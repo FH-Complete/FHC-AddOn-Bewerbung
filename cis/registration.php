@@ -150,7 +150,8 @@ if ($userid)
 				$geb_datum = filter_input(INPUT_POST, 'geb_datum');
 				$geschlecht = filter_input(INPUT_POST, 'geschlecht');
 				$email = filter_input(INPUT_POST, 'email');
-				$studiengaenge = filter_input(INPUT_POST, 'studiengaenge');
+				$studiengaenge = filter_input(INPUT_POST, 'studiengaenge', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY);
+				$anmerkungen = filter_input(INPUT_POST, 'anmerkung', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY);
 				$std_semester = filter_input(INPUT_POST, 'studiensemester_kurzbz');
 				$stg_auswahl = filter_input(INPUT_POST, 'stg');
 
@@ -248,6 +249,7 @@ if ($userid)
 								$prestudent_status->updateamum = date("Y-m-d H:m:s");
 								$prestudent_status->updatevon = '';
 								$prestudent_status->new = true;
+								$prestudent_status->anmerkung_status = $anmerkungen[$studiengaenge[$i]];
 
 								if(!$prestudent_status->save_rolle())
 								{
@@ -416,7 +418,7 @@ if ($userid)
 											<input type="checkbox" name="studiengaenge[]" value="<?php echo $result->studiengang_kz ?>" <?php echo $checked ?>>
 											<?php echo $result->bezeichnung ?>
 											<span class="badge" id="badge<?php echo $result->studiengang_kz ?>"></span>
-											<input type="hidden" id="anmerkung<?php echo $result->studiengang_kz ?>">
+											<input type="hidden" id="anmerkung<?php echo $result->studiengang_kz ?>" name="anmerkung[<?php echo $result->studiengang_kz ?>]">
 										</label>
 									</div>
 								<?php endif;
