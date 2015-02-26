@@ -27,8 +27,16 @@
 		<h4 class="modal-title"><?php echo $p->t('bewerbung/priowaehlen') ?></h4>
 	</div>
 	<div class="modal-body">
+		<div class="row">
+			<div class="col-sm-12">
+				<p><?php echo $p->t('bewerbung/prioBeschreibungstext') ?></p>
+			</div>
+		</div>
 	<?php foreach(array('topprio', 'alternative') as $prio): ?>
 		<div class="row" id="<?php echo $prio ?>">
+			<div class="col-sm-12">
+				<h4><?php echo $p->t('bewerbung/prioUeberschrift' . $prio) ?></h4>
+			</div>
 			<div class="col-sm-6">
 				<h4><?php echo $p->t('bewerbung/orgform') ?></h4>
 				<div class="radio">
