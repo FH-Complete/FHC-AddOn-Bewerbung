@@ -96,7 +96,7 @@ if ($userid)
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 		<meta name="robots" content="noindex">
-		<link href="../../../include/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+		<link href="../../../submodules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" type="text/css">
 		<link href="../include/css/registration.css" rel="stylesheet" type="text/css">
 	</head>
 	<body class="main">
@@ -478,7 +478,7 @@ if ($userid)
 		</div>
 		<?php require('views/modal_sprache_orgform.php'); ?>
 		<script src="../../../include/js/jquery.min.1.11.1.js"></script>
-		<script src="../../../include/js/bootstrap.min.js"></script>
+		<script src="../../../submodules/bootstrap/dist/js/bootstrap.min.js"></script>
 		<script type="text/javascript">
 
 			function changeSprache(sprache)

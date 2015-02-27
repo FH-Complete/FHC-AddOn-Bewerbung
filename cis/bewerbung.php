@@ -541,9 +541,9 @@ foreach($prestudent->result as $row)
 		<meta http-equiv="X-UA-Compatible" content="chrome=1">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<title>Bewerbung für einen Studiengang</title>
-		<link href="../../../include/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+		<link href="../../../submodules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" type="text/css">
 		<script src="../../../include/js/jquery.min.1.11.1.js"></script>
-		<script src="../../../include/js/bootstrap.min.js"></script>
+		<script src="../../../submodules/bootstrap/dist/js/bootstrap.min.js"></script>
 		<script src="../include/js/bewerbung.js"></script>
 		<script type="text/javascript">
 			var activeTab = <?php echo json_encode($active) ?>,
