@@ -405,7 +405,7 @@ if ($userid)
 							$stg->getAll('typ,bezeichnung',true);
 
 							foreach($stg->result as $result):
-								if($result->studiengang_kz > 0):
+								if($result->studiengang_kz > 0 && $result->onlinebewerbung):
 									$checked = '';
 									$typ = new studiengang();
 									$typ->getStudiengangTyp($result->typ);
