@@ -37,7 +37,7 @@
 			<div class="col-sm-12">
 				<h4><?php echo $p->t('bewerbung/prioUeberschrift' . $prio) ?></h4>
 			</div>
-			<div class="col-sm-6">
+			<div class="col-sm-6 priogroup">
 				<h4><?php echo $p->t('bewerbung/orgform') ?></h4>
 				<div class="radio">
 					<label>
@@ -58,7 +58,7 @@
 					</label>
 				</div>
 			</div>
-			<div class="col-sm-6">
+			<div class="col-sm-6 priogroup">
 				<h4><?php echo $p->t('bewerbung/sprache') ?></h4>
 				<div class="radio">
 					<label>
@@ -115,5 +115,44 @@
 		}
 
 		return anm;
+	}
+
+	function prioAvailable(modal_orgform, modal_sprache) {
+
+		var prios = {
+				German: 'De',
+				English: 'En'
+			},
+			input;
+
+		$('#prio-dialog input').prop('disabled', true);
+
+		for(var i = 0; i < modal_orgform.length; i++)
+		{
+			$('#prio-dialog input[value="' + modal_orgform[i] + '"]').prop({
+				disabled: false,
+				checked: true
+			});
+		}
+
+		for(var i = 0; i < modal_sprache.length; i++)
+		{
+			$('#prio-dialog input[value="' + prios[modal_sprache[i]] + '"]').prop({
+				disabled: false,
+				checked: true
+			});
+		}
+
+		$('.priogroup').each(function(i, value) {
+			var disabled_inputs = $(value).find('input:disabled').length;
+
+			if(disabled_inputs === 1)
+			{
+				$(value).find('input:disabled').prop({
+					disabled: false,
+					checked: true
+				});
+			}
+		});
 	}
 </script>

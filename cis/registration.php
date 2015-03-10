@@ -409,13 +409,27 @@ if ($userid)
 									$checked = '';
 									$typ = new studiengang();
 									$typ->getStudiengangTyp($result->typ);
+
+									$orgform = $stg->getOrgForm($result->studiengang_kz);
+									$sprache = $stg->getSprache($result->studiengang_kz);
+
+									$modal = false;
+
+									if(count($orgform) !== 1 || count($sprache) !== 1)
+									{
+										$modal = true;
+									}
+
 									if(in_array($result->studiengang_kz, $studiengaenge) || $result->studiengang_kz == $stg_auswahl)
 									{
 										$checked = 'checked';
 									} ?>
 									<div class="checkbox">
 										<label>
-											<input type="checkbox" name="studiengaenge[]" value="<?php echo $result->studiengang_kz ?>" <?php echo $checked ?>>
+											<input type="checkbox" name="studiengaenge[]" value="<?php echo $result->studiengang_kz ?>" <?php echo $checked ?>
+												   data-modal="<?php echo $modal ?>"
+												   data-modal-sprache="<?php echo implode(',', $sprache) ?>"
+												   data-modal-orgform="<?php echo implode(',', $orgform) ?>">
 											<?php echo $result->bezeichnung ?>
 											(<?php echo preg_replace(',\w\s*\-\s*,', '', $stg->studiengang_typ_arr[$result->typ]) ?>)
 											<span class="badge" id="badge<?php echo $result->studiengang_kz ?>"></span>
@@ -564,12 +578,16 @@ if ($userid)
 
 				$('#liste-studiengaenge input').on('change', function() {
 
-					var stgkz = $(this).val();
+					var stgkz = $(this).val(),
+						modal = $(this).attr('data-modal'),
+						modal_orgform = $(this).attr('data-modal-orgform').split(','),
+						modal_sprache = $(this).attr('data-modal-sprache').split(',');
 					$('#prio-dialog').data({stgkz: stgkz});
 
-					if($(this).prop('checked')) {
+					if($(this).prop('checked') && modal) {
 
 						$('#prio-dialog input[value="egal"]').prop('checked', true);
+						prioAvailable(modal_orgform, modal_sprache);
 						checkPrios(0);
 
 						$('#prio-dialog').modal('show');
