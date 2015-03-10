@@ -417,6 +417,7 @@ if ($userid)
 										<label>
 											<input type="checkbox" name="studiengaenge[]" value="<?php echo $result->studiengang_kz ?>" <?php echo $checked ?>>
 											<?php echo $result->bezeichnung ?>
+											(<?php echo preg_replace(',\w\s*\-\s*,', '', $stg->studiengang_typ_arr[$result->typ]) ?>)
 											<span class="badge" id="badge<?php echo $result->studiengang_kz ?>"></span>
 											<input type="hidden" id="anmerkung<?php echo $result->studiengang_kz ?>" name="anmerkung[<?php echo $result->studiengang_kz ?>]">
 										</label>
