@@ -498,9 +498,9 @@ if ($userid)
 
 			function changeSprache(sprache)
 			{
-				method = '<?php echo $db->convert_html_chars($method);?>';
+				var method = '<?php echo $db->convert_html_chars($method);?>';
 
-				window.location.href="registration.php?sprache="+sprache+"&method="+method;
+				window.location.href = "registration.php?sprache=" + sprache + "&method=" + method;
 			}
 
 			function checkRegistration()

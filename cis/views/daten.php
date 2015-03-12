@@ -121,6 +121,9 @@
 		<button class="btn-nav btn btn-default" type="button" data-jump-tab="allgemein">
 			Zurück
 		</button>
+		<button class="btn btn-default" type="submit" name="btn_person">
+			Speichern
+		</button>
 		<button class="btn-nav btn btn-default" type="button" data-jump-tab="kontakt">
 			Weiter
 		</button>

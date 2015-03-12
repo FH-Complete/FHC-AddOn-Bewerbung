@@ -54,16 +54,17 @@ require_once('../../../include/reihungstest.class.php');
 require_once('../../../include/preinteressent.class.php');
 
 $person_id = $_SESSION['bewerbung/personId'];
-$akte_id = isset($_GET['akte_id'])?$_GET['akte_id']:'';
-$method=isset($_GET['method'])?$_GET['method']:'';
+$akte_id = isset($_GET['akte_id']) ? $_GET['akte_id'] : '';
+$method = isset($_GET['method']) ? $_GET['method'] : '';
 $datum = new datum();
 $person = new person();
+
 if(!$person->load($person_id))
 {
     die('Konnte Person nicht laden');
 }
 
-$sprache=DEFAULT_LANGUAGE;
+$sprache = DEFAULT_LANGUAGE;
 $p = new phrasen($sprache);
 
 $message = '&nbsp;';
@@ -76,7 +77,7 @@ if($method=='delete')
     $akte= new akte();
     if(!$akte->load($akte_id))
     {
-        $message = "Ungueltige akte_id übergeben";
+        $message = 'Ungueltige akte_id übergeben';
     }
     else
     {
@@ -89,13 +90,17 @@ if($method=='delete')
         if($akte->delete($akte_id))
         {
             if(!$dms->deleteDms($dms_id))
-                $message = "Konnte DMS Eintrag nicht löschen";
+			{
+                $message = 'Konnte DMS Eintrag nicht löschen';
+			}
             else
-                $message = "Erfolgreich gelöscht";
+			{
+                $message = 'Erfolgreich gelöscht';
+			}
         }
         else
         {
-            $message="Konnte Akte nicht Löschen";
+            $message = 'Konnte Akte nicht Löschen';
         }
     }
 
@@ -112,7 +117,9 @@ if(isset($_GET['rt_id']))
 	{
 		$prestudent = new prestudent();
 		if(!$prestudent->getPrestudenten($person_id))
+		{
 			die('Konnte Prestudenten nicht laden');
+		}
 
 		foreach($prestudent->result as $row)
 		{
@@ -125,7 +132,9 @@ if(isset($_GET['rt_id']))
 				$prest->new = false;
 
 				if(!$prest->save())
-					echo "Fehler aufgetreten";
+				{
+					echo 'Fehler aufgetreten';
+				}
 			}
 		}
 	}
@@ -136,14 +145,16 @@ if(isset($_GET['rt_id']))
 
 		if($reihungstest->max_teilnehmer && $reihungstest->getTeilnehmerAnzahl($rt_id) >= $reihungstest->max_teilnehmer)
 		{
-			die("max. Teilnehmeranzahl erreicht.");
+			die('max. Teilnehmeranzahl erreicht.');
 		}
 
 		$timestamp = time();
 
 		$prestudent = new prestudent();
 		if(!$prestudent->getPrestudenten($person_id))
+		{
 			die('Konnte Prestudenten nicht laden');
+		}
 
 		foreach($prestudent->result as $row)
 		{
@@ -152,11 +163,13 @@ if(isset($_GET['rt_id']))
 				$prest = new prestudent();
 				$prest->load($pre_id);
 				$prest->reihungstest_id = $rt_id;
-				$prest->anmeldungreihungstest = date("Y-m-d",$timestamp);
+				$prest->anmeldungreihungstest = date('Y-m-d', $timestamp);
 				$prest->new = false;
 
 				if(!$prest->save())
-					echo "Fehler aufgetreten";
+				{
+					echo 'Fehler aufgetreten';
+				}
 			}
 		}
 	}
@@ -165,7 +178,7 @@ if(isset($_GET['rt_id']))
 if(isset($_POST['btn_bewerbung_abschicken']))
 {
    // Mail an zuständige Assistenz schicken
-    $pr_id = isset($_POST['prestudent_id'])?$_POST['prestudent_id']:'';
+    $pr_id = isset($_POST['prestudent_id']) ? $_POST['prestudent_id'] : '';
 
     $studiensemester = new studiensemester();
     $std_semester = $studiensemester->getakt();
@@ -185,10 +198,10 @@ if(isset($_POST['btn_bewerbung_abschicken']))
             $prestudent_status->status_kurzbz = 'Bewerber';
             $prestudent_status->studiensemester_kurzbz = $std_semester;
             $prestudent_status->ausbildungssemester = '1';
-            $prestudent_status->datum = date("Y-m-d H:i:s");
-            $prestudent_status->insertamum = date("Y-m-d H:i:s");
+            $prestudent_status->datum = date('Y-m-d H:i:s');
+            $prestudent_status->insertamum = date('Y-m-d H:i:s');
             $prestudent_status->insertvon = '';
-            $prestudent_status->updateamum = date("Y-m-d H:i:s");
+            $prestudent_status->updateamum = date('Y-m-d H:i:s');
             $prestudent_status->updatevon = '';
             $prestudent_status->studienplan_id = $alterstatus->studienplan_id;
             $prestudent_status->new = true;
@@ -197,10 +210,13 @@ if(isset($_POST['btn_bewerbung_abschicken']))
         }
 
         if(sendBewerbung($pr_id))
-			echo "<script type='text/javascript'>alert('Sie haben sich erfolgreich beworben. Die zuständige Assistenz wird sich in den nächsten Tagen bei Ihnen melden.');</script>";
+		{
+			echo '<script type="text/javascript">alert("Sie haben sich erfolgreich beworben. Die zuständige Assistenz wird sich in den nächsten Tagen bei Ihnen melden.");</script>';
+		}
         else
-			echo "<script type='text/javascript'>alert('Es ist ein Fehler beim versenden der Bewerbung aufgetreten. Bitte versuchen Sie es nocheinmal');</script>";
-
+		{
+			echo '<script type="text/javascript">alert("Es ist ein Fehler beim versenden der Bewerbung aufgetreten. Bitte versuchen Sie es nocheinmal");</script>';
+		}
     }
 }
 
@@ -226,11 +242,12 @@ if(isset($_POST['submit_nachgereicht']))
         $akte->insertamum = date('Y-m-d H:i:s');
         $akte->uid = '';
         $akte->new = true;
-        $akte->nachgereicht = (isset($_POST['check_nachgereicht']))?true:false;
-        if(!$akte->save())
-            echo"Fehler beim Speichern aufgetreten ".$akte->errormsg;
+		$akte->nachgereicht = (isset($_POST['check_nachgereicht'])) ? true : false;
+		if(!$akte->save())
+		{
+            echo 'Fehler beim Speichern aufgetreten '.$akte->errormsg;
+		}
     }
-
 }
 
 // gibt an welcher Tab gerade aktiv ist
@@ -257,10 +274,14 @@ if(isset($_POST['btn_person']))
 
     $person->new = false;
     if(!$person->save())
-        $message=('Fehler beim Speichern der Person aufgetreten');
+	{
+        $message = 'Fehler beim Speichern der Person aufgetreten';
+	}
 
 	if($person->checkSvnr($person->svnr))
-		$message = "SVNR bereits vorhanden";
+	{
+		$message = 'SVNR bereits vorhanden';
+	}
 }
 
 // Kontaktdaten speichern
@@ -359,8 +380,9 @@ if(isset($_POST['btn_kontakt']))
             $adresse_help->updateamum = date('Y-m-d H:i:s');
             $adresse_help->new = false;
             if(!$adresse_help->save())
+			{
                 die($adresse_help->errormsg);
-
+			}
         }
         else
         {
@@ -376,8 +398,9 @@ if(isset($_POST['btn_kontakt']))
             $adresse->heimatadresse = true;
             $adresse->new = true;
             if(!$adresse->save())
+			{
                 die('Fehler beim Anlegen der Adresse aufgetreten');
-
+			}
         }
     }
 }
@@ -399,7 +422,9 @@ if(isset($_POST['btn_zgv']))
     $prestudent->updateamum = date('Y-m-d H:i:s');
 
     if(!$prestudent->save())
+	{
         die('Fehler beim Speichern des Prestudenten aufgetaucht.');
+	}
 
     // Studienplan Speichern
     $prestudent_status = new prestudent();
@@ -407,8 +432,8 @@ if(isset($_POST['btn_zgv']))
     if($prestudent_status->getLastStatus($_POST['prestudent']))
     {
     	$prestudent_status->new = false;
-    	$prestudent_status->studienplan_id=$_POST['studienplan_id'];
-    	$prestudent_status->save_rolle();
+		$prestudent_status->studienplan_id = $_POST['studienplan_id'];
+		$prestudent_status->save_rolle();
     }
 }
 
@@ -437,6 +462,7 @@ $kontakt = new kontakt();
 $kontakt->load_persKontakttyp($person->person_id, 'email');
 $adresse = new adresse();
 $adresse->load_pers($person->person_id);
+
 if(count($kontakt->result) && count($adresse->result))
 {
     $status_kontakt = true;
@@ -450,7 +476,9 @@ else
 
 $prestudent = new prestudent();
 if(!$prestudent->getPrestudenten($person->person_id))
+{
     die('Fehler beim laden des Prestudenten');
+}
 
 $zgv_auswahl = false;
 
@@ -458,7 +486,9 @@ $zgv_auswahl = false;
 foreach($prestudent->result as $pre)
 {
     if($pre->zgv_code != '' || $pre->zgvmas_code != '' || $pre->zgvdoktor_code != '')
+	{
         $zgv_auswahl = true;
+	}
 }
 
 
@@ -519,7 +549,9 @@ else
 
 $prestudent = new prestudent();
 if(!$prestudent->getPrestudenten($person_id))
+{
 	die('Konnte Prestudenten nicht laden');
+}
 
 $status_reihungstest = false;
 $status_reihungstest_text = $unvollstaendig;

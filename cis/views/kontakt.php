@@ -98,6 +98,9 @@
 		<button class="btn-nav btn btn-default" type="button" data-jump-tab="daten">
 			Zurück
 		</button>
+		<button class="btn btn-default" type="submit" name="btn_kontakt">
+			Speichern
+		</button>
 		<button class="btn-nav btn btn-default" type="button" data-jump-tab="dokumente">
 			Weiter
 		</button>
