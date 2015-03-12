@@ -184,7 +184,7 @@ if ($userid)
 						// Person anlegen
 						$person = new person();
 
-						$zugangscode = uniqid();
+						$zugangscode = substr(md5(openssl_random_pseudo_bytes(20)), 0, 10);
 
 						$person->nachname = $nachname;
 						$person->vorname = $vorname;
