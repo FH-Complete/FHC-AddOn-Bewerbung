@@ -53,7 +53,7 @@ require_once('../../../include/basis_db.class.php');
 require_once('../../../include/reihungstest.class.php');
 require_once('../../../include/preinteressent.class.php');
 
-$person_id = $_SESSION['bewerbung/personId'];
+$person_id = (int) $_SESSION['bewerbung/personId'];
 $akte_id = isset($_GET['akte_id']) ? $_GET['akte_id'] : '';
 $method = isset($_GET['method']) ? $_GET['method'] : '';
 $datum = new datum();
@@ -81,8 +81,10 @@ if($method=='delete')
     }
     else
     {
-    	if($akte->person_id!=$person_id)
+		if($akte->person_id != $person_id)
+		{
     		die('Ungueltiger Zugriff');
+		}
 
         $dms_id = $akte->dms_id;
         $dms = new dms();
@@ -409,16 +411,25 @@ if(isset($_POST['btn_zgv']))
 {
     // Zugangsvoraussetzungen speichern
     $prestudent = new prestudent();
-    if(!$prestudent->load($_POST['prestudent']))
+	$prestudent_id = filter_input(INPUT_POST, 'prestudent', FILTER_VALIDATE_INT);
+
+	if(!$prestudent->load($prestudent_id))
+	{
         die('Prestudent konnte nicht geladen werden');
+	}
+
+	if($person_id != $prestudent->person_id)
+	{
+		die('Ungültiger Zugriff');
+	}
 
     $prestudent->new = false;
-    $prestudent->zgv_code = $_POST['zgv'];
-    $prestudent->zgvort = $_POST['zgv_ort'];
-    $prestudent->zgvdatum = $datum->formatDatum($_POST['zgv_datum'], 'Y-m-d');
-    $prestudent->zgvmas_code = $_POST['zgv_master'];
-    $prestudent->zgvmaort = $_POST['zgv_master_ort'];
-    $prestudent->zgvmadatum = $datum->formatDatum($_POST['zgv_master_datum'], 'Y-m-d');
+    $prestudent->zgv_code = filter_input(INPUT_POST, 'zgv', FILTER_VALIDATE_INT);
+    $prestudent->zgvort = filter_input(INPUT_POST, 'zgv_ort');
+    $prestudent->zgvdatum = $datum->formatDatum(filter_input(INPUT_POST, 'zgv_datum'), 'Y-m-d');
+    $prestudent->zgvmas_code = filter_input(INPUT_POST, 'zgv_master', FILTER_VALIDATE_INT);
+    $prestudent->zgvmaort = filter_input(INPUT_POST, 'zgv_master_ort');
+    $prestudent->zgvmadatum = $datum->formatDatum(filter_input(INPUT_POST, 'zgv_master_datum'), 'Y-m-d');
     $prestudent->updateamum = date('Y-m-d H:i:s');
 
     if(!$prestudent->save())
@@ -429,10 +440,10 @@ if(isset($_POST['btn_zgv']))
     // Studienplan Speichern
     $prestudent_status = new prestudent();
 
-    if($prestudent_status->getLastStatus($_POST['prestudent']))
+    if($prestudent_status->getLastStatus($prestudent_id))
     {
     	$prestudent_status->new = false;
-		$prestudent_status->studienplan_id = $_POST['studienplan_id'];
+		$prestudent_status->studienplan_id = filter_input(INPUT_POST, 'studienplan_id', FILTER_VALIDATE_INT);
 		$prestudent_status->save_rolle();
     }
 }
@@ -441,9 +452,9 @@ $ajax = filter_input(INPUT_POST, 'ajax', FILTER_VALIDATE_BOOLEAN);
 
 if($ajax)
 {
-	var_export($_POST);
-	var_export($person);
-	exit;
+//	var_export($_POST);
+//	var_export($person);
+//	exit;
 }
 
 // Abfrage ob ein Punkt schon vollständig ist

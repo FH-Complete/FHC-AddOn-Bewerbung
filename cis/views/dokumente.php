@@ -17,6 +17,11 @@
  *
  * Authors: Robert Hofer <robert.hofer@technikum-wien.at>
  */
+
+if(!isset($person_id))
+{
+	die('Ungültiger Zugriff');
+}
 ?>
 
 <div role="tabpanel" class="tab-pane" id="dokumente">

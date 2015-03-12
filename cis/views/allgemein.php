@@ -17,7 +17,13 @@
  *
  * Authors: Robert Hofer <robert.hofer@technikum-wien.at>
  */
+
+if(!isset($person_id))
+{
+	die('Ungültiger Zugriff');
+}
 ?>
+
 <div role="tabpanel" class="tab-pane" id="allgemein">
 	<h2>Allgemein</h2>
 	<p>Wir freuen uns dass Sie sich für einen oder mehrere unserer Studiengänge bewerben. <br><br>

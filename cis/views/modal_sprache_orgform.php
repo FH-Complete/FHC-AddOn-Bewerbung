@@ -122,8 +122,7 @@
 		var prios = {
 				German: 'De',
 				English: 'En'
-			},
-			input;
+			};
 
 		$('#prio-dialog input').prop('disabled', true);
 
