@@ -123,6 +123,44 @@ if(!isset($person_id))
 				w: <input type="radio" name="geschlecht" value="w" <?php echo $geschl_w ?>>
 			</div>
 		</div>
+        <fieldset>
+            <legend>Berufstätigkeit</legend>
+            <?php
+            $notiz = new notiz;
+            $notiz->getBewerbungstoolNotizen($person_id);
+            if(count($notiz->result)):
+                foreach($notiz->result as $berufstaetig): ?>
+                    <div class="form-group">
+                        <label for="berufstaetig" class="col-sm-3 control-label">
+                            Eintrag vom <?php echo date('j.n.y H:i', strtotime($berufstaetig->insertamum)) ?>
+                        </label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" disabled value="<?php echo $berufstaetig->text ?>">
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <div class="form-group">
+                    <label for="berufstaetig" class="col-sm-3 control-label">berufstätig</label>
+                    <div class="col-sm-9">
+                        Ja: <input type="radio" name="berufstaetig" value="j">
+                        Nein: <input type="radio" name="berufstaetig" value="n" checked>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="berufstaetig_dienstgeber" class="col-sm-3 control-label">Dienstgeber</label>
+                    <div class="col-sm-9">
+                        <input type="text" name="berufstaetig_dienstgeber" id="berufstaetig_dienstgeber" class="form-control">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="berufstaetig_art" class="col-sm-3 control-label">Art der Tätigkeit</label>
+                    <div class="col-sm-9">
+                        <input type="text" name="berufstaetig_art" id="berufstaetig_art" class="form-control">
+                    </div>
+                </div>
+            <?php endif; ?>
+        </fieldset>
 		<button class="btn-nav btn btn-default" type="button" data-jump-tab="allgemein">
 			Zurück
 		</button>

@@ -52,6 +52,7 @@ require_once('../../../include/studienplan.class.php');
 require_once('../../../include/basis_db.class.php');
 require_once('../../../include/reihungstest.class.php');
 require_once('../../../include/preinteressent.class.php');
+require_once('../../../include/notiz.class.php');
 
 $person_id = (int) $_SESSION['bewerbung/personId'];
 $akte_id = isset($_GET['akte_id']) ? $_GET['akte_id'] : '';
@@ -284,6 +285,26 @@ if(isset($_POST['btn_person']))
 	{
 		$message = 'SVNR bereits vorhanden';
 	}
+
+    $berufstaetig = filter_input(INPUT_POST, 'berufstaetig');
+
+    if($berufstaetig === 'j') {
+
+        $berufstaetig_art = filter_input(INPUT_POST, 'berufstaetig_art');
+        $berufstaetig_dienstgeber = filter_input(INPUT_POST, 'berufstaetig_dienstgeber');
+
+        $notiz = new notiz;
+        $notiz->person_id = $person_id;
+        $notiz->verfasser_uid = '_DummyStudent';
+        $notiz->erledigt = false;
+        $notiz->insertvon = 'Bewerbungstool';
+        $notiz->insertamum = date('c');
+        $notiz->titel = 'Berufstätigkeit';
+        $notiz->text = 'Dienstgeber: ' . $berufstaetig_dienstgeber
+                . '; Art der Tätigkeit: ' . $berufstaetig_art;
+        $notiz->save(true);
+        $notiz->saveZuordnung();
+    }
 }
 
 // Kontaktdaten speichern
