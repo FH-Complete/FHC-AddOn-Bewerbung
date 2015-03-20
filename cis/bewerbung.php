@@ -537,7 +537,7 @@ foreach($akte_person->result as $akte)
 
 foreach($dokument_help->result as $dok)
 {
-    if(!in_array($dok->dokument_kurzbz, $help_array))
+    if($dok->pflicht && !in_array($dok->dokument_kurzbz, $help_array, true))
     {
         $missing = true;
     }
