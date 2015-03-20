@@ -95,7 +95,7 @@ if(!isset($person_id))
 			<label for="staatsbuergerschaft" class="col-sm-3 control-label">Staatsbürgerschaft*</label>
 			<div class="col-sm-9">
 				<select name="staatsbuergerschaft" id="staatsbuergerschaft" class="form-control">
-					<option value="">-- Bitte auswählen -- </option>";
+					<option value="">-- Bitte auswählen -- </option>
 					<?php $selected = '';
 					foreach($nation->nation as $nat):
 						$selected = ($person->staatsbuergerschaft == $nat->code) ? 'selected' : ''; ?>

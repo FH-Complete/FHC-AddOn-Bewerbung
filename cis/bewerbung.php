@@ -432,40 +432,29 @@ if(isset($_POST['btn_zgv']))
 {
     // Zugangsvoraussetzungen speichern
     $prestudent = new prestudent();
-	$prestudent_id = filter_input(INPUT_POST, 'prestudent', FILTER_VALIDATE_INT);
+    $prestudent->getPrestudenten($person_id);
 
-	if(!$prestudent->load($prestudent_id))
-	{
-        die('Prestudent konnte nicht geladen werden');
-	}
+    $master_zgv_art = filter_input(INPUT_POST, 'master_zgv_art', FILTER_VALIDATE_INT);
 
-	if($person_id != $prestudent->person_id)
-	{
-		die('Ungültiger Zugriff');
-	}
+    foreach($prestudent->result as $prestudent_eintrag) {
 
-    $prestudent->new = false;
-    $prestudent->zgv_code = filter_input(INPUT_POST, 'zgv', FILTER_VALIDATE_INT);
-    $prestudent->zgvort = filter_input(INPUT_POST, 'zgv_ort');
-    $prestudent->zgvdatum = $datum->formatDatum(filter_input(INPUT_POST, 'zgv_datum'), 'Y-m-d');
-    $prestudent->zgvmas_code = filter_input(INPUT_POST, 'zgv_master', FILTER_VALIDATE_INT);
-    $prestudent->zgvmaort = filter_input(INPUT_POST, 'zgv_master_ort');
-    $prestudent->zgvmadatum = $datum->formatDatum(filter_input(INPUT_POST, 'zgv_master_datum'), 'Y-m-d');
-    $prestudent->updateamum = date('Y-m-d H:i:s');
+        $prestudent_eintrag->new = false;
+        $prestudent_eintrag->zgv_code = filter_input(INPUT_POST, 'bachelor_zgv_art', FILTER_VALIDATE_INT);
+        $prestudent_eintrag->zgvort = filter_input(INPUT_POST, 'bachelor_zgv_ort');
+        $prestudent_eintrag->zgvdatum = $datum->formatDatum(filter_input(INPUT_POST, 'bachelor_zgv_datum'), 'Y-m-d');
 
-    if(!$prestudent->save())
-	{
-        die('Fehler beim Speichern des Prestudenten aufgetaucht.');
-	}
+        if($master_zgv_art) {
+            $prestudent_eintrag->zgvmas_code = filter_input(INPUT_POST, 'master_zgv_art', FILTER_VALIDATE_INT);
+            $prestudent_eintrag->zgvmaort = filter_input(INPUT_POST, 'master_zgv_ort');
+            $prestudent_eintrag->zgvmadatum = $datum->formatDatum(filter_input(INPUT_POST, 'master_zgv_datum'), 'Y-m-d');
+        }
 
-    // Studienplan Speichern
-    $prestudent_status = new prestudent();
+        $prestudent_eintrag->updateamum = date('c');
 
-    if($prestudent_status->getLastStatus($prestudent_id))
-    {
-    	$prestudent_status->new = false;
-		$prestudent_status->studienplan_id = filter_input(INPUT_POST, 'studienplan_id', FILTER_VALIDATE_INT);
-		$prestudent_status->save_rolle();
+        if(!$prestudent_eintrag->save())
+        {
+            die('Fehler beim Speichern des Prestudenten aufgetaucht.');
+        }
     }
 }
 
@@ -512,19 +501,17 @@ if(!$prestudent->getPrestudenten($person->person_id))
     die('Fehler beim laden des Prestudenten');
 }
 
-$zgv_auswahl = false;
+$master_zgv_done = false;
+$stg = new studiengang;
 
-// Überprüfe ZGV pro Prestudent
-foreach($prestudent->result as $pre)
-{
-    if($pre->zgv_code != '' || $pre->zgvmas_code != '' || $pre->zgvdoktor_code != '')
-	{
-        $zgv_auswahl = true;
-	}
+foreach($prestudent->result as $prestudent_eintrag) {
+    $studiengaenge[] = $prestudent_eintrag->studiengang_kz;
+    $master_zgv_done = isset($prestudent_eintrag->zgvmas_code);
 }
 
+$types = $stg->getTypes($studiengaenge);
 
-if($zgv_auswahl)
+if(in_array('m', $types, true) && $master_zgv_done)
 {
 	$status_zgv = true;
 	$status_zgv_text = $vollstaendig;
@@ -649,6 +636,11 @@ foreach($prestudent->result as $row)
 							</a>
 						</li>
 						<li>
+							<a href="#zgv" aria-controls="zgv" role="tab" data-toggle="tab">
+								ZGV <br> <?php echo $status_zgv_text;?>
+							</a>
+						</li>
+						<li>
 							<a href="#zahlungen" aria-controls="zahlungen" role="tab" data-toggle="tab">
 								Zahlungen <br> <?php echo $status_zahlungen_text;?>
 							</a>
@@ -678,6 +670,7 @@ foreach($prestudent->result as $row)
 					'zahlungen',
 					'aufnahme',
 					'abschicken',
+					'zgv',
 				);
 
 				foreach($tabs as $tab)

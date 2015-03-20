@@ -117,7 +117,7 @@ if(!isset($person_id))
 	<?php else: ?>
 		<p><?php echo $p->t('tools/keineZahlungenVorhanden') ?></p>
 	<?php endif; ?>
-	<button class="btn-nav btn btn-default" type="button" data-jump-tab="dokumente">
+	<button class="btn-nav btn btn-default" type="button" data-jump-tab="zgv">
 		Zurück
 	</button>
 	<button class="btn-nav btn btn-default" type="button" data-jump-tab="aufnahme">

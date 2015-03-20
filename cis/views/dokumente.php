@@ -160,7 +160,7 @@ if(!isset($person_id))
 	<button class="btn-nav btn btn-default" type="button" data-jump-tab="kontakt">
 		Zurück
 	</button>
-	<button class="btn-nav btn btn-default" type="button" data-jump-tab="zahlungen">
+	<button class="btn-nav btn btn-default" type="button" data-jump-tab="zgv">
 		Weiter
 	</button>
 	<br><?php echo $message ?>

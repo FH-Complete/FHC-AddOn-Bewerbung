@@ -1,0 +1,96 @@
+<?php
+/*
+ * Copyright (C) 2015 fhcomplete.org
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Authors: Robert Hofer <robert.hofer@technikum-wien.at>
+ */
+
+$zgv_options = new zgv;
+$zgv_options->getAll();
+$zgv = $prestudent->getZgv();
+$studiengaenge = array();
+$studienplan = new studienplan;
+$stg = new studiengang;
+
+foreach($prestudent->result as $prestudent_eintrag) {
+    $studiengaenge[] = $prestudent_eintrag->studiengang_kz;
+}
+
+$types = $stg->getTypes($studiengaenge);
+?>
+    <div role="tabpanel" class="tab-pane" id="zgv">
+        <h2>Zugangsvoraussetzungen</h2>
+
+        <form method="POST" class="form-horizontal">
+            <?php foreach ($zgv as $stufe => $attribute):
+                if($stufe === 'master' && !in_array('m', $types, true)) {
+                    continue;
+                } ?>
+                <fieldset>
+                    <legend>für <?php echo ucfirst($stufe) ?></legend>
+                    <div class="form-group">
+                        <label for="<?php echo $stufe ?>_zgv_art" class="col-sm-3 control-label">
+                            Art der Voraussetzung
+                        </label>
+
+                        <div class="col-sm-9">
+                            <select name="<?php echo $stufe ?>_zgv_art" id="<?php echo $stufe ?>_zgv_art" class="form-control">
+                                <option value="">-- Bitte auswählen --</option>
+                                <?php $selected = '';
+                                foreach ($zgv_options->result as $zgv_option):
+                                    $selected = (isset($attribute['art']) && $attribute['art'] == $zgv_option->zgv_code) ? 'selected' : ''; ?>
+                                    <option value="<?php echo $zgv_option->zgv_code ?>" <?php echo $selected ?>>
+                                        <?php echo $zgv_option->zgv_bez ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="<?php echo $stufe ?>_zgv_ort" class="col-sm-3 control-label">
+                            Ort
+                        </label>
+
+                        <div class="col-sm-9">
+                            <input type="text" name="<?php echo $stufe ?>_zgv_ort" id="<?php echo $stufe ?>_zgv_ort" class="form-control"
+                                   value="<?php echo isset($attribute['ort']) ? $attribute['ort'] : '' ?>"
+                                   placeholder="Wo wurde die Urkunde ausgestellt?">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="<?php echo $stufe ?>_zgv_datum" class="col-sm-3 control-label">
+                            Datum
+                        </label>
+
+                        <div class="col-sm-9">
+                            <input type="text" name="<?php echo $stufe ?>_zgv_datum" id="<?php echo $stufe ?>_zgv_datum" class="form-control"
+                                   value="<?php echo isset($attribute['datum']) ? date('d.m.Y', strtotime($attribute['datum'])) : '' ?>"
+                                   placeholder="<?php echo $p->t('bewerbung/datumFormat') ?>">
+                        </div>
+                    </div>
+                </fieldset>
+            <?php endforeach ?>
+            <button class="btn-nav btn btn-default" type="button" data-jump-tab="dokumente">
+                Zurück
+            </button>
+            <button class="btn btn-default" type="submit" name="btn_zgv">
+                Speichern
+            </button>
+            <button class="btn-nav btn btn-default" type="button" data-jump-tab="zahlungen">
+                Weiter
+            </button>
+        </form>
+    </div>

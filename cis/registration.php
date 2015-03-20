@@ -84,7 +84,7 @@ if ($userid)
 	}
 	else
 	{
-		$message = "<script type=\"text/javascript\">alert('".$p->t('bewerbung/zugangsdatenFalsch')."')</script>";
+		$message = '<script type="text/javascript">alert("'.$p->t('bewerbung/zugangsdatenFalsch').'")</script>';
 	}
 }
 ?>
@@ -345,8 +345,10 @@ if ($userid)
 							<?php echo $p->t('global/geburtsdatum') ?>
 						</label>
 						<div class="col-sm-4">
-							<input type="datetime" name="geb_datum" id="geburtsdatum" value="<?php echo $geb_datum ?>" class="form-control" placeholder="<?php echo $p->t('bewerbung/datumFormat') ?>">
-						</div>
+                            <input type="datetime" name="geb_datum" id="geburtsdatum"
+                                   value="<?php echo isset($geb_datum) ? date('d.m.Y', strtotime($geb_datum)) : '' ?>"
+                                   class="form-control" placeholder="<?php echo $p->t('bewerbung/datumFormat') ?>">
+                        </div>
 					</div>
 
 					<div class="form-group">
