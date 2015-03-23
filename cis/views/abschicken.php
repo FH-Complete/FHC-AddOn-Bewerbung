@@ -48,7 +48,7 @@ if(!isset($person_id))
 		$stg->load($prest->studiengang_kz); ?>
 		<div class="row">
 			<div class="col-md-6 col-sm-8 col-xs-10">
-				<form method="POST">
+				<form method="POST"  action="<?php echo $_SERVER['PHP_SELF'] ?>?active=abschicken">
 					<div class="form-group">
 						<label for="<?php echo $stg->kurzbzlang ?>">Bewerbung abschicken für <?php echo $stg->bezeichnung ?></label>
 						<input id="<?php echo $stg->kurzbzlang ?>" class="btn btn-default form-control" type="submit" value="Bewerbung abschicken (<?php echo $stg->kurzbzlang ?>)" name="btn_bewerbung_abschicken" <?php echo $disabled ?>>

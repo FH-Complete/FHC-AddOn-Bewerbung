@@ -34,7 +34,7 @@ $types = $stg->getTypes($studiengaenge);
     <div role="tabpanel" class="tab-pane" id="zgv">
         <h2>Zugangsvoraussetzungen</h2>
 
-        <form method="POST" class="form-horizontal">
+        <form method="POST" class="form-horizontal" action="<?php echo $_SERVER['PHP_SELF'] ?>?active=zgv">
             <?php foreach ($zgv as $stufe => $attribute):
                 if($stufe === 'master' && !in_array('m', $types, true)) {
                     continue;

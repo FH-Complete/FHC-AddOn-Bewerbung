@@ -511,7 +511,7 @@ foreach($prestudent->result as $prestudent_eintrag) {
 
 $types = $stg->getTypes($studiengaenge);
 
-if(in_array('m', $types, true) && $master_zgv_done)
+if(!in_array('m', $types, true) || $master_zgv_done)
 {
 	$status_zgv = true;
 	$status_zgv_text = $vollstaendig;
