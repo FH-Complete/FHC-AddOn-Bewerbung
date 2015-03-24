@@ -25,72 +25,92 @@ $studiengaenge = array();
 $studienplan = new studienplan;
 $stg = new studiengang;
 
-foreach($prestudent->result as $prestudent_eintrag) {
+foreach ($prestudent->result as $prestudent_eintrag) {
     $studiengaenge[] = $prestudent_eintrag->studiengang_kz;
 }
 
 $types = $stg->getTypes($studiengaenge);
 ?>
-    <div role="tabpanel" class="tab-pane" id="zgv">
-        <h2>Zugangsvoraussetzungen</h2>
+<div role="tabpanel" class="tab-pane" id="zgv">
+    <h2>Zugangsvoraussetzungen</h2>
 
-        <form method="POST" class="form-horizontal" action="<?php echo $_SERVER['PHP_SELF'] ?>?active=zgv">
-            <?php foreach ($zgv as $stufe => $attribute):
-                if($stufe === 'master' && !in_array('m', $types, true)) {
-                    continue;
-                } ?>
-                <fieldset>
-                    <legend>für <?php echo ucfirst($stufe) ?></legend>
-                    <div class="form-group">
-                        <label for="<?php echo $stufe ?>_zgv_art" class="col-sm-3 control-label">
-                            Art der Voraussetzung
-                        </label>
+    <form method="POST" class="form-horizontal" action="<?php echo $_SERVER['PHP_SELF'] ?>?active=zgv">
+        <?php foreach ($zgv as $stufe => $attribute):
+            if ($stufe === 'master' && !in_array('m', $types, true)) {
+                continue;
+            } ?>
+            <fieldset>
+                <legend>für <?php echo ucfirst($stufe) ?></legend>
+                <div class="form-group">
+                    <label for="<?php echo $stufe ?>_zgv_art" class="col-sm-3 control-label">
+                        Art der Voraussetzung
+                    </label>
 
-                        <div class="col-sm-9">
-                            <select name="<?php echo $stufe ?>_zgv_art" id="<?php echo $stufe ?>_zgv_art" class="form-control">
-                                <option value="">-- Bitte auswählen --</option>
-                                <?php $selected = '';
-                                foreach ($zgv_options->result as $zgv_option):
-                                    $selected = (isset($attribute['art']) && $attribute['art'] == $zgv_option->zgv_code) ? 'selected' : ''; ?>
-                                    <option value="<?php echo $zgv_option->zgv_code ?>" <?php echo $selected ?>>
-                                        <?php echo $zgv_option->zgv_bez ?>
-                                    </option>
-                                <?php endforeach; ?>
-                            </select>
-                        </div>
+                    <div class="col-sm-9">
+                        <select name="<?php echo $stufe ?>_zgv_art" id="<?php echo $stufe ?>_zgv_art"
+                                class="form-control">
+                            <option value="">-- Bitte auswählen --</option>
+                            <?php $selected = '';
+                            foreach ($zgv_options->result as $zgv_option):
+                                $selected = (isset($attribute['art']) && $attribute['art'] == $zgv_option->zgv_code) ? 'selected' : ''; ?>
+                                <option value="<?php echo $zgv_option->zgv_code ?>" <?php echo $selected ?>>
+                                    <?php echo $zgv_option->zgv_bez ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
                     </div>
-                    <div class="form-group">
-                        <label for="<?php echo $stufe ?>_zgv_ort" class="col-sm-3 control-label">
-                            Ort
-                        </label>
+                </div>
+                <div class="form-group">
+                    <label for="<?php echo $stufe ?>_zgv_ort" class="col-sm-3 control-label">
+                        Ort
+                    </label>
 
-                        <div class="col-sm-9">
-                            <input type="text" name="<?php echo $stufe ?>_zgv_ort" id="<?php echo $stufe ?>_zgv_ort" class="form-control"
-                                   value="<?php echo isset($attribute['ort']) ? $attribute['ort'] : '' ?>"
-                                   placeholder="Wo wurde die Urkunde ausgestellt?">
-                        </div>
+                    <div class="col-sm-9">
+                        <input type="text" name="<?php echo $stufe ?>_zgv_ort" id="<?php echo $stufe ?>_zgv_ort"
+                               class="form-control"
+                               value="<?php echo isset($attribute['ort']) ? $attribute['ort'] : '' ?>"
+                               placeholder="Wo wurde die Urkunde ausgestellt?">
                     </div>
-                    <div class="form-group">
-                        <label for="<?php echo $stufe ?>_zgv_datum" class="col-sm-3 control-label">
-                            Datum
-                        </label>
+                </div>
+                <div class="form-group">
+                    <label for="<?php echo $stufe ?>_zgv_nation" class="col-sm-3 control-label">Land</label>
 
-                        <div class="col-sm-9">
-                            <input type="text" name="<?php echo $stufe ?>_zgv_datum" id="<?php echo $stufe ?>_zgv_datum" class="form-control"
-                                   value="<?php echo isset($attribute['datum']) ? date('d.m.Y', strtotime($attribute['datum'])) : '' ?>"
-                                   placeholder="<?php echo $p->t('bewerbung/datumFormat') ?>">
-                        </div>
+                    <div class="col-sm-9">
+                        <select name="<?php echo $stufe ?>_zgv_nation" id="<?php echo $stufe ?>_zgv_nation"
+                                class="form-control">
+                            <option value="">-- Bitte auswählen --</option>
+                            <?php $selected = '';
+                            foreach ($nation->nation as $nat):
+                                $selected = (isset($attribute['nation']) && $attribute['nation'] == $nat->code) ? 'selected' : ''; ?>
+                                <option value="<?php echo $nat->code ?>" <?php echo $selected ?>>
+                                    <?php echo $nat->kurztext ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
                     </div>
-                </fieldset>
-            <?php endforeach ?>
-            <button class="btn-nav btn btn-default" type="button" data-jump-tab="dokumente">
-                Zurück
-            </button>
-            <button class="btn btn-default" type="submit" name="btn_zgv">
-                Speichern
-            </button>
-            <button class="btn-nav btn btn-default" type="button" data-jump-tab="zahlungen">
-                Weiter
-            </button>
-        </form>
-    </div>
+                </div>
+                <div class="form-group">
+                    <label for="<?php echo $stufe ?>_zgv_datum" class="col-sm-3 control-label">
+                        Datum
+                    </label>
+
+                    <div class="col-sm-9">
+                        <input type="text" name="<?php echo $stufe ?>_zgv_datum" id="<?php echo $stufe ?>_zgv_datum"
+                               class="form-control"
+                               value="<?php echo isset($attribute['datum']) ? date('d.m.Y', strtotime($attribute['datum'])) : '' ?>"
+                               placeholder="<?php echo $p->t('bewerbung/datumFormat') ?>">
+                    </div>
+                </div>
+            </fieldset>
+        <?php endforeach ?>
+        <button class="btn-nav btn btn-default" type="button" data-jump-tab="dokumente">
+            Zurück
+        </button>
+        <button class="btn btn-default" type="submit" name="btn_zgv">
+            Speichern
+        </button>
+        <button class="btn-nav btn btn-default" type="button" data-jump-tab="zahlungen">
+            Weiter
+        </button>
+    </form>
+</div>

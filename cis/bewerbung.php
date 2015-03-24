@@ -442,11 +442,13 @@ if(isset($_POST['btn_zgv']))
         $prestudent_eintrag->zgv_code = filter_input(INPUT_POST, 'bachelor_zgv_art', FILTER_VALIDATE_INT);
         $prestudent_eintrag->zgvort = filter_input(INPUT_POST, 'bachelor_zgv_ort');
         $prestudent_eintrag->zgvdatum = $datum->formatDatum(filter_input(INPUT_POST, 'bachelor_zgv_datum'), 'Y-m-d');
+        $prestudent_eintrag->zgvnation = filter_input(INPUT_POST, 'bachelor_zgv_nation');
 
         if($master_zgv_art) {
             $prestudent_eintrag->zgvmas_code = filter_input(INPUT_POST, 'master_zgv_art', FILTER_VALIDATE_INT);
             $prestudent_eintrag->zgvmaort = filter_input(INPUT_POST, 'master_zgv_ort');
             $prestudent_eintrag->zgvmadatum = $datum->formatDatum(filter_input(INPUT_POST, 'master_zgv_datum'), 'Y-m-d');
+            $prestudent_eintrag->zgvmanation = filter_input(INPUT_POST, 'master_zgv_nation');
         }
 
         $prestudent_eintrag->updateamum = date('c');
