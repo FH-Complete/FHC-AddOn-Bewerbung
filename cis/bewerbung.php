@@ -288,7 +288,7 @@ if(isset($_POST['btn_person']))
 
     $berufstaetig = filter_input(INPUT_POST, 'berufstaetig');
 
-    if($berufstaetig === 'j') {
+    if(in_array($berufstaetig, array('Vollzeit', 'Teilzeit'), true)) {
 
         $berufstaetig_art = filter_input(INPUT_POST, 'berufstaetig_art');
         $berufstaetig_dienstgeber = filter_input(INPUT_POST, 'berufstaetig_dienstgeber');
@@ -300,7 +300,7 @@ if(isset($_POST['btn_person']))
         $notiz->insertvon = 'Bewerbungstool';
         $notiz->insertamum = date('c');
         $notiz->titel = 'Berufstätigkeit';
-        $notiz->text = 'Dienstgeber: ' . $berufstaetig_dienstgeber
+        $notiz->text = 'Berufstätig: ' . $berufstaetig . '; Dienstgeber: ' . $berufstaetig_dienstgeber
                 . '; Art der Tätigkeit: ' . $berufstaetig_art;
         $notiz->save(true);
         $notiz->saveZuordnung();

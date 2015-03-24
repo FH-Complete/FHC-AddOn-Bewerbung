@@ -143,7 +143,8 @@ if(!isset($person_id))
                 <div class="form-group">
                     <label for="berufstaetig" class="col-sm-3 control-label">berufstätig</label>
                     <div class="col-sm-9">
-                        Ja: <input type="radio" name="berufstaetig" value="j">
+                        Vollzeit: <input type="radio" name="berufstaetig" value="Vollzeit">
+                        Teilzeit: <input type="radio" name="berufstaetig" value="Teilzeit">
                         Nein: <input type="radio" name="berufstaetig" value="n" checked>
                     </div>
                 </div>
