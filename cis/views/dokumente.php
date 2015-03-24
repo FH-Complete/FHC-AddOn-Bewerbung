@@ -119,7 +119,12 @@ if(!isset($person_id))
 			} ?>
 
 			<tr>
-				<td><?php echo $dok->bezeichnung ?></td>
+				<td>
+                    <?php echo $dok->bezeichnung ?>
+                    <?php if($dok->pflicht): ?>
+                        <span class="text-danger glyphicon glyphicon-asterisk"></span>
+                    <?php endif; ?>
+                </td>
 				<td><?php echo $status ?></td>
 				<td><?php echo $aktion ?></td>
 				<td><?php echo $div ?></td>
@@ -132,6 +137,12 @@ if(!isset($person_id))
 			<br>
 	<h2>Status</h2>
 	<table class="table">
+		<tr>
+			<td>
+				<span class="text-danger glyphicon glyphicon-asterisk"></span>
+			</td>
+			<td>Dokument erforderlich</td>
+		</tr>
 		<tr>
 			<td>
 				<img title="offen" src="<?php echo APP_ROOT ?>skin/images/upload.png" width="20px">
