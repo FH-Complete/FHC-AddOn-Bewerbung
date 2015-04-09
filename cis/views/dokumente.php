@@ -27,7 +27,7 @@ if(!isset($person_id))
 <div role="tabpanel" class="tab-pane" id="dokumente">
 	<h2>Dokumente</h2>
 	<p>Bitte laden Sie alle vorhandenen Dokumente, die für Ihre Bewerbung relevant sind, über folgenden Link hoch:</p>
-	<a href="<?php echo APP_ROOT ?>cis/public/dms_akteupload.php?person_id=<?php echo $person_id ?>"
+	<a href="dms_akteupload.php?person_id=<?php echo $person_id ?>"
 	   onclick="FensterOeffnen(this.href); return false;">
 		Dokumente Upload
 	</a>
@@ -68,7 +68,9 @@ if(!isset($person_id))
 				}
 				else
 				{
+					/*
 					$dokument = new dokument();
+					
 					if($dokument->load($akte->result[0]->dokument_kurzbz,$prestudent->prestudent_id))
 					{
 						// Dokument wurde bereits überprüft
@@ -79,21 +81,21 @@ if(!isset($person_id))
 					}
 					else
 					{
-						// Dokument hochgeladen ohne überprüfung der Assistenz
+						// Dokument hochgeladen ohne überprüfung der Assistenz*/
 						$status = '<img title="abgegeben" src="'.APP_ROOT.'skin/images/check_black.png" width="20px">';
 						$nachgereicht_help = '';
 						$div = "<form method='POST' action='".$_SERVER['PHP_SELF']."&active=dokumente'><span id='nachgereicht_".$dok->dokument_kurzbz."' style='display:none;'>wird nachgereicht:<input type='checkbox' name='check_nachgereicht' ".$nachgereicht_help."><input type='text' size='15' name='txt_anmerkung'><input type='submit' value='OK' name='submit_nachgereicht' class='btn btn-default'></span><input type='hidden' name='dok_kurzbz' value='".$dok->dokument_kurzbz."'><input type='hidden' name='akte_id' value='".$akte_id."'></form>";
 						$aktion = '<a href="'.$_SERVER['PHP_SELF'].'?method=delete&akte_id='.$akte_id.'&active=dokumente"><img title="löschen" src="'.APP_ROOT.'skin/images/delete.png" width="20px"></a>';
 
-					}
+					//}
 				}
 			}
 			else
 			{
 				// Dokument fehlt noch
-				$status = '<img title="offen" src="'.APP_ROOT.'skin/images/upload.png" width="20px">';
-				$aktion = '<img src="'.APP_ROOT.'skin/images/delete.png" width="20px" title="löschen"> <a href="'.APP_ROOT.'cis/public/dms_akteupload.php?person_id='.$person_id.'&dokumenttyp='.$dok->dokument_kurzbz.'" onclick="FensterOeffnen(this.href); return false;"><img src="'.APP_ROOT.'skin/images/upload.png" width="20px" title="upload"></a><a href="#" onclick="toggleDiv(\'nachgereicht_'.$dok->dokument_kurzbz.'\');"><img src="'.APP_ROOT.'skin/images/hourglass.png" width="20px" title="wird nachgereicht"></a>';
-				$div = "<form method='POST' action='".$_SERVER['PHP_SELF']."?active=dokumente'><span id='nachgereicht_".$dok->dokument_kurzbz."' style='display:none;'>wird nachgereicht:<input type='checkbox' name='check_nachgereicht'><input type='text' size='15' name='txt_anmerkung'><input type='submit' value='OK' name='submit_nachgereicht' class='btn btn-default'></span><input type='hidden' name='dok_kurzbz' value='".$dok->dokument_kurzbz."'></form>";
+				$status = ' - ';//<img title="offen" src="'.APP_ROOT.'skin/images/upload.png" width="20px">';
+				$aktion = '<img src="'.APP_ROOT.'skin/images/delete.png" width="20px" title="löschen"> <a href="dms_akteupload.php?person_id='.$person_id.'&dokumenttyp='.$dok->dokument_kurzbz.'" onclick="FensterOeffnen(this.href); return false;"><img src="'.APP_ROOT.'skin/images/upload.png" width="20px" title="upload"></a><a href="#" onclick="toggleDiv(\'nachgereicht_'.$dok->dokument_kurzbz.'\');return false;"><img src="'.APP_ROOT.'skin/images/hourglass.png" width="20px" title="wird nachgereicht"></a>';
+				$div = "<form method='POST' action='".$_SERVER['PHP_SELF']."?active=dokumente'><span id='nachgereicht_".$dok->dokument_kurzbz."' style='display:none;'>Anmerkung:<input type='checkbox' name='check_nachgereicht' checked=\"checked\" style='display:none'><input type='text' size='15' name='txt_anmerkung'><input type='submit' value='OK' name='submit_nachgereicht' class='btn btn-default'></span><input type='hidden' name='dok_kurzbz' value='".$dok->dokument_kurzbz."'></form>";
 
 			}
 
@@ -126,7 +128,7 @@ if(!isset($person_id))
                     <?php endif; ?>
                 </td>
 				<td><?php echo $status ?></td>
-				<td><?php echo $aktion ?></td>
+				<td nowrap><?php echo $aktion ?></td>
 				<td><?php echo $div ?></td>
 				<td><?php echo $ben ?></td>
 			</tr>
@@ -161,12 +163,13 @@ if(!isset($person_id))
 			</td>
 			<td>Dokument wird nachgereicht </td>
 		</tr>
-		<tr>
+		<!--<tr>
 			<td>
 				<img title="offen" src="<?php echo APP_ROOT ?>skin/images/true_green.png" width="20px">
 			</td>
 			<td>Dokument wurde bereits überprüft</td>
 		</tr>
+		-->
 	</table>
 	<button class="btn-nav btn btn-default" type="button" data-jump-tab="kontakt">
 		Zurück

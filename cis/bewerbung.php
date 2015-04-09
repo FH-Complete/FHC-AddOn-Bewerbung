@@ -199,7 +199,7 @@ if(isset($_POST['btn_bewerbung_abschicken']))
         if(!$prestudent_status->load_rolle($pr_id, 'Bewerber', $std_semester, '1'))
         {
             $prestudent_status->status_kurzbz = 'Bewerber';
-            $prestudent_status->studiensemester_kurzbz = $std_semester;
+            $prestudent_status->studiensemester_kurzbz = $alterstatus->studiensemester_kurzbz;
             $prestudent_status->ausbildungssemester = '1';
             $prestudent_status->datum = date('Y-m-d H:i:s');
             $prestudent_status->insertamum = date('Y-m-d H:i:s');
@@ -374,14 +374,17 @@ if(isset($_POST['btn_kontakt']))
     }
     else
     {
-        // neuen Kontakt anlegen
-        $kontakt_t->person_id = $person->person_id;
-        $kontakt_t->zustellung = true;
-        $kontakt_t->kontakttyp = 'telefon';
-        $kontakt_t->kontakt = $_POST['telefonnummer'];
-        $kontakt_t->new = true;
+		if($_POST['telefonnummer']!='')
+		{
+		    // neuen Kontakt anlegen
+		    $kontakt_t->person_id = $person->person_id;
+		    $kontakt_t->zustellung = true;
+		    $kontakt_t->kontakttyp = 'telefon';
+		    $kontakt_t->kontakt = $_POST['telefonnummer'];
+		    $kontakt_t->new = true;
 
-        $kontakt_t->save();
+		    $kontakt_t->save();
+		}
     }
 
     // Adresse Speichern
@@ -436,7 +439,8 @@ if(isset($_POST['btn_zgv']))
 
     $master_zgv_art = filter_input(INPUT_POST, 'master_zgv_art', FILTER_VALIDATE_INT);
 
-    foreach($prestudent->result as $prestudent_eintrag) {
+    foreach($prestudent->result as $prestudent_eintrag) 
+	{
 
         $prestudent_eintrag->new = false;
         $prestudent_eintrag->zgv_code = filter_input(INPUT_POST, 'bachelor_zgv_art', FILTER_VALIDATE_INT);
@@ -444,7 +448,8 @@ if(isset($_POST['btn_zgv']))
         $prestudent_eintrag->zgvdatum = $datum->formatDatum(filter_input(INPUT_POST, 'bachelor_zgv_datum'), 'Y-m-d');
         $prestudent_eintrag->zgvnation = filter_input(INPUT_POST, 'bachelor_zgv_nation');
 
-        if($master_zgv_art) {
+        if($master_zgv_art)
+		{
             $prestudent_eintrag->zgvmas_code = filter_input(INPUT_POST, 'master_zgv_art', FILTER_VALIDATE_INT);
             $prestudent_eintrag->zgvmaort = filter_input(INPUT_POST, 'master_zgv_ort');
             $prestudent_eintrag->zgvmadatum = $datum->formatDatum(filter_input(INPUT_POST, 'master_zgv_datum'), 'Y-m-d');
@@ -470,23 +475,25 @@ if($ajax)
 }
 
 // Abfrage ob ein Punkt schon vollständig ist
- if($person->vorname && $person->nachname && $person->gebdatum && $person->staatsbuergerschaft && $person->geschlecht)
- {
-     $status_person = true;
-     $status_person_text = $vollstaendig;
- }
- else
- {
-     $status_person = false;
-     $status_person_text = $unvollstaendig;
- }
+if($person->vorname && $person->nachname && $person->gebdatum && $person->staatsbuergerschaft && $person->geschlecht)
+{
+	$status_person = true;
+	$status_person_text = $vollstaendig;
+}
+else
+{
+	$status_person = false;
+	$status_person_text = $unvollstaendig;
+}
 
 $kontakt = new kontakt();
 $kontakt->load_persKontakttyp($person->person_id, 'email');
+$kontakttel = new kontakt();
+$kontakttel->load_persKontakttyp($person->person_id, 'telefon');
 $adresse = new adresse();
 $adresse->load_pers($person->person_id);
 
-if(count($kontakt->result) && count($adresse->result))
+if(count($kontakt->result) && count($adresse->result) && count($kontakttel->result))
 {
     $status_kontakt = true;
     $status_kontakt_text = $vollstaendig;
@@ -504,16 +511,19 @@ if(!$prestudent->getPrestudenten($person->person_id))
 }
 
 $master_zgv_done = false;
+$bachelor_zgv_done = false;
 $stg = new studiengang;
 
-foreach($prestudent->result as $prestudent_eintrag) {
+foreach($prestudent->result as $prestudent_eintrag) 
+{
     $studiengaenge[] = $prestudent_eintrag->studiengang_kz;
     $master_zgv_done = isset($prestudent_eintrag->zgvmas_code);
+    $bachelor_zgv_done = isset($prestudent_eintrag->zgv_code);
 }
 
 $types = $stg->getTypes($studiengaenge);
 
-if(!in_array('m', $types, true) || $master_zgv_done)
+if($bachelor_zgv_done && (!in_array('m', $types, true) || $master_zgv_done))
 {
 	$status_zgv = true;
 	$status_zgv_text = $vollstaendig;
@@ -584,7 +594,27 @@ foreach($prestudent->result as $row)
 		$status_reihungstest = true;
 		$status_reihungstest_text = $vollstaendig;
 	}
+	else
+	{
+		// Wenn keine Reihungstesttermine vorhanden sind ist die Bewerbung auch vollstaendig
+		if(!$prestudent->getPrestudenten($person_id))
+			die('Konnte Prestudenten nicht laden');
 
+		$anzahl_reihungstests=0;
+		foreach($prestudent->result as $row)
+		{
+			$reihungstest = new reihungstest();
+			if(!$reihungstest->getStgZukuenftige($row->studiengang_kz))
+				die('Es ist ein Fehler aufgetreten:'.$reihungstest->errormsg);
+
+			$anzahl_reihungstests+=count($reihungstest->result);
+		}
+		if($anzahl_reihungstests==0)
+		{
+			$status_reihungstest = true;
+			$status_reihungstest_text = $vollstaendig;
+		}
+	}
 }
 
 ?><!DOCTYPE HTML>

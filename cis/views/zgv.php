@@ -18,14 +18,19 @@
  * Authors: Robert Hofer <robert.hofer@technikum-wien.at>
  */
 
-$zgv_options = new zgv;
+$zgv_options = new zgv();
 $zgv_options->getAll();
+
+$zgvma_options = new zgv();
+$zgvma_options->getAllMaster();
+
 $zgv = $prestudent->getZgv();
 $studiengaenge = array();
-$studienplan = new studienplan;
-$stg = new studiengang;
+$studienplan = new studienplan();
+$stg = new studiengang();
 
-foreach ($prestudent->result as $prestudent_eintrag) {
+foreach ($prestudent->result as $prestudent_eintrag) 
+{
     $studiengaenge[] = $prestudent_eintrag->studiengang_kz;
 }
 
@@ -50,13 +55,29 @@ $types = $stg->getTypes($studiengaenge);
                         <select name="<?php echo $stufe ?>_zgv_art" id="<?php echo $stufe ?>_zgv_art"
                                 class="form-control">
                             <option value="">-- Bitte auswählen --</option>
-                            <?php $selected = '';
-                            foreach ($zgv_options->result as $zgv_option):
-                                $selected = (isset($attribute['art']) && $attribute['art'] == $zgv_option->zgv_code) ? 'selected' : ''; ?>
-                                <option value="<?php echo $zgv_option->zgv_code ?>" <?php echo $selected ?>>
-                                    <?php echo $zgv_option->zgv_bez ?>
-                                </option>
-                            <?php endforeach; ?>
+                            <?php 
+							$selected = '';
+							if($stufe==='master')
+							{
+		                        foreach ($zgvma_options->result as $zgvma_option)
+								{
+		                            $selected = (isset($attribute['art']) && $attribute['art'] == $zgvma_option->zgvmas_code) ? 'selected' : '';
+		
+									echo '<option value="'.$zgvma_option->zgvmas_code.'" '.$selected.'>'.$zgvma_option->convert_html_chars($zgvma_option->zgvmas_bez).'</option>';
+		                        }
+
+							}
+							else
+							{
+		                        foreach ($zgv_options->result as $zgv_option)
+								{
+		                            $selected = (isset($attribute['art']) && $attribute['art'] == $zgv_option->zgv_code) ? 'selected' : '';
+		
+									echo '<option value="'.$zgv_option->zgv_code.'" '.$selected.'>'.$zgv_option->convert_html_chars($zgv_option->zgv_bez).'</option>';
+		                        }
+							}
+
+							?>
                         </select>
                     </div>
                 </div>

@@ -57,6 +57,12 @@
 						<?php echo $p->t('bewerbung/orgform/berufsbegleitend') ?>
 					</label>
 				</div>
+				<div class="radio">
+					<label>
+						<input type="radio" name="<?php echo $prio ?>Orgform" value="DL">
+						<?php echo $p->t('bewerbung/orgform/distance') ?>
+					</label>
+				</div>
 			</div>
 			<div class="col-sm-6 priogroup">
 				<h4><?php echo $p->t('bewerbung/sprache') ?></h4>
@@ -120,14 +126,24 @@
 	function prioAvailable(modal_orgform, modal_sprache) {
 
 		var prios = {
+				egal:'egal',
 				German: 'De',
 				English: 'En'
 			};
 
+		modal_orgform.push('egal');
+		modal_sprache.push('egal');
 		$('#prio-dialog input').prop('disabled', true);
+		$('#prio-dialog input').parent().prop({
+			hidden:true
+		});
 
 		for(var i = 0; i < modal_orgform.length; i++)
 		{
+			$('#prio-dialog input[value="' + modal_orgform[i] + '"]').parent().prop({
+				hidden:false
+			});
+
 			$('#prio-dialog input[value="' + modal_orgform[i] + '"]').prop({
 				disabled: false,
 				checked: true
@@ -140,8 +156,11 @@
 				disabled: false,
 				checked: true
 			});
+			$('#prio-dialog input[value="' + prios[modal_sprache[i]] + '"]').parent().prop({
+				hidden:false,
+			});
 		}
-
+/*
 		$('.priogroup').each(function(i, value) {
 			var disabled_inputs = $(value).find('input:disabled').length;
 
@@ -152,6 +171,6 @@
 					checked: true
 				});
 			}
-		});
+		});*/
 	}
 </script>
