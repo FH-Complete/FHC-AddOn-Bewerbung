@@ -44,6 +44,13 @@ if(!isset($person_id))
 	$plz = isset($adresse->result[0]->plz)?$adresse->result[0]->plz:'';
 	$ort = isset($adresse->result[0]->ort)?$adresse->result[0]->ort:'';
 	$adr_nation = isset($adresse->result[0]->nation)?$adresse->result[0]->nation:'';
+
+	$disabled='';
+	if($eingabegesperrt)
+	{
+		$disabled='disabled="disabled"';
+		echo 'Da sie bereits einen Account haben können Sie ihre Stammdaten nicht mehr ändern. Sollten hier fehlerhafte Angaben vorhanden sein, wenden Sie sich bitte an die zuständige Assistenz<br><br>';
+	}
 	?>
 
 
@@ -53,13 +60,13 @@ if(!isset($person_id))
 			<div class="form-group">
 				<label for="email" class="col-sm-2 control-label">Email*</label>
 				<div class="col-sm-10">
-					<input type="text" name="email" id="email" value="<?php echo $email ?>" size="32" class="form-control">
+					<input type="text" name="email" id="email" value="<?php echo $email ?>" <?php echo $disabled; ?> size="32" class="form-control">
 				</div>
 			</div>
 			<div class="form-group">
 				<label for="telefonnummer" class="col-sm-2 control-label">Telefonnummer*</label>
 				<div class="col-sm-10">
-					<input type="text" name="telefonnummer" id="telefonnummer" value="<?php echo $telefon ?>" size="32" class="form-control">
+					<input type="text" name="telefonnummer" id="telefonnummer" value="<?php echo $telefon ?>"  <?php echo $disabled; ?> size="32" class="form-control">
 				</div>
 			</div>
 		</fieldset>
@@ -69,25 +76,25 @@ if(!isset($person_id))
 			<div class="form-group">
 				<label for="strasse" class="col-sm-2 control-label">Straße*</label>
 				<div class="col-sm-10">
-					<input type="text" name="strasse" id="strasse" value="<?php echo $strasse ?>" class="form-control">
+					<input type="text" name="strasse" id="strasse" value="<?php echo $strasse ?>"  <?php echo $disabled; ?> class="form-control">
 				</div>
 			</div>
 			<div class="form-group">
 				<label for="plz" class="col-sm-2 control-label">Postleitzahl*</label>
 				<div class="col-sm-10">
-					<input type="text" name="plz" id="plz" value="<?php echo $plz ?>" class="form-control">
+					<input type="text" name="plz" id="plz" value="<?php echo $plz ?>"  <?php echo $disabled; ?> class="form-control">
 				</div>
 			</div>
 			<div class="form-group">
 				<label for="ort" class="col-sm-2 control-label">Ort*</label>
 				<div class="col-sm-10">
-					<input type="text" name="ort" id="ort" value="<?php echo $ort ?>" class="form-control">
+					<input type="text" name="ort" id="ort" value="<?php echo $ort ?>"  <?php echo $disabled; ?> class="form-control">
 				</div>
 			</div>
 			<div class="form-group">
 				<label for="nation" class="col-sm-2 control-label">Nation*</label>
 				<div class="col-sm-10">
-					<select name="nation" class="form-control">
+					<select name="nation" class="form-control" <?php echo $disabled; ?> >
 						<option>--Bitte auswählen --</option>
 						<?php
 						foreach($nation->nation as $nat):
@@ -103,7 +110,7 @@ if(!isset($person_id))
 		<button class="btn-nav btn btn-default" type="button" data-jump-tab="daten">
 			Zurück
 		</button>
-		<button class="btn btn-default" type="submit" name="btn_kontakt">
+		<button class="btn btn-default" type="submit"  <?php echo $disabled; ?> name="btn_kontakt">
 			Speichern
 		</button>
 		<button class="btn-nav btn btn-default" type="button" data-jump-tab="dokumente">

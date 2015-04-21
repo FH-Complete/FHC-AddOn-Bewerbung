@@ -32,9 +32,11 @@ require_once('../../../include/kontakt.class.php');
 require_once('../../../include/studiensemester.class.php');
 require_once('../../../include/datum.class.php');
 require_once('../../../include/sprache.class.php');
+require_once('../../../include/benutzer.class.php');
 
 require_once '../../../include/securimage/securimage.php';
 
+session_start();
 $lang = filter_input(INPUT_GET, 'lang');
 
 if(isset($lang))
@@ -62,15 +64,15 @@ if(isset($sprache))
 $sprache = getSprache();
 $p = new phrasen($sprache);
 $db = new basis_db();
-
 $userid = trim(filter_input(INPUT_POST, 'userid'));
+$username = trim(filter_input(INPUT_POST, 'username'));
+$password = trim(filter_input(INPUT_POST, 'password'));
 
 // Login gestartet
 if ($userid)
 {
 	$person = new person();
 
-	session_start();
 	$person_id = $person->checkZugangscodePerson($userid);
 
 	//Zugangscode wird überprüft
@@ -86,6 +88,41 @@ if ($userid)
 	{
 		$message = '<script type="text/javascript">alert("'.$p->t('bewerbung/zugangsdatenFalsch').'")</script>';
 	}
+}
+elseif($username && $password)
+{
+	$benutzer = new benutzer();
+	if($benutzer->load($username))
+	{
+		$auth = new authentication();
+		if($auth->checkpassword($username, $password))
+		{
+			$person_id = $benutzer->person_id;
+			$userid='Login';
+
+			if($person_id != false)
+			{
+				$_SESSION['bewerbung/user'] = $userid;
+				$_SESSION['bewerbung/personId'] = $person_id;
+
+				header('Location: bewerbung.php');
+				exit;
+			}
+			else
+			{
+				$message = '<script type="text/javascript">alert("'.$p->t('bewerbung/zugangsdatenFalsch').'")</script>';
+			}
+		}
+		else
+		{
+			$message = '<script type="text/javascript">alert("'.$p->t('bewerbung/zugangsdatenFalsch').'")</script>';
+		}
+	}
+	else
+	{
+		$message = '<script type="text/javascript">alert("'.$p->t('bewerbung/zugangsdatenFalsch').'")</script>';
+	}
+
 }
 ?>
 <!DOCTYPE html>
@@ -482,6 +519,35 @@ if ($userid)
 									</span>
 								</div>
 							</div>
+							<p class="text-center"><?php echo $p->t('bewerbung/loginmitAccount') ?></p>
+							<div class="form-group">
+								<div class="form-group">
+									<label for="username" class="col-sm-3 control-label">
+										<?php echo $p->t('bewerbung/username') ?>
+									</label>
+									<div class="col-sm-8">
+										<input class="form-control" type="text" placeholder="<?php echo $p->t('bewerbung/username') ?>" name="username">
+									</div>
+								</div>
+								<div class="form-group">
+									<label for="password" class="col-sm-3 control-label">
+										<?php echo $p->t('bewerbung/password') ?>
+									</label>
+									<div class="col-sm-8">
+										<input class="form-control" type="password" placeholder="<?php echo $p->t('bewerbung/password') ?>" name="password">
+									</div>
+								</div>
+								<div class="form-group">
+									<span class="col-sm-4 col-sm-offset-3">
+										<button class="btn btn-primary" type="submit" name="submit">
+											Login
+										</button>
+									</span>
+								</div>
+							</div>
+							<br><br><br><br><br><br><br>
+							<br><br><br><br><br><br><br>
+							<br><br><br><br><br><br><br>
 							<?php
 							if(isset($errormsg))
 							{

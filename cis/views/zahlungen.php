@@ -28,7 +28,7 @@ if(!isset($person_id))
 	<?php
 	$datum_obj = new datum();
 	$studiengang = new studiengang();
-	$studiengang->getAll();
+	$studiengang->getAll(null, null);
 
 	$stg_arr = array();
 	foreach ($studiengang->result as $row)

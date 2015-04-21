@@ -37,49 +37,57 @@ if(!isset($person_id))
 	$geburtstag = ($person->gebdatum != '')?$datum->formatDatum($person->gebdatum, 'd.m.Y'):'';
 	$gebort =  ($person->gebort != '')?$person->gebort:'';
 
-	$svnr = ($person->svnr != '')?$person->svnr:''; ?>
+	$svnr = ($person->svnr != '')?$person->svnr:''; 
+
+	$disabled='';
+	if($eingabegesperrt)
+	{
+		$disabled='disabled="disabled"';
+		echo 'Da sie bereits einen Account haben können Sie ihre Stammdaten nicht mehr ändern. Sollten hier fehlerhafte Angaben vorhanden sein, wenden Sie sich bitte an die zuständige Assistenz<br><br>';
+	}
+	?>
 
 	<form method="POST" action="<?php echo $_SERVER['PHP_SELF'] ?>?active=daten" class="form-horizontal">
 		<div class="form-group">
 			<label for="titel_pre" class="col-sm-3 control-label">Titel vorgestellt</label>
 			<div class="col-sm-9">
-				<input type="text" name="titel_pre" id="titel_pre" value="<?php echo $titelpre ?>" class="form-control">
+				<input type="text" name="titel_pre" id="titel_pre" <?php echo $disabled; ?> value="<?php echo $titelpre ?>" class="form-control">
 			</div>
 		</div>
 		<div class="form-group">
 			<label for="vorname" class="col-sm-3 control-label">Vorname*</label>
 			<div class="col-sm-9">
-				<input type="text" name="vorname" id="vorname" value="<?php echo $vorname ?>" class="form-control">
+				<input type="text" name="vorname" id="vorname"  <?php echo $disabled; ?> value="<?php echo $vorname ?>" class="form-control">
 			</div>
 		</div>
 		<div class="form-group">
 			<label for="nachname" class="col-sm-3 control-label">Nachname*</label>
 			<div class="col-sm-9">
-				<input type="text" name="nachname" id="nachname" value="<?php echo $nachname ?>" class="form-control">
+				<input type="text" name="nachname" id="nachname"  <?php echo $disabled; ?> value="<?php echo $nachname ?>" class="form-control">
 			</div>
 		</div>
 		<div class="form-group">
 			<label for="titel_post" class="col-sm-3 control-label">Titel nachgestellt</label>
 			<div class="col-sm-9">
-				<input type="text" name="titel_post" id="titel_post" value="<?php echo $titelpost ?>" class="form-control">
+				<input type="text" name="titel_post" id="titel_post"  <?php echo $disabled; ?> value="<?php echo $titelpost ?>" class="form-control">
 			</div>
 		</div>
 		<div class="form-group">
 			<label for="gebdatum" class="col-sm-3 control-label">Geburtsdatum* (dd.mm.yyyy)</label>
 			<div class="col-sm-9">
-				<input type="text" name="geburtsdatum" id="gebdatum" value="<?php echo $geburtstag ?>" class="form-control">
+				<input type="text" name="geburtsdatum" id="gebdatum"  <?php echo $disabled; ?> value="<?php echo $geburtstag ?>" class="form-control">
 			</div>
 		</div>
 		<div class="form-group">
 			<label for="gebort" class="col-sm-3 control-label">Geburtsort</label>
 			<div class="col-sm-9">
-				<input type="text" name="gebort" id="gebort" value="<?php echo $gebort ?>" class="form-control">
+				<input type="text" name="gebort" id="gebort"  <?php echo $disabled; ?> value="<?php echo $gebort ?>" class="form-control">
 			</div>
 		</div>
 		<div class="form-group">
 			<label for="geburtsnation" class="col-sm-3 control-label">Geburtsnation</label>
 			<div class="col-sm-9">
-				<select name="geburtsnation" id="geburtsnation" class="form-control">
+				<select name="geburtsnation" id="geburtsnation"  <?php echo $disabled; ?> class="form-control">
 					<option value="">-- Bitte auswählen -- </option>
 					<?php $selected = '';
 					foreach($nation->nation as $nat):
@@ -94,7 +102,7 @@ if(!isset($person_id))
 		<div class="form-group">
 			<label for="staatsbuergerschaft" class="col-sm-3 control-label">Staatsbürgerschaft*</label>
 			<div class="col-sm-9">
-				<select name="staatsbuergerschaft" id="staatsbuergerschaft" class="form-control">
+				<select name="staatsbuergerschaft" id="staatsbuergerschaft"  <?php echo $disabled; ?> class="form-control">
 					<option value="">-- Bitte auswählen -- </option>
 					<?php $selected = '';
 					foreach($nation->nation as $nat):
@@ -109,7 +117,7 @@ if(!isset($person_id))
 		<div class="form-group">
 			<label for="svnr" class="col-sm-3 control-label">Österr. Sozialversicherungsnr</label>
 			<div class="col-sm-9">
-				<input type="text" name="svnr" id="svnr" value="<?php echo $svnr ?>" class="form-control">
+				<input type="text" name="svnr" id="svnr"  <?php echo $disabled; ?> value="<?php echo $svnr ?>" class="form-control">
 			</div>
 		</div>
 		<div class="form-group">
@@ -119,8 +127,8 @@ if(!isset($person_id))
 				$geschl_m = ($person->geschlecht == 'm') ? 'checked' : '';
 				$geschl_w = ($person->geschlecht == 'w') ? 'checked' : '';
 				?>
-				m: <input type="radio" name="geschlecht" value="m" <?php echo $geschl_m ?>>
-				w: <input type="radio" name="geschlecht" value="w" <?php echo $geschl_w ?>>
+				m: <input type="radio" name="geschlecht"  <?php echo $disabled; ?> value="m" <?php echo $geschl_m ?>>
+				w: <input type="radio" name="geschlecht"  <?php echo $disabled; ?> value="w" <?php echo $geschl_w ?>>
 			</div>
 		</div>
         <fieldset>
@@ -165,7 +173,7 @@ if(!isset($person_id))
 		<button class="btn-nav btn btn-default" type="button" data-jump-tab="allgemein">
 			Zurück
 		</button>
-		<button class="btn btn-default" type="submit" name="btn_person">
+		<button class="btn btn-default" type="submit"  <?php echo $disabled; ?> name="btn_person">
 			Speichern
 		</button>
 		<button class="btn-nav btn btn-default" type="button" data-jump-tab="kontakt">

@@ -58,6 +58,9 @@ if(!isset($person_id))
 			</div>
 		</div>
 	<?php endforeach; ?>
+	<button class="btn-nav btn btn-default" type="button" onclick="window.location.href='bewerbung.php?logout=true';">
+		Logout
+	</button>
 	<button class="btn-nav btn btn-default" type="button" data-jump-tab="aufnahme">
 		Zurück
 	</button>

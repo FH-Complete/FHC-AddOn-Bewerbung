@@ -25,7 +25,7 @@ if(!isset($person_id))
 ?>
 
 <div role="tabpanel" class="tab-pane" id="allgemein">
-	<h2>Allgemein</h2>
+	<h2><?php echo $p->t('bewerbung/menuAllgemein'); ?></h2>
 	<p>Wir freuen uns dass Sie sich für einen oder mehrere unserer Studiengänge bewerben. <br><br>
 	Bitte füllen Sie das Formular vollständig aus und schicken Sie es danach ab.<br><br>
 	<b>Bewerbungsmodus:</b><br>
@@ -75,9 +75,9 @@ if(!isset($person_id))
 			</table>
 		</div>
 	<br>
-<!--	<button class="btn-nav btn btn-danger" type="button" data-toggle="modal" data-target="#liste-studiengaenge">
+	<button class="btn-nav btn btn-default" type="button" data-toggle="modal" data-target="#liste-studiengaenge">
 		Studiengang hinzufügen
-	</button>-->
+	</button>
 	<button class="btn-nav btn btn-default" type="button" data-jump-tab="daten">
 		Weiter
 	</button>
@@ -90,27 +90,72 @@ if(!isset($person_id))
 			<h4 class="modal-title"><?php echo $p->t('bewerbung/neuerStudiengang') ?></h4>
 		</div>
 		<div class="modal-body">
+			<div class="form-group">
+				<label for="studiensemester_kurzbz" class="control-label">
+					<?php echo $p->t('bewerbung/geplanterStudienbeginn') ?>
+				</label>
+				<div class="dropdown">
+					<select id="studiensemester_kurzbz" name="studiensemester_kurzbz" class="form-control">
+						<option value=""><?php echo $p->t('bewerbung/bitteWaehlen') ?></option>
+						<?php
+						$stsem = new studiensemester();
+						$stsem->getFutureStudiensemester('',4);
+
+						foreach($stsem->studiensemester as $row)
+						{
+							echo '<option value="'.$row->studiensemester_kurzbz.'">'.$stsem->convert_html_chars($row->bezeichnung).'</option>';
+						}
+						?>
+					</select>
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="studiensemester_kurzbz" class="control-label">
+					<?php echo $p->t('bewerbung/geplanteStudienrichtung') ?>
+				</label>
 			<?php
 			$stg = new studiengang();
 			$stg->getAll('typ,bezeichnung',true);
 
-			foreach($stg->result as $result):
-				if($result->studiengang_kz > 0):
+			foreach($stg->result as $result)
+			{
+				if(!$result->onlinebewerbung)
+					continue;
+				if($result->studiengang_kz > 0)
+				{
 					$typ = new studiengang();
 					$typ->getStudiengangTyp($result->typ);
 					if(in_array($result->studiengang_kz, $bereits_angemeldet))
 					{
 						continue;
-					} ?>
+					} 
+
+					$orgform = $stg->getOrgForm($result->studiengang_kz);
+					$sprache = $stg->getSprache($result->studiengang_kz);
+
+					$modal = false;
+
+					if(count($orgform) !== 1 || count($sprache) !== 1)
+					{
+						$modal = true;
+					}
+
+					echo '
 					<div class="radio">
 						<label>
-							<input type="radio" name="studiengaenge[]" value="<?php echo $result->studiengang_kz ?>">
-							<?php echo $result->bezeichnung ?>
-							<input type="hidden" id="anmerkung<?php echo $result->studiengang_kz ?>">
+							<input type="radio" name="studiengaenge[]" value="'.$result->studiengang_kz.'"
+								data-modal="'.$modal.'"
+								data-modal-sprache="'.implode(',', $sprache).'"
+								data-modal-orgform="'.implode(',', $orgform).'">
+							'.$result->bezeichnung.'
+							<input type="hidden" id="anmerkung'.$result->studiengang_kz.'">
 						</label>
 					</div>
-				<?php endif;
-			endforeach; ?>
+					';
+				}
+			}			
+			?>
+			</div>
 		</div>
 		<div class="modal-footer">
 			<button class="btn btn-default cancel-studiengang" data-dismiss="modal"><?php echo $p->t('bewerbung/abbrechen') ?></button>
@@ -121,43 +166,85 @@ if(!isset($person_id))
 	<script type="text/javascript">
 		$(function() {
 
-			$('#liste-studiengaenge button.ok-studiengang').on('click', function() {
+			$('#liste-studiengaenge button.ok-studiengang').on('click', function() 
+			{
 
-				var stgkz = $('#liste-studiengaenge input:checked').val();
+				var item = $('#liste-studiengaenge input:checked');
+				var stgkz = item.val();
+				var stsem = $('#studiensemester_kurzbz').val();
 
-				$('#prio-dialog input[value="egal"]').prop('checked', true);
-				checkPrios(0);
+				var	modal = item.attr('data-modal'),
+					modal_orgform = item.attr('data-modal-orgform').split(','),
+					modal_sprache = item.attr('data-modal-sprache').split(',');
 				$('#prio-dialog').data({stgkz: stgkz});
-				$('#liste-studiengaenge').modal('hide');
-				$('#prio-dialog').modal('show');
 
+				if(modal) 
+				{
+					$('#prio-dialog input[value="egal"]').prop('checked', true);
+					prioAvailable(modal_orgform, modal_sprache);
+					checkPrios(0);
+					$('#prio-dialog').data({stgkz: stgkz, stsem: stsem});
+					$('#prio-dialog').modal('show');
+					$('#liste-studiengaenge').modal('hide');
+				}
+				else
+				{
+					saveStudiengang(stgkz, '', stsem);
+					$('#liste-studiengaenge').modal('hide');
+				}
+
+			});
+
+			$('#prio-dialog input').on('change', function() {
+
+					var stgkz = $('#prio-dialog').data('stgkz'),
+						anm;
+
+					anm = checkPrios(200);
+
+					$('#anmerkung' + stgkz).val(anm);
+					$('#badge' + stgkz).html(anm);
 			});
 
 			$('#prio-dialog button.ok-prio').on('click', function() {
 
 				var stgkz = $('#prio-dialog').data('stgkz'),
 					anm,
-					data;
+					stsem = $('#prio-dialog').data('stsem');
 
 				anm = checkPrios(0);
 
-				data = {
-					anm: anm,
-					stgkz: stgkz,
-					ajax: true
-				};
-
-				$.ajax({
-					url: basename,
-					data: data,
-					type: 'POST',
-					success: function(data) {
-						
-					}
-				});
-
+				saveStudiengang(stgkz, anm, stsem);
 			});
 
 		});
+		function saveStudiengang(stgkz, anm, stsem)
+		{
+			data = {
+				anm: anm,
+				stgkz: stgkz,
+				addStudiengang: true,
+				studiensemester: stsem
+			};
+
+			$.ajax({
+				url: basename,
+				data: data,
+				type: 'POST',
+				dataType: "json",
+				success: function(data) 
+				{
+					if(data.status!='ok')
+						alert('Fehler'+data.msg);
+					else
+						window.location.reload();
+				},
+				error: function(data) 
+				{
+					alert('Fehler beim Speichern der Daten')
+				}
+			});
+			
+		}
 	</script>
 </div>

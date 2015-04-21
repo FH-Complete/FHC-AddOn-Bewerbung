@@ -53,6 +53,13 @@ require_once('../../../include/basis_db.class.php');
 require_once('../../../include/reihungstest.class.php');
 require_once('../../../include/preinteressent.class.php');
 require_once('../../../include/notiz.class.php');
+require_once('../include/functions.inc.php');
+
+if(isset($_GET['logout']))
+{
+	session_destroy();
+	header('Location: registration.php');
+}
 
 $person_id = (int) $_SESSION['bewerbung/personId'];
 $akte_id = isset($_GET['akte_id']) ? $_GET['akte_id'] : '';
@@ -64,9 +71,23 @@ if(!$person->load($person_id))
 {
     die('Konnte Person nicht laden');
 }
-
-$sprache = DEFAULT_LANGUAGE;
+//$sprache = DEFAULT_LANGUAGE;
+$sprache = getSprache();
 $p = new phrasen($sprache);
+
+$eingabegesperrt=false;
+
+// Wenn die eingeloggte Person bereits Student oder Mitarbeiter ist
+// duerfen die Stammdaten nicht mehr geaendert werden
+$benutzer = new benutzer();
+if($benutzer->getBenutzerFromPerson($person->person_id))
+{
+	if(count($benutzer->result)>0)
+	{
+		$eingabegesperrt=true;
+		
+	}
+}
 
 $message = '&nbsp;';
 
@@ -465,13 +486,16 @@ if(isset($_POST['btn_zgv']))
     }
 }
 
-$ajax = filter_input(INPUT_POST, 'ajax', FILTER_VALIDATE_BOOLEAN);
+$addStudiengang = filter_input(INPUT_POST, 'addStudiengang', FILTER_VALIDATE_BOOLEAN);
 
-if($ajax)
+if($addStudiengang)
 {
-//	var_export($_POST);
-//	var_export($person);
-//	exit;
+	$return = BewerbungPersonAddStudiengang($_POST['stgkz'], $_POST['anm'], $person, $_POST['studiensemester']);
+	if($return===true)
+		echo json_encode(array('status'=>'ok'));
+	else
+		echo json_encode(array('status'=>'fehler','msg'=>$return));
+	exit;
 }
 
 // Abfrage ob ein Punkt schon vollständig ist

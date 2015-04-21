@@ -68,10 +68,10 @@ if(!isset($person_id))
 				}
 				else
 				{
-					/*
+					
 					$dokument = new dokument();
 					
-					if($dokument->load($akte->result[0]->dokument_kurzbz,$prestudent->prestudent_id))
+					if($dokument->akzeptiert($akte->result[0]->dokument_kurzbz,$person->person_id))
 					{
 						// Dokument wurde bereits überprüft
 						$status = '<img title="abgegeben" src="'.APP_ROOT.'skin/images/true_green.png" width="20px">';
@@ -87,7 +87,7 @@ if(!isset($person_id))
 						$div = "<form method='POST' action='".$_SERVER['PHP_SELF']."&active=dokumente'><span id='nachgereicht_".$dok->dokument_kurzbz."' style='display:none;'>wird nachgereicht:<input type='checkbox' name='check_nachgereicht' ".$nachgereicht_help."><input type='text' size='15' name='txt_anmerkung'><input type='submit' value='OK' name='submit_nachgereicht' class='btn btn-default'></span><input type='hidden' name='dok_kurzbz' value='".$dok->dokument_kurzbz."'><input type='hidden' name='akte_id' value='".$akte_id."'></form>";
 						$aktion = '<a href="'.$_SERVER['PHP_SELF'].'?method=delete&akte_id='.$akte_id.'&active=dokumente"><img title="löschen" src="'.APP_ROOT.'skin/images/delete.png" width="20px"></a>';
 
-					//}
+					}
 				}
 			}
 			else
@@ -163,13 +163,12 @@ if(!isset($person_id))
 			</td>
 			<td>Dokument wird nachgereicht </td>
 		</tr>
-		<!--<tr>
+		<tr>
 			<td>
 				<img title="offen" src="<?php echo APP_ROOT ?>skin/images/true_green.png" width="20px">
 			</td>
 			<td>Dokument wurde bereits überprüft</td>
 		</tr>
-		-->
 	</table>
 	<button class="btn-nav btn btn-default" type="button" data-jump-tab="kontakt">
 		Zurück
