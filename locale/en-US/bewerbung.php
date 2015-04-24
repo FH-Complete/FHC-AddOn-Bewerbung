@@ -37,16 +37,27 @@ $this->phrasen['bewerbung/egal']='no preference';
 $this->phrasen['bewerbung/orgform']='Organisationsform';
 $this->phrasen['bewerbung/orgform/berufsbegleitend']='extra-occupational';
 $this->phrasen['bewerbung/orgform/vollzeit']='Full time';
-$this->phrasen['bewerbung/sprache']='Language';
-$this->phrasen['bewerbung/sprache/deutsch']='German';
-$this->phrasen['bewerbung/sprache/englisch']='English';
+$this->phrasen['bewerbung/orgform/distance']='Fernstudium';
 $this->phrasen['bewerbung/topprio']='Top priority';
 $this->phrasen['bewerbung/alternative']='Alternative';
 $this->phrasen['bewerbung/priowaehlen']='Select primary and alternative course of studies';
-$this->phrasen['bewerbung/ok']='OK';
-$this->phrasen['bewerbung/abbrechen']='Cancel';
 $this->phrasen['bewerbung/prioBeschreibungstext'] = 'Please choose the type of program. If possible, choose an alternative in case it\'s fully booked.';
 $this->phrasen['bewerbung/prioUeberschrifttopprio'] = 'Top priority';
 $this->phrasen['bewerbung/prioUeberschriftalternative'] = 'Alternative';
-
-$this->phrasen['bewerbung/menuAllgemein']='General';
+$this->phrasen['bewerbung/neuerStudiengang'] = 'Bitte wählen Sie einen Studiengang für den Sie sich bewerben möchten';
+$this->phrasen['bewerbung/geplanteStudienrichtung']='Geplante Studienrichtung';
+$this->phrasen['bewerbung/menuAllgemein']='Allgemein';
+$this->phrasen['bewerbung/loginmitAccount']='Login mit Account';
+$this->phrasen['bewerbung/allgemeineErklaerung']='Wir freuen uns dass Sie sich für einen oder mehrere unserer Studiengänge bewerben.<br><br>
+	Bitte füllen Sie das Formular vollständig aus und schicken Sie es danach ab.<br><br>
+	<b>Bewerbungsmodus:</b><br>
+	<p style="text-align:justify;">Füllen Sie alle Punkte aus. Sind alle Werte vollständig eingetragen, können Sie unter "Bewerbung abschicken" Ihre Bewerbung and die zuständige Assistenz schicken.<br>
+	Diese wird sich in den nächsten Tagen bei Ihnen melden.';
+$this->phrasen['bewerbung/aktuelleBewerbungen']='Aktuelle Bewerbungen:';
+$this->phrasen['bewerbung/status']='Status';
+$this->phrasen['bewerbung/bewerbungsstatus']='Bewerbungsstatus';
+$this->phrasen['bewerbung/keinStatus']='Noch kein Status vorhanden';
+$this->phrasen['bewerbung/bestaetigt']='bestätigt';
+$this->phrasen['bewerbung/nichtBestaetigt']='noch nicht bestätigt';
+$this->phrasen['bewerbung/studiengangHinzufuegen']='Studiengang hinzufügen';
+$this->phrasen['bewerbung/weiter']='continue';

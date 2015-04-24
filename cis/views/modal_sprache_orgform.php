@@ -65,7 +65,7 @@
 				</div>
 			</div>
 			<div class="col-sm-6 priogroup">
-				<h4><?php echo $p->t('bewerbung/sprache') ?></h4>
+				<h4><?php echo $p->t('global/sprache') ?></h4>
 				<div class="radio">
 					<label>
 						<input type="radio" name="<?php echo $prio ?>Sprache" value="egal">
@@ -75,13 +75,13 @@
 				<div class="radio">
 					<label>
 						<input type="radio" name="<?php echo $prio ?>Sprache" value="De">
-						<?php echo $p->t('bewerbung/sprache/deutsch') ?>
+						<?php echo $p->t('global/sprache/deutsch') ?>
 					</label>
 				</div>
 				<div class="radio">
 					<label>
 						<input type="radio" name="<?php echo $prio ?>Sprache" value="En">
-						<?php echo $p->t('bewerbung/sprache/englisch') ?>
+						<?php echo $p->t('global/sprache/englisch') ?>
 					</label>
 				</div>
 			</div>
@@ -89,8 +89,8 @@
 	<?php endforeach; ?>
 	</div>
 	<div class="modal-footer">
-		<button class="btn btn-default cancel-prio" data-dismiss="modal"><?php echo $p->t('bewerbung/abbrechen') ?></button>
-		<button class="btn btn-primary ok-prio" data-dismiss="modal"><?php echo $p->t('bewerbung/ok') ?></button>
+		<button class="btn btn-default cancel-prio" data-dismiss="modal"><?php echo $p->t('global/abbrechen') ?></button>
+		<button class="btn btn-primary ok-prio" data-dismiss="modal"><?php echo $p->t('global/ok') ?></button>
 	</div>
 </div></div></div>
 

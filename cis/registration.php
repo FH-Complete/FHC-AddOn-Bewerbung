@@ -523,18 +523,18 @@ elseif($username && $password)
 							<div class="form-group">
 								<div class="form-group">
 									<label for="username" class="col-sm-3 control-label">
-										<?php echo $p->t('bewerbung/username') ?>
+										<?php echo $p->t('global/username') ?>
 									</label>
 									<div class="col-sm-8">
-										<input class="form-control" type="text" placeholder="<?php echo $p->t('bewerbung/username') ?>" name="username">
+										<input class="form-control" type="text" placeholder="<?php echo $p->t('global/username') ?>" name="username">
 									</div>
 								</div>
 								<div class="form-group">
 									<label for="password" class="col-sm-3 control-label">
-										<?php echo $p->t('bewerbung/password') ?>
+										<?php echo $p->t('global/passwort') ?>
 									</label>
 									<div class="col-sm-8">
-										<input class="form-control" type="password" placeholder="<?php echo $p->t('bewerbung/password') ?>" name="password">
+										<input class="form-control" type="password" placeholder="<?php echo $p->t('global/passwort') ?>" name="password">
 									</div>
 								</div>
 								<div class="form-group">
