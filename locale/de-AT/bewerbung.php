@@ -76,3 +76,6 @@ $this->phrasen['bewerbung/eintragVom']='Eintrag vom';
 $this->phrasen['bewerbung/menuPersDaten']='Persönliche Daten';
 $this->phrasen['bewerbung/accountVorhanden']='Da sie bereits einen Account haben können Sie ihre Stammdaten nicht mehr ändern. Sollten hier fehlerhafte Angaben vorhanden sein, wenden Sie sich bitte an die zuständige Assistenz<br><br>';
 $this->phrasen['bewerbung/bitteAuswaehlen']='-- Bitte auswählen --';
+$this->phrasen['bewerbung/menuKontaktinformationen']='Kontaktinformationen';
+$this->phrasen['bewerbung/kontakt']='Kontakt';
+$this->phrasen['bewerbung/nation']='Nation';
