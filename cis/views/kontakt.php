@@ -20,7 +20,7 @@
 
 if(!isset($person_id))
 {
-	die('Ungültiger Zugriff');
+	die($p->t('bewerbung/ungueltigerZugriff'));
 }
 ?>
 
