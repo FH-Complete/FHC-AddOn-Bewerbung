@@ -20,12 +20,12 @@
 
 if(!isset($person_id))
 {
-	die('Ungültiger Zugriff');
+	die($p->t('bewerbung/ungueltigerZugriff'));
 }
 ?>
 
 <div role="tabpanel" class="tab-pane" id="daten">
-	<h2>Persönliche Daten</h2>
+	<h2><?php echo $p->t('bewerbung/menuPersDaten') ?></h2>
 	<?php
 
 	$nation = new nation();
@@ -43,52 +43,52 @@ if(!isset($person_id))
 	if($eingabegesperrt)
 	{
 		$disabled='disabled="disabled"';
-		echo 'Da sie bereits einen Account haben können Sie ihre Stammdaten nicht mehr ändern. Sollten hier fehlerhafte Angaben vorhanden sein, wenden Sie sich bitte an die zuständige Assistenz<br><br>';
+		echo $p->t('bewerbung/accountVorhanden');
 	}
 	?>
 
 	<form method="POST" action="<?php echo $_SERVER['PHP_SELF'] ?>?active=daten" class="form-horizontal">
 		<div class="form-group">
-			<label for="titel_pre" class="col-sm-3 control-label">Titel vorgestellt</label>
+			<label for="titel_pre" class="col-sm-3 control-label"><?php echo $p->t('global/titel') ?></label>
 			<div class="col-sm-9">
 				<input type="text" name="titel_pre" id="titel_pre" <?php echo $disabled; ?> value="<?php echo $titelpre ?>" class="form-control">
 			</div>
 		</div>
 		<div class="form-group">
-			<label for="vorname" class="col-sm-3 control-label">Vorname*</label>
+			<label for="vorname" class="col-sm-3 control-label"><?php echo $p->t('global/vorname') ?>*</label>
 			<div class="col-sm-9">
 				<input type="text" name="vorname" id="vorname"  <?php echo $disabled; ?> value="<?php echo $vorname ?>" class="form-control">
 			</div>
 		</div>
 		<div class="form-group">
-			<label for="nachname" class="col-sm-3 control-label">Nachname*</label>
+			<label for="nachname" class="col-sm-3 control-label"><?php echo $p->t('global/nachname') ?>*</label>
 			<div class="col-sm-9">
 				<input type="text" name="nachname" id="nachname"  <?php echo $disabled; ?> value="<?php echo $nachname ?>" class="form-control">
 			</div>
 		</div>
 		<div class="form-group">
-			<label for="titel_post" class="col-sm-3 control-label">Titel nachgestellt</label>
+			<label for="titel_post" class="col-sm-3 control-label"><?php echo $p->t('global/postnomen') ?></label>
 			<div class="col-sm-9">
 				<input type="text" name="titel_post" id="titel_post"  <?php echo $disabled; ?> value="<?php echo $titelpost ?>" class="form-control">
 			</div>
 		</div>
 		<div class="form-group">
-			<label for="gebdatum" class="col-sm-3 control-label">Geburtsdatum* (dd.mm.yyyy)</label>
+			<label for="gebdatum" class="col-sm-3 control-label"><?php echo $p->t('global/geburtsdatum') ?>* (<?php echo $p->t('bewerbung/datumFormat') ?>)</label>
 			<div class="col-sm-9">
 				<input type="text" name="geburtsdatum" id="gebdatum"  <?php echo $disabled; ?> value="<?php echo $geburtstag ?>" class="form-control">
 			</div>
 		</div>
 		<div class="form-group">
-			<label for="gebort" class="col-sm-3 control-label">Geburtsort</label>
+			<label for="gebort" class="col-sm-3 control-label"><?php echo $p->t('global/geburtsort') ?></label>
 			<div class="col-sm-9">
 				<input type="text" name="gebort" id="gebort"  <?php echo $disabled; ?> value="<?php echo $gebort ?>" class="form-control">
 			</div>
 		</div>
 		<div class="form-group">
-			<label for="geburtsnation" class="col-sm-3 control-label">Geburtsnation</label>
+			<label for="geburtsnation" class="col-sm-3 control-label"><?php echo $p->t('bewerbung/geburtsnation') ?></label>
 			<div class="col-sm-9">
 				<select name="geburtsnation" id="geburtsnation"  <?php echo $disabled; ?> class="form-control">
-					<option value="">-- Bitte auswählen -- </option>
+					<option value=""><?php echo $p->t('bewerbung/bitteAuswaehlen') ?></option>
 					<?php $selected = '';
 					foreach($nation->nation as $nat):
 						$selected = ($person->geburtsnation == $nat->code) ? 'selected' : ''; ?>
@@ -100,10 +100,10 @@ if(!isset($person_id))
 			</div>
 		</div>
 		<div class="form-group">
-			<label for="staatsbuergerschaft" class="col-sm-3 control-label">Staatsbürgerschaft*</label>
+			<label for="staatsbuergerschaft" class="col-sm-3 control-label"><?php echo $p->t('global/staatsbuergerschaft') ?>*</label>
 			<div class="col-sm-9">
 				<select name="staatsbuergerschaft" id="staatsbuergerschaft"  <?php echo $disabled; ?> class="form-control">
-					<option value="">-- Bitte auswählen -- </option>
+					<option value=""><?php echo $p->t('bewerbung/bitteAuswaehlen') ?></option>
 					<?php $selected = '';
 					foreach($nation->nation as $nat):
 						$selected = ($person->staatsbuergerschaft == $nat->code) ? 'selected' : ''; ?>
@@ -115,24 +115,24 @@ if(!isset($person_id))
 			</div>
 		</div>
 		<div class="form-group">
-			<label for="svnr" class="col-sm-3 control-label">Österr. Sozialversicherungsnr</label>
+			<label for="svnr" class="col-sm-3 control-label"><?php echo $p->t('bewerbung/svnr') ?></label>
 			<div class="col-sm-9">
 				<input type="text" name="svnr" id="svnr"  <?php echo $disabled; ?> value="<?php echo $svnr ?>" class="form-control">
 			</div>
 		</div>
 		<div class="form-group">
-			<label for="geschlecht" class="col-sm-3 control-label">Geschlecht</label>
+			<label for="geschlecht" class="col-sm-3 control-label"><?php echo $p->t('global/geschlecht') ?></label>
 			<div class="col-sm-9">
 				<?php
 				$geschl_m = ($person->geschlecht == 'm') ? 'checked' : '';
 				$geschl_w = ($person->geschlecht == 'w') ? 'checked' : '';
 				?>
-				m: <input type="radio" name="geschlecht"  <?php echo $disabled; ?> value="m" <?php echo $geschl_m ?>>
-				w: <input type="radio" name="geschlecht"  <?php echo $disabled; ?> value="w" <?php echo $geschl_w ?>>
+				<?php echo $p->t('bewerbung/maennlich') ?>: <input type="radio" name="geschlecht"  <?php echo $disabled; ?> value="m" <?php echo $geschl_m ?>>
+				<?php echo $p->t('bewerbung/weiblich') ?>: <input type="radio" name="geschlecht"  <?php echo $disabled; ?> value="w" <?php echo $geschl_w ?>>
 			</div>
 		</div>
         <fieldset>
-            <legend>Berufstätigkeit</legend>
+            <legend><?php echo $p->t('bewerbung/berufstaetigkeit') ?></legend>
             <?php
             $notiz = new notiz;
             $notiz->getBewerbungstoolNotizen($person_id);
@@ -140,7 +140,7 @@ if(!isset($person_id))
                 foreach($notiz->result as $berufstaetig): ?>
                     <div class="form-group">
                         <label for="berufstaetig" class="col-sm-3 control-label">
-                            Eintrag vom <?php echo date('j.n.y H:i', strtotime($berufstaetig->insertamum)) ?>
+                            <?php echo $p->t('bewerbung/eintragVom') ?> <?php echo date('j.n.y H:i', strtotime($berufstaetig->insertamum)) ?>
                         </label>
                         <div class="col-sm-9">
                             <input type="text" class="form-control" disabled value="<?php echo $berufstaetig->text ?>">
@@ -149,21 +149,21 @@ if(!isset($person_id))
                 <?php endforeach; ?>
             <?php else: ?>
                 <div class="form-group">
-                    <label for="berufstaetig" class="col-sm-3 control-label">berufstätig</label>
+                    <label for="berufstaetig" class="col-sm-3 control-label"><?php echo $p->t('bewerbung/berufstaetig') ?></label>
                     <div class="col-sm-9">
-                        Vollzeit: <input type="radio" name="berufstaetig" value="Vollzeit">
-                        Teilzeit: <input type="radio" name="berufstaetig" value="Teilzeit">
-                        Nein: <input type="radio" name="berufstaetig" value="n" checked>
+                        <?php echo $p->t('bewerbung/orgform/vollzeit') ?>: <input type="radio" name="berufstaetig" value="Vollzeit">
+                        <?php echo $p->t('bewerbung/orgform/teilzeit') ?>: <input type="radio" name="berufstaetig" value="Teilzeit">
+                        <?php echo $p->t('global/nein') ?>: <input type="radio" name="berufstaetig" value="n" checked>
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="berufstaetig_dienstgeber" class="col-sm-3 control-label">Dienstgeber</label>
+                    <label for="berufstaetig_dienstgeber" class="col-sm-3 control-label"><?php echo $p->t('bewerbung/dienstgeber') ?></label>
                     <div class="col-sm-9">
                         <input type="text" name="berufstaetig_dienstgeber" id="berufstaetig_dienstgeber" class="form-control">
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="berufstaetig_art" class="col-sm-3 control-label">Art der Tätigkeit</label>
+                    <label for="berufstaetig_art" class="col-sm-3 control-label"><?php echo $p->t('bewerbung/artDerTaetigkeit') ?></label>
                     <div class="col-sm-9">
                         <input type="text" name="berufstaetig_art" id="berufstaetig_art" class="form-control">
                     </div>
@@ -171,13 +171,13 @@ if(!isset($person_id))
             <?php endif; ?>
         </fieldset>
 		<button class="btn-nav btn btn-default" type="button" data-jump-tab="allgemein">
-			Zurück
+			<?php echo $p->t('global/zurueck') ?>
 		</button>
 		<button class="btn btn-default" type="submit"  <?php echo $disabled; ?> name="btn_person">
-			Speichern
+			<?php echo $p->t('global/speichern') ?>
 		</button>
 		<button class="btn-nav btn btn-default" type="button" data-jump-tab="kontakt">
-			Weiter
+			<?php echo $p->t('bewerbung/weiter') ?>
 		</button>
 	</form>
 	<?php echo $message; ?>

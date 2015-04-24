@@ -20,22 +20,18 @@
 
 if(!isset($person_id))
 {
-	die('Ungültiger Zugriff');
+	die($p->t('bewerbung/ungueltigerZugriff'));
 }
 ?>
 
 <div role="tabpanel" class="tab-pane" id="allgemein">
 	<h2><?php echo $p->t('bewerbung/menuAllgemein'); ?></h2>
-	<p>Wir freuen uns dass Sie sich für einen oder mehrere unserer Studiengänge bewerben. <br><br>
-	Bitte füllen Sie das Formular vollständig aus und schicken Sie es danach ab.<br><br>
-	<b>Bewerbungsmodus:</b><br>
-	<p style="text-align:justify;">Füllen Sie alle Punkte aus. Sind alle Werte vollständig eingetragen, können Sie unter "Bewerbung abschicken" Ihre Bewerbung and die zuständige Assistenz schicken.<br>
-	Diese wird sich in den nächsten Tagen bei Ihnen melden.</p>
+	<p><?php echo $p->t('bewerbung/allgemeineErklaerung'); ?></p>
 	<br><br>
-	<p><b>Aktuelle Bewerbungen: </b></p>
+	<p><b><?php echo $p->t('bewerbung/aktuelleBewerbungen'); ?></b></p>
 	<?php
 
-	 // Zeige Stati der aktuellen Bewerbungen an
+        // Zeige Stati der aktuellen Bewerbungen an
 		$prestudent = new prestudent();
 		if(!$prestudent->getPrestudenten($person_id))
 		{
@@ -45,11 +41,11 @@ if(!isset($person_id))
 		<div class="table-responsive">
 			<table class="table">
 				<tr>
-					<th>Studiengang</th>
-					<th>Status</th>
-					<th>Datum</th>
-					<th>Aktion</th>
-					<th>Bewerbungsstatus</th>
+					<th><?php echo $p->t('global/studiengang'); ?></th>
+					<th><?php echo $p->t('bewerbung/status'); ?></th>
+					<th><?php echo $p->t('global/datum'); ?></th>
+					<th><?php echo $p->t('global/aktion'); ?></th>
+					<th><?php echo $p->t('bewerbung/bewerbungsstatus'); ?></th>
 				</tr>
 				<?php
 				$bereits_angemeldet = array();
@@ -62,8 +58,8 @@ if(!isset($person_id))
 					$bereits_angemeldet[] = $stg->studiengang_kz;
 
 					$prestudent_status = new prestudent();
-					$prestatus_help= ($prestudent_status->getLastStatus($row->prestudent_id))?$prestudent_status->status_kurzbz:'Noch kein Status vorhanden';
-					$bewerberstatus =($prestudent_status->bestaetigtam != '' || $prestudent_status->bestaetigtvon != '')?'bestätigt':'noch nicht bestätigt'; ?>
+					$prestatus_help= ($prestudent_status->getLastStatus($row->prestudent_id))?$prestudent_status->status_kurzbz:$p->t('bewerbung/keinStatus');
+					$bewerberstatus =($prestudent_status->bestaetigtam != '' || $prestudent_status->bestaetigtvon != '')?$p->t('bewerbung/bestaetigt'):$p->t('bewerbung/nichtBestaetigt'); ?>
 					<tr>
 						<td><?php echo $stg->bezeichnung ?></td>
 						<td><?php echo $prestatus_help ?></td>
@@ -76,10 +72,10 @@ if(!isset($person_id))
 		</div>
 	<br>
 	<button class="btn-nav btn btn-default" type="button" data-toggle="modal" data-target="#liste-studiengaenge">
-		Studiengang hinzufügen
+		<?php echo $p->t('bewerbung/studiengangHinzufuegen'); ?>
 	</button>
 	<button class="btn-nav btn btn-default" type="button" data-jump-tab="daten">
-		Weiter
+		<?php echo $p->t('bewerbung/weiter'); ?>
 	</button>
 
 	<div class="modal fade" id="liste-studiengaenge"><div class="modal-dialog"><div class="modal-content">
@@ -158,8 +154,8 @@ if(!isset($person_id))
 			</div>
 		</div>
 		<div class="modal-footer">
-			<button class="btn btn-default cancel-studiengang" data-dismiss="modal"><?php echo $p->t('bewerbung/abbrechen') ?></button>
-			<button class="btn btn-primary ok-studiengang" data-dismiss="modal"><?php echo $p->t('bewerbung/ok') ?></button>
+			<button class="btn btn-default cancel-studiengang" data-dismiss="modal"><?php echo $p->t('global/abbrechen') ?></button>
+			<button class="btn btn-primary ok-studiengang" data-dismiss="modal"><?php echo $p->t('global/ok') ?></button>
 		</div>
 	</div></div></div>
 	<?php require 'modal_sprache_orgform.php'; ?>

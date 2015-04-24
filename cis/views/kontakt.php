@@ -20,12 +20,12 @@
 
 if(!isset($person_id))
 {
-	die('Ungültiger Zugriff');
+	die($p->t('bewerbung/ungueltigerZugriff'));
 }
 ?>
 
 <div role="tabpanel" class="tab-pane" id="kontakt">
-	<h2>Kontaktinformationen</h2>
+	<h2><?php echo $p->t('bewerbung/menuKontaktinformationen'); ?></h2>
 	<?php
 	$nation = new nation();
 	$nation->getAll($ohnesperre=true);
@@ -49,22 +49,22 @@ if(!isset($person_id))
 	if($eingabegesperrt)
 	{
 		$disabled='disabled="disabled"';
-		echo 'Da sie bereits einen Account haben können Sie ihre Stammdaten nicht mehr ändern. Sollten hier fehlerhafte Angaben vorhanden sein, wenden Sie sich bitte an die zuständige Assistenz<br><br>';
+		echo $p->t('bewerbung/accountVorhanden');
 	}
 	?>
 
 
 	<form method="POST" action="<?php echo $_SERVER['PHP_SELF'] ?>?active=dokumente" class="form-horizontal">
 		<fieldset>
-			<legend>Kontakt</legend>
+			<legend><?php echo $p->t('bewerbung/kontakt') ?></legend>
 			<div class="form-group">
-				<label for="email" class="col-sm-2 control-label">Email*</label>
+				<label for="email" class="col-sm-2 control-label"><?php echo $p->t('global/emailAdresse') ?>*</label>
 				<div class="col-sm-10">
 					<input type="text" name="email" id="email" value="<?php echo $email ?>" <?php echo $disabled; ?> size="32" class="form-control">
 				</div>
 			</div>
 			<div class="form-group">
-				<label for="telefonnummer" class="col-sm-2 control-label">Telefonnummer*</label>
+				<label for="telefonnummer" class="col-sm-2 control-label"><?php echo $p->t('global/telefonnummer') ?>*</label>
 				<div class="col-sm-10">
 					<input type="text" name="telefonnummer" id="telefonnummer" value="<?php echo $telefon ?>"  <?php echo $disabled; ?> size="32" class="form-control">
 				</div>
@@ -72,30 +72,30 @@ if(!isset($person_id))
 		</fieldset>
 
 		<fieldset>
-			<legend>Adresse</legend>
+			<legend><?php echo $p->t('global/adresse') ?></legend>
 			<div class="form-group">
-				<label for="strasse" class="col-sm-2 control-label">Straße*</label>
+				<label for="strasse" class="col-sm-2 control-label"><?php echo $p->t('global/strasse') ?>*</label>
 				<div class="col-sm-10">
 					<input type="text" name="strasse" id="strasse" value="<?php echo $strasse ?>"  <?php echo $disabled; ?> class="form-control">
 				</div>
 			</div>
 			<div class="form-group">
-				<label for="plz" class="col-sm-2 control-label">Postleitzahl*</label>
+				<label for="plz" class="col-sm-2 control-label"><?php echo $p->t('global/plz') ?>*</label>
 				<div class="col-sm-10">
 					<input type="text" name="plz" id="plz" value="<?php echo $plz ?>"  <?php echo $disabled; ?> class="form-control">
 				</div>
 			</div>
 			<div class="form-group">
-				<label for="ort" class="col-sm-2 control-label">Ort*</label>
+				<label for="ort" class="col-sm-2 control-label"><?php echo $p->t('global/ort') ?>*</label>
 				<div class="col-sm-10">
 					<input type="text" name="ort" id="ort" value="<?php echo $ort ?>"  <?php echo $disabled; ?> class="form-control">
 				</div>
 			</div>
 			<div class="form-group">
-				<label for="nation" class="col-sm-2 control-label">Nation*</label>
+				<label for="nation" class="col-sm-2 control-label"><?php echo $p->t('bewerbung/nation') ?>*</label>
 				<div class="col-sm-10">
 					<select name="nation" class="form-control" <?php echo $disabled; ?> >
-						<option>--Bitte auswählen --</option>
+						<option><?php echo $p->t('bewerbung/bitteAuswaehlen') ?></option>
 						<?php
 						foreach($nation->nation as $nat):
 							$selected = ($adr_nation == $nat->code)?'selected':''; ?>
@@ -108,13 +108,13 @@ if(!isset($person_id))
 			</div>
 		</fieldset>
 		<button class="btn-nav btn btn-default" type="button" data-jump-tab="daten">
-			Zurück
+			<?php echo $p->t('global/zurueck') ?>
 		</button>
 		<button class="btn btn-default" type="submit"  <?php echo $disabled; ?> name="btn_kontakt">
-			Speichern
+			<?php echo $p->t('global/speichern') ?>
 		</button>
 		<button class="btn-nav btn btn-default" type="button" data-jump-tab="dokumente">
-			Weiter
+			<?php echo $p->t('bewerbung/weiter') ?>
 		</button>
 	</form>
 </div>
