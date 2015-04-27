@@ -25,13 +25,13 @@ if(!isset($person_id))
 ?>
 
 <div role="tabpanel" class="tab-pane" id="dokumente">
-	<h2>Dokumente</h2>
-	<p>Bitte laden Sie alle vorhandenen Dokumente, die für Ihre Bewerbung relevant sind, über folgenden Link hoch:</p>
+	<h2><?php echo $p->t('bewerbung/menuDokumente'); ?></h2>
+	<p><?php echo $p->t('bewerbung/bitteDokumenteHochladen'); ?></p>
 	<a href="dms_akteupload.php?person_id=<?php echo $person_id ?>"
 	   onclick="FensterOeffnen(this.href); return false;">
-		Dokumente Upload
+		<?php echo $p->t('bewerbung/linkDokumenteHochladen'); ?>
 	</a>
-	<p>Dokumente zum Uploaden:</p>
+	<p><?php echo $p->t('bewerbung/dokumenteZumHochladen'); ?></p>
 	<?php
 	$dokumente_person = new dokument();
 	$dokumente_person->getAllDokumenteForPerson($person_id, true); ?>
@@ -40,11 +40,11 @@ if(!isset($person_id))
 		<table class="table table-striped">
 			<thead>
 				<tr>
-					<th>Name</th>
-					<th>Status</th>
-					<th>Aktion</th>
+					<th><?php echo $p->t('bewerbung/dokumentName'); ?></th>
+					<th><?php echo $p->t('bewerbung/status'); ?></th>
+					<th><?php echo $p->t('global/aktion'); ?></th>
 					<th></th>
-					<th>Benötigt für</th>
+					<th><?php echo $p->t('bewerbung/benoetigtFuer'); ?></th>
 				</tr>
 			</thead>
 			<tbody>
@@ -61,10 +61,10 @@ if(!isset($person_id))
 				if($akte->result[0]->nachgereicht == true)
 				{
 					// wird nachgereicht
-					$status = '<img title="wird nachgereicht" src="'.APP_ROOT.'skin/images/hourglass.png" width="20px">';
+					$status = '<img title="'.$p->t('bewerbung/dokumentWirdNachgereicht').'" src="'.APP_ROOT.'skin/images/hourglass.png" width="20px">';
 					$nachgereicht_help = 'checked';
 					$div = "<form method='POST' action='".$_SERVER['PHP_SELF']."?active=dokumente'><span id='nachgereicht_".$dok->dokument_kurzbz."' style='display:true;'>".$akte->result[0]->anmerkung."</span></form>";
-					$aktion = '<a href="'.$_SERVER['PHP_SELF'].'?method=delete&akte_id='.$akte_id.'&active=dokumente"><img title="löschen" src="'.APP_ROOT.'skin/images/delete.png" width="20px"></a>';
+					$aktion = '<a href="'.$_SERVER['PHP_SELF'].'?method=delete&akte_id='.$akte_id.'&active=dokumente"><img title="'.$p->t('global/löschen').'" src="'.APP_ROOT.'skin/images/delete.png" width="20px"></a>';
 				}
 				else
 				{
@@ -74,7 +74,7 @@ if(!isset($person_id))
 					if($dokument->akzeptiert($akte->result[0]->dokument_kurzbz,$person->person_id))
 					{
 						// Dokument wurde bereits überprüft
-						$status = '<img title="abgegeben" src="'.APP_ROOT.'skin/images/true_green.png" width="20px">';
+						$status = '<img title="'.$p->t('bewerbung/abgegeben').'" src="'.APP_ROOT.'skin/images/true_green.png" width="20px">';
 						$nachgereicht_help = '';
 						$div = "<form method='POST' action='".$_SERVER['PHP_SELF']."&active=dokumente'><span id='nachgereicht_".$dok->dokument_kurzbz."' style='display:none;'>wird nachgereicht:<input type='checkbox' name='check_nachgereicht' ".$nachgereicht_help."><input type='text' size='15' name='txt_anmerkung'><input type='submit' value='OK' name='submit_nachgereicht' class='btn btn-default'></span><input type='hidden' name='dok_kurzbz' value='".$dok->dokument_kurzbz."'><input type='hidden' name='akte_id' value='".$akte_id."'></form>";
 						$aktion = '';
@@ -82,10 +82,10 @@ if(!isset($person_id))
 					else
 					{
 						// Dokument hochgeladen ohne überprüfung der Assistenz*/
-						$status = '<img title="abgegeben" src="'.APP_ROOT.'skin/images/check_black.png" width="20px">';
+						$status = '<img title="'.$p->t('bewerbung/abgegeben').'" src="'.APP_ROOT.'skin/images/check_black.png" width="20px">';
 						$nachgereicht_help = '';
 						$div = "<form method='POST' action='".$_SERVER['PHP_SELF']."&active=dokumente'><span id='nachgereicht_".$dok->dokument_kurzbz."' style='display:none;'>wird nachgereicht:<input type='checkbox' name='check_nachgereicht' ".$nachgereicht_help."><input type='text' size='15' name='txt_anmerkung'><input type='submit' value='OK' name='submit_nachgereicht' class='btn btn-default'></span><input type='hidden' name='dok_kurzbz' value='".$dok->dokument_kurzbz."'><input type='hidden' name='akte_id' value='".$akte_id."'></form>";
-						$aktion = '<a href="'.$_SERVER['PHP_SELF'].'?method=delete&akte_id='.$akte_id.'&active=dokumente"><img title="löschen" src="'.APP_ROOT.'skin/images/delete.png" width="20px"></a>';
+						$aktion = '<a href="'.$_SERVER['PHP_SELF'].'?method=delete&akte_id='.$akte_id.'&active=dokumente"><img title="'.$p->t('global/löschen').'" src="'.APP_ROOT.'skin/images/delete.png" width="20px"></a>';
 
 					}
 				}
@@ -93,8 +93,8 @@ if(!isset($person_id))
 			else
 			{
 				// Dokument fehlt noch
-				$status = ' - ';//<img title="offen" src="'.APP_ROOT.'skin/images/upload.png" width="20px">';
-				$aktion = '<img src="'.APP_ROOT.'skin/images/delete.png" width="20px" title="löschen"> <a href="dms_akteupload.php?person_id='.$person_id.'&dokumenttyp='.$dok->dokument_kurzbz.'" onclick="FensterOeffnen(this.href); return false;"><img src="'.APP_ROOT.'skin/images/upload.png" width="20px" title="upload"></a><a href="#" onclick="toggleDiv(\'nachgereicht_'.$dok->dokument_kurzbz.'\');return false;"><img src="'.APP_ROOT.'skin/images/hourglass.png" width="20px" title="wird nachgereicht"></a>';
+				$status = ' - ';
+				$aktion = '<img src="'.APP_ROOT.'skin/images/delete.png" width="20px" title="'.$p->t('global/löschen').'"> <a href="dms_akteupload.php?person_id='.$person_id.'&dokumenttyp='.$dok->dokument_kurzbz.'" onclick="FensterOeffnen(this.href); return false;"><img src="'.APP_ROOT.'skin/images/upload.png" width="20px" title="'.$p->t('bewerbung/upload').'"></a><a href="#" onclick="toggleDiv(\'nachgereicht_'.$dok->dokument_kurzbz.'\');return false;"><img src="'.APP_ROOT.'skin/images/hourglass.png" width="20px" title="'.$p->t('bewerbung/dokumentWirdNachgereicht').'"></a>';
 				$div = "<form method='POST' action='".$_SERVER['PHP_SELF']."?active=dokumente'><span id='nachgereicht_".$dok->dokument_kurzbz."' style='display:none;'>Anmerkung:<input type='checkbox' name='check_nachgereicht' checked=\"checked\" style='display:none'><input type='text' size='15' name='txt_anmerkung'><input type='submit' value='OK' name='submit_nachgereicht' class='btn btn-default'></span><input type='hidden' name='dok_kurzbz' value='".$dok->dokument_kurzbz."'></form>";
 
 			}
@@ -137,44 +137,44 @@ if(!isset($person_id))
 		</table>
 	</div>
 			<br>
-	<h2>Status</h2>
+	<h2><?php echo $p->t('bewerbung/status'); ?></h2>
 	<table class="table">
 		<tr>
 			<td>
 				<span class="text-danger glyphicon glyphicon-asterisk"></span>
 			</td>
-			<td>Dokument erforderlich</td>
+			<td><?php echo $p->t('bewerbung/dokumentErforderlich'); ?></td>
 		</tr>
 		<tr>
 			<td>
-				<img title="offen" src="<?php echo APP_ROOT ?>skin/images/upload.png" width="20px">
+				<img title="<?php echo $p->t('bewerbung/dokumentOffen'); ?>" src="<?php echo APP_ROOT ?>skin/images/upload.png" width="20px">
 			</td>
-			<td>Dokument noch nicht abgegeben (offen)</td>
+			<td><?php echo $p->t('bewerbung/dokumentOffen'); ?></td>
 		</tr>
 		<tr>
 			<td>
-				<img title="offen" src="<?php echo APP_ROOT ?>skin/images/check_black.png" width="20px">
+				<img title="<?php echo $p->t('bewerbung/dokumentNichtUeberprueft'); ?>" src="<?php echo APP_ROOT ?>skin/images/check_black.png" width="20px">
 			</td>
-			<td>Dokument wurde abgegeben aber noch nicht überprüft</td>
+			<td><?php echo $p->t('bewerbung/dokumentNichtUeberprueft'); ?></td>
 		</tr>
 		<tr>
 			<td>
-				<img title="offen" src="<?php echo APP_ROOT ?>skin/images/hourglass.png" width="20px">
+				<img title="<?php echo $p->t('bewerbung/dokumentWirdNachgereicht'); ?>" src="<?php echo APP_ROOT ?>skin/images/hourglass.png" width="20px">
 			</td>
-			<td>Dokument wird nachgereicht </td>
+			<td><?php echo $p->t('bewerbung/dokumentWirdNachgereicht'); ?></td>
 		</tr>
 		<tr>
 			<td>
-				<img title="offen" src="<?php echo APP_ROOT ?>skin/images/true_green.png" width="20px">
+				<img title="<?php echo $p->t('bewerbung/dokumentWurdeUeberprueft'); ?>" src="<?php echo APP_ROOT ?>skin/images/true_green.png" width="20px">
 			</td>
-			<td>Dokument wurde bereits überprüft</td>
+			<td><?php echo $p->t('bewerbung/dokumentWurdeUeberprueft'); ?></td>
 		</tr>
 	</table>
 	<button class="btn-nav btn btn-default" type="button" data-jump-tab="kontakt">
-		Zurück
+		<?php echo $p->t('global/zurueck') ?>
 	</button>
 	<button class="btn-nav btn btn-default" type="button" data-jump-tab="zgv">
-		Weiter
+		<?php echo $p->t('bewerbung/weiter'); ?>
 	</button>
 	<br><?php echo $message ?>
 </div>
