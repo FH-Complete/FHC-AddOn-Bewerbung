@@ -25,14 +25,8 @@ if(!isset($person_id))
 ?>
 
 <div role="tabpanel" class="tab-pane" id="abschicken">
-	<h2>Bewerbung abschicken</h2>
-	<p>
-		Haben Sie alle Daten korrekt ausgefüllt bzw. alle Dokumente auf das System hochgeladen, können Sie Ihre Bewerbung abschicken.<br>
-		Die jeweilige Studiengangsassistenz wird sich in den folgenden Tagen, bezüglich der Bewerbung, bei Ihnen Melden.
-		<br><br>
-		Bitte überprüfen Sie nochmals Ihre Daten.<br>
-		Um Ihre Bewerbung jetzt abzuschließen klicken auf folgenden Link:
-	</p>
+	<h2><?php echo $p->t('bewerbung/menuBewerbungAbschicken') ?></h2>
+	<p><?php echo $p->t('bewerbung/erklaerungBewerbungAbschicken') ?></p>
 	<?php
 
 	$disabled = 'disabled';
@@ -50,8 +44,8 @@ if(!isset($person_id))
 			<div class="col-md-6 col-sm-8 col-xs-10">
 				<form method="POST"  action="<?php echo $_SERVER['PHP_SELF'] ?>?active=abschicken">
 					<div class="form-group">
-						<label for="<?php echo $stg->kurzbzlang ?>">Bewerbung abschicken für <?php echo $stg->bezeichnung ?></label>
-						<input id="<?php echo $stg->kurzbzlang ?>" class="btn btn-default form-control" type="submit" value="Bewerbung abschicken (<?php echo $stg->kurzbzlang ?>)" name="btn_bewerbung_abschicken" <?php echo $disabled ?>>
+						<label for="<?php echo $stg->kurzbzlang ?>"><?php echo $p->t('bewerbung/bewerbungAbschickenFuer') ?> <?php echo $stg->bezeichnung ?></label>
+						<input id="<?php echo $stg->kurzbzlang ?>" class="btn btn-default form-control" type="submit" value="<?php echo $p->t('bewerbung/buttonBewerbungAbschicken') ?> (<?php echo $stg->kurzbzlang ?>)" name="btn_bewerbung_abschicken" <?php echo $disabled ?>>
 						<input type="hidden" name="prestudent_id" value="<?php echo $prest->prestudent_id ?>">
 					</div>
 				</form>
@@ -59,10 +53,10 @@ if(!isset($person_id))
 		</div>
 	<?php endforeach; ?>
 	<button class="btn-nav btn btn-default" type="button" onclick="window.location.href='bewerbung.php?logout=true';">
-		Logout
+		<?php echo $p->t('bewerbung/logout') ?>
 	</button>
 	<button class="btn-nav btn btn-default" type="button" data-jump-tab="aufnahme">
-		Zurück
+		<?php echo $p->t('global/zurueck') ?>
 	</button>
 </div>
 

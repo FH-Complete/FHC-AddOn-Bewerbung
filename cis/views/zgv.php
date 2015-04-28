@@ -37,7 +37,7 @@ foreach ($prestudent->result as $prestudent_eintrag)
 $types = $stg->getTypes($studiengaenge);
 ?>
 <div role="tabpanel" class="tab-pane" id="zgv">
-    <h2>Zugangsvoraussetzungen</h2>
+    <h2><?php echo $p->t('bewerbung/menuZugangsvoraussetzungen'); ?></h2>
 
     <form method="POST" class="form-horizontal" action="<?php echo $_SERVER['PHP_SELF'] ?>?active=zgv">
         <?php foreach ($zgv as $stufe => $attribute):
@@ -45,16 +45,16 @@ $types = $stg->getTypes($studiengaenge);
                 continue;
             } ?>
             <fieldset>
-                <legend>für <?php echo ucfirst($stufe) ?></legend>
+                <legend><?php echo $p->t('bewerbung/fuer'); ?> <?php echo ucfirst($stufe) ?></legend>
                 <div class="form-group">
                     <label for="<?php echo $stufe ?>_zgv_art" class="col-sm-3 control-label">
-                        Art der Voraussetzung
+                        <?php echo $p->t('bewerbung/artDerVoraussetzung'); ?>
                     </label>
 
                     <div class="col-sm-9">
                         <select name="<?php echo $stufe ?>_zgv_art" id="<?php echo $stufe ?>_zgv_art"
                                 class="form-control">
-                            <option value="">-- Bitte auswählen --</option>
+                            <option value=""><?php echo $p->t('bewerbung/bitteAuswaehlen'); ?></option>
                             <?php 
 							$selected = '';
 							if($stufe==='master')
@@ -83,7 +83,7 @@ $types = $stg->getTypes($studiengaenge);
                 </div>
                 <div class="form-group">
                     <label for="<?php echo $stufe ?>_zgv_ort" class="col-sm-3 control-label">
-                        Ort
+                        <?php echo $p->t('global/ort'); ?>
                     </label>
 
                     <div class="col-sm-9">
@@ -94,12 +94,12 @@ $types = $stg->getTypes($studiengaenge);
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="<?php echo $stufe ?>_zgv_nation" class="col-sm-3 control-label">Land</label>
+                    <label for="<?php echo $stufe ?>_zgv_nation" class="col-sm-3 control-label"><?php echo $p->t('bewerbung/nation'); ?></label>
 
                     <div class="col-sm-9">
                         <select name="<?php echo $stufe ?>_zgv_nation" id="<?php echo $stufe ?>_zgv_nation"
                                 class="form-control">
-                            <option value="">-- Bitte auswählen --</option>
+                            <option value=""><?php echo $p->t('bewerbung/bitteAuswaehlen'); ?></option>
                             <?php $selected = '';
                             foreach ($nation->nation as $nat):
                                 $selected = (isset($attribute['nation']) && $attribute['nation'] == $nat->code) ? 'selected' : ''; ?>
@@ -112,7 +112,7 @@ $types = $stg->getTypes($studiengaenge);
                 </div>
                 <div class="form-group">
                     <label for="<?php echo $stufe ?>_zgv_datum" class="col-sm-3 control-label">
-                        Datum
+                        <?php echo $p->t('global/datum'); ?>
                     </label>
 
                     <div class="col-sm-9">
@@ -125,13 +125,13 @@ $types = $stg->getTypes($studiengaenge);
             </fieldset>
         <?php endforeach ?>
         <button class="btn-nav btn btn-default" type="button" data-jump-tab="dokumente">
-            Zurück
+            <?php echo $p->t('global/zurueck') ?>
         </button>
         <button class="btn btn-default" type="submit" name="btn_zgv">
-            Speichern
+            <?php echo $p->t('global/speichern') ?>
         </button>
         <button class="btn-nav btn btn-default" type="button" data-jump-tab="zahlungen">
-            Weiter
+            <?php echo $p->t('bewerbung/weiter'); ?>
         </button>
     </form>
 </div>

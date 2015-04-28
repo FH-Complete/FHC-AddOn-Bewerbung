@@ -92,3 +92,25 @@ $this->phrasen['bewerbung/dokumentWirdNachgereicht']='Dokument wird nachgereicht
 $this->phrasen['bewerbung/dokumentWurdeUeberprueft']='Dokument wurde bereits überprüft';
 $this->phrasen['bewerbung/abgegeben']='abgegeben';
 $this->phrasen['bewerbung/upload']='Upload';
+$this->phrasen['bewerbung/menuZugangsvoraussetzungen']='Zugangsvoraussetzungen';
+$this->phrasen['bewerbung/fuer']='für';
+$this->phrasen['bewerbung/artDerVoraussetzung']='Art der Voraussetzung';
+$this->phrasen['bewerbung/zahlungsinformation']='Zahlungsinformation';
+$this->phrasen['bewerbung/bezahlt']='bezahlt';
+$this->phrasen['bewerbung/zahlungsdetails']='Zahlungsdetails';
+$this->phrasen['bewerbung/reihungstest']='Reihungstest';
+$this->phrasen['bewerbung/fuerReihungstestAnmelden']='Sie können sich für folgende Reihungstest anmelden:';
+$this->phrasen['bewerbung/konntePrestudNichtLaden']='Konnte Prestudenten nicht laden';
+$this->phrasen['bewerbung/fehler']='Es ist ein Fehler aufgetreten';
+$this->phrasen['bewerbung/angemeldetPlaetze']='angemeldet / Plätze';
+$this->phrasen['bewerbung/uhrzeit']='Uhrzeit';
+$this->phrasen['bewerbung/stornieren']='stornieren';
+$this->phrasen['bewerbung/menuBewerbungAbschicken']='Bewerbung abschicken';
+$this->phrasen['bewerbung/erklaerungBewerbungAbschicken']='Haben Sie alle Daten korrekt ausgefüllt bzw. alle Dokumente auf das System hochgeladen, können Sie Ihre Bewerbung abschicken.<br>
+		Die jeweilige Studiengangsassistenz wird sich in den folgenden Tagen, bezüglich der Bewerbung, bei Ihnen Melden.
+		<br><br>
+		Bitte überprüfen Sie nochmals Ihre Daten.<br>
+		Um Ihre Bewerbung jetzt abzuschließen klicken auf folgenden Link:';
+$this->phrasen['bewerbung/bewerbungAbschickenFuer']='Bewerbung abschicken für';
+$this->phrasen['bewerbung/buttonBewerbungAbschicken']='Bewerbung abschicken';
+$this->phrasen['bewerbung/logout']='Logout';

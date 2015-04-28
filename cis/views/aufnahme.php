@@ -25,33 +25,33 @@ if(!isset($person_id))
 ?>
 
 <div role="tabpanel" class="tab-pane" id="aufnahme">
-	<h2>Reihungstest</h2>
+	<h2><?php echo $p->t('bewerbung/menuReihungstest') ?></h2>
 	<br>
-	<p>Sie können sich für folgende Reihungstest anmelden: </p>
+	<p><?php echo $p->t('bewerbung/fuerReihungstestAnmelden') ?></p>
 	<?php
 
 	$prestudent = new prestudent();
 	if(!$prestudent->getPrestudenten($person_id))
-		die('Konnte Prestudenten nicht laden');
+		die($p->t('bewerbung/konntePrestudNichtLaden'));
 
 	foreach($prestudent->result as $row)
 	{
 		$reihungstest = new reihungstest();
 		if(!$reihungstest->getStgZukuenftige($row->studiengang_kz))
-			echo "Fehler aufgetreten";
+			echo $p->t('bewerbung/fehler');
 
 		$stg = new studiengang();
 		$stg->load($row->studiengang_kz); ?>
-		<h3>Studiengang <?php echo $stg->bezeichnung ?></h3>
+		<h3><?php echo $p->t('global/studiengang') ?> <?php echo $stg->bezeichnung ?></h3>
 
 		<div class="table-responsive">
 			<table class="reihungstest table">
 				<tr>
-					<th>angemeldet / Plätze</th>
-					<th>Datum</th>
-					<th>Uhrzeit</th>
-					<th>Ort</th>
-					<th title="<?php echo $row->studiengang_kz ?>">Studiengang</th>
+					<th><?php echo $p->t('bewerbung/angemeldetPlaetze') ?></th>
+					<th><?php echo $p->t('global/datum') ?></th>
+					<th><?php echo $p->t('bewerbung/uhrzeit') ?></th>
+					<th><?php echo $p->t('global/ort') ?></th>
+					<th title="<?php echo $row->studiengang_kz ?>"><?php echo $p->t('global/studiengang') ?></th>
 					<th>&nbsp;</th>
 				</tr>
 			<?php
@@ -72,7 +72,7 @@ if(!isset($person_id))
 						<td><?php echo $stg->bezeichnung ?></td>
 						<td>
 							<input type='button' name='btn_stg'
-								value='Stornieren'
+								value='<?php echo $p->t('bewerbung/stornieren') ?>'
 								onclick='location.href="<?php echo $_SERVER['PHP_SELF'] ?>?active=aufnahme&rt_id=<?php echo $rt->reihungstest_id ?>&pre=<?php echo $row->prestudent_id ?>&delete"'>
 						</td>
 					</tr>
@@ -90,7 +90,7 @@ if(!isset($person_id))
 						<td>
 							<input type='button' name='btn_stg'
 								<?php echo isset($rt->max_teilnehmer) && $teilnehmer_anzahl >= $rt->max_teilnehmer ? 'disabled' : '' ?>
-								value='Anmelden'
+								value='<?php echo $p->t('global/anmelden') ?>'
 								onclick='location.href="<?php echo $_SERVER['PHP_SELF'] ?>?active=aufnahme&rt_id=<?php echo $rt->reihungstest_id ?>&pre=<?php echo $row->prestudent_id ?>"'>
 						</td>
 					</tr>
@@ -105,9 +105,9 @@ if(!isset($person_id))
 
 	?>
 	<button class="btn-nav btn btn-default" type="button" data-jump-tab="zahlungen">
-		Zurück
+		<?php echo $p->t('global/zurueck') ?>
 	</button>
 	<button class="btn-nav btn btn-default" type="button" data-jump-tab="abschicken">
-		Weiter
+		<?php echo $p->t('bewerbung/weiter'); ?>
 	</button>
 </div>

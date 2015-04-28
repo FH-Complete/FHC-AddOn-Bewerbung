@@ -34,10 +34,6 @@ if(!isset($person_id))
 	foreach ($studiengang->result as $row)
 		$stg_arr[$row->studiengang_kz]=$row->kuerzel;
 
-	//$benutzer = new benutzer();
-	//if(!$benutzer->load($uid))
-	//	die('Benutzer wurde nicht gefunden');
-
 	echo '<h2>'.$p->t('tools/zahlungen').' - '.$person->vorname.' '.$person->nachname.'</h2>';
 
 	$konto = new konto();
@@ -60,7 +56,7 @@ if(!isset($person_id))
 						<th><?php echo $p->t('global/studiensemester') ?></th>
 						<th><?php echo $p->t('tools/buchungstext') ?></th>
 						<th><?php echo $p->t('tools/betrag') ?></th>
-						<th><?php echo 'Zahlungsinformation' ?></th>
+						<th><?php echo $p->t('bewerbung/zahlungsinformation') ?></th>
 					</tr>
 				</thead>
 				<tbody>
@@ -99,10 +95,10 @@ if(!isset($person_id))
 							<td align="right" nowrap><?php echo ($betrag<0?'-':($betrag>0?'+':'')).sprintf('%.2f',abs($row['parent']->betrag)) ?> €</td>
 							<td align="center">
 							<?php if($betrag==0 && $row['parent']->betrag<0): ?>
-								bezahlt
+								<?php echo $p->t('bewerbung/bezahlt') ?>
 							<?php else: ?>
 									<a onclick="window.open('zahlungen_details.php?buchungsnr=<?php echo $row['parent']->buchungsnr ?>',
-												'Zahlungsdetails',
+												'<?php echo $p->t('bewerbung/zahlungsdetails') ?>',
 												'height=320,width=550,left=0,top=0,hotkeys=0,resizable=yes,status=no,scrollbars=no,toolbar=no,location=no,menubar=no,dependent=yes');
 										return false;" href="#">
 											<?php echo $p->t('tools/offen') ?>
@@ -118,10 +114,10 @@ if(!isset($person_id))
 		<p><?php echo $p->t('tools/keineZahlungenVorhanden') ?></p>
 	<?php endif; ?>
 	<button class="btn-nav btn btn-default" type="button" data-jump-tab="zgv">
-		Zurück
+		<?php echo $p->t('global/zurueck') ?>
 	</button>
 	<button class="btn-nav btn btn-default" type="button" data-jump-tab="aufnahme">
-		Weiter
+		<?php echo $p->t('bewerbung/weiter'); ?>
 	</button>
 </div>
 
