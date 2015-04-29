@@ -235,7 +235,7 @@ elseif($username && $password)
 
 						if(!$person->save())
 						{
-							die('Fehler beim Anlegen der Person aufgetreten.');
+							die($p->t('global/fehlerBeimSpeichernDerDaten'));
 						}
 
 						// Email Kontakt zu Person speichern
@@ -249,7 +249,7 @@ elseif($username && $password)
 
 						if(!$kontakt->save())
 						{
-							die('Fehler beim speichern des Kontaktes');
+							die($p->t('global/fehlerBeimSpeichernDerDaten'));
 						}
 
 						$anzStg = count($studiengaenge);
@@ -271,7 +271,7 @@ elseif($username && $password)
 
 								if(!$prestudent->save())
 								{
-									die('Fehler beim anlegen des Prestudenten');
+									die($p->t('global/fehlerBeimSpeichernDerDaten'));
 								}
 
 								// Interessenten Status anlegen
@@ -290,7 +290,7 @@ elseif($username && $password)
 
 								if(!$prestudent_status->save_rolle())
 								{
-									die('Fehler beim anlegen der Rolle');
+									die($p->t('global/fehlerBeimSpeichernDerDaten'));
 								}
 							}
 						}
@@ -309,7 +309,7 @@ elseif($username && $password)
 
 							if(!$preInteressent->save())
 							{
-								die('Fehler beim anlegen des Preinteressenten');
+								die($p->t('global/fehlerBeimSpeichernDerDaten'));
 							}
 
 							// Zuordnungen anlegen
@@ -326,7 +326,7 @@ elseif($username && $password)
 
 								if(!$preIntZuordnung->saveZuordnung())
 								{
-									die('Fehler beim anlegen des Preinteressenten');
+									die($p->t('global/fehlerBeimSpeichernDerDaten'));
 								}
 							}
 

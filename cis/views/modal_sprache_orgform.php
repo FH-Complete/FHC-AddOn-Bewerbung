@@ -75,7 +75,7 @@
 				<div class="radio">
 					<label>
 						<input type="radio" name="<?php echo $prio ?>Sprache" value="De">
-						<?php echo $p->t('global/sprache/deutsch') ?>
+						<?php echo $p->t('global/deutsch') ?>
 					</label>
 				</div>
 				<div class="radio">

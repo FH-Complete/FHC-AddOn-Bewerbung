@@ -49,10 +49,10 @@ if(isset($_GET['lang']))
 $person_id = isset($_GET['person_id'])?$_GET['person_id']:'';
 
 if(!isset($_SESSION['bewerbung/personId']))
-	die('Sie haben keine Berechtigung für diese Seite');
+	die($p->t('global/keineBerechtigungFuerDieseSeite'));
 
 if($person_id!=$_SESSION['bewerbung/personId'])
-	die('Sie haben keine Berechtigung für diese Seite');
+	die($p->t('global/keineBerechtigungFuerDieseSeite'));
 	
 $dokumenttyp = (isset($_GET['dokumenttyp']))? $_GET['dokumenttyp'] : '';
 $kategorie_kurzbz = isset($_REQUEST['kategorie_kurzbz'])?$_REQUEST['kategorie_kurzbz']:'';
@@ -61,7 +61,7 @@ $p=new phrasen($sprache);
 
 $PHP_SELF = $_SERVER['PHP_SELF'];
 echo "<html>
-		<head><title>File-Upload</title></head>
+		<head><title>".$p->t('bewerbung/fileUpload')."</title></head>
 		<body>";
 
 //Bei Upload des Bildes
@@ -104,13 +104,13 @@ if(isset($_POST['submitbild']))
             }    	
             else
             {
-                echo 'Fehler beim Speichern der Daten';
+                echo $p->t('global/fehlerBeimSpeichernDerDaten');
                 $error = true; 
             }
         } 
         else 
         {
-            echo 'Fehler beim Hochladen der Datei';
+            echo $p->t('bewerbung/fehlerBeimHochladenDerDatei');
             $error = true; 
         }
     }
@@ -186,7 +186,7 @@ if(isset($_POST['submitbild']))
 
 
         if (!$akte->save()) {
-            echo "<b>Fehler: $akte->errormsg</b>";
+            echo "<b>" . $p->t('global/fehleraufgetreten') . ": $akte->errormsg</b>";
         } else {
             echo "<b>" . $p->t('global/erfolgreichgespeichert') . "</b>";
         }
@@ -243,7 +243,7 @@ if($person_id !='')
 }
 else
 {
-	echo "Es wurde keine Person_id angegeben";
+	echo $p->t('bewerbung/fehlerKeinePersonId');
 }
 
 ?>

@@ -35,7 +35,7 @@ if(!isset($person_id))
 		$prestudent = new prestudent();
 		if(!$prestudent->getPrestudenten($person_id))
 		{
-			die('Konnte Prestudenten nicht laden');
+			die($p->t('global/fehlerBeimLadenDesDatensatzes'));
 		} ?>
 
 		<div class="table-responsive">
@@ -53,7 +53,7 @@ if(!isset($person_id))
 				foreach($prestudent->result as $row):
 					$stg = new studiengang();
 					if(!$stg->load($row->studiengang_kz))
-						die('Konnte Studiengang nicht laden');
+						die($p->t('global/fehlerBeimLadenDesDatensatzes'));
 
 					$bereits_angemeldet[] = $stg->studiengang_kz;
 

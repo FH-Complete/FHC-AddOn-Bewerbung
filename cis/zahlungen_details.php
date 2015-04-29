@@ -45,9 +45,9 @@ else
 	
 $konto=new konto();
 if(!$konto->load($buchungsnr))
-	die('Buchungsnummer '.$buchungsnr.' nicht vorhanden');
+	die($p->t('bewerbung/buchungsnummerNichtVorhanden', array($buchungsnr)));
 if($person_id != $konto->person_id)
-	die('keine Berechtigung, um auf Datensatz zuzugreifen');
+	die($p->t('global/keineBerechtigung'));
 	
 $studiengang=new studiengang();
 $studiengang->load($konto->studiengang_kz);
@@ -75,30 +75,30 @@ echo '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www
 		<html>
 		<head>
 			<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-			<title>Zahlungsdetails</title>
+			<title>'.$p->t('bewerbung/zahlungsdetails').'</title>
 			<link href="../../../skin/style.css.php" rel="stylesheet" type="text/css">
 			<link href="../../../skin/fhcomplete.css" rel="stylesheet" type="text/css">
 			<link rel="stylesheet" href="../../../skin/tablesort.css" type="text/css"/>
 		</head>
 		<body>';
 
-echo '<h1>Einzahlung für '.$konto->vorname.' '.$konto->nachname.'</h1>
+echo '<h1>'.$p->t('bewerbung/einzahlungFuer').' '.$konto->vorname.' '.$konto->nachname.'</h1>
 <table class="tablesorter">
 	<thead>
 		<tr>
-			<th width="40%">Zahlungsinformationen</th>
+			<th width="40%">'.$p->t('bewerbung/zahlungsinformationen').'</th>
 			<th width="60%"></th>
 		</tr>
 	</thead>
 	<tbody>
 		<tr>
-			<td>Buchungstyp</td>
+			<td>'.$p->t('bewerbung/buchungstyp').'</td>
 			<td>'.$buchungstyp[$konto->buchungstyp_kurzbz].'</td>
 		</tr><tr>
-			<td>Buchungstext</td>
+			<td>'.$p->t('bewerbung/buchungstext').'</td>
 			<td>'.$konto->buchungstext.'</td>
 		</tr><tr>
-			<td>Betrag</td>
+			<td>'.$p->t('bewerbung/betrag').'</td>
 			<td>'.abs($konto->betrag).' €</td>
 		</tr>
 	</tbody>
@@ -106,20 +106,20 @@ echo '<h1>Einzahlung für '.$konto->vorname.' '.$konto->nachname.'</h1>
 <table class="tablesorter">
 	<thead>
 		<tr>
-			<th width="40%">Zahlung an</th>
+			<th width="40%">'.$p->t('bewerbung/zahlungAn').'</th>
 			<th width="60%"></th>
 		</tr>
 	</thead>
 	<tbody>
 		<tr>
-			<td>Empfänger</td>
+			<td>'.$p->t('bewerbung/empfaenger').'</td>
 			<td>'.$oe->organisationseinheittyp_kurzbz.' '.$oe->bezeichnung.'</td>
 		</tr>';
 if($iban!='')
 {
 	echo '
 			<tr>
-				<td>IBAN</td>
+				<td>'.$p->t('bewerbung/iban').'</td>
 				<td>'.$iban.'</td>
 			</tr>';
 }
@@ -127,7 +127,7 @@ if($bic!='')
 {
 	echo '
 			<tr>
-				<td>BIC</td>
+				<td>'.$p->t('bewerbung/bic').'</td>
 				<td>'.$bic.'</td>
 			</tr>';
 }
@@ -136,7 +136,7 @@ if($konto->zahlungsreferenz!='')
 {
 	echo '
 			<tr>
-				<td>Zahlungsreferenz</td>
+				<td>'.$p->t('bewerbung/zahlungsreferenz').'</td>
 				<td>'.$konto->zahlungsreferenz.'</td>
 			</tr>';
 }

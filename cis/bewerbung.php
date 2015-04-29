@@ -69,7 +69,7 @@ $person = new person();
 
 if(!$person->load($person_id))
 {
-    die('Konnte Person nicht laden');
+    die($p->t('global/fehlerBeimLadenDesDatensatzes'));
 }
 //$sprache = DEFAULT_LANGUAGE;
 $sprache = getSprache();
@@ -91,21 +91,21 @@ if($benutzer->getBenutzerFromPerson($person->person_id))
 
 $message = '&nbsp;';
 
-$vollstaendig = '<span class="badge alert-success">vollständig <span class="glyphicon glyphicon-ok"></span></span>';
-$unvollstaendig = '<span class="badge alert-danger">unvollständig <span class="glyphicon glyphicon-remove"></span></span>';
+$vollstaendig = '<span class="badge alert-success">'.$p->t('bewerbung/vollstaendig').' <span class="glyphicon glyphicon-ok"></span></span>';
+$unvollstaendig = '<span class="badge alert-danger">'.$p->t('bewerbung/unvollstaendig').' <span class="glyphicon glyphicon-remove"></span></span>';
 
 if($method=='delete')
 {
     $akte= new akte();
     if(!$akte->load($akte_id))
     {
-        $message = 'Ungueltige akte_id übergeben';
+        $message = $p->t('global/fehlerBeiDerParameteruebergabe');
     }
     else
     {
 		if($akte->person_id != $person_id)
 		{
-    		die('Ungueltiger Zugriff');
+    		die($p->t('global/fehlerBeimLadenDesDatensatzes'));
 		}
 
         $dms_id = $akte->dms_id;
@@ -115,16 +115,16 @@ if($method=='delete')
         {
             if(!$dms->deleteDms($dms_id))
 			{
-                $message = 'Konnte DMS Eintrag nicht löschen';
+                $message = $p->t('global/fehlerBeimLoeschenDesEintrags');
 			}
             else
 			{
-                $message = 'Erfolgreich gelöscht';
+                $message = $p->t('global/erfolgreichgelöscht');
 			}
         }
         else
         {
-            $message = 'Konnte Akte nicht Löschen';
+            $message = $p->t('global/fehlerBeimLoeschenDesEintrags');
         }
     }
 
@@ -142,7 +142,7 @@ if(isset($_GET['rt_id']))
 		$prestudent = new prestudent();
 		if(!$prestudent->getPrestudenten($person_id))
 		{
-			die('Konnte Prestudenten nicht laden');
+			die($p->t('global/fehlerBeimLadenDesDatensatzes'));
 		}
 
 		foreach($prestudent->result as $row)
@@ -157,7 +157,7 @@ if(isset($_GET['rt_id']))
 
 				if(!$prest->save())
 				{
-					echo 'Fehler aufgetreten';
+					echo $p->t('global/fehlerBeimSpeichernDerDaten');
 				}
 			}
 		}
@@ -169,7 +169,7 @@ if(isset($_GET['rt_id']))
 
 		if($reihungstest->max_teilnehmer && $reihungstest->getTeilnehmerAnzahl($rt_id) >= $reihungstest->max_teilnehmer)
 		{
-			die('max. Teilnehmeranzahl erreicht.');
+			die($p->t('bewerbung/maxAnzahlTeilnehmer'));
 		}
 
 		$timestamp = time();
@@ -177,7 +177,7 @@ if(isset($_GET['rt_id']))
 		$prestudent = new prestudent();
 		if(!$prestudent->getPrestudenten($person_id))
 		{
-			die('Konnte Prestudenten nicht laden');
+			die($p->t('global/fehlerBeimLadenDesDatensatzes'));
 		}
 
 		foreach($prestudent->result as $row)
@@ -192,7 +192,7 @@ if(isset($_GET['rt_id']))
 
 				if(!$prest->save())
 				{
-					echo 'Fehler aufgetreten';
+					echo $p->t('global/fehlerBeimSpeichernDerDaten');
 				}
 			}
 		}
@@ -230,16 +230,16 @@ if(isset($_POST['btn_bewerbung_abschicken']))
             $prestudent_status->studienplan_id = $alterstatus->studienplan_id;
             $prestudent_status->new = true;
             if(!$prestudent_status->save_rolle())
-                die('Fehler beim anlegen der Rolle');
+                die($p->t('global/fehlerBeimSpeichernDerDaten'));
         }
 
         if(sendBewerbung($pr_id))
 		{
-			echo '<script type="text/javascript">alert("Sie haben sich erfolgreich beworben. Die zuständige Assistenz wird sich in den nächsten Tagen bei Ihnen melden.");</script>';
+			echo '<script type="text/javascript">alert("'.$p->t('bewerbung/erfolgreichBeworben').'");</script>';
 		}
         else
 		{
-			echo '<script type="text/javascript">alert("Es ist ein Fehler beim versenden der Bewerbung aufgetreten. Bitte versuchen Sie es nocheinmal");</script>';
+			echo '<script type="text/javascript">alert("'.$p->t('bewerbung/fehlerBeimVersendenDerBewerbung').'");</script>';
 		}
     }
 }
@@ -269,7 +269,7 @@ if(isset($_POST['submit_nachgereicht']))
 		$akte->nachgereicht = (isset($_POST['check_nachgereicht'])) ? true : false;
 		if(!$akte->save())
 		{
-            echo 'Fehler beim Speichern aufgetreten '.$akte->errormsg;
+            echo $p->t('global/fehlerBeimSpeichernDerDaten').' '.$akte->errormsg;
 		}
     }
 }
@@ -299,12 +299,12 @@ if(isset($_POST['btn_person']))
     $person->new = false;
     if(!$person->save())
 	{
-        $message = 'Fehler beim Speichern der Person aufgetreten';
+        $message = $p->t('global/fehlerBeimSpeichernDerDaten');
 	}
 
 	if($person->checkSvnr($person->svnr))
 	{
-		$message = 'SVNR bereits vorhanden';
+		$message = $p->t('bewerbung/svnrBereitsVorhanden');
 	}
 
     $berufstaetig = filter_input(INPUT_POST, 'berufstaetig');
@@ -428,7 +428,7 @@ if(isset($_POST['btn_kontakt']))
             $adresse_help->new = false;
             if(!$adresse_help->save())
 			{
-                die($adresse_help->errormsg);
+                die($p->t('global/fehlerBeimSpeichernDerDaten') . " (".$adresse_help->errormsg.")");
 			}
         }
         else
@@ -446,7 +446,7 @@ if(isset($_POST['btn_kontakt']))
             $adresse->new = true;
             if(!$adresse->save())
 			{
-                die('Fehler beim Anlegen der Adresse aufgetreten');
+                die($p->t('global/fehlerBeimSpeichernDerDaten'));
 			}
         }
     }
@@ -481,7 +481,7 @@ if(isset($_POST['btn_zgv']))
 
         if(!$prestudent_eintrag->save())
         {
-            die('Fehler beim Speichern des Prestudenten aufgetaucht.');
+            die($p->t('global/fehlerBeimSpeichernDerDaten'));
         }
     }
 }
@@ -531,7 +531,7 @@ else
 $prestudent = new prestudent();
 if(!$prestudent->getPrestudenten($person->person_id))
 {
-    die('Fehler beim laden des Prestudenten');
+    die($p->t('global/fehlerBeimLadenDesDatensatzes'));
 }
 
 $master_zgv_done = false;
@@ -605,7 +605,7 @@ else
 $prestudent = new prestudent();
 if(!$prestudent->getPrestudenten($person_id))
 {
-	die('Konnte Prestudenten nicht laden');
+	die($p->t('global/fehlerBeimLadenDesDatensatzes'));
 }
 
 $status_reihungstest = false;
@@ -622,14 +622,14 @@ foreach($prestudent->result as $row)
 	{
 		// Wenn keine Reihungstesttermine vorhanden sind ist die Bewerbung auch vollstaendig
 		if(!$prestudent->getPrestudenten($person_id))
-			die('Konnte Prestudenten nicht laden');
+			die($p->t('global/fehlerBeimLadenDesDatensatzes'));
 
 		$anzahl_reihungstests=0;
 		foreach($prestudent->result as $row)
 		{
 			$reihungstest = new reihungstest();
 			if(!$reihungstest->getStgZukuenftige($row->studiengang_kz))
-				die('Es ist ein Fehler aufgetreten:'.$reihungstest->errormsg);
+				die($p->t('global/fehleraufgetreten').': '.$reihungstest->errormsg);
 
 			$anzahl_reihungstests+=count($reihungstest->result);
 		}
@@ -647,7 +647,7 @@ foreach($prestudent->result as $row)
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 		<meta http-equiv="X-UA-Compatible" content="chrome=1">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<title>Bewerbung für einen Studiengang</title>
+		<title><?php echo $p->t('bewerbung/menuBewerbungFuerStudiengang') ?></title>
 		<link href="../../../submodules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" type="text/css">
 		<script src="../../../include/js/jquery.min.1.11.1.js"></script>
 		<script src="../../../submodules/bootstrap/dist/js/bootstrap.min.js"></script>
@@ -673,42 +673,42 @@ foreach($prestudent->result as $row)
 					<ul class="nav navbar-nav">
 						<li>
 							<a href="#allgemein" aria-controls="allgemein" role="tab" data-toggle="tab">
-								Allgemein <br> &nbsp;
+								<?php echo $p->t('bewerbung/menuAllgemein') ?> <br> &nbsp;
 							</a>
 						</li>
 						<li>
 							<a href="#daten" aria-controls="daten" role="tab" data-toggle="tab">
-								Persönliche Daten <br> <?php echo $status_person_text;?>
+								<?php echo $p->t('bewerbung/menuPersDaten') ?> <br> <?php echo $status_person_text;?>
 							</a>
 						</li>
 						<li>
 							<a href="#kontakt" aria-controls="kontakt" role="tab" data-toggle="tab">
-								Kontaktinformationen <br> <?php echo $status_kontakt_text;?>
+								<?php echo $p->t('bewerbung/menuKontaktinformationen') ?> <br> <?php echo $status_kontakt_text;?>
 							</a>
 						</li>
 						<li>
 							<a href="#dokumente" aria-controls="dokumente" role="tab" data-toggle="tab">
-								Dokumente <br> <?php echo $status_dokumente_text;?>
+								<?php echo $p->t('bewerbung/menuDokumente') ?> <br> <?php echo $status_dokumente_text;?>
 							</a>
 						</li>
 						<li>
 							<a href="#zgv" aria-controls="zgv" role="tab" data-toggle="tab">
-								ZGV <br> <?php echo $status_zgv_text;?>
+								<?php echo $p->t('bewerbung/menuZgv') ?> <br> <?php echo $status_zgv_text;?>
 							</a>
 						</li>
 						<li>
 							<a href="#zahlungen" aria-controls="zahlungen" role="tab" data-toggle="tab">
-								Zahlungen <br> <?php echo $status_zahlungen_text;?>
+								<?php echo $p->t('bewerbung/menuZahlungen') ?> <br> <?php echo $status_zahlungen_text;?>
 							</a>
 						</li>
 						<li>
 							<a href="#aufnahme" aria-controls="aufnahme" role="tab" data-toggle="tab">
-								Reihungstest <br> <?php echo $status_reihungstest_text;?>
+								<?php echo $p->t('bewerbung/menuReihungstest') ?> <br> <?php echo $status_reihungstest_text;?>
 							</a>
 						</li>
 						<li>
 							<a href="#abschicken" aria-controls="abschicken" role="tab" data-toggle="tab">
-								Bewerbung abschicken <br> &nbsp;
+								<?php echo $p->t('bewerbung/menuBewerbungAbschicken') ?> <br> &nbsp;
 							</a>
 						</li>
 					</ul>
@@ -751,16 +751,16 @@ function sendBewerbung($prestudent_id)
 
     $prestudent = new prestudent();
     if(!$prestudent->load($prestudent_id))
-        die('Konnte Prestudent nicht laden');
+        die($p->t('global/fehlerBeimLadenDesDatensatzes'));
 
     $studiengang = new studiengang();
     if(!$studiengang->load($prestudent->studiengang_kz))
-        die('Konnte Studiengang nicht laden');
+        die($p->t('global/fehlerBeimLadenDesDatensatzes'));
 
-    $email = 'Es hat sich ein Student für Ihren Studiengang beworben. <br>';
-    $email.= 'Name: '.$person->vorname.' '.$person->nachname.'<br>';
-    $email.= 'Studiengang: '.$studiengang->bezeichnung.'<br><br>';
-    $email.= 'Für mehr Details, verwenden Sie die Personenansicht im FAS.';
+    $email = $p->t('global/emailBodyStart');
+    $email.= $p->t('global/name').': '.$person->vorname.' '.$person->nachname.'<br>';
+    $email.= $p->t('global/studiengang').': '.$studiengang->bezeichnung.'<br><br>';
+    $email.= $p->t('global/emailBodyEnde');
 
     $mail = new mail($studiengang->email, 'no-reply', 'Bewerbung '.$person->vorname.' '.$person->nachname, 'Bitte sehen Sie sich die Nachricht in HTML Sicht an, um den Link vollständig darzustellen.');
 	$mail->setHTMLContent($email);
