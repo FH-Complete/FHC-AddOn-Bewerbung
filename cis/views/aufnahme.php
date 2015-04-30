@@ -32,7 +32,7 @@ if(!isset($person_id))
 
 	$prestudent = new prestudent();
 	if(!$prestudent->getPrestudenten($person_id))
-		die($p->t('bewerbung/konntePrestudNichtLaden'));
+		die($p->t('global/fehlerBeimLadenDesDatensatzes'));
 
 	foreach($prestudent->result as $row)
 	{

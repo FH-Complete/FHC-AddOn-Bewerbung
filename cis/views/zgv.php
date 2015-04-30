@@ -90,7 +90,7 @@ $types = $stg->getTypes($studiengaenge);
                         <input type="text" name="<?php echo $stufe ?>_zgv_ort" id="<?php echo $stufe ?>_zgv_ort"
                                class="form-control"
                                value="<?php echo isset($attribute['ort']) ? $attribute['ort'] : '' ?>"
-                               placeholder="Wo wurde die Urkunde ausgestellt?">
+                               placeholder="<?php echo $p->t('bewerbung/woWurdeUrkundeAusgestellt'); ?>">
                     </div>
                 </div>
                 <div class="form-group">

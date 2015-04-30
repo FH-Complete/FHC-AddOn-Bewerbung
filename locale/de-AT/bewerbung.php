@@ -1,15 +1,15 @@
 <?php
 $this->phrasen['bewerbung/ungueltigerZugriff']='ungültiger Zugriff';
-$this->phrasen['bewerbung/welcome']='Willkommen bei der Online Bewerbung';
+$this->phrasen['bewerbung/welcome']='Willkommen bei der Online Bewerbung an der '.CAMPUS_NAME;
 $this->phrasen['bewerbung/registration']='Registration';
 $this->phrasen['bewerbung/registrieren']='Registrieren';
 $this->phrasen['bewerbung/registrierenOderZugangscode']='<a href="'.$_SERVER['PHP_SELF'].'?method=registration">Hier registrieren</a> oder Zugangscode eingeben';
 $this->phrasen['bewerbung/einleitungstext']='Für eine Bewerbung füllen Sie bitte das Formular <u>vollständig</u> aus und klicken Sie anschließend auf "Registrieren". <br>
-												Danach haben Sie noch die Möglichkeit, weitere Daten einzugeben und Dokumente hochzuladen, bevor Sie Ihre Bewerbung abschicken.'; //noch zu übersetzen
+												Danach haben Sie noch die Möglichkeit, weitere Daten einzugeben und Dokumente hochzuladen, bevor Sie Ihre Bewerbung abschicken.';
 $this->phrasen['bewerbung/login']='Login';
 $this->phrasen['bewerbung/zugangscode']='Zugangscode';
 $this->phrasen['bewerbung/fallsVorhanden']='(falls vorhanden)';
-$this->phrasen['bewerbung/mailtextHtml']='Bitte sehen Sie sich die Nachricht in HTML Sicht an, um den Link vollständig darzustellen.';
+$this->phrasen['bewerbung/mailtextHtml']='Bitte sehen Sie sich die Nachricht in der HTML-Ansicht an um den Link vollständig darzustellen.';
 $this->phrasen['bewerbung/mailtext']='Sehr geehrteR Herr/Frau %1$s %2$s.<br><br>
         Vielen Dank für Ihr Interesse an einem Studiengang der '.CAMPUS_NAME.'. <br> 
         Um sich für einen Studiengang zu bewerben verwenden Sie bitte folgenden Link und Zugangscode: <br><br>
@@ -20,20 +20,19 @@ $this->phrasen['bewerbung/mailtext']='Sehr geehrteR Herr/Frau %1$s %2$s.<br><br>
 $this->phrasen['bewerbung/zugangsdatenFalsch']='Der eingegebene Zugangscode ist falsch oder Sie haben sich noch nicht registriert.';
 $this->phrasen['bewerbung/fehlerBeimSenden']='Beim senden der E-Mail ist ein Fehler aufgetreten.';
 $this->phrasen['bewerbung/zurueckZurAnmeldung']='Zurück zur Anmeldung.';
-$this->phrasen['bewerbung/sicherheitscodeFalsch']='Der eingegebene Sicherheitscode war falsch.';
+$this->phrasen['bewerbung/sicherheitscodeFalsch']='Der eingegebene Sicherheitscode ist falsch.';
 $this->phrasen['bewerbung/geplanterStudienbeginn']='Geplanter Studienbeginn';
-$this->phrasen['bewerbung/bitteWaehlen']='Bitte wählen...';
 $this->phrasen['bewerbung/studienrichtung']='Gewünschte Studienrichtung(en)';
 $this->phrasen['bewerbung/bitteStudienrichtungWaehlen']='Bitte mindestens eine Studienrichtung auswählen.';
 $this->phrasen['bewerbung/bitteVornameAngeben']='Bitte geben Sie Ihren Vornamen ein.';
 $this->phrasen['bewerbung/bitteNachnameAngeben']='Bitte geben Sie Ihren Nachnamen ein.';
-$this->phrasen['bewerbung/bitteGeburtsdatumEintragen']='Bitte tragen Sie Ihr Geburtsdatum ein.';
+$this->phrasen['bewerbung/bitteGeburtsdatumEintragen']='Bitte geben Sie Ihr Geburtsdatum ein.';
 $this->phrasen['bewerbung/bitteGeschlechtWaehlen']='Bitte geben Sie Ihr Geschlecht ein.';
-$this->phrasen['bewerbung/bitteEmailAngeben']='Bitte geben Sie eine gültige eMail-Adresse ein.';
+$this->phrasen['bewerbung/bitteEmailAngeben']='Bitte geben Sie eine gültige E-Mail-Adresse ein.';
 $this->phrasen['bewerbung/bitteStudienbeginnWaehlen']='Bitte wählen Sie den gewünschten Studienbeginn.';
 $this->phrasen['bewerbung/captcha']='Geben Sie bitte hier die Zeichen aus der Grafik ein (Spamschutz).';
 $this->phrasen['bewerbung/andereGrafik']='Andere Grafik';
-$this->phrasen['bewerbung/datumFormat']='TT.MM.JJJJ';
+$this->phrasen['bewerbung/datumFormat']='tt.mm.jjjj';
 $this->phrasen['bewerbung/egal']='egal';
 $this->phrasen['bewerbung/orgform']='Organisationsform';
 $this->phrasen['bewerbung/orgform/berufsbegleitend']='Berufsbegleitend';
@@ -102,7 +101,6 @@ $this->phrasen['bewerbung/bezahlt']='bezahlt';
 $this->phrasen['bewerbung/zahlungsdetails']='Zahlungsdetails';
 $this->phrasen['bewerbung/menuReihungstest']='Reihungstest';
 $this->phrasen['bewerbung/fuerReihungstestAnmelden']='Sie können sich für folgende Reihungstest anmelden:';
-$this->phrasen['bewerbung/konntePrestudNichtLaden']='Konnte Prestudenten nicht laden';
 $this->phrasen['bewerbung/fehler']='Es ist ein Fehler aufgetreten';
 $this->phrasen['bewerbung/angemeldetPlaetze']='angemeldet / Plätze';
 $this->phrasen['bewerbung/uhrzeit']='Uhrzeit';
@@ -121,7 +119,7 @@ $this->phrasen['bewerbung/einzahlungFuer']='Einzahlung für';
 $this->phrasen['bewerbung/zahlungsinformationen']='Zahlungsinformationen';
 $this->phrasen['bewerbung/buchungstyp']='Buchungstyp';
 $this->phrasen['bewerbung/buchungstext']='Buchungstext';
-$this->phrasen['bewerbung/betrag']='Amount';
+$this->phrasen['bewerbung/betrag']='Betrag';
 $this->phrasen['bewerbung/zahlungAn']='Zahlung an';
 $this->phrasen['bewerbung/empfaenger']='Empfänger';
 $this->phrasen['bewerbung/iban']='IBAN';
@@ -136,7 +134,8 @@ $this->phrasen['bewerbung/fehlerBeimVersendenDerBewerbung']='Es ist ein Fehler b
 $this->phrasen['bewerbung/svnrBereitsVorhanden']='SVNR bereits vorhanden';
 $this->phrasen['bewerbung/menuBewerbungFuerStudiengang']='Bewerbung für einen Studiengang';
 $this->phrasen['bewerbung/emailBodyStart']='Es hat sich ein Student für Ihren Studiengang beworben. <br>';
-$this->phrasen['bewerbung/emailBodyEnde']='Für mehr Details, verwenden Sie die Personenansicht im FAS.';
+$this->phrasen['bewerbung/emailBodyEnde']='Für mehr Details verwenden Sie die Personenansicht im FAS.';
 $this->phrasen['bewerbung/fileUpload']='File-Upload';
 $this->phrasen['bewerbung/fehlerBeimHochladenDerDatei']='Fehler beim Hochladen der Datei';
-$this->phrasen['bewerbung/fehlerBeimHochladenDerDatei']='Es wurde keine Person_id angegeben';
+$this->phrasen['bewerbung/fehlerKeinePersonId']='Es wurde keine Person_id angegeben';
+$this->phrasen['bewerbung/woWurdeUrkundeAusgestellt']='Wo wurde die Urkunde ausgestellt?';

@@ -419,7 +419,7 @@ elseif($username && $password)
 						</label>
 						<div class="col-sm-4 dropdown">
 							<select id="studiensemester_kurzbz" name="studiensemester_kurzbz" class="form-control">
-								<option value=""><?php echo $p->t('bewerbung/bitteWaehlen') ?></option>
+								<option value=""><?php echo $p->t('bewerbung/bitteAuswaehlen') ?></option>
 								<?php
 								$stsem = new studiensemester();
 								$stsem->getFutureStudiensemester('',4);
