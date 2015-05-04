@@ -110,7 +110,7 @@ if(isset($_POST['submitbild']))
         } 
         else 
         {
-            echo $p->t('bewerbung/fehlerBeimHochladenDerDatei');
+            echo $p->t('global/dateiNichtErfolgreichHochgeladen');
             $error = true; 
         }
     }

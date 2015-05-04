@@ -1,6 +1,6 @@
 <?php
 $this->phrasen['bewerbung/ungueltigerZugriff']='ungültiger Zugriff';
-$this->phrasen['bewerbung/welcome']='Willkommen bei der Online Bewerbung an der '.CAMPUS_NAME;
+$this->phrasen['bewerbung/welcome']='Willkommen bei der Online Bewerbung';
 $this->phrasen['bewerbung/registration']='Registration';
 $this->phrasen['bewerbung/registrieren']='Registrieren';
 $this->phrasen['bewerbung/registrierenOderZugangscode']='<a href="'.$_SERVER['PHP_SELF'].'?method=registration">Hier registrieren</a> oder Zugangscode eingeben';
@@ -18,7 +18,7 @@ $this->phrasen['bewerbung/mailtext']='Sehr geehrteR Herr/Frau %1$s %2$s.<br><br>
         Mit freundlichen Grüßen, <br>
         '.CAMPUS_NAME;
 $this->phrasen['bewerbung/zugangsdatenFalsch']='Der eingegebene Zugangscode ist falsch oder Sie haben sich noch nicht registriert.';
-$this->phrasen['bewerbung/fehlerBeimSenden']='Beim senden der E-Mail ist ein Fehler aufgetreten.';
+$this->phrasen['bewerbung/fehlerBeimSenden']='Beim Senden der E-Mail ist ein Fehler aufgetreten.';
 $this->phrasen['bewerbung/zurueckZurAnmeldung']='Zurück zur Anmeldung.';
 $this->phrasen['bewerbung/sicherheitscodeFalsch']='Der eingegebene Sicherheitscode ist falsch.';
 $this->phrasen['bewerbung/geplanterStudienbeginn']='Geplanter Studienbeginn';
@@ -81,7 +81,7 @@ $this->phrasen['bewerbung/nation']='Nation';
 $this->phrasen['bewerbung/menuDokumente']='Dokumente';
 $this->phrasen['bewerbung/bitteDokumenteHochladen']='Bitte laden Sie alle vorhandenen Dokumente, die für Ihre Bewerbung relevant sind, über folgenden Link hoch:';
 $this->phrasen['bewerbung/linkDokumenteHochladen']='Dokumente hochladen';
-$this->phrasen['bewerbung/dokumenteZumHochladen']='Dokumente zum Uploaden:';
+$this->phrasen['bewerbung/dokumenteZumHochladen']='Benötigte Dokumente:';
 $this->phrasen['bewerbung/dokumentName']='Name';
 $this->phrasen['bewerbung/benoetigtFuer']='Benötigt für';
 $this->phrasen['bewerbung/dokumentErforderlich']='Dokument erforderlich';
@@ -114,7 +114,6 @@ $this->phrasen['bewerbung/erklaerungBewerbungAbschicken']='Haben Sie alle Daten 
 $this->phrasen['bewerbung/bewerbungAbschickenFuer']='Bewerbung abschicken für';
 $this->phrasen['bewerbung/buttonBewerbungAbschicken']='Bewerbung abschicken';
 $this->phrasen['bewerbung/logout']='Logout';
-$this->phrasen['bewerbung/zahlungsdetails']='Zahlungsdetails';
 $this->phrasen['bewerbung/einzahlungFuer']='Einzahlung für';
 $this->phrasen['bewerbung/zahlungsinformationen']='Zahlungsinformationen';
 $this->phrasen['bewerbung/buchungstyp']='Buchungstyp';
@@ -136,6 +135,5 @@ $this->phrasen['bewerbung/menuBewerbungFuerStudiengang']='Bewerbung für einen S
 $this->phrasen['bewerbung/emailBodyStart']='Es hat sich ein Student für Ihren Studiengang beworben. <br>';
 $this->phrasen['bewerbung/emailBodyEnde']='Für mehr Details verwenden Sie die Personenansicht im FAS.';
 $this->phrasen['bewerbung/fileUpload']='File-Upload';
-$this->phrasen['bewerbung/fehlerBeimHochladenDerDatei']='Fehler beim Hochladen der Datei';
 $this->phrasen['bewerbung/fehlerKeinePersonId']='Es wurde keine Person_id angegeben';
 $this->phrasen['bewerbung/woWurdeUrkundeAusgestellt']='Wo wurde die Urkunde ausgestellt?';
