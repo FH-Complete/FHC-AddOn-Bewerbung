@@ -35,7 +35,7 @@ function BewerbungPersonAddStudiengang($studiengang_kz, $anmerkung, $person, $st
 
 		if(!$prestudent->save())
 		{
-			return 'Fehler beim Anlegen des Prestudenten';
+			return false;
 		}
 
 		// Interessenten Status anlegen
@@ -54,7 +54,7 @@ function BewerbungPersonAddStudiengang($studiengang_kz, $anmerkung, $person, $st
 
 		if(!$prestudent_status->save_rolle())
 		{
-			return 'Fehler beim Anlegen der Rolle';
+			return false;
 		}
 
 		return true;

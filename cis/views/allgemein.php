@@ -231,13 +231,13 @@ if(!isset($person_id))
 				success: function(data) 
 				{
 					if(data.status!='ok')
-						alert('Fehler'+data.msg);
+						alert(data.msg);
 					else
 						window.location.reload();
 				},
 				error: function(data) 
 				{
-					alert('Fehler beim Speichern der Daten')
+					alert('<?php echo $p->t('global/fehlerBeimSpeichernDerDaten') ?>')
 				}
 			});
 			

@@ -494,7 +494,7 @@ if($addStudiengang)
 	if($return===true)
 		echo json_encode(array('status'=>'ok'));
 	else
-		echo json_encode(array('status'=>'fehler','msg'=>$return));
+		echo json_encode(array('status'=>'fehler','msg'=>$p->t('global/fehlerBeimSpeichernDerDaten')));
 	exit;
 }
 
