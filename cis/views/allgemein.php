@@ -87,12 +87,20 @@ if(!isset($person_id))
 		</div>
 		<div class="modal-body">
 			<div class="form-group">
+                <label for="ausbildungstyp" class="control-label">
+					<?php echo $p->t('bewerbung/ausbildungstyp') ?>
+				</label>
+				<div class="dropdown">
+					<select id="ausbildungstyp" name="ausbildungstyp" class="form-control">
+						<option value="stg"><?php echo $p->t('global/studiengang') ?></option>
+                        <option value="lehrg"><?php echo $p->t('bewerbung/lehrgang') ?></option>
+					</select>
+				</div>
 				<label for="studiensemester_kurzbz" class="control-label">
 					<?php echo $p->t('bewerbung/geplanterStudienbeginn') ?>
 				</label>
 				<div class="dropdown">
 					<select id="studiensemester_kurzbz" name="studiensemester_kurzbz" class="form-control">
-						<option value=""><?php echo $p->t('bewerbung/bitteAuswaehlen') ?></option>
 						<?php
 						$stsem = new studiensemester();
 						$stsem->getFutureStudiensemester('',4);
@@ -106,51 +114,75 @@ if(!isset($person_id))
 				</div>
 			</div>
 			<div class="form-group">
+                <?php
+                $optionsStg = null;
+                $optionsLehrg = null;
+                $stg = new studiengang();
+                $stg->getAllForBewerbung();
+
+                foreach($stg->result as $result)
+                {
+                    if($result->studiengang_kz > 0)
+                    {
+                        $typ = new studiengang();
+                        $typ->getStudiengangTyp($result->typ);
+                        if(in_array($result->studiengang_kz, $bereits_angemeldet))
+                        {
+                            continue;
+                        } 
+
+                        $orgform = $stg->getOrgForm($result->studiengang_kz);
+                        $sprache = $stg->getSprache($result->studiengang_kz);
+
+                        $modal = false;
+
+                        if(count($orgform) !== 1 || count($sprache) !== 1)
+                        {
+                            $modal = true;
+                        }
+
+                        if($result->organisationseinheittyp_kurzbz == "Studiengang")
+                        {
+                            $optionsStg .= '
+                                <div class="radio">
+                                    <label>
+                                        <input type="radio" name="studiengaenge[]" value="'.$result->studiengang_kz.'"
+                                            data-modal="'.$modal.'"
+                                            data-modal-sprache="'.implode(',', $sprache).'"
+                                            data-modal-orgform="'.implode(',', $orgform).'">
+                                        '.$result->studiengangbezeichnung.'
+                                        <input type="hidden" id="anmerkung'.$result->studiengang_kz.'">
+                                    </label>
+                                </div>
+                                ';
+                        }
+                        else if($result->organisationseinheittyp_kurzbz == "Lehrgang")
+                        {
+                            $optionsLehrg .= '
+                                <div class="radio">
+                                    <label>
+                                        <input type="radio" name="studiengaenge[]" value="'.$result->studiengang_kz.'"
+                                            data-modal="'.$modal.'"
+                                            data-modal-sprache="'.implode(',', $sprache).'"
+                                            data-modal-orgform="'.implode(',', $orgform).'">
+                                        '.$result->studiengangbezeichnung.'
+                                        <input type="hidden" id="anmerkung'.$result->studiengang_kz.'">
+                                    </label>
+                                </div>
+                                ';
+                        }
+                    }
+                }			
+                ?>
 				<label for="studiensemester_kurzbz" class="control-label">
 					<?php echo $p->t('bewerbung/geplanteStudienrichtung') ?>
 				</label>
-			<?php
-			$stg = new studiengang();
-			$stg->getAll('typ,bezeichnung',true);
-
-			foreach($stg->result as $result)
-			{
-				if(!$result->onlinebewerbung)
-					continue;
-				if($result->studiengang_kz > 0)
-				{
-					$typ = new studiengang();
-					$typ->getStudiengangTyp($result->typ);
-					if(in_array($result->studiengang_kz, $bereits_angemeldet))
-					{
-						continue;
-					} 
-
-					$orgform = $stg->getOrgForm($result->studiengang_kz);
-					$sprache = $stg->getSprache($result->studiengang_kz);
-
-					$modal = false;
-
-					if(count($orgform) !== 1 || count($sprache) !== 1)
-					{
-						$modal = true;
-					}
-
-					echo '
-					<div class="radio">
-						<label>
-							<input type="radio" name="studiengaenge[]" value="'.$result->studiengang_kz.'"
-								data-modal="'.$modal.'"
-								data-modal-sprache="'.implode(',', $sprache).'"
-								data-modal-orgform="'.implode(',', $orgform).'">
-							'.$result->bezeichnung.'
-							<input type="hidden" id="anmerkung'.$result->studiengang_kz.'">
-						</label>
-					</div>
-					';
-				}
-			}			
-			?>
+                <div id="auswahlStg">
+                    <?php echo $optionsStg ?>
+                </div>
+                <div id="auswahlLehrg" style="display: none;">
+                    <?php echo $optionsLehrg ?>
+                </div>
 			</div>
 		</div>
 		<div class="modal-footer">
@@ -212,6 +244,17 @@ if(!isset($person_id))
 
 				saveStudiengang(stgkz, anm, stsem);
 			});
+            
+            $('#ausbildungstyp').change(function() {
+                if($('#ausbildungstyp').val() == "stg") {
+                    $('#auswahlLehr').hide();
+                    $('#auswahlStg').show();
+                }
+                else {
+                    $('#auswahlLehr').show();
+                    $('#auswahlStg').hide();
+                }
+            })
 
 		});
 		function saveStudiengang(stgkz, anm, stsem)

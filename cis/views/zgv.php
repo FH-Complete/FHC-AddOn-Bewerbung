@@ -26,6 +26,7 @@ $zgvma_options->getAllMaster();
 
 $zgv = $prestudent->getZgv();
 $studiengaenge = array();
+$types = array();
 $studienplan = new studienplan();
 $stg = new studiengang();
 
@@ -34,7 +35,8 @@ foreach ($prestudent->result as $prestudent_eintrag)
     $studiengaenge[] = $prestudent_eintrag->studiengang_kz;
 }
 
-$types = $stg->getTypes($studiengaenge);
+if(!empty($studiengaenge))
+    $types = $stg->getTypes($studiengaenge);
 ?>
 <div role="tabpanel" class="tab-pane" id="zgv">
     <h2><?php echo $p->t('bewerbung/menuZugangsvoraussetzungen'); ?></h2>

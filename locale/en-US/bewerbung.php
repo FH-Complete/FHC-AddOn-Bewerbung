@@ -137,3 +137,5 @@ $this->phrasen['bewerbung/emailBodyEnde']='Für mehr Details verwenden Sie die P
 $this->phrasen['bewerbung/fileUpload']='File-Upload';
 $this->phrasen['bewerbung/fehlerKeinePersonId']='There was no Person_id supplied';
 $this->phrasen['bewerbung/woWurdeUrkundeAusgestellt']='Wo wurde die Urkunde ausgestellt?';
+$this->phrasen['bewerbung/ausbildungstyp']='Type of Education';
+$this->phrasen['bewerbung/lehrgang']='Lehrgang';

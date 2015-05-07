@@ -20,6 +20,7 @@
  * 			Manfred Kindl 	<kindlm@technikum-wien.at>
  */
 
+require_once('../../../config/global.config.inc.php');
 require_once('../../../config/cis.config.inc.php');
 require_once('../../../include/phrasen.class.php');
 require_once('../../../include/person.class.php');
@@ -187,15 +188,19 @@ elseif($username && $password)
 				$geb_datum = filter_input(INPUT_POST, 'geb_datum');
 				$geschlecht = filter_input(INPUT_POST, 'geschlecht');
 				$email = filter_input(INPUT_POST, 'email');
-				$studiengaenge = filter_input(INPUT_POST, 'studiengaenge', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY);
 				$anmerkungen = filter_input(INPUT_POST, 'anmerkung', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY);
-				$std_semester = filter_input(INPUT_POST, 'studiensemester_kurzbz');
-				$stg_auswahl = filter_input(INPUT_POST, 'stg');
+				
+                if(BEWERBERTOOL_STUDIENAUSWAHL_ANZEIGEN)
+                {
+                    $studiengaenge = filter_input(INPUT_POST, 'studiengaenge', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY);
+                    $std_semester = filter_input(INPUT_POST, 'studiensemester_kurzbz');
+                    $stg_auswahl = filter_input(INPUT_POST, 'stg');
 
-				if(!is_array($studiengaenge))
-				{
-					$studiengaenge = array();
-				}
+                    if(!is_array($studiengaenge))
+                    {
+                        $studiengaenge = array();
+                    }
+                }
 
 				if($geb_datum)
 				{
@@ -210,11 +215,11 @@ elseif($username && $password)
 					// Sicherheitscode wurde falsch eingegeben
 					if ($securimage->check($_POST['captcha_code']) == false)
 					{
-						$message = '<span class="error">'.$p->t('bewerbung/sicherheitscodeFalsch').'</span><br />';
+						$message = '<p class="bg-danger padding-10">'.$p->t('bewerbung/sicherheitscodeFalsch').'</p>';
 					}
-					elseif (count($studiengaenge)==0)
+					elseif (BEWERBERTOOL_STUDIENAUSWAHL_ANZEIGEN && count($studiengaenge)==0)
 					{
-						$message = '<span class="error">'.$p->t('bewerbung/bitteStudienrichtungWaehlen').'</span><br />';
+						$message = '<p class="bg-danger padding-10">'.$p->t('bewerbung/bitteStudienrichtungWaehlen').'</p>';
 					}
 					else
 					{
@@ -252,87 +257,88 @@ elseif($username && $password)
 							die($p->t('global/fehlerBeimSpeichernDerDaten'));
 						}
 
-						$anzStg = count($studiengaenge);
+						if(BEWERBERTOOL_STUDIENAUSWAHL_ANZEIGEN && count($studiengaenge) < ANZAHL_PREINTERESSENT)
+                        {
+                            $anzStg = count($studiengaenge);
 
-						// ab wieviel ausgewählten Studiengängen kommt Student ins Preinteressententool
-						if(count($studiengaenge) < ANZAHL_PREINTERESSENT)
-						{
-							// Prestudenten anlegen
-							for($i = 0; $i<$anzStg; $i++)
-							{
-								$prestudent = new prestudent();
-								$prestudent->person_id = $person->person_id;
-								$prestudent->studiengang_kz = $studiengaenge[$i];
-								$prestudent->aufmerksamdurch_kurzbz = 'k.A.';
-								$prestudent->insertamum = date('Y-m-d H:i:s');
-								$prestudent->updateamum = date('Y-m-d H:i:s');
-								$prestudent->reihungstestangetreten = false;
-								$prestudent->new = true;
+                            // Prestudenten anlegen
+                            for($i = 0; $i<$anzStg; $i++)
+                            {
+                                $prestudent = new prestudent();
+                                $prestudent->person_id = $person->person_id;
+                                $prestudent->studiengang_kz = $studiengaenge[$i];
+                                $prestudent->aufmerksamdurch_kurzbz = 'k.A.';
+                                $prestudent->insertamum = date('Y-m-d H:i:s');
+                                $prestudent->updateamum = date('Y-m-d H:i:s');
+                                $prestudent->reihungstestangetreten = false;
+                                $prestudent->new = true;
 
-								if(!$prestudent->save())
-								{
-									die($p->t('global/fehlerBeimSpeichernDerDaten'));
-								}
+                                if(!$prestudent->save())
+                                {
+                                    die($p->t('global/fehlerBeimSpeichernDerDaten'));
+                                }
 
-								// Interessenten Status anlegen
-								$prestudent_status = new prestudent();
-								$prestudent_status->load($prestudent->prestudent_id);
-								$prestudent_status->status_kurzbz = 'Interessent';
-								$prestudent_status->studiensemester_kurzbz = $std_semester;
-								$prestudent_status->ausbildungssemester = '1';
-								$prestudent_status->datum = date("Y-m-d H:m:s");
-								$prestudent_status->insertamum = date("Y-m-d H:m:s");
-								$prestudent_status->insertvon = '';
-								$prestudent_status->updateamum = date("Y-m-d H:m:s");
-								$prestudent_status->updatevon = '';
-								$prestudent_status->new = true;
-								$prestudent_status->anmerkung_status = $anmerkungen[$studiengaenge[$i]];
+                                // Interessenten Status anlegen
+                                $prestudent_status = new prestudent();
+                                $prestudent_status->load($prestudent->prestudent_id);
+                                $prestudent_status->status_kurzbz = 'Interessent';
+                                $prestudent_status->studiensemester_kurzbz = $std_semester;
+                                $prestudent_status->ausbildungssemester = '1';
+                                $prestudent_status->datum = date("Y-m-d H:m:s");
+                                $prestudent_status->insertamum = date("Y-m-d H:m:s");
+                                $prestudent_status->insertvon = '';
+                                $prestudent_status->updateamum = date("Y-m-d H:m:s");
+                                $prestudent_status->updatevon = '';
+                                $prestudent_status->new = true;
+                                $prestudent_status->anmerkung_status = $anmerkungen[$studiengaenge[$i]];
 
-								if(!$prestudent_status->save_rolle())
-								{
-									die($p->t('global/fehlerBeimSpeichernDerDaten'));
-								}
-							}
-						}
+                                if(!$prestudent_status->save_rolle())
+                                {
+                                    die($p->t('global/fehlerBeimSpeichernDerDaten'));
+                                }
+                            }
+                        }
 						else
 						{
-							// Preinteressent anlegen
-							$timestamp = time();
-							$preInteressent = new preinteressent();
-							$preInteressent->person_id = $person->person_id;
-							$preInteressent->aufmerksamdurch_kurzbz = 'k.A.';
-							$preInteressent->kontaktmedium_kurzbz = 'bewerbungonline';
-							$preInteressent->erfassungsdatum = date('Y-m-d', $timestamp);
-							$preInteressent->insertamum = date('Y-m-d H:i:s');
-							$preInteressent->updateamum = date('Y-m-d H:i:s');
-							$preInteressent->new = true;
+                            // Preinteressent anlegen
+                            $timestamp = time();
+                            $preInteressent = new preinteressent();
+                            $preInteressent->person_id = $person->person_id;
+                            $preInteressent->aufmerksamdurch_kurzbz = 'k.A.';
+                            $preInteressent->kontaktmedium_kurzbz = 'bewerbungonline';
+                            $preInteressent->erfassungsdatum = date('Y-m-d', $timestamp);
+                            $preInteressent->insertamum = date('Y-m-d H:i:s');
+                            $preInteressent->updateamum = date('Y-m-d H:i:s');
+                            $preInteressent->new = true;
 
-							if(!$preInteressent->save())
-							{
-								die($p->t('global/fehlerBeimSpeichernDerDaten'));
-							}
+                            if(!$preInteressent->save())
+                            {
+                                die($p->t('global/fehlerBeimSpeichernDerDaten'));
+                            }
 
-							// Zuordnungen anlegen
+							if(BEWERBERTOOL_STUDIENAUSWAHL_ANZEIGEN)
+                            {
+                                // Zuordnungen anlegen
+                                $anzStg = count($studiengaenge);
+                                for($i = 0; $i<$anzStg; $i++)
+                                {
+                                    $preIntZuordnung = new preinteressent();
+                                    $preIntZuordnung->preinteressent_id = $preInteressent->preinteressent_id;
+                                    $preIntZuordnung->studiengang_kz = $studiengaenge[$i];
+                                    $preIntZuordnung->prioritaet = '1';
+                                    $preIntZuordnung->insertamum = date('Y-m-d H:i:s');
+                                    $preIntZuordnung->updateamum = date('Y-m-d H:i:s');
+                                    $preIntZuordnung->new = true;
 
-							for($i = 0; $i<$anzStg; $i++)
-							{
-								$preIntZuordnung = new preinteressent();
-								$preIntZuordnung->preinteressent_id = $preInteressent->preinteressent_id;
-								$preIntZuordnung->studiengang_kz = $studiengaenge[$i];
-								$preIntZuordnung->prioritaet = '1';
-								$preIntZuordnung->insertamum = date('Y-m-d H:i:s');
-								$preIntZuordnung->updateamum = date('Y-m-d H:i:s');
-								$preIntZuordnung->new = true;
-
-								if(!$preIntZuordnung->saveZuordnung())
-								{
-									die($p->t('global/fehlerBeimSpeichernDerDaten'));
-								}
-							}
-
+                                    if(!$preIntZuordnung->saveZuordnung())
+                                    {
+                                        die($p->t('global/fehlerBeimSpeichernDerDaten'));
+                                    }
+                                }
+                            }
 						}
 
-						//Email schicken
+                        //Email schicken
 						echo sendMail($zugangscode, $email);
 						exit();
 					}
@@ -412,7 +418,8 @@ elseif($username && $password)
 							<input type="email" maxlength="128" name="email" id="email" value="<?php echo $email ?>" class="form-control">
 						</div>
 					</div>
-
+                    
+                    <?php if(BEWERBERTOOL_STUDIENAUSWAHL_ANZEIGEN): ?>
 					<div class="form-group">
 						<label for="studiensemester_kurzbz" class="col-sm-3 control-label">
 							<?php echo $p->t('bewerbung/geplanterStudienbeginn') ?>
@@ -479,6 +486,7 @@ elseif($username && $password)
 							endforeach; ?>
 						</div>
 					</div>
+                    <?php endif; ?>
 
 					<div class="form-group">
 						<div class="col-sm-3">
@@ -503,7 +511,7 @@ elseif($username && $password)
 				<?php echo $message ?>
 				<div class="row">
 					<div class="col-xs-10 col-xs-offset-1 col-sm-6 col-sm-offset-3">
-						<form action ="<?php echo basename(__FILE__) ?>" method="POST" id="lp">
+                        <form action ="<?php echo basename(__FILE__) ?>" method="POST" id="lp" class="form-horizontal">
 							<h1 class="text-center">
 								<?php echo $p->t('bewerbung/welcome') ?>
 							</h1>
@@ -521,30 +529,28 @@ elseif($username && $password)
 							</div>
 							<p class="text-center"><?php echo $p->t('bewerbung/loginmitAccount') ?></p>
 							<div class="form-group">
-								<div class="form-group">
-									<label for="username" class="col-sm-3 control-label">
-										<?php echo $p->t('global/username') ?>
-									</label>
-									<div class="col-sm-8">
-										<input class="form-control" type="text" placeholder="<?php echo $p->t('global/username') ?>" name="username">
-									</div>
-								</div>
-								<div class="form-group">
-									<label for="password" class="col-sm-3 control-label">
-										<?php echo $p->t('global/passwort') ?>
-									</label>
-									<div class="col-sm-8">
-										<input class="form-control" type="password" placeholder="<?php echo $p->t('global/passwort') ?>" name="password">
-									</div>
-								</div>
-								<div class="form-group">
-									<span class="col-sm-4 col-sm-offset-3">
-										<button class="btn btn-primary" type="submit" name="submit">
-											Login
-										</button>
-									</span>
-								</div>
-							</div>
+                                <label for="username" class="col-sm-3 control-label">
+                                    <?php echo $p->t('global/username') ?>
+                                </label>
+                                <div class="col-sm-8">
+                                    <input class="form-control" type="text" placeholder="<?php echo $p->t('global/username') ?>" name="username">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="password" class="col-sm-3 control-label">
+                                    <?php echo $p->t('global/passwort') ?>
+                                </label>
+                                <div class="col-sm-8">
+                                    <input class="form-control" type="password" placeholder="<?php echo $p->t('global/passwort') ?>" name="password">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <span class="col-sm-4 col-sm-offset-3">
+                                    <button class="btn btn-primary" type="submit" name="submit">
+                                        Login
+                                    </button>
+                                </span>
+                            </div>
 							<br><br><br><br><br><br><br>
 							<br><br><br><br><br><br><br>
 							<br><br><br><br><br><br><br>
@@ -559,7 +565,10 @@ elseif($username && $password)
 				</div>
 			<?php endif; ?>
 		</div>
-		<?php require('views/modal_sprache_orgform.php'); ?>
+		<?php 
+        if(BEWERBERTOOL_STUDIENAUSWAHL_ANZEIGEN)
+            require('views/modal_sprache_orgform.php'); 
+        ?>
 		<script src="../../../include/js/jquery.min.1.11.1.js"></script>
 		<script src="../../../submodules/bootstrap/dist/js/bootstrap.min.js"></script>
 		<script type="text/javascript">
@@ -628,11 +637,13 @@ elseif($username && $password)
 					alert("<?php echo $p->t('bewerbung/bitteEmailAngeben')?>");
 					return false;
 				}
-				if(document.RegistrationLoginForm.studiensemester_kurzbz.value == "")
+				<?php if(BEWERBERTOOL_STUDIENAUSWAHL_ANZEIGEN): ?>
+                if(document.RegistrationLoginForm.studiensemester_kurzbz.value == "")
 				{
 					alert("<?php echo $p->t('bewerbung/bitteStudienbeginnWaehlen')?>");
 					return false;
 				}
+                <?php endif; ?>
 				return true;
 			}
 
@@ -644,7 +655,8 @@ elseif($username && $password)
 					changeSprache(sprache);
 				});
 
-				$('#liste-studiengaenge input').on('change', function() {
+				<?php if(BEWERBERTOOL_STUDIENAUSWAHL_ANZEIGEN): ?>
+                $('#liste-studiengaenge input').on('change', function() {
 
 					var stgkz = $(this).val(),
 						modal = $(this).attr('data-modal'),
@@ -664,7 +676,7 @@ elseif($username && $password)
 
 						$('#badge' + stgkz).html('');
 					}
-				});
+                });
 
 				$('#prio-dialog button.cancel-prio').on('click', function() {
 
@@ -695,6 +707,7 @@ elseif($username && $password)
 					$('#anmerkung' + stgkz).val(anm);
 					$('#badge' + stgkz).html(anm);
 				});
+                <?php endif; ?>
 			});
 
 		</script>

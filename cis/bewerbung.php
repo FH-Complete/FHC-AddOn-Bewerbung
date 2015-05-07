@@ -545,17 +545,18 @@ foreach($prestudent->result as $prestudent_eintrag)
     $bachelor_zgv_done = isset($prestudent_eintrag->zgv_code);
 }
 
-$types = $stg->getTypes($studiengaenge);
+$status_zgv = false;
+$status_zgv_text = $unvollstaendig;
 
-if($bachelor_zgv_done && (!in_array('m', $types, true) || $master_zgv_done))
+if(isset($studiengaenge))
 {
-	$status_zgv = true;
-	$status_zgv_text = $vollstaendig;
-}
-else
-{
-	$status_zgv = false;
-	$status_zgv_text = $unvollstaendig;
+    $types = $stg->getTypes($studiengaenge);
+
+    if($bachelor_zgv_done && (!in_array('m', $types, true) || $master_zgv_done))
+    {
+        $status_zgv = true;
+        $status_zgv_text = $vollstaendig;
+    }
 }
 
 $dokument_help = new dokument();
