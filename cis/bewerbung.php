@@ -657,6 +657,16 @@ foreach($prestudent->result as $row)
 			var activeTab = <?php echo json_encode($active) ?>,
 				basename = <?php echo json_encode(basename(__FILE__)) ?>;
 		</script>
+		<style type="text/css">
+		dokument a:hover
+		{
+			text-decoration:none;
+		}
+		.glyphicon 
+		{
+			font-size: 16px;
+		}
+		</style>
 	</head>
 	<body class="bewerbung">
 		<nav class="navbar navbar-default">

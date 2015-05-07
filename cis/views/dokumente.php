@@ -61,10 +61,12 @@ if(!isset($person_id))
 				if($akte->result[0]->nachgereicht == true)
 				{
 					// wird nachgereicht
-					$status = '<img title="'.$p->t('bewerbung/dokumentWirdNachgereicht').'" src="'.APP_ROOT.'skin/images/hourglass.png" width="20px">';
+					$status = '<span class="glyphicon glyphicon-hourglass" aria-hidden="true" title="'.$p->t('bewerbung/dokumentWirdNachgereicht').'"></span>';
 					$nachgereicht_help = 'checked';
 					$div = "<form method='POST' action='".$_SERVER['PHP_SELF']."?active=dokumente'><span id='nachgereicht_".$dok->dokument_kurzbz."' style='display:true;'>".$akte->result[0]->anmerkung."</span></form>";
-					$aktion = '<a href="'.$_SERVER['PHP_SELF'].'?method=delete&akte_id='.$akte_id.'&active=dokumente"><img title="'.$p->t('global/löschen').'" src="'.APP_ROOT.'skin/images/delete.png" width="20px"></a>';
+					$aktion = '	<button type="button" title="'.$p->t('global/löschen').'" class="btn btn-default" onclick="location.href=\''.$_SERVER['PHP_SELF'].'?method=delete&akte_id='.$akte_id.'&active=dokumente\'; return false;">
+  									<span class="glyphicon glyphicon-remove" aria-hidden="true" title="'.$p->t('global/löschen').'"></span>
+								</button>';
 				}
 				else
 				{
@@ -74,18 +76,20 @@ if(!isset($person_id))
 					if($dokument->akzeptiert($akte->result[0]->dokument_kurzbz,$person->person_id))
 					{
 						// Dokument wurde bereits überprüft
-						$status = '<img title="'.$p->t('bewerbung/abgegeben').'" src="'.APP_ROOT.'skin/images/true_green.png" width="20px">';
+						$status = '<span class="glyphicon glyphicon-ok" aria-hidden="true" title="'.$p->t('bewerbung/abgegeben').'"></span>';
 						$nachgereicht_help = '';
-						$div = "<form method='POST' action='".$_SERVER['PHP_SELF']."&active=dokumente'><span id='nachgereicht_".$dok->dokument_kurzbz."' style='display:none;'>wird nachgereicht:<input type='checkbox' name='check_nachgereicht' ".$nachgereicht_help."><input type='text' size='15' name='txt_anmerkung'><input type='submit' value='OK' name='submit_nachgereicht' class='btn btn-default'></span><input type='hidden' name='dok_kurzbz' value='".$dok->dokument_kurzbz."'><input type='hidden' name='akte_id' value='".$akte_id."'></form>";
+						$div = "<form method='POST' action='".$_SERVER['PHP_SELF']."&active=dokumente'><span id='nachgereicht_".$dok->dokument_kurzbz."' style='display:none;'>wird nachgereicht:<input type='checkbox' name='check_nachgereicht' ".$nachgereicht_help."><input type='text' size='15' maxlength='128' name='txt_anmerkung'><input type='submit' value='OK' name='submit_nachgereicht' class='btn btn-default'></span><input type='hidden' name='dok_kurzbz' value='".$dok->dokument_kurzbz."'><input type='hidden' name='akte_id' value='".$akte_id."'></form>";
 						$aktion = '';
 					}
 					else
 					{
 						// Dokument hochgeladen ohne überprüfung der Assistenz*/
-						$status = '<img title="'.$p->t('bewerbung/abgegeben').'" src="'.APP_ROOT.'skin/images/check_black.png" width="20px">';
+						$status = '<span class="glyphicon glyphicon-eye-open" aria-hidden="true" title="'.$p->t('bewerbung/dokumentNichtUeberprueft').'"></span>';
 						$nachgereicht_help = '';
-						$div = "<form method='POST' action='".$_SERVER['PHP_SELF']."&active=dokumente'><span id='nachgereicht_".$dok->dokument_kurzbz."' style='display:none;'>wird nachgereicht:<input type='checkbox' name='check_nachgereicht' ".$nachgereicht_help."><input type='text' size='15' name='txt_anmerkung'><input type='submit' value='OK' name='submit_nachgereicht' class='btn btn-default'></span><input type='hidden' name='dok_kurzbz' value='".$dok->dokument_kurzbz."'><input type='hidden' name='akte_id' value='".$akte_id."'></form>";
-						$aktion = '<a href="'.$_SERVER['PHP_SELF'].'?method=delete&akte_id='.$akte_id.'&active=dokumente"><img title="'.$p->t('global/löschen').'" src="'.APP_ROOT.'skin/images/delete.png" width="20px"></a>';
+						$div = "<form method='POST' action='".$_SERVER['PHP_SELF']."&active=dokumente'><span id='nachgereicht_".$dok->dokument_kurzbz."' style='display:none;'>wird nachgereicht:<input type='checkbox' name='check_nachgereicht' ".$nachgereicht_help."><input type='text' size='15' maxlength='128' name='txt_anmerkung'><input type='submit' value='OK' name='submit_nachgereicht' class='btn btn-default'></span><input type='hidden' name='dok_kurzbz' value='".$dok->dokument_kurzbz."'><input type='hidden' name='akte_id' value='".$akte_id."'></form>";
+						$aktion = '	<button type="button" title="'.$p->t('global/löschen').'" class="btn btn-default" onclick="location.href=\''.$_SERVER['PHP_SELF'].'?method=delete&akte_id='.$akte_id.'&active=dokumente\'; return false;">
+  										<span class="glyphicon glyphicon-remove" aria-hidden="true" title="'.$p->t('global/löschen').'"></span>
+									</button>';
 
 					}
 				}
@@ -94,8 +98,13 @@ if(!isset($person_id))
 			{
 				// Dokument fehlt noch
 				$status = ' - ';
-				$aktion = '<img src="'.APP_ROOT.'skin/images/delete.png" width="20px" title="'.$p->t('global/löschen').'"> <a href="dms_akteupload.php?person_id='.$person_id.'&dokumenttyp='.$dok->dokument_kurzbz.'" onclick="FensterOeffnen(this.href); return false;"><img src="'.APP_ROOT.'skin/images/upload.png" width="20px" title="'.$p->t('bewerbung/upload').'"></a><a href="#" onclick="toggleDiv(\'nachgereicht_'.$dok->dokument_kurzbz.'\');return false;"><img src="'.APP_ROOT.'skin/images/hourglass.png" width="20px" title="'.$p->t('bewerbung/dokumentWirdNachgereicht').'"></a>';
-				$div = "<form method='POST' action='".$_SERVER['PHP_SELF']."?active=dokumente'><span id='nachgereicht_".$dok->dokument_kurzbz."' style='display:none;'>Anmerkung:<input type='checkbox' name='check_nachgereicht' checked=\"checked\" style='display:none'><input type='text' size='15' name='txt_anmerkung'><input type='submit' value='OK' name='submit_nachgereicht' class='btn btn-default'></span><input type='hidden' name='dok_kurzbz' value='".$dok->dokument_kurzbz."'></form>";
+				$aktion = '	<button title="'.$p->t('bewerbung/upload').'" type="button" class="btn btn-default" href="dms_akteupload.php?person_id='.$person_id.'&dokumenttyp='.$dok->dokument_kurzbz.'" onclick="FensterOeffnen(\'dms_akteupload.php?person_id='.$person_id.'&dokumenttyp='.$dok->dokument_kurzbz.'\'); return false;">
+  								<span class="glyphicon glyphicon-upload" aria-hidden="true" title="'.$p->t('bewerbung/upload').'"></span>
+							</button>
+							<button title="'.$p->t('bewerbung/dokumentWirdNachgereicht').'" type="button" class="btn btn-default" onclick="toggleDiv(\'nachgereicht_'.$dok->dokument_kurzbz.'\');return false;">
+  								<span class="glyphicon glyphicon-hourglass" aria-hidden="true" title="'.$p->t('bewerbung/dokumentWirdNachgereicht').'"></span>
+							</button>';
+				$div = "<form method='POST' action='".$_SERVER['PHP_SELF']."?active=dokumente'><span id='nachgereicht_".$dok->dokument_kurzbz."' style='display:none;'>Anmerkung:<input type='checkbox' name='check_nachgereicht' checked=\"checked\" style='display:none'><input type='text' size='15' maxlength='128' name='txt_anmerkung'><input type='submit' value='OK' name='submit_nachgereicht' class='btn btn-default'></span><input type='hidden' name='dok_kurzbz' value='".$dok->dokument_kurzbz."'></form>";
 
 			}
 
@@ -116,21 +125,21 @@ if(!isset($person_id))
 					$stg = new studiengang();
 					$stg->load($row->studiengang_kz);
 
-					$ben .= $stg->bezeichnung;
+					$ben .= $stg->kuerzel;
 				}
 			} ?>
 
 			<tr>
-				<td>
+				<td style="vertical-align: middle">
                     <?php echo $dok->bezeichnung ?>
                     <?php if($dok->pflicht): ?>
                         <span class="text-danger glyphicon glyphicon-asterisk"></span>
                     <?php endif; ?>
                 </td>
-				<td><?php echo $status ?></td>
-				<td nowrap><?php echo $aktion ?></td>
-				<td><?php echo $div ?></td>
-				<td><?php echo $ben ?></td>
+				<td style="vertical-align: middle"><?php echo $status ?></td>
+				<td style="vertical-align: middle" nowrap><?php echo $aktion ?></td>
+				<td style="vertical-align: middle"><?php echo $div ?></td>
+				<td style="vertical-align: middle"><?php echo $ben ?></td>
 			</tr>
 		<?php endforeach; ?>
 			</tbody>
@@ -147,27 +156,33 @@ if(!isset($person_id))
 		</tr>
 		<tr>
 			<td>
-				<img title="<?php echo $p->t('bewerbung/dokumentOffen'); ?>" src="<?php echo APP_ROOT ?>skin/images/upload.png" width="20px">
+				<span class="glyphicon glyphicon-upload" aria-hidden="true" title="<?php echo $p->t('bewerbung/dokumentOffen'); ?>"></span>
 			</td>
 			<td><?php echo $p->t('bewerbung/dokumentOffen'); ?></td>
 		</tr>
 		<tr>
 			<td>
-				<img title="<?php echo $p->t('bewerbung/dokumentNichtUeberprueft'); ?>" src="<?php echo APP_ROOT ?>skin/images/check_black.png" width="20px">
+				<span class="glyphicon glyphicon-eye-open" aria-hidden="true" title="<?php echo $p->t('bewerbung/dokumentNichtUeberprueft'); ?>"></span>
 			</td>
 			<td><?php echo $p->t('bewerbung/dokumentNichtUeberprueft'); ?></td>
 		</tr>
 		<tr>
 			<td>
-				<img title="<?php echo $p->t('bewerbung/dokumentWirdNachgereicht'); ?>" src="<?php echo APP_ROOT ?>skin/images/hourglass.png" width="20px">
+				<span class="glyphicon glyphicon-hourglass" aria-hidden="true" title="<?php echo $p->t('bewerbung/dokumentWirdNachgereicht'); ?>"></span>
 			</td>
 			<td><?php echo $p->t('bewerbung/dokumentWirdNachgereicht'); ?></td>
 		</tr>
 		<tr>
 			<td>
-				<img title="<?php echo $p->t('bewerbung/dokumentWurdeUeberprueft'); ?>" src="<?php echo APP_ROOT ?>skin/images/true_green.png" width="20px">
+				<span class="glyphicon glyphicon-ok" aria-hidden="true" title="<?php echo $p->t('bewerbung/dokumentWurdeUeberprueft'); ?>"></span>
 			</td>
 			<td><?php echo $p->t('bewerbung/dokumentWurdeUeberprueft'); ?></td>
+		</tr>
+		<tr>
+			<td>
+				<span class="glyphicon glyphicon-remove" aria-hidden="true" title="<?php echo $p->t('global/löschen'); ?>"></span>
+			</td>
+			<td><?php echo $p->t('global/löschen'); ?></td>
 		</tr>
 	</table>
 	<button class="btn-nav btn btn-default" type="button" data-jump-tab="kontakt">
