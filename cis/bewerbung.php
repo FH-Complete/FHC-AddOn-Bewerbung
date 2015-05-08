@@ -656,6 +656,14 @@ foreach($prestudent->result as $row)
 		<script type="text/javascript">
 			var activeTab = <?php echo json_encode($active) ?>,
 				basename = <?php echo json_encode(basename(__FILE__)) ?>;
+
+			function zeichenCountdown(id)
+			{
+				var length,rest;
+				length = document.getElementById(id).value.length;
+				rest = 128 - length;
+				document.getElementById('countdown_'+id).innerHTML = rest;
+			}
 		</script>
 		<style type="text/css">
 		dokument a:hover

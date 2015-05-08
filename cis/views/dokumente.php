@@ -104,7 +104,15 @@ if(!isset($person_id))
 							<button title="'.$p->t('bewerbung/dokumentWirdNachgereicht').'" type="button" class="btn btn-default" onclick="toggleDiv(\'nachgereicht_'.$dok->dokument_kurzbz.'\');return false;">
   								<span class="glyphicon glyphicon-hourglass" aria-hidden="true" title="'.$p->t('bewerbung/dokumentWirdNachgereicht').'"></span>
 							</button>';
-				$div = "<form method='POST' action='".$_SERVER['PHP_SELF']."?active=dokumente'><span id='nachgereicht_".$dok->dokument_kurzbz."' style='display:none;'>Anmerkung:<input type='checkbox' name='check_nachgereicht' checked=\"checked\" style='display:none'><input type='text' size='15' maxlength='128' name='txt_anmerkung'><input type='submit' value='OK' name='submit_nachgereicht' class='btn btn-default'></span><input type='hidden' name='dok_kurzbz' value='".$dok->dokument_kurzbz."'></form>";
+				$div = "<form method='POST' action='".$_SERVER['PHP_SELF']."?active=dokumente'>
+							<span id='nachgereicht_".$dok->dokument_kurzbz."' style='display:none;'>".$p->t('global/anmerkung').": 
+								<input type='checkbox' name='check_nachgereicht' checked=\"checked\" style='display:none'>
+								<input id='anmerkung_".$dok->dokument_kurzbz."' type='text' size='15' maxlength='128' name='txt_anmerkung' onInput='zeichenCountdown(\"anmerkung_".$dok->dokument_kurzbz."\")'> 
+								<span style='color: grey; display: inline-block; width: 30px;' id='countdown_anmerkung_".$dok->dokument_kurzbz."'>128</span> 
+								<input type='submit' value='OK' name='submit_nachgereicht' class='btn btn-default'>
+							</span>
+							<input type='hidden' name='dok_kurzbz' value='".$dok->dokument_kurzbz."'>
+						</form>";
 
 			}
 
