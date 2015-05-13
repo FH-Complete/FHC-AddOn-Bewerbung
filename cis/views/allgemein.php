@@ -18,6 +18,8 @@
  * Authors: Robert Hofer <robert.hofer@technikum-wien.at>
  */
 
+require_once('../../../config/global.config.inc.php');
+
 if(!isset($person_id))
 {
 	die($p->t('bewerbung/ungueltigerZugriff'));
@@ -114,9 +116,12 @@ if(!isset($person_id))
 				</div>
 			</div>
 			<div class="form-group">
-                <?php
+                <?php 
+                $orgeinheit = new organisationseinheit();
+                $standorte = $orgeinheit->getAllStandorte();
                 $optionsStg = null;
                 $optionsLehrg = null;
+                $options = array();
                 $stg = new studiengang();
                 $stg->getAllForBewerbung();
 
@@ -141,48 +146,130 @@ if(!isset($person_id))
                             $modal = true;
                         }
 
+                        $radioBtn = '
+                            <div class="radio">
+                                <label>
+                                    <input type="radio" name="studiengaenge[]" value="'.$result->studiengang_kz.'"
+                                        data-modal="'.$modal.'"
+                                        data-modal-sprache="'.implode(',', $sprache).'"
+                                        data-modal-orgform="'.implode(',', $orgform).'">
+                                    '.$result->studiengangbezeichnung.'
+                                    <input type="hidden" id="anmerkung'.$result->studiengang_kz.'">
+                                </label>
+                            </div>
+                            ';
+                        
                         if($result->organisationseinheittyp_kurzbz == "Studiengang")
                         {
-                            $optionsStg .= '
-                                <div class="radio">
-                                    <label>
-                                        <input type="radio" name="studiengaenge[]" value="'.$result->studiengang_kz.'"
-                                            data-modal="'.$modal.'"
-                                            data-modal-sprache="'.implode(',', $sprache).'"
-                                            data-modal-orgform="'.implode(',', $orgform).'">
-                                        '.$result->studiengangbezeichnung.'
-                                        <input type="hidden" id="anmerkung'.$result->studiengang_kz.'">
-                                    </label>
-                                </div>
-                                ';
+                            if(BEWERBERTOOL_STANDORTAUSWAHL_ANZEIGEN)
+                            {
+                                if(isset($options["Stg"][$result->standort]))
+                                    $options["Stg"][$result->standort] .= $radioBtn;
+                                else
+                                    $options["Stg"][$result->standort] = $radioBtn;
+                            }
+                            else
+                            {
+                                $optionsStg .= $radioBtn;
+                            }
                         }
                         else if($result->organisationseinheittyp_kurzbz == "Lehrgang")
                         {
-                            $optionsLehrg .= '
-                                <div class="radio">
-                                    <label>
-                                        <input type="radio" name="studiengaenge[]" value="'.$result->studiengang_kz.'"
-                                            data-modal="'.$modal.'"
-                                            data-modal-sprache="'.implode(',', $sprache).'"
-                                            data-modal-orgform="'.implode(',', $orgform).'">
-                                        '.$result->studiengangbezeichnung.'
-                                        <input type="hidden" id="anmerkung'.$result->studiengang_kz.'">
-                                    </label>
-                                </div>
-                                ';
+                            if(BEWERBERTOOL_STANDORTAUSWAHL_ANZEIGEN)
+                            {
+                                if(isset($options["Lehrg"][$result->standort]))
+                                    $options["Lehrg"][$result->standort] .= $radioBtn;
+                                else
+                                    $options["Lehrg"][$result->standort] = $radioBtn;
+                            }
+                            else
+                            {
+                                $optionsLehrg .= $radioBtn;
+                            }
                         }
                     }
-                }			
+                }
                 ?>
-				<label for="studiensemester_kurzbz" class="control-label">
+				<label class="control-label">
 					<?php echo $p->t('bewerbung/geplanteStudienrichtung') ?>
 				</label>
+                
+                <?php if(BEWERBERTOOL_STANDORTAUSWAHL_ANZEIGEN): ?>
                 <div id="auswahlStg">
-                    <?php echo $optionsStg ?>
+                    <div class="panel-group" id="accordionStg" role="tablist" aria-multiselectable="true">
+                        <div class="panel panel-default">
+                            
+                            <?php foreach($standorte as $standort): ?>
+                            <div class="panel-heading" role="tab" id="heading<?php echo $standort; ?>">
+                                <h4 class="panel-title">
+                                  <a class="collapsed" data-toggle="collapse" data-parent="#accordionStg" href="#collapse<?php echo $standort; ?>" aria-expanded="false" aria-controls="collapse<?php echo $standort; ?>">
+                                    <?php echo $standort; ?>
+                                  </a>
+                                </h4>
+                            </div>
+                            <div id="collapse<?php echo $standort; ?>" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading<?php echo $standort; ?>">
+                                <div class="panel-body">
+                                    <?php 
+                                    if(isset($options["Stg"][$standort]))
+                                        echo $options["Stg"][$standort]; 
+                                    else
+                                        echo $p->t('bewerbung/keineStgAngeboten');
+                                    ?>
+                                </div>
+                            </div>
+                            <?php endforeach; ?>
+                            
+                        </div>
+                    </div>
                 </div>
                 <div id="auswahlLehrg" style="display: none;">
-                    <?php echo $optionsLehrg ?>
+                    <div class="panel-group" id="accordionLehrg" role="tablist" aria-multiselectable="true">
+                        <div class="panel panel-default">
+                            
+                            <?php foreach($standorte as $standort): ?>
+                            <div class="panel-heading" role="tab" id="heading<?php echo $standort; ?>Lehrg">
+                                <h4 class="panel-title">
+                                  <a class="collapsed" data-toggle="collapse" data-parent="#accordionLehrg" href="#collapse<?php echo $standort; ?>Lehrg" aria-expanded="false" aria-controls="collapse<?php echo $standort; ?>Lehrg">
+                                    <?php echo $standort; ?>
+                                  </a>
+                                </h4>
+                            </div>
+                            <div id="collapse<?php echo $standort; ?>Lehrg" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading<?php echo $standort; ?>Lehrg">
+                                <div class="panel-body">
+                                    <?php 
+                                    if(isset($options["Lehrg"][$standort]))
+                                        echo $options["Lehrg"][$standort]; 
+                                    else
+                                        echo $p->t('bewerbung/keineLehrgAngeboten');
+                                    ?>
+                                </div>
+                            </div>
+                            <?php endforeach; ?>
+                            
+                        </div>
+                    </div>
                 </div>
+                
+                <?php else: ?>
+                
+                <div id="auswahlStg">
+                    <?php 
+                    if(!empty($optionsStg))
+                        echo $optionsStg;
+                    else
+                        echo $p->t('bewerbung/keineStgAngeboten');
+                    ?>
+                </div>
+                <div id="auswahlLehrg" style="display: none;">
+                    <?php 
+                    if(!empty($optionsLehrg))
+                        echo $optionsLehrg;
+                    else
+                        echo $p->t('bewerbung/keineLehrgAngeboten');
+                    ?>
+                </div>
+                <?php endif; ?>
+                
 			</div>
 		</div>
 		<div class="modal-footer">
@@ -247,11 +334,11 @@ if(!isset($person_id))
             
             $('#ausbildungstyp').change(function() {
                 if($('#ausbildungstyp').val() == "stg") {
-                    $('#auswahlLehr').hide();
+                    $('#auswahlLehrg').hide();
                     $('#auswahlStg').show();
                 }
                 else {
-                    $('#auswahlLehr').show();
+                    $('#auswahlLehrg').show();
                     $('#auswahlStg').hide();
                 }
             })

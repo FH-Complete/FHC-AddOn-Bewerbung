@@ -139,3 +139,5 @@ $this->phrasen['bewerbung/fehlerKeinePersonId']='There was no Person_id supplied
 $this->phrasen['bewerbung/woWurdeUrkundeAusgestellt']='Wo wurde die Urkunde ausgestellt?';
 $this->phrasen['bewerbung/ausbildungstyp']='Type of Education';
 $this->phrasen['bewerbung/lehrgang']='Lehrgang';
+$this->phrasen['bewerbung/keineStgAngeboten']='Es werden derzeit keine Studiengänge angeboten';
+$this->phrasen['bewerbung/keineLehrgAngeboten']='Es werden derzeit keine Lehrgänge angeboten';

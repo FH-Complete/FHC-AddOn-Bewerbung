@@ -53,6 +53,7 @@ require_once('../../../include/basis_db.class.php');
 require_once('../../../include/reihungstest.class.php');
 require_once('../../../include/preinteressent.class.php');
 require_once('../../../include/notiz.class.php');
+require_once('../../../include/organisationseinheit.class.php');
 require_once('../include/functions.inc.php');
 
 if(isset($_GET['logout']))
