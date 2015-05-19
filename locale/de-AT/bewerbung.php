@@ -53,7 +53,7 @@ $this->phrasen['bewerbung/allgemeineErklaerung']='Wir freuen uns dass Sie sich f
 	Bitte füllen Sie das Formular vollständig aus und schicken Sie es danach ab.<br><br>
 	<b>Bewerbungsmodus:</b><br>
 	<p style="text-align:justify;">Füllen Sie alle Punkte aus. Sind alle Werte vollständig eingetragen, können Sie unter "Bewerbung abschicken" Ihre Bewerbung and die zuständige Assistenz schicken.<br>
-	Diese wird sich in den nächsten Tagen bei Ihnen melden.';
+	Diese wird sich in den nächsten Tagen bei Ihnen melden.</p>';
 $this->phrasen['bewerbung/aktuelleBewerbungen']='Aktuelle Bewerbungen:';
 $this->phrasen['bewerbung/status']='Status';
 $this->phrasen['bewerbung/bewerbungsstatus']='Bewerbungsstatus';
@@ -73,7 +73,7 @@ $this->phrasen['bewerbung/artDerTaetigkeit']='Art der Tätigkeit';
 $this->phrasen['bewerbung/weiter']='Weiter';
 $this->phrasen['bewerbung/eintragVom']='Eintrag vom';
 $this->phrasen['bewerbung/menuPersDaten']='Persönliche Daten';
-$this->phrasen['bewerbung/accountVorhanden']='Da sie bereits einen Account haben können Sie ihre Stammdaten nicht mehr ändern. Sollten hier fehlerhafte Angaben vorhanden sein, wenden Sie sich bitte an die zuständige Assistenz<br><br>';
+$this->phrasen['bewerbung/accountVorhanden']='Da sie bereits einen Account haben können Sie ihre Stammdaten nicht mehr ändern. Sollten hier fehlerhafte Angaben vorhanden sein, wenden Sie sich bitte an die zuständige Assistenz.<br><br>';
 $this->phrasen['bewerbung/bitteAuswaehlen']='-- Bitte auswählen --';
 $this->phrasen['bewerbung/menuKontaktinformationen']='Kontaktinformationen';
 $this->phrasen['bewerbung/kontakt']='Kontakt';
