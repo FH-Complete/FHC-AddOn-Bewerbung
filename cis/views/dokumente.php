@@ -139,7 +139,10 @@ if(!isset($person_id))
 
 			<tr>
 				<td style="vertical-align: middle">
-                    <?php echo $dok->bezeichnung ?>
+                    <?php 
+					echo $dok->bezeichnung_mehrsprachig[getSprache()];
+                    ?>
+                    
                     <?php if($dok->pflicht): ?>
                         <span class="text-danger glyphicon glyphicon-asterisk"></span>
                     <?php endif; ?>
