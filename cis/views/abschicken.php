@@ -32,7 +32,6 @@ if(!isset($person_id))
 	$disabled = 'disabled';
 	if($status_person == true && $status_kontakt == true && $status_dokumente == true && $status_zahlungen == true && $status_reihungstest == true)
 		$disabled = '';
-
 	$prestudent_help= new prestudent();
 	$prestudent_help->getPrestudenten($person->person_id);
 	$stg = new studiengang();

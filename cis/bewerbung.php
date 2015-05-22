@@ -20,6 +20,7 @@
  */
 
 require_once('../../../config/cis.config.inc.php');
+require_once('../../../config/global.config.inc.php');
 
 session_cache_limiter('none'); //muss gesetzt werden sonst funktioniert der Download mit IE8 nicht
 session_start();
@@ -548,18 +549,19 @@ foreach($prestudent->result as $prestudent_eintrag)
 
 $status_zgv = false;
 $status_zgv_text = $unvollstaendig;
-
-if(isset($studiengaenge))
+if(!defined('BEWERBERTOOL_ZGV_ANZEIGEN') || BEWERBERTOOL_ZGV_ANZEIGEN==true)
 {
-    $types = $stg->getTypes($studiengaenge);
+	if(isset($studiengaenge))
+	{
+		$types = $stg->getTypes($studiengaenge);
 
-    if($bachelor_zgv_done && (!in_array('m', $types, true) || $master_zgv_done))
-    {
-        $status_zgv = true;
-        $status_zgv_text = $vollstaendig;
-    }
+		if($bachelor_zgv_done && (!in_array('m', $types, true) || $master_zgv_done))
+		{
+		    $status_zgv = true;
+		    $status_zgv_text = $vollstaendig;
+		}
+	}
 }
-
 $dokument_help = new dokument();
 $dokument_help->getAllDokumenteForPerson($person_id, true);
 $akte_person= new akte();
@@ -581,7 +583,7 @@ foreach($dokument_help->result as $dok)
     }
 }
 
-if($missing)
+if($missing && (!defined('BEWERBERTOOL_DOKUMENTE_ANZEIGEN') || BEWERBERTOOL_DOKUMENTE_ANZEIGEN==true))
 {
     $status_dokumente = false;
     $status_dokumente_text = $unvollstaendig;
@@ -593,15 +595,17 @@ else
 }
 
 $konto = new konto();
-if($konto->checkKontostand($person_id))
+
+$status_zahlungen = true;
+$status_zahlungen_text = $vollstaendig;
+
+if(!defined('BEWERBERTOOL_ZAHLUNGEN_ANZEIGEN') || BEWERBERTOOL_ZAHLUNGEN_ANZEIGEN==true)
 {
-	$status_zahlungen = true;
-	$status_zahlungen_text = $vollstaendig;
-}
-else
-{
-	$status_zahlungen = false;
-	$status_zahlungen_text = $unvollstaendig;
+	if(!$konto->checkKontostand($person_id))
+	{
+		$status_zahlungen = false;
+		$status_zahlungen_text = $unvollstaendig;
+	}
 }
 
 $prestudent = new prestudent();
@@ -612,37 +616,43 @@ if(!$prestudent->getPrestudenten($person_id))
 
 $status_reihungstest = false;
 $status_reihungstest_text = $unvollstaendig;
-
-foreach($prestudent->result as $row)
+if(!defined('BEWERBERTOOL_REIHUNGSTEST_ANZEIGEN') || BEWERBERTOOL_REIHUNGSTEST_ANZEIGEN==true)
 {
-	if($row->reihungstest_id != '')
+	foreach($prestudent->result as $row)
 	{
-		$status_reihungstest = true;
-		$status_reihungstest_text = $vollstaendig;
-	}
-	else
-	{
-		// Wenn keine Reihungstesttermine vorhanden sind ist die Bewerbung auch vollstaendig
-		if(!$prestudent->getPrestudenten($person_id))
-			die($p->t('global/fehlerBeimLadenDesDatensatzes'));
-
-		$anzahl_reihungstests=0;
-		foreach($prestudent->result as $row)
-		{
-			$reihungstest = new reihungstest();
-			if(!$reihungstest->getStgZukuenftige($row->studiengang_kz))
-				die($p->t('global/fehleraufgetreten').': '.$reihungstest->errormsg);
-
-			$anzahl_reihungstests+=count($reihungstest->result);
-		}
-		if($anzahl_reihungstests==0)
+		if($row->reihungstest_id != '')
 		{
 			$status_reihungstest = true;
 			$status_reihungstest_text = $vollstaendig;
 		}
+		else
+		{
+			// Wenn keine Reihungstesttermine vorhanden sind ist die Bewerbung auch vollstaendig
+			if(!$prestudent->getPrestudenten($person_id))
+				die($p->t('global/fehlerBeimLadenDesDatensatzes'));
+
+			$anzahl_reihungstests=0;
+			foreach($prestudent->result as $row)
+			{
+				$reihungstest = new reihungstest();
+				if(!$reihungstest->getStgZukuenftige($row->studiengang_kz))
+					die($p->t('global/fehleraufgetreten').': '.$reihungstest->errormsg);
+
+				$anzahl_reihungstests+=count($reihungstest->result);
+			}
+			if($anzahl_reihungstests==0)
+			{
+				$status_reihungstest = true;
+				$status_reihungstest_text = $vollstaendig;
+			}
+		}
 	}
 }
-
+else
+{
+	$status_reihungstest = true;
+	$status_reihungstest_text = $vollstaendig;
+}
 ?><!DOCTYPE HTML>
 <html>
 	<head>
@@ -706,26 +716,45 @@ foreach($prestudent->result as $row)
 								<?php echo $p->t('bewerbung/menuKontaktinformationen') ?> <br> <?php echo $status_kontakt_text;?>
 							</a>
 						</li>
+						<?php
+						if(!defined('BEWERBERTOOL_DOKUMENTE_ANZEIGEN') || BEWERBERTOOL_DOKUMENTE_ANZEIGEN):
+						?>
 						<li>
 							<a href="#dokumente" aria-controls="dokumente" role="tab" data-toggle="tab">
 								<?php echo $p->t('bewerbung/menuDokumente') ?> <br> <?php echo $status_dokumente_text;?>
 							</a>
 						</li>
+						<?php endif; ?>
+
+						<?php
+						if(!defined('BEWERBERTOOL_ZGV_ANZEIGEN') || BEWERBERTOOL_ZGV_ANZEIGEN):
+						?>
 						<li>
 							<a href="#zgv" aria-controls="zgv" role="tab" data-toggle="tab">
 								<?php echo $p->t('bewerbung/menuZgv') ?> <br> <?php echo $status_zgv_text;?>
 							</a>
 						</li>
+						<?php endif; ?>
+
+						<?php
+						if(!defined('BEWERBERTOOL_ZAHLUNGEN_ANZEIGEN') || BEWERBERTOOL_ZAHLUNGEN_ANZEIGEN):
+						?>
 						<li>
 							<a href="#zahlungen" aria-controls="zahlungen" role="tab" data-toggle="tab">
 								<?php echo $p->t('bewerbung/menuZahlungen') ?> <br> <?php echo $status_zahlungen_text;?>
 							</a>
 						</li>
+						<?php endif; ?>
+
+						<?php
+						if(!defined('BEWERBERTOOL_REIHUNGSTEST_ANZEIGEN') || BEWERBERTOOL_REIHUNGSTEST_ANZEIGEN):
+						?>
 						<li>
 							<a href="#aufnahme" aria-controls="aufnahme" role="tab" data-toggle="tab">
 								<?php echo $p->t('bewerbung/menuReihungstest') ?> <br> <?php echo $status_reihungstest_text;?>
 							</a>
 						</li>
+						<?php endif; ?>
 						<li>
 							<a href="#abschicken" aria-controls="abschicken" role="tab" data-toggle="tab">
 								<?php echo $p->t('bewerbung/menuBewerbungAbschicken') ?> <br> &nbsp;
@@ -742,12 +771,16 @@ foreach($prestudent->result as $row)
 					'allgemein',
 					'daten',
 					'kontakt',
-					'dokumente',
-					'zahlungen',
-					'aufnahme',
-					'abschicken',
-					'zgv',
+					'abschicken'
 				);
+				if(!defined('BEWERBERTOOL_DOKUMENTE_ANZEIGEN') || BEWERBERTOOL_DOKUMENTE_ANZEIGEN);
+					$tabs[]='dokumente';
+				if(!defined('BEWERBERTOOL_ZAHLUNGEN_ANZEIGEN') || BEWERBERTOOL_ZAHLUNGEN_ANZEIGEN);
+					$tabs[]='zahlungen';
+				if(!defined('BEWERBERTOOL_ZGV_ANZEIGEN') || BEWERBERTOOL_ZGV_ANZEIGEN);
+					$tabs[]='zgv';
+				if(!defined('BEWERBERTOOL_REIHUNGSTEST_ANZEIGEN') || BEWERBERTOOL_REIHUNGSTEST_ANZEIGEN);
+					$tabs[]='aufnahme';
 
 				foreach($tabs as $tab)
 				{

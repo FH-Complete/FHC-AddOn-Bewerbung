@@ -81,7 +81,7 @@
 				<div class="radio">
 					<label>
 						<input type="radio" name="<?php echo $prio ?>Sprache" value="En">
-						<?php echo $p->t('global/sprache/englisch') ?>
+						<?php echo $p->t('global/englisch') ?>
 					</label>
 				</div>
 			</div>

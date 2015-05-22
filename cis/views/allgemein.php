@@ -105,7 +105,7 @@ if(!isset($person_id))
 					<select id="studiensemester_kurzbz" name="studiensemester_kurzbz" class="form-control">
 						<?php
 						$stsem = new studiensemester();
-						$stsem->getFutureStudiensemester('',4);
+						$stsem->getStudiensemesterOnlinebewerbung();
 
 						foreach($stsem->studiensemester as $row)
 						{

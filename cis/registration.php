@@ -429,7 +429,7 @@ elseif($username && $password)
 								<option value=""><?php echo $p->t('bewerbung/bitteAuswaehlen') ?></option>
 								<?php
 								$stsem = new studiensemester();
-								$stsem->getFutureStudiensemester('',4);
+								$stsem->getStudiensemesterOnlinebewerbung();
 
 								foreach($stsem->studiensemester as $row): ?>
 									<option value="<?php echo $row->studiensemester_kurzbz ?>"
