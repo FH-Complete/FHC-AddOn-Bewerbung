@@ -53,7 +53,7 @@ $this->phrasen['bewerbung/allgemeineErklaerung']='Wir freuen uns dass Sie sich f
 	Bitte füllen Sie das Formular vollständig aus und schicken Sie es danach ab.<br><br>
 	<b>Bewerbungsmodus:</b><br>
 	<p style="text-align:justify;">Füllen Sie alle Punkte aus. Sind alle Werte vollständig eingetragen, können Sie unter "Bewerbung abschicken" Ihre Bewerbung and die zuständige Assistenz schicken.<br>
-	Diese wird sich in den nächsten Tagen bei Ihnen melden.</p>';
+	Diese wird sich in den nächsten Tagen bei Ihnen melden.';
 $this->phrasen['bewerbung/aktuelleBewerbungen']='Aktuelle Bewerbungen:';
 $this->phrasen['bewerbung/status']='Status';
 $this->phrasen['bewerbung/bewerbungsstatus']='Bewerbungsstatus';
@@ -141,3 +141,4 @@ $this->phrasen['bewerbung/ausbildungstyp']='Ausbildungstyp';
 $this->phrasen['bewerbung/lehrgang']='Lehrgang';
 $this->phrasen['bewerbung/keineStgAngeboten']='Es werden derzeit keine Studiengänge angeboten';
 $this->phrasen['bewerbung/keineLehrgAngeboten']='Es werden derzeit keine Lehrgänge angeboten';
+$this->phrasen['bewerbung/aufmerksamdurch']='Wie sind Sie auf uns Aufmerksam geworden?';

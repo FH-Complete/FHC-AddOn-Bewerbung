@@ -22,6 +22,7 @@ if(!isset($person_id))
 {
 	die($p->t('bewerbung/ungueltigerZugriff'));
 }
+
 ?>
 
 <div role="tabpanel" class="tab-pane" id="daten">
@@ -45,6 +46,15 @@ if(!isset($person_id))
 		$disabled='disabled="disabled"';
 		echo $p->t('bewerbung/accountVorhanden');
 	}
+
+	if($save_error)
+	{
+		echo '<div class="bg-danger">
+		    <h4>'.$p->t('global/fehlerBeimSpeichernDerDaten').'</h4>
+		    <p>'.$message.'</p>
+		  </div>';
+	}
+
 	?>
 
 	<form method="POST" action="<?php echo $_SERVER['PHP_SELF'] ?>?active=daten" class="form-horizontal">
@@ -131,6 +141,34 @@ if(!isset($person_id))
 				<?php echo $p->t('bewerbung/weiblich') ?>: <input type="radio" name="geschlecht"  <?php echo $disabled; ?> value="w" <?php echo $geschl_w ?>>
 			</div>
 		</div>
+		<div class="form-group">
+			<label for="aufmerksamdurch" class="col-sm-3 control-label"><?php echo $p->t('bewerbung/aufmerksamdurch') ?></label>
+			<div class="col-sm-9">
+				<select name="aufmerksamdurch" id="aufmerksamdurch"  <?php echo $disabled; ?> class="form-control">
+					<option value=""><?php echo $p->t('bewerbung/bitteAuswaehlen') ?></option>
+					<?php 
+					$aufmerksamdurch = new aufmerksamdurch();
+					$aufmerksamdurch->getAll();
+
+					$selected = '';
+
+					if(isset($prestudent->result[0]) && $prestudent->result[0]->aufmerksamdurch_kurzbz!='')
+						$aufmerksamdurch_kurzbz = $prestudent->result[0]->aufmerksamdurch_kurzbz;
+					else
+						$aufmerksamdurch_kurzbz ='';
+
+					foreach($aufmerksamdurch->result as $row_aufm):
+						$selected = ($aufmerksamdurch_kurzbz == $row_aufm->aufmerksamdurch_kurzbz) ? 'selected' : ''; ?>
+						<option value="<?php echo $row_aufm->aufmerksamdurch_kurzbz; ?>" <?php echo $selected ?>>
+							<?php echo $row_aufm->beschreibung ?>
+						</option>
+					<?php endforeach; ?>
+				</select>
+			</div>
+		</div>
+		<?php
+		if(!defined('BEWERBERTOOL_BERUFSTAETIGKEIT_ANZEIGEN') || BEWERBERTOOL_BERUFSTAETIGKEIT_ANZEIGEN):
+		?>
         <fieldset>
             <legend><?php echo $p->t('bewerbung/berufstaetigkeit') ?></legend>
             <?php
@@ -170,6 +208,9 @@ if(!isset($person_id))
                 </div>
             <?php endif; ?>
         </fieldset>
+		<?php
+		endif;
+		?>
 		<button class="btn-nav btn btn-default" type="button" data-jump-tab="allgemein">
 			<?php echo $p->t('global/zurueck') ?>
 		</button>
@@ -180,6 +221,5 @@ if(!isset($person_id))
 			<?php echo $p->t('bewerbung/weiter') ?>
 		</button>
 	</form>
-	<?php echo $message; ?>
 </div>
 

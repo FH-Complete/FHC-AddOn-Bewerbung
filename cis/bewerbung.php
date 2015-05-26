@@ -56,6 +56,7 @@ require_once('../../../include/preinteressent.class.php');
 require_once('../../../include/notiz.class.php');
 require_once('../../../include/organisationseinheit.class.php');
 require_once('../include/functions.inc.php');
+require_once('../../../include/aufmerksamdurch.class.php');
 
 if(isset($_GET['logout']))
 {
@@ -283,7 +284,7 @@ if(!$active)
 {
 	$active = 'allgemein';
 }
-
+$save_error=false;
 // Persönliche Daten speichern
 if(isset($_POST['btn_person']))
 {
@@ -301,17 +302,20 @@ if(isset($_POST['btn_person']))
     $person->new = false;
     if(!$person->save())
 	{
-        $message = $p->t('global/fehlerBeimSpeichernDerDaten');
+        $message = $person->errormsg;;
+		$save_error=true;
 	}
 
 	if($person->checkSvnr($person->svnr))
 	{
 		$message = $p->t('bewerbung/svnrBereitsVorhanden');
+		$save_error=true;
 	}
 
     $berufstaetig = filter_input(INPUT_POST, 'berufstaetig');
 
-    if(in_array($berufstaetig, array('Vollzeit', 'Teilzeit'), true)) {
+    if(in_array($berufstaetig, array('Vollzeit', 'Teilzeit'), true)) 
+	{
 
         $berufstaetig_art = filter_input(INPUT_POST, 'berufstaetig_art');
         $berufstaetig_dienstgeber = filter_input(INPUT_POST, 'berufstaetig_dienstgeber');
@@ -328,6 +332,19 @@ if(isset($_POST['btn_person']))
         $notiz->save(true);
         $notiz->saveZuordnung();
     }
+		
+	$aufmerksamdurch = filter_input(INPUT_POST,'aufmerksamdurch');
+
+    // Aufmerksamdurch speichern
+    $prestudent = new prestudent();
+    $prestudent->getPrestudenten($person_id);
+
+    foreach($prestudent->result as $prestudent_eintrag) 
+	{
+		$prestudent_eintrag->new=false;
+		$prestudent_eintrag->aufmerksamdurch_kurzbz = $aufmerksamdurch;
+		$prestudent_eintrag->save();
+	}
 }
 
 // Kontaktdaten speichern
