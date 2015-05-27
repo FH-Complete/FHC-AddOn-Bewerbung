@@ -48,7 +48,7 @@ $this->phrasen['bewerbung/prioUeberschriftalternative'] = 'Alternative';
 $this->phrasen['bewerbung/neuerStudiengang'] = 'Bitte wählen Sie einen Studiengang für den Sie sich bewerben möchten';
 $this->phrasen['bewerbung/geplanteStudienrichtung']='Geplante Studienrichtung';
 $this->phrasen['bewerbung/menuAllgemein']='Allgemein';
-$this->phrasen['bewerbung/loginmitAccount']='Wenn Sie bereits einen Account haben, können sie sich mit ihrem Usernamen / Passwort anmelden';
+$this->phrasen['bewerbung/loginmitAccount']='Wenn Sie bereits einen Account haben, können sie sich mit Ihrem Usernamen / Passwort anmelden';
 $this->phrasen['bewerbung/allgemeineErklaerung']='Wir freuen uns dass Sie sich für einen oder mehrere unserer Studiengänge bewerben.<br><br>
 	Bitte füllen Sie das Formular vollständig aus und schicken Sie es danach ab.<br><br>
 	<b>Bewerbungsmodus:</b><br>
