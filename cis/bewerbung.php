@@ -827,10 +827,10 @@ function sendBewerbung($prestudent_id)
     if(!$studiengang->load($prestudent->studiengang_kz))
         die($p->t('global/fehlerBeimLadenDesDatensatzes'));
 
-    $email = $p->t('global/emailBodyStart');
+    $email = $p->t('bewerbung/emailBodyStart');
     $email.= $p->t('global/name').': '.$person->vorname.' '.$person->nachname.'<br>';
     $email.= $p->t('global/studiengang').': '.$studiengang->bezeichnung.'<br><br>';
-    $email.= $p->t('global/emailBodyEnde');
+    $email.= $p->t('bewerbung/emailBodyEnde');
 
     $mail = new mail($studiengang->email, 'no-reply', 'Bewerbung '.$person->vorname.' '.$person->nachname, 'Bitte sehen Sie sich die Nachricht in HTML Sicht an, um den Link vollständig darzustellen.');
 	$mail->setHTMLContent($email);
