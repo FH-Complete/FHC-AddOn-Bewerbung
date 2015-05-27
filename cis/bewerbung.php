@@ -814,7 +814,7 @@ else
 // sendet eine Email an die Assistenz dass die Bewerbung abgeschlossen ist
 function sendBewerbung($prestudent_id)
 {
-    global $person_id;
+    global $person_id, $p;
 
     $person = new person();
     $person->load($person_id);
