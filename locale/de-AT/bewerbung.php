@@ -5,7 +5,7 @@ $this->phrasen['bewerbung/registration']='Zugangscode für Ihre Bewerbung';
 $this->phrasen['bewerbung/registrieren']='Registrieren';
 $this->phrasen['bewerbung/registrierenOderZugangscode']='<a href="'.$_SERVER['PHP_SELF'].'?method=registration">Hier registrieren</a> oder Zugangscode eingeben';
 $this->phrasen['bewerbung/einleitungstext']='Für eine Bewerbung füllen Sie bitte das Formular <u>vollständig</u> aus und klicken Sie anschließend auf "Registrieren". <br>
-												Danach haben Sie noch die Möglichkeit, weitere Daten einzugeben und Dokumente hochzuladen, bevor Sie Ihre Bewerbung abschicken.';
+												Danach haben Sie noch die Möglichkeit, weitere Daten einzugeben und Dokumente hochzuladen bevor Sie Ihre Bewerbung abschicken.';
 $this->phrasen['bewerbung/login']='Login';
 $this->phrasen['bewerbung/zugangscode']='Zugangscode';
 $this->phrasen['bewerbung/fallsVorhanden']='(falls vorhanden)';
@@ -41,7 +41,7 @@ $this->phrasen['bewerbung/orgform/teilzeit']='Teilzeit';
 $this->phrasen['bewerbung/orgform/distance']='Fernstudium';
 $this->phrasen['bewerbung/topprio']='Oberste Priorität';
 $this->phrasen['bewerbung/alternative']='Alternative';
-$this->phrasen['bewerbung/priowaehlen']='Primären und alternative Variante auswählen';
+$this->phrasen['bewerbung/priowaehlen']='Primäre und alternative Variante auswählen';
 $this->phrasen['bewerbung/prioBeschreibungstext'] = 'Bitte wählen Sie die Organisationsform und Sprache. Für den Fall dass es keine Plätze mehr gibt können Sie auch eine Alternative auswählen.';
 $this->phrasen['bewerbung/prioUeberschrifttopprio'] = 'Oberste Priorität';
 $this->phrasen['bewerbung/prioUeberschriftalternative'] = 'Alternative';
@@ -52,7 +52,7 @@ $this->phrasen['bewerbung/loginmitAccount']='Wenn Sie bereits einen Account habe
 $this->phrasen['bewerbung/allgemeineErklaerung']='Wir freuen uns dass Sie sich für einen oder mehrere unserer Studiengänge bewerben.<br><br>
 	Bitte füllen Sie das Formular vollständig aus und schicken Sie es danach ab.<br><br>
 	<b>Bewerbungsmodus:</b><br>
-	<p style="text-align:justify;">Füllen Sie alle Punkte aus. Sind alle Werte vollständig eingetragen, können Sie unter "Bewerbung abschicken" Ihre Bewerbung and die zuständige Assistenz schicken.<br>
+	<p style="text-align:justify;">Füllen Sie alle Punkte aus. Sind alle Werte vollständig eingetragen, können Sie unter "Bewerbung abschicken" Ihre Bewerbung an die zuständige Assistenz schicken.<br>
 	Diese wird sich in den nächsten Tagen bei Ihnen melden.';
 $this->phrasen['bewerbung/aktuelleBewerbungen']='Aktuelle Bewerbungen:';
 $this->phrasen['bewerbung/status']='Status';
@@ -63,7 +63,7 @@ $this->phrasen['bewerbung/nichtBestaetigt']='noch nicht bestätigt';
 $this->phrasen['bewerbung/studiengangHinzufuegen']='Studiengang hinzufügen';
 $this->phrasen['bewerbung/weiter']='Weiter';
 $this->phrasen['bewerbung/geburtsnation']='Geburtsnation';
-$this->phrasen['bewerbung/svnr']='Österr. Sozialversicherungsnr';
+$this->phrasen['bewerbung/svnr']='Österr. Sozialversicherungsnr.';
 $this->phrasen['bewerbung/maennlich']='männlich';
 $this->phrasen['bewerbung/weiblich']='weiblich';
 $this->phrasen['bewerbung/berufstaetigkeit']='Berufstätigkeit';
@@ -100,14 +100,14 @@ $this->phrasen['bewerbung/zahlungsinformation']='Zahlungsinformation';
 $this->phrasen['bewerbung/bezahlt']='bezahlt';
 $this->phrasen['bewerbung/zahlungsdetails']='Zahlungsdetails';
 $this->phrasen['bewerbung/menuReihungstest']='Reihungstest';
-$this->phrasen['bewerbung/fuerReihungstestAnmelden']='Sie können sich für folgende Reihungstest anmelden:';
+$this->phrasen['bewerbung/fuerReihungstestAnmelden']='Sie können sich für folgende Reihungstests anmelden:';
 $this->phrasen['bewerbung/fehler']='Es ist ein Fehler aufgetreten';
 $this->phrasen['bewerbung/angemeldetPlaetze']='angemeldet / Plätze';
 $this->phrasen['bewerbung/uhrzeit']='Uhrzeit';
 $this->phrasen['bewerbung/stornieren']='stornieren';
 $this->phrasen['bewerbung/menuBewerbungAbschicken']='Bewerbung abschicken';
 $this->phrasen['bewerbung/erklaerungBewerbungAbschicken']='Haben Sie alle Daten korrekt ausgefüllt bzw. alle Dokumente auf das System hochgeladen, können Sie Ihre Bewerbung abschicken.<br>
-		Die jeweilige Studiengangsassistenz wird sich in den folgenden Tagen, bezüglich der Bewerbung, bei Ihnen Melden.
+		Die jeweilige Studiengangsassistenz wird sich in den folgenden Tagen bezüglich der Bewerbung bei Ihnen melden.
 		<br><br>
 		Bitte überprüfen Sie nochmals Ihre Daten.<br>
 		Um Ihre Bewerbung jetzt abzuschließen klicken auf folgenden Link:';
@@ -129,7 +129,7 @@ $this->phrasen['bewerbung/vollstaendig']='vollständig';
 $this->phrasen['bewerbung/unvollstaendig']='uvollständig';
 $this->phrasen['bewerbung/maxAnzahlTeilnehmer']='max. Teilnehmeranzahl erreicht';
 $this->phrasen['bewerbung/erfolgreichBeworben']='Sie haben sich erfolgreich beworben. Die zuständige Assistenz wird sich in den nächsten Tagen bei Ihnen melden.';
-$this->phrasen['bewerbung/fehlerBeimVersendenDerBewerbung']='Es ist ein Fehler beim versenden der Bewerbung aufgetreten. Bitte versuchen Sie es nocheinmal.';
+$this->phrasen['bewerbung/fehlerBeimVersendenDerBewerbung']='Es ist ein Fehler beim Versenden der Bewerbung aufgetreten. Bitte versuchen Sie es nocheinmal.';
 $this->phrasen['bewerbung/svnrBereitsVorhanden']='SVNR bereits vorhanden';
 $this->phrasen['bewerbung/menuBewerbungFuerStudiengang']='Bewerbung für einen Studiengang';
 $this->phrasen['bewerbung/emailBodyStart']='Es hat sich ein/e Student/in für folgenden Studiengang beworben: <br>';
@@ -141,4 +141,4 @@ $this->phrasen['bewerbung/ausbildungstyp']='Ausbildungstyp';
 $this->phrasen['bewerbung/lehrgang']='Lehrgang';
 $this->phrasen['bewerbung/keineStgAngeboten']='Es werden derzeit keine Studiengänge angeboten';
 $this->phrasen['bewerbung/keineLehrgAngeboten']='Es werden derzeit keine Lehrgänge angeboten';
-$this->phrasen['bewerbung/aufmerksamdurch']='Wie sind Sie auf uns Aufmerksam geworden?';
+$this->phrasen['bewerbung/aufmerksamdurch']='Wie sind Sie auf uns aufmerksam geworden?';
