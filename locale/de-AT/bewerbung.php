@@ -1,7 +1,7 @@
 <?php
 $this->phrasen['bewerbung/ungueltigerZugriff']='ungültiger Zugriff';
 $this->phrasen['bewerbung/welcome']='Willkommen bei der Online Bewerbung';
-$this->phrasen['bewerbung/registration']='Registration';
+$this->phrasen['bewerbung/registration']='Zugangscode für Ihre Bewerbung';
 $this->phrasen['bewerbung/registrieren']='Registrieren';
 $this->phrasen['bewerbung/registrierenOderZugangscode']='<a href="'.$_SERVER['PHP_SELF'].'?method=registration">Hier registrieren</a> oder Zugangscode eingeben';
 $this->phrasen['bewerbung/einleitungstext']='Für eine Bewerbung füllen Sie bitte das Formular <u>vollständig</u> aus und klicken Sie anschließend auf "Registrieren". <br>
