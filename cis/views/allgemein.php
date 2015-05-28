@@ -46,7 +46,6 @@ if(!isset($person_id))
 					<th><?php echo $p->t('global/studiengang'); ?></th>
 					<th><?php echo $p->t('bewerbung/status'); ?></th>
 					<th><?php echo $p->t('global/datum'); ?></th>
-					<th><?php echo $p->t('global/aktion'); ?></th>
 					<th><?php echo $p->t('bewerbung/bewerbungsstatus'); ?></th>
 				</tr>
 				<?php
@@ -61,12 +60,18 @@ if(!isset($person_id))
 
 					$prestudent_status = new prestudent();
 					$prestatus_help= ($prestudent_status->getLastStatus($row->prestudent_id))?$prestudent_status->status_kurzbz:$p->t('bewerbung/keinStatus');
-					$bewerberstatus =($prestudent_status->bestaetigtam != '' || $prestudent_status->bestaetigtvon != '')?$p->t('bewerbung/bestaetigt'):$p->t('bewerbung/nichtBestaetigt'); ?>
+					$bewerberstatus =($prestudent_status->bestaetigtam != '' || $prestudent_status->bestaetigtvon != '')?$p->t('bewerbung/bestaetigt'):$p->t('bewerbung/nichtBestaetigt'); 
+
+					if($sprache!='German' && $stg->english!='')
+						$stg_bezeichnung = $stg->english;
+					else
+						$stg_bezeichnung = $stg->bezeichnung;
+					?>
+
 					<tr>
-						<td><?php echo $stg->bezeichnung ?></td>
+						<td><?php echo $stg_bezeichnung ?></td>
 						<td><?php echo $prestatus_help ?></td>
 						<td><?php echo $datum->formatDatum($prestudent_status->datum, 'd.m.Y') ?></td>
-						<td></td>
 						<td><?php echo $bewerberstatus ?></td>
 					</tr>
 				<?php endforeach; ?>
@@ -127,6 +132,12 @@ if(!isset($person_id))
 
                 foreach($stg->result as $result)
                 {
+
+					if($sprache!='German' && $result->studiengangbezeichnung_englisch!='')
+						$stg_bezeichnung = $result->studiengangbezeichnung_englisch;
+					else
+						$stg_bezeichnung = $result->studiengangbezeichnung;
+
                     if($result->studiengang_kz > 0)
                     {
                         $typ = new studiengang();
@@ -153,7 +164,7 @@ if(!isset($person_id))
                                         data-modal="'.$modal.'"
                                         data-modal-sprache="'.implode(',', $sprache).'"
                                         data-modal-orgform="'.implode(',', $orgform).'">
-                                    '.$result->studiengangbezeichnung.'
+                                    '.$stg_bezeichnung.'
                                     <input type="hidden" id="anmerkung'.$result->studiengang_kz.'">
                                 </label>
                             </div>

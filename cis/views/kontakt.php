@@ -95,7 +95,7 @@ if(!isset($person_id))
 				<label for="nation" class="col-sm-2 control-label"><?php echo $p->t('bewerbung/nation') ?>*</label>
 				<div class="col-sm-10">
 					<select name="nation" class="form-control" <?php echo $disabled; ?> >
-						<option><?php echo $p->t('bewerbung/bitteAuswaehlen') ?></option>
+						<option value=""><?php echo $p->t('bewerbung/bitteAuswaehlen') ?></option>
 						<?php
 						foreach($nation->nation as $nat):
 							$selected = ($adr_nation == $nat->code)?'selected':''; ?>

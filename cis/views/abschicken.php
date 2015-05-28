@@ -22,40 +22,66 @@ if(!isset($person_id))
 {
 	die($p->t('bewerbung/ungueltigerZugriff'));
 }
-?>
 
-<div role="tabpanel" class="tab-pane" id="abschicken">
-	<h2><?php echo $p->t('bewerbung/menuBewerbungAbschicken') ?></h2>
-	<p><?php echo $p->t('bewerbung/erklaerungBewerbungAbschicken') ?></p>
-	<?php
+echo '<div role="tabpanel" class="tab-pane" id="abschicken">
+	<h2>'.$p->t('bewerbung/menuBewerbungAbschicken').'</h2>
+	<p>'.$p->t('bewerbung/erklaerungBewerbungAbschicken').'</p>';
 
-	$disabled = 'disabled';
-	if($status_person == true && $status_kontakt == true && $status_dokumente == true && $status_zahlungen == true && $status_reihungstest == true)
-		$disabled = '';
-	$prestudent_help= new prestudent();
-	$prestudent_help->getPrestudenten($person->person_id);
-	$stg = new studiengang();
+$disabled = 'disabled';
+if($status_person == true && $status_kontakt == true && $status_dokumente == true && $status_zahlungen == true && $status_reihungstest == true)
+	$disabled = '';
+$prestudent_help= new prestudent();
+$prestudent_help->getPrestudenten($person->person_id);
+$stg = new studiengang();
 
+foreach($prestudent_help->result as $prest)
+{
+	$stg->load($prest->studiengang_kz);
 
-	foreach($prestudent_help->result as $prest):
-		$stg->load($prest->studiengang_kz); ?>
+	if($sprache!='German' && $stg->english!='')
+		$stg_bezeichnung = $stg->english;
+	else
+		$stg_bezeichnung = $stg->bezeichnung;
+
+	$prestudent_help2 = new prestudent();
+	$prestudent_help2->getPrestudentRolle($prest->prestudent_id,'Bewerber');
+	if(count($prestudent_help2->result)>0)
+	{
+		// Bewerbung bereits geschickt
+		echo '
 		<div class="row">
 			<div class="col-md-6 col-sm-8 col-xs-10">
-				<form method="POST"  action="<?php echo $_SERVER['PHP_SELF'] ?>?active=abschicken">
 					<div class="form-group">
-						<label for="<?php echo $stg->kurzbzlang ?>"><?php echo $p->t('bewerbung/bewerbungAbschickenFuer') ?> <?php echo $stg->bezeichnung ?></label>
-						<input id="<?php echo $stg->kurzbzlang ?>" class="btn btn-default form-control" type="submit" value="<?php echo $p->t('bewerbung/buttonBewerbungAbschicken') ?> (<?php echo $stg->kurzbzlang ?>)" name="btn_bewerbung_abschicken" <?php echo $disabled ?>>
-						<input type="hidden" name="prestudent_id" value="<?php echo $prest->prestudent_id ?>">
+						<label for="'.$stg->kurzbzlang.'">'.$p->t('bewerbung/bewerbungAbschickenFuer').' '.$stg_bezeichnung.'</label>
+						<input class="btn btn-default form-control" type="button" value="'.$p->t('bewerbung/BewerbungBereitsVerschickt').'" disabled="disabled">
+					</div>
+			</div>
+		</div>';
+	}
+	else
+	{
+		// Bewerbung noch nicht geschickt
+		echo '
+		<div class="row">
+			<div class="col-md-6 col-sm-8 col-xs-10">
+				<form method="POST"  action="'.$_SERVER['PHP_SELF'].'?active=abschicken">
+					<div class="form-group">
+						<label for="'.$stg->kurzbzlang.'">'.$p->t('bewerbung/bewerbungAbschickenFuer').' '.$stg_bezeichnung.'</label>
+						<input id="'.$stg->kurzbzlang.'" class="btn btn-default form-control" type="submit" value="'.$p->t('bewerbung/buttonBewerbungAbschicken').' ('.$stg->kurzbzlang.')" name="btn_bewerbung_abschicken" '.$disabled.'>
+						<input type="hidden" name="prestudent_id" value="'.$prest->prestudent_id.'">
 					</div>
 				</form>
 			</div>
-		</div>
-	<?php endforeach; ?>
-	<button class="btn-nav btn btn-default" type="button" onclick="window.location.href='bewerbung.php?logout=true';">
-		<?php echo $p->t('bewerbung/logout') ?>
+		</div>';
+	}
+}
+
+echo '
+	<button class="btn-nav btn btn-default" type="button" onclick="window.location.href=\'bewerbung.php?logout=true\';">
+		'.$p->t('bewerbung/logout').'
 	</button>
 	<button class="btn-nav btn btn-default" type="button" data-jump-tab="aufnahme">
-		<?php echo $p->t('global/zurueck') ?>
+		'.$p->t('global/zurueck').'
 	</button>
-</div>
-
+</div>';
+?>

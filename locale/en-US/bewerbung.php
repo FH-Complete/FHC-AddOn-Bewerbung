@@ -14,7 +14,7 @@ $this->phrasen['bewerbung/mailtext']='Dear Mr / Ms %1$s %2$s.<br><br>
                                         Thank you for your interest in a degree program at '.CAMPUS_NAME.'. <br>
                                         To apply for a course, please use the following link and access code:<br><br>
                                         <a href="'.APP_ROOT.'addons/bewerbung/cis/registration.php">Link to registration</a><br>
-                                        Access code:%3$s <br><br>
+                                        Access code: %3$s <br><br>
                                         Best regards, <br>
                                         '.CAMPUS_NAME;
 $this->phrasen['bewerbung/zugangsdatenFalsch']='The access code you have entered is incorrect or you have not yet registered.';

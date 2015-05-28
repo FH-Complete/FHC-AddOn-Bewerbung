@@ -142,3 +142,4 @@ $this->phrasen['bewerbung/lehrgang']='Lehrgang';
 $this->phrasen['bewerbung/keineStgAngeboten']='Es werden derzeit keine Studiengänge angeboten';
 $this->phrasen['bewerbung/keineLehrgAngeboten']='Es werden derzeit keine Lehrgänge angeboten';
 $this->phrasen['bewerbung/aufmerksamdurch']='Wie sind Sie auf uns aufmerksam geworden?';
+$this->phrasen['bewerbung/BewerbungBereitsVerschickt']='Ihre Bewerbung wurde erfasst und wird bearbeitet';

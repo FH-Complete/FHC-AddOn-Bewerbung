@@ -194,12 +194,7 @@ if(isset($_POST['submitbild']))
 		echo "<script>
 
                 var loc = window.opener.location;
-
-                if(!/active/.test(loc.href)) {
-                    window.opener.location = loc + '?active=dokumente';
-                } else {
-                    window.opener.location.reload();
-                }
+                window.opener.location = 'bewerbung.php?active=dokumente';
             </script>";
 	}
 }
@@ -224,7 +219,7 @@ if($person_id !='')
 				{
                                     $selected=($dokumenttyp == $dok->dokument_kurzbz)?'selected':'';
 					
-                    echo '<option '.$selected.' value="'.$dok->dokument_kurzbz.'" >'.$dok->bezeichnung."</option>\n";
+                    echo '<option '.$selected.' value="'.$dok->dokument_kurzbz.'" >'.$dok->bezeichnung_mehrsprachig[$sprache]."</option>\n";
 					
 				}
 	echo "			</select>

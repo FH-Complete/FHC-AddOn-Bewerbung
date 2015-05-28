@@ -448,13 +448,18 @@ elseif($username && $password)
 						<div class="col-sm-6" id="liste-studiengaenge">
 							<?php
 							$stg = new studiengang();
-							$stg->getAll('typ,bezeichnung',true);
+							$stg->getAllForBewerbung();
 
-							foreach($stg->result as $result):
-								if($result->studiengang_kz > 0 && $result->onlinebewerbung):
+							foreach($stg->result as $result)
+							{
 									$checked = '';
 									$typ = new studiengang();
 									$typ->getStudiengangTyp($result->typ);
+
+									if($sprache!='German' && $result->studiengangbezeichnung_englisch!='')
+										$stg_bezeichnung = $result->studiengangbezeichnung_englisch;
+									else
+										$stg_bezeichnung = $result->studiengangbezeichnung;
 
 									$orgform = $stg->getOrgForm($result->studiengang_kz);
 									$sprache = $stg->getSprache($result->studiengang_kz);
@@ -469,21 +474,23 @@ elseif($username && $password)
 									if(in_array($result->studiengang_kz, $studiengaenge) || $result->studiengang_kz == $stg_auswahl)
 									{
 										$checked = 'checked';
-									} ?>
+									} 
+									echo '
 									<div class="checkbox">
 										<label>
-											<input type="checkbox" name="studiengaenge[]" value="<?php echo $result->studiengang_kz ?>" <?php echo $checked ?>
-												   data-modal="<?php echo $modal ?>"
-												   data-modal-sprache="<?php echo implode(',', $sprache) ?>"
-												   data-modal-orgform="<?php echo implode(',', $orgform) ?>">
-											<?php echo $result->bezeichnung ?>
-											(<?php echo preg_replace(',\w\s*\-\s*,', '', $stg->studiengang_typ_arr[$result->typ]) ?>)
-											<span class="badge" id="badge<?php echo $result->studiengang_kz ?>"></span>
-											<input type="hidden" id="anmerkung<?php echo $result->studiengang_kz ?>" name="anmerkung[<?php echo $result->studiengang_kz ?>]">
+											<input type="checkbox" name="studiengaenge[]" value="'.$result->studiengang_kz.'" '.$checked.'
+												   data-modal="'.$modal.'"
+												   data-modal-sprache="'.implode(',', $sprache).'"
+												   data-modal-orgform="'.implode(',', $orgform).'">
+											'.$stg_bezeichnung.'
+											('.preg_replace(',\w\s*\-\s*,', '', $stg->studiengang_typ_arr[$result->typ]) .')
+											<span class="badge" id="badge'.$result->studiengang_kz.'"></span>
+											<input type="hidden" id="anmerkung'.$result->studiengang_kz.'" name="anmerkung['.$result->studiengang_kz.']">
 										</label>
 									</div>
-								<?php endif;
-							endforeach; ?>
+									';
+							}
+							?>
 						</div>
 					</div>
                     <?php endif; ?>

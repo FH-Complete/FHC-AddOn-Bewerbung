@@ -207,9 +207,6 @@ if(isset($_POST['btn_bewerbung_abschicken']))
    // Mail an zuständige Assistenz schicken
     $pr_id = isset($_POST['prestudent_id']) ? $_POST['prestudent_id'] : '';
 
-    $studiensemester = new studiensemester();
-    $std_semester = $studiensemester->getakt();
-
     if($pr_id != '')
     {
         // Status Bewerber anlegen
@@ -220,7 +217,7 @@ if(isset($_POST['btn_bewerbung_abschicken']))
         $alterstatus->getLastStatus($pr_id);
 
         // check ob es status schon gibt
-        if(!$prestudent_status->load_rolle($pr_id, 'Bewerber', $std_semester, '1'))
+        if(!$prestudent_status->load_rolle($pr_id, 'Bewerber', $alterstatus->studiensemester_kurzbz, '1'))
         {
             $prestudent_status->status_kurzbz = 'Bewerber';
             $prestudent_status->studiensemester_kurzbz = $alterstatus->studiensemester_kurzbz;
