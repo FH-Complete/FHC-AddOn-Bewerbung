@@ -303,7 +303,7 @@ if(isset($_POST['btn_person']))
 		$save_error=true;
 	}
 
-	if($person->checkSvnr($person->svnr))
+	if($person->checkSvnr($person->svnr, $person_id))
 	{
 		$message = $p->t('bewerbung/svnrBereitsVorhanden');
 		$save_error=true;
