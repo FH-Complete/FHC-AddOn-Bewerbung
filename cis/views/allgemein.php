@@ -374,7 +374,7 @@ if(!isset($person_id))
 					if(data.status!='ok')
 						alert(data.msg);
 					else
-						window.location.reload();
+						window.location.href='bewerbung.php?active=allgemein';
 				},
 				error: function(data) 
 				{
