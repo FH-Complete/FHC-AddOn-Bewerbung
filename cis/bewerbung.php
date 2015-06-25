@@ -829,6 +829,11 @@ function sendBewerbung($prestudent_id)
     $email.= $p->t('global/studiengang').': '.$studiengang->bezeichnung.'<br><br>';
     $email.= $p->t('bewerbung/emailBodyEnde');
 
+	if(defined('BEWERBERTOOL_MAILEMPFANG') && BEWERBERTOOL_MAILEMPFANG!='')
+		$empfaenger = BEWERBERTOOL_MAILEMPFANG;
+	else
+		$empfaenger = $studiengang->email;
+
     $mail = new mail($studiengang->email, 'no-reply', 'Bewerbung '.$person->vorname.' '.$person->nachname, 'Bitte sehen Sie sich die Nachricht in HTML Sicht an, um den Link vollständig darzustellen.');
 	$mail->setHTMLContent($email);
 	if(!$mail->send())
