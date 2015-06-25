@@ -40,7 +40,19 @@ if(!empty($studiengaenge))
 ?>
 <div role="tabpanel" class="tab-pane" id="zgv">
     <h2><?php echo $p->t('bewerbung/menuZugangsvoraussetzungen'); ?></h2>
-
+    
+    <?php if(empty($prestudent->result)): ?>
+    <p class="bg-danger" style="padding: 10px;">
+        <?php echo $p->t('bewerbung/bitteZuerstStudiengangWaehlen'); ?>
+    </p>
+    <button class="btn-nav btn btn-default" type="button" data-jump-tab="dokumente">
+        <?php echo $p->t('global/zurueck') ?>
+    </button>
+    <button class="btn-nav btn btn-default" type="button" data-jump-tab="zahlungen">
+        <?php echo $p->t('bewerbung/weiter'); ?>
+    </button>
+    
+    <?php else: ?>
     <form method="POST" class="form-horizontal" action="<?php echo $_SERVER['PHP_SELF'] ?>?active=zgv">
         <?php foreach ($zgv as $stufe => $attribute):
             if ($stufe === 'master' && !in_array('m', $types, true)) {
@@ -136,4 +148,5 @@ if(!empty($studiengaenge))
             <?php echo $p->t('bewerbung/weiter'); ?>
         </button>
     </form>
+    <?php endif; ?>
 </div>

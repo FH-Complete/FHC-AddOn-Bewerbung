@@ -140,3 +140,4 @@ $this->phrasen['bewerbung/ausbildungstyp']='Type of Education';
 $this->phrasen['bewerbung/lehrgang']='Course';
 $this->phrasen['bewerbung/keineStgAngeboten']='There are no degree programs available at the moment';
 $this->phrasen['bewerbung/keineLehrgAngeboten']='There are no courses available at the moment';
+$this->phrasen['bewerbung/bitteZuerstStudiengangWaehlen']='Please select at least one field of study first (see section "General").';

@@ -148,11 +148,11 @@ if(!isset($person_id))
                         } 
 
                         $orgform = $stg->getOrgForm($result->studiengang_kz);
-                        $sprache = $stg->getSprache($result->studiengang_kz);
+                        $stgSprache = $stg->getSprache($result->studiengang_kz);
 
                         $modal = false;
 
-                        if(count($orgform) !== 1 || count($sprache) !== 1)
+                        if(count($orgform) !== 1 || count($stgSprache) !== 1)
                         {
                             $modal = true;
                         }
@@ -162,7 +162,7 @@ if(!isset($person_id))
                                 <label>
                                     <input type="radio" name="studiengaenge[]" value="'.$result->studiengang_kz.'"
                                         data-modal="'.$modal.'"
-                                        data-modal-sprache="'.implode(',', $sprache).'"
+                                        data-modal-sprache="'.implode(',', $stgSprache).'"
                                         data-modal-orgform="'.implode(',', $orgform).'">
                                     '.$stg_bezeichnung.'
                                     <input type="hidden" id="anmerkung'.$result->studiengang_kz.'">
