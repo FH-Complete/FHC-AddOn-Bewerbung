@@ -35,8 +35,12 @@ require_once('../../../include/konto.class.php');
 require_once('../../../include/bankverbindung.class.php');
 require_once('../../../include/studiengang.class.php');
 require_once('../../../include/organisationseinheit.class.php');
+require_once('../../../include/phrasen.class.php');
 	
 $person_id = $_SESSION['bewerbung/personId'];
+
+$sprache = getSprache();
+$p = new phrasen($sprache);
 
 if(isset($_GET['buchungsnr']))
 	$buchungsnr=$_GET['buchungsnr'];
