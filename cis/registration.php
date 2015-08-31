@@ -462,7 +462,7 @@ elseif($username && $password)
 										$stg_bezeichnung = $result->studiengangbezeichnung;
 
 									$orgform = $stg->getOrgForm($result->studiengang_kz);
-									$sprache = $stg->getSprache($result->studiengang_kz);
+									$sprache_lv = $stg->getSprache($result->studiengang_kz);
 
 									$modal = false;
 
@@ -480,7 +480,7 @@ elseif($username && $password)
 										<label>
 											<input type="checkbox" name="studiengaenge[]" value="'.$result->studiengang_kz.'" '.$checked.'
 												   data-modal="'.$modal.'"
-												   data-modal-sprache="'.implode(',', $sprache).'"
+												   data-modal-sprache="'.implode(',', $sprache_lv).'"
 												   data-modal-orgform="'.implode(',', $orgform).'">
 											'.$stg_bezeichnung.'
 											('.preg_replace(',\w\s*\-\s*,', '', $stg->studiengang_typ_arr[$result->typ]) .')
