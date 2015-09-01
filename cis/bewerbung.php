@@ -88,7 +88,7 @@ if($benutzer->getBenutzerFromPerson($person->person_id))
 	if(count($benutzer->result)>0)
 	{
 		$eingabegesperrt=true;
-		
+
 	}
 }
 
@@ -311,7 +311,7 @@ if(isset($_POST['btn_person']))
 
     $berufstaetig = filter_input(INPUT_POST, 'berufstaetig');
 
-    if(in_array($berufstaetig, array('Vollzeit', 'Teilzeit'), true)) 
+    if(in_array($berufstaetig, array('Vollzeit', 'Teilzeit'), true))
 	{
 
         $berufstaetig_art = filter_input(INPUT_POST, 'berufstaetig_art');
@@ -329,14 +329,14 @@ if(isset($_POST['btn_person']))
         $notiz->save(true);
         $notiz->saveZuordnung();
     }
-		
+
 	$aufmerksamdurch = filter_input(INPUT_POST,'aufmerksamdurch');
 
     // Aufmerksamdurch speichern
     $prestudent = new prestudent();
     $prestudent->getPrestudenten($person_id);
 
-    foreach($prestudent->result as $prestudent_eintrag) 
+    foreach($prestudent->result as $prestudent_eintrag)
 	{
 		$prestudent_eintrag->new=false;
 		$prestudent_eintrag->aufmerksamdurch_kurzbz = $aufmerksamdurch;
@@ -476,7 +476,7 @@ if(isset($_POST['btn_zgv']))
 
     $master_zgv_art = filter_input(INPUT_POST, 'master_zgv_art', FILTER_VALIDATE_INT);
 
-    foreach($prestudent->result as $prestudent_eintrag) 
+    foreach($prestudent->result as $prestudent_eintrag)
 	{
 
         $prestudent_eintrag->new = false;
@@ -554,7 +554,7 @@ $master_zgv_done = false;
 $bachelor_zgv_done = false;
 $stg = new studiengang;
 
-foreach($prestudent->result as $prestudent_eintrag) 
+foreach($prestudent->result as $prestudent_eintrag)
 {
     $studiengaenge[] = $prestudent_eintrag->studiengang_kz;
     $master_zgv_done = isset($prestudent_eintrag->zgvmas_code);
@@ -695,7 +695,7 @@ else
 		{
 			text-decoration:none;
 		}
-		.glyphicon 
+		.glyphicon
 		{
 			font-size: 16px;
 		}
@@ -834,7 +834,7 @@ function sendBewerbung($prestudent_id)
 	else
 		$empfaenger = $studiengang->email;
 
-    $mail = new mail($studiengang->email, 'no-reply', 'Bewerbung '.$person->vorname.' '.$person->nachname, 'Bitte sehen Sie sich die Nachricht in HTML Sicht an, um den Link vollständig darzustellen.');
+    $mail = new mail($empfaenger, 'no-reply', 'Bewerbung '.$person->vorname.' '.$person->nachname, 'Bitte sehen Sie sich die Nachricht in HTML Sicht an, um den Link vollständig darzustellen.');
 	$mail->setHTMLContent($email);
 	if(!$mail->send())
 		return false;
