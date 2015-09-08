@@ -38,6 +38,10 @@ header("Content-Type: text/html; charset=utf-8");
 
 session_cache_limiter('none'); //muss gesetzt werden sonst funktioniert der Download mit IE8 nicht
 session_start();
+
+$sprache = getSprache();
+$p=new phrasen($sprache);
+
 if (!isset($_SESSION['bewerbung/user']) || $_SESSION['bewerbung/user']=='')
 {
     header('registration.php?method=allgemein');
@@ -57,8 +61,6 @@ if($person_id!=$_SESSION['bewerbung/personId'])
 
 $dokumenttyp = (isset($_GET['dokumenttyp']))? $_GET['dokumenttyp'] : '';
 $kategorie_kurzbz = isset($_REQUEST['kategorie_kurzbz'])?$_REQUEST['kategorie_kurzbz']:'';
-$sprache = getSprache();
-$p=new phrasen($sprache);
 
 $PHP_SELF = $_SERVER['PHP_SELF'];
 echo "<html>
