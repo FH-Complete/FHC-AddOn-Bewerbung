@@ -1,5 +1,5 @@
 <?php
-/* 
+/*
  * Copyright (C) 2015 fhcomplete.org
  *
  * This program is free software: you can redistribute it and/or modify
@@ -70,9 +70,9 @@ if(!isset($person_id))
 				}
 				else
 				{
-					
+
 					$dokument = new dokument();
-					
+
 					if($dokument->akzeptiert($akte->result[0]->dokument_kurzbz,$person->person_id))
 					{
 						// Dokument wurde bereits überprüft
@@ -100,15 +100,20 @@ if(!isset($person_id))
 				$status = ' - ';
 				$aktion = '	<button title="'.$p->t('bewerbung/upload').'" type="button" class="btn btn-default" href="dms_akteupload.php?person_id='.$person_id.'&dokumenttyp='.$dok->dokument_kurzbz.'" onclick="FensterOeffnen(\'dms_akteupload.php?person_id='.$person_id.'&dokumenttyp='.$dok->dokument_kurzbz.'\'); return false;">
   								<span class="glyphicon glyphicon-upload" aria-hidden="true" title="'.$p->t('bewerbung/upload').'"></span>
-							</button>
+							</button>';
+
+				if(!defined('BEWERBERTOOL_DOKUMENTE_NACHREICHEN') || BEWERBERTOOL_DOKUMENTE_NACHREICHEN==true)
+				{
+					$aktion .='
 							<button title="'.$p->t('bewerbung/dokumentWirdNachgereicht').'" type="button" class="btn btn-default" onclick="toggleDiv(\'nachgereicht_'.$dok->dokument_kurzbz.'\');return false;">
   								<span class="glyphicon glyphicon-hourglass" aria-hidden="true" title="'.$p->t('bewerbung/dokumentWirdNachgereicht').'"></span>
 							</button>';
+				}
 				$div = "<form method='POST' action='".$_SERVER['PHP_SELF']."?active=dokumente'>
-							<span id='nachgereicht_".$dok->dokument_kurzbz."' style='display:none;'>".$p->t('global/anmerkung').": 
+							<span id='nachgereicht_".$dok->dokument_kurzbz."' style='display:none;'>".$p->t('global/anmerkung').":
 								<input type='checkbox' name='check_nachgereicht' checked=\"checked\" style='display:none'>
-								<input id='anmerkung_".$dok->dokument_kurzbz."' type='text' size='15' maxlength='128' name='txt_anmerkung' onInput='zeichenCountdown(\"anmerkung_".$dok->dokument_kurzbz."\")'> 
-								<span style='color: grey; display: inline-block; width: 30px;' id='countdown_anmerkung_".$dok->dokument_kurzbz."'>128</span> 
+								<input id='anmerkung_".$dok->dokument_kurzbz."' type='text' size='15' maxlength='128' name='txt_anmerkung' onInput='zeichenCountdown(\"anmerkung_".$dok->dokument_kurzbz."\")'>
+								<span style='color: grey; display: inline-block; width: 30px;' id='countdown_anmerkung_".$dok->dokument_kurzbz."'>128</span>
 								<input type='submit' value='OK' name='submit_nachgereicht' class='btn btn-default'>
 							</span>
 							<input type='hidden' name='dok_kurzbz' value='".$dok->dokument_kurzbz."'>
@@ -139,10 +144,10 @@ if(!isset($person_id))
 
 			<tr>
 				<td style="vertical-align: middle">
-                    <?php 
+                    <?php
 					echo $dok->bezeichnung_mehrsprachig[getSprache()];
                     ?>
-                    
+
                     <?php if($dok->pflicht): ?>
                         <span class="text-danger glyphicon glyphicon-asterisk"></span>
                     <?php endif; ?>

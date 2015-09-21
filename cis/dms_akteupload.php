@@ -63,9 +63,39 @@ $dokumenttyp = (isset($_GET['dokumenttyp']))? $_GET['dokumenttyp'] : '';
 $kategorie_kurzbz = isset($_REQUEST['kategorie_kurzbz'])?$_REQUEST['kategorie_kurzbz']:'';
 
 $PHP_SELF = $_SERVER['PHP_SELF'];
-echo "<html>
-		<head><title>".$p->t('bewerbung/fileUpload')."</title></head>
-		<body>";
+echo '<!DOCTYPE HTML>
+<html>
+		<head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <title>'.$p->t('bewerbung/fileUpload').'</title>
+        <link href="../../../submodules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+        <link href="../../../skin/fhcomplete.css" rel="stylesheet" type="text/css">
+		<script src="../../../include/js/jquery.min.1.11.1.js"></script>
+		<script src="../../../submodules/bootstrap/dist/js/bootstrap.min.js"></script>
+        <script>
+        function showExtensionInfo()
+        {
+
+            var typ = $("#dokumenttyp").val();
+            var extinfo="";
+            if(typ=="Lichtbil")
+                extinfo="jpg";
+            else
+                extinfo="jpg, png, gif, tiff, bmp, pdf, zip, doc, docx";
+            $("#extinfo").html("'.$p->t('bewerbung/ExtensionInformation').'"+extinfo);
+        }
+
+        $(function() {
+          showExtensionInfo()
+        });
+        </script>
+        <style>
+        body {
+            margin:10px;
+        }
+        </style>
+        </head>
+		<body>';
 
 //Bei Upload des Bildes
 if(isset($_POST['submitbild']))
@@ -76,44 +106,53 @@ if(isset($_POST['submitbild']))
     if(isset($_POST['fileupload']))
     {
         $ext = pathinfo($_FILES['file']['name'], PATHINFO_EXTENSION);
-        $filename = uniqid();
-        $filename.=".".$ext;
-        $uploadfile = DMS_PATH.$filename;
 
-
-        if(move_uploaded_file($_FILES['file']['tmp_name'], $uploadfile))
+        if((in_array($ext,array('jpg','jpeg')) && $_REQUEST['dokumenttyp']=='Lichtbil')
+          || ($_REQUEST['dokumenttyp']!='Lichtbil' && in_array($ext, array('zip','pdf','doc','docx','jpg','png','gif','tiff','bmp'))))
         {
-            if(!chgrp($uploadfile,'dms'))
-                echo 'CHGRP failed';
-            if(!chmod($uploadfile, 0774))
-                echo 'CHMOD failed';
-            exec('sudo chown wwwrun '.$uploadfile);
+            $filename = uniqid();
+            $filename.=".".$ext;
+            $uploadfile = DMS_PATH.$filename;
 
-            $dms = new dms();
-
-            $dms->version='0';
-            $dms->kategorie_kurzbz=$kategorie_kurzbz;
-
-            $dms->insertamum=date('Y-m-d H:i:s');
-            //$dms->insertvon = $user;
-            $dms->mimetype=$_FILES['file']['type'];
-            $dms->filename = $filename;
-            $dms->name = $_FILES['file']['name'];
-
-            if($dms->save(true))
+            if(move_uploaded_file($_FILES['file']['tmp_name'], $uploadfile))
             {
-                $dms_id=$dms->dms_id;
+                if(!chgrp($uploadfile,'dms'))
+                    echo 'CHGRP failed';
+                if(!chmod($uploadfile, 0774))
+                    echo 'CHMOD failed';
+                //exec('sudo chown wwwrun '.$uploadfile);
 
+                $dms = new dms();
+
+                $dms->version='0';
+                $dms->kategorie_kurzbz=$kategorie_kurzbz;
+
+                $dms->insertamum=date('Y-m-d H:i:s');
+                //$dms->insertvon = $user;
+                $dms->mimetype=$_FILES['file']['type'];
+                $dms->filename = $filename;
+                $dms->name = $_FILES['file']['name'];
+
+                if($dms->save(true))
+                {
+                    $dms_id=$dms->dms_id;
+
+                }
+                else
+                {
+                    echo $p->t('global/fehlerBeimSpeichernDerDaten');
+                    $error = true;
+                }
             }
             else
             {
-                echo $p->t('global/fehlerBeimSpeichernDerDaten');
+                echo $p->t('global/dateiNichtErfolgreichHochgeladen');
                 $error = true;
             }
         }
         else
         {
-            echo $p->t('global/dateiNichtErfolgreichHochgeladen');
+            echo '<span class="error">'.$p->t('bewerbung/falscherDateityp').'</span>';
             $error = true;
         }
     }
@@ -184,7 +223,7 @@ if(isset($_POST['submitbild']))
 		$akte->anmerkung = '';
 	//	$akte->insertvon = $user;
 		$akte->uid = '';
-                $akte->dms_id = $dms_id;
+        $akte->dms_id = $dms_id;
 		$akte->new = true;
 
 
@@ -243,7 +282,6 @@ if(isset($_POST['submitbild']))
         }
 
 		echo "<script>
-
                 var loc = window.opener.location;
                 window.opener.location = 'bewerbung.php?active=dokumente';
             </script>";
@@ -253,38 +291,32 @@ if(isset($_POST['submitbild']))
 if($person_id !='')
 {
 	$dokument = new dokument();
-	$dokument->getAllDokumenteForPerson($person_id);
-	echo "	<form method='POST' enctype='multipart/form-data' action='$PHP_SELF?person_id=".$_GET['person_id']."'>
-			<table>
-				<tr>
-					<td>".$p->t('incoming/dokument').":</td>
-					<td>
-						<input type='file' name='file' />
-					</td>
-				</tr>
-				<tr>
-					<td>".$p->t('incoming/dokumenttyp').":</td>
-					<td>
-					 <SELECT name='dokumenttyp'>";
+	$dokument->getAllDokumenteForPerson($person_id, true);
+
+	echo '	<form method="POST" enctype="multipart/form-data" action="'.$PHP_SELF.'?person_id='.$_GET['person_id'].'" class="form-horizontal">
+            <div class="form-group">
+				<label for="file" class="col-xs-2 control-label">'.$p->t('incoming/dokument').':</label>
+				<div class="col-xs-5">
+					<input type="file" name="file" class="file"/>
+				</div>
+			</div>
+            <div class="form-group">
+				<label for="file" class="col-xs-2 control-label">'.$p->t('incoming/dokumenttyp').':</label>
+				<div class="col-xs-5">
+					<SELECT name="dokumenttyp" id="dokumenttyp" onchange="showExtensionInfo()" class="form-control">';
 				foreach ($dokument->result as $dok)
 				{
-                                    $selected=($dokumenttyp == $dok->dokument_kurzbz)?'selected':'';
-
+                    $selected=($dokumenttyp == $dok->dokument_kurzbz)?'selected':'';
                     echo '<option '.$selected.' value="'.$dok->dokument_kurzbz.'" >'.$dok->bezeichnung_mehrsprachig[$sprache]."</option>\n";
-
 				}
-	echo "			</select>
-					</td>
-				</tr>
-				<tr><td>&nbsp;</td></tr>
-				<tr>
-					<td><input type='hidden' name='kategorie_kurzbz' id='kategorie_kurzbz' value='Akte'>
-                    <td><input type='hidden' name='fileupload' id='fileupload'></td>
-					<td><input type='submit' name='submitbild' value='Upload'></td>
-
-				</tr>
-			</table>
-			</form>";
+	echo '			</select>
+                </div>
+            </div>
+            <input type="submit" name="submitbild" value="Upload" class="btn btn-default">
+            <p class="help-block"><span id="extinfo"></span></p>
+            <input type="hidden" name="kategorie_kurzbz" id="kategorie_kurzbz" value="Akte">
+            <input type="hidden" name="fileupload" id="fileupload">
+		</form>';
 
 }
 else

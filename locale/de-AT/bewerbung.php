@@ -11,7 +11,7 @@ $this->phrasen['bewerbung/zugangscode']='Zugangscode';
 $this->phrasen['bewerbung/fallsVorhanden']='(falls vorhanden)';
 $this->phrasen['bewerbung/mailtextHtml']='Bitte sehen Sie sich die Nachricht in der HTML-Ansicht an um den Link vollständig darzustellen.';
 $this->phrasen['bewerbung/mailtext']='Sehr geehrteR Herr/Frau %1$s %2$s.<br><br>
-        Vielen Dank für Ihr Interesse an einem Studiengang der '.CAMPUS_NAME.'. <br> 
+        Vielen Dank für Ihr Interesse an einem Studiengang der '.CAMPUS_NAME.'. <br>
         Um sich für einen Studiengang zu bewerben verwenden Sie bitte folgenden Link und Zugangscode: <br><br>
         <a href="'.APP_ROOT.'addons/bewerbung/cis/registration.php">Link zur Bewerbung</a><br>
         Zugangscode: %3$s <br><br>
@@ -144,3 +144,5 @@ $this->phrasen['bewerbung/keineLehrgAngeboten']='Es werden derzeit keine Lehrgä
 $this->phrasen['bewerbung/aufmerksamdurch']='Wie sind Sie auf uns aufmerksam geworden?';
 $this->phrasen['bewerbung/BewerbungBereitsVerschickt']='Ihre Bewerbung wurde erfasst und wird bearbeitet';
 $this->phrasen['bewerbung/bitteZuerstStudiengangWaehlen']='Bitte wählen Sie zuerst den gewünschten Studiengang im Bereich "Allgemein" aus.';
+$this->phrasen['bewerbung/ExtensionInformation']='Unterstützte Dateiformate:';
+$this->phrasen['bewerbung/falscherDateityp']='Dieses Dateiformat wird nicht unterstützt';

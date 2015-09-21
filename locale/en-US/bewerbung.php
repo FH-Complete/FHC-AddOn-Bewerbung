@@ -141,3 +141,5 @@ $this->phrasen['bewerbung/lehrgang']='Course';
 $this->phrasen['bewerbung/keineStgAngeboten']='There are no degree programs available at the moment';
 $this->phrasen['bewerbung/keineLehrgAngeboten']='There are no courses available at the moment';
 $this->phrasen['bewerbung/bitteZuerstStudiengangWaehlen']='Please select at least one field of study first (see section "General").';
+$this->phrasen['bewerbung/ExtensionInformation']='Supported File formats:';
+$this->phrasen['bewerbung/falscherDateityp']='This File format is not supported';
