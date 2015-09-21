@@ -1,5 +1,5 @@
 <?php
-/* 
+/*
  * Copyright (C) 2015 fhcomplete.org
  *
  * This program is free software: you can redistribute it and/or modify
@@ -100,7 +100,12 @@ if(!isset($person_id))
 						foreach($nation->nation as $nat):
 							$selected = ($adr_nation == $nat->code)?'selected':''; ?>
 							<option value="<?php echo $nat->code ?>" <?php echo $selected ?>>
-								<?php echo $nat->kurztext ?>
+								<?php
+									if($sprache=='German')
+										echo $nat->langtext;
+									else
+										echo $nat->engltext;
+									?>
 							</option>
 						<?php endforeach; ?>
 					</select>

@@ -30,7 +30,7 @@ $types = array();
 $studienplan = new studienplan();
 $stg = new studiengang();
 
-foreach ($prestudent->result as $prestudent_eintrag) 
+foreach ($prestudent->result as $prestudent_eintrag)
 {
     $studiengaenge[] = $prestudent_eintrag->studiengang_kz;
 }
@@ -40,7 +40,7 @@ if(!empty($studiengaenge))
 ?>
 <div role="tabpanel" class="tab-pane" id="zgv">
     <h2><?php echo $p->t('bewerbung/menuZugangsvoraussetzungen'); ?></h2>
-    
+
     <?php if(empty($prestudent->result)): ?>
     <p class="bg-danger" style="padding: 10px;">
         <?php echo $p->t('bewerbung/bitteZuerstStudiengangWaehlen'); ?>
@@ -51,7 +51,7 @@ if(!empty($studiengaenge))
     <button class="btn-nav btn btn-default" type="button" data-jump-tab="zahlungen">
         <?php echo $p->t('bewerbung/weiter'); ?>
     </button>
-    
+
     <?php else: ?>
     <form method="POST" class="form-horizontal" action="<?php echo $_SERVER['PHP_SELF'] ?>?active=zgv">
         <?php foreach ($zgv as $stufe => $attribute):
@@ -69,14 +69,14 @@ if(!empty($studiengaenge))
                         <select name="<?php echo $stufe ?>_zgv_art" id="<?php echo $stufe ?>_zgv_art"
                                 class="form-control">
                             <option value=""><?php echo $p->t('bewerbung/bitteAuswaehlen'); ?></option>
-                            <?php 
+                            <?php
 							$selected = '';
 							if($stufe==='master')
 							{
 		                        foreach ($zgvma_options->result as $zgvma_option)
 								{
 		                            $selected = (isset($attribute['art']) && $attribute['art'] == $zgvma_option->zgvmas_code) ? 'selected' : '';
-		
+
 									echo '<option value="'.$zgvma_option->zgvmas_code.'" '.$selected.'>'.$zgvma_option->convert_html_chars($zgvma_option->zgvmas_bez).'</option>';
 		                        }
 
@@ -86,7 +86,7 @@ if(!empty($studiengaenge))
 		                        foreach ($zgv_options->result as $zgv_option)
 								{
 		                            $selected = (isset($attribute['art']) && $attribute['art'] == $zgv_option->zgv_code) ? 'selected' : '';
-		
+
 									echo '<option value="'.$zgv_option->zgv_code.'" '.$selected.'>'.$zgv_option->convert_html_chars($zgv_option->zgv_bez).'</option>';
 		                        }
 							}
@@ -118,7 +118,12 @@ if(!empty($studiengaenge))
                             foreach ($nation->nation as $nat):
                                 $selected = (isset($attribute['nation']) && $attribute['nation'] == $nat->code) ? 'selected' : ''; ?>
                                 <option value="<?php echo $nat->code ?>" <?php echo $selected ?>>
-                                    <?php echo $nat->kurztext ?>
+                                    <?php
+                                        if($sprache=='German')
+                                            echo $nat->langtext;
+                                        else
+                                            echo $nat->engltext;
+                                    ?>
                                 </option>
                             <?php endforeach; ?>
                         </select>

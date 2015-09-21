@@ -1,5 +1,5 @@
 <?php
-/* 
+/*
  * Copyright (C) 2015 fhcomplete.org
  *
  * This program is free software: you can redistribute it and/or modify
@@ -38,7 +38,7 @@ if(!isset($person_id))
 	$geburtstag = ($person->gebdatum != '')?$datum->formatDatum($person->gebdatum, 'd.m.Y'):'';
 	$gebort =  ($person->gebort != '')?$person->gebort:'';
 
-	$svnr = ($person->svnr != '')?$person->svnr:''; 
+	$svnr = ($person->svnr != '')?$person->svnr:'';
 
 	$disabled='';
 	if($eingabegesperrt)
@@ -103,7 +103,12 @@ if(!isset($person_id))
 					foreach($nation->nation as $nat):
 						$selected = ($person->geburtsnation == $nat->code) ? 'selected' : ''; ?>
 						<option value="<?php echo $nat->code ?>" <?php echo $selected ?>>
-							<?php echo $nat->kurztext ?>
+							<?php
+							if($sprache=='German')
+								echo $nat->langtext;
+							else
+								echo $nat->engltext;
+							?>
 						</option>
 					<?php endforeach; ?>
 				</select>
@@ -118,7 +123,12 @@ if(!isset($person_id))
 					foreach($nation->nation as $nat):
 						$selected = ($person->staatsbuergerschaft == $nat->code) ? 'selected' : ''; ?>
 						<option value="<?php echo $nat->code ?>" <?php echo $selected ?>>
-							<?php echo $nat->kurztext ?>
+							<?php
+								if($sprache=='German')
+									echo $nat->langtext;
+								else
+									echo $nat->engltext;
+							?>
 						</option>
 					<?php endforeach; ?>
 				</select>
@@ -146,7 +156,7 @@ if(!isset($person_id))
 			<div class="col-sm-9">
 				<select name="aufmerksamdurch" id="aufmerksamdurch"  <?php echo $disabled; ?> class="form-control">
 					<option value=""><?php echo $p->t('bewerbung/bitteAuswaehlen') ?></option>
-					<?php 
+					<?php
 					$aufmerksamdurch = new aufmerksamdurch();
 					$aufmerksamdurch->getAll();
 
@@ -222,4 +232,3 @@ if(!isset($person_id))
 		</button>
 	</form>
 </div>
-
