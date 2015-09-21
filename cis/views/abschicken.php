@@ -1,5 +1,5 @@
 <?php
-/* 
+/*
  * Copyright (C) 2015 fhcomplete.org
  *
  * This program is free software: you can redistribute it and/or modify
@@ -44,8 +44,8 @@ foreach($prestudent_help->result as $prest)
 		$stg_bezeichnung = $stg->bezeichnung;
 
 	$prestudent_help2 = new prestudent();
-	$prestudent_help2->getPrestudentRolle($prest->prestudent_id,'Bewerber');
-	if(count($prestudent_help2->result)>0)
+	$prestudent_help2->getPrestudentRolle($prest->prestudent_id,'Interessent');
+	if($prestudent_help2->result[0]->bestaetigtam!='')
 	{
 		// Bewerbung bereits geschickt
 		echo '

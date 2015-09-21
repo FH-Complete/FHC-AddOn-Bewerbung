@@ -217,9 +217,9 @@ if(isset($_POST['btn_bewerbung_abschicken']))
         $alterstatus->getLastStatus($pr_id);
 
         // check ob es status schon gibt
-        if(!$prestudent_status->load_rolle($pr_id, 'Bewerber', $alterstatus->studiensemester_kurzbz, '1'))
+        if($prestudent_status->load_rolle($pr_id, 'Interessent', $alterstatus->studiensemester_kurzbz, '1'))
         {
-            $prestudent_status->status_kurzbz = 'Bewerber';
+            /*$prestudent_status->status_kurzbz = 'Bewerber';
             $prestudent_status->studiensemester_kurzbz = $alterstatus->studiensemester_kurzbz;
             $prestudent_status->ausbildungssemester = '1';
             $prestudent_status->datum = date('Y-m-d H:i:s');
@@ -229,6 +229,12 @@ if(isset($_POST['btn_bewerbung_abschicken']))
             $prestudent_status->updatevon = '';
             $prestudent_status->studienplan_id = $alterstatus->studienplan_id;
             $prestudent_status->new = true;
+            */
+            $prestudent_status->bestaetigtam=date('Y-m-d H:i:s');
+            $prestudent_status->new=false;
+            $prestudent_status->updateamum = date('Y-m-d H:i:s');
+            $prestudent_status->updatevon = 'onlinebewerbung';
+            
             if(!$prestudent_status->save_rolle())
                 die($p->t('global/fehlerBeimSpeichernDerDaten'));
         }
@@ -283,7 +289,7 @@ if(!$active)
 }
 $save_error=false;
 // Persönliche Daten speichern
-if(isset($_POST['btn_person']))
+if(isset($_POST['btn_person']) && !$eingabegesperrt)
 {
     $person->titelpre = $_POST['titel_pre'];
     $person->vorname = $_POST ['vorname'];
