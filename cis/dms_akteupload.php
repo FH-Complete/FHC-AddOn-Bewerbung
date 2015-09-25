@@ -116,12 +116,13 @@ if(isset($_POST['submitbild']))
 
             if(move_uploaded_file($_FILES['file']['tmp_name'], $uploadfile))
             {
-                if(!chgrp($uploadfile,'dms'))
+				/*
+                if(!@chgrp($uploadfile,'dms'))
                     echo 'CHGRP failed';
-                if(!chmod($uploadfile, 0774))
+                if(!@chmod($uploadfile, 0774))
                     echo 'CHMOD failed';
                 //exec('sudo chown wwwrun '.$uploadfile);
-
+				*/
                 $dms = new dms();
 
                 $dms->version='0';

@@ -49,7 +49,7 @@ $this->phrasen['bewerbung/neuerStudiengang'] = 'Bitte wählen Sie einen Studieng
 $this->phrasen['bewerbung/geplanteStudienrichtung']='Geplante Studienrichtung';
 $this->phrasen['bewerbung/menuAllgemein']='Allgemein';
 $this->phrasen['bewerbung/loginmitAccount']='Wenn Sie bereits einen Account haben, können sie sich mit Ihrem Usernamen / Passwort anmelden';
-$this->phrasen['bewerbung/allgemeineErklaerung']='Wir freuen uns dass Sie sich für einen oder mehrere unserer Studiengänge bewerben.<br><br>
+$this->phrasen['bewerbung/allgemeineErklaerung']='Wir freuen uns, dass Sie sich für einen oder mehrere unserer Studiengänge bewerben.<br><br>
 	Bitte füllen Sie das Formular vollständig aus und schicken Sie es danach ab.<br><br>
 	<b>Bewerbungsmodus:</b><br>
 	<p style="text-align:justify;">Füllen Sie alle Punkte aus. Sind alle Werte vollständig eingetragen, können Sie unter "Bewerbung abschicken" Ihre Bewerbung an die zuständige Assistenz schicken.<br>
@@ -110,7 +110,7 @@ $this->phrasen['bewerbung/erklaerungBewerbungAbschicken']='Haben Sie alle Daten 
 		Die jeweilige Studiengangsassistenz wird sich in den folgenden Tagen bezüglich der Bewerbung bei Ihnen melden.
 		<br><br>
 		Bitte überprüfen Sie nochmals Ihre Daten.<br>
-		Um Ihre Bewerbung jetzt abzuschließen klicken auf folgenden Link:';
+		Um Ihre Bewerbung abzuschließen klicken Sie auf die entsprechende Schaltfläche:';
 $this->phrasen['bewerbung/bewerbungAbschickenFuer']='Bewerbung abschicken für';
 $this->phrasen['bewerbung/buttonBewerbungAbschicken']='Bewerbung abschicken';
 $this->phrasen['bewerbung/logout']='Logout';

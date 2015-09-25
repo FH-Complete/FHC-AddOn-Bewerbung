@@ -166,7 +166,7 @@ elseif($username && $password)
 						</a>
 					</li>
 					<li class="active">
-						<?php echo $p->t('bewerbung/registration') ?>
+						<?php echo $p->t('bewerbung/registrieren') ?>
 					</li>
 				<?php else: ?>
 					<li class="active">
@@ -450,8 +450,25 @@ elseif($username && $password)
 							$stg = new studiengang();
 							$stg->getAllForBewerbung();
 
+
+							$stghlp = new studiengang();
+							$stghlp->getLehrgangstyp();
+							$lgtyparr=array();
+							foreach($stghlp->result as $row)
+								$lgtyparr[$row->lgartcode]=$row->bezeichnung;
+
+							$stgtyp = new studiengang();
+							$stgtyp->getAllTypes();
+
+							$lasttyp='';
 							foreach($stg->result as $result)
 							{
+									if($lasttyp!=$result->typ)
+									{
+										echo '<h4>'.$stgtyp->studiengang_typ_arr[$result->typ].'</h4>';
+										$lasttyp=$result->typ;
+									}
+									
 									$checked = '';
 									$typ = new studiengang();
 									$typ->getStudiengangTyp($result->typ);
@@ -482,8 +499,13 @@ elseif($username && $password)
 												   data-modal="'.$modal.'"
 												   data-modal-sprache="'.implode(',', $sprache_lv).'"
 												   data-modal-orgform="'.implode(',', $orgform).'">
-											'.$stg_bezeichnung.'
-											('.preg_replace(',\w\s*\-\s*,', '', $stg->studiengang_typ_arr[$result->typ]) .')
+											'.$stg_bezeichnung;
+									if($result->typ=='l' && isset($lgtyparr[$result->lgartcode]))
+									{
+										echo ' ('.$lgtyparr[$result->lgartcode].')';
+									}
+
+									echo '
 											<span class="badge" id="badge'.$result->studiengang_kz.'"></span>
 											<input type="hidden" id="anmerkung'.$result->studiengang_kz.'" name="anmerkung['.$result->studiengang_kz.']">
 										</label>
