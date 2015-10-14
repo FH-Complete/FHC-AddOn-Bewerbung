@@ -189,7 +189,8 @@ elseif($username && $password)
 				$geschlecht = filter_input(INPUT_POST, 'geschlecht');
 				$email = filter_input(INPUT_POST, 'email');
 				$anmerkungen = filter_input(INPUT_POST, 'anmerkung', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY);
-				
+				$orgform = filter_input(INPUT_POST, 'orgform', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY);
+
                 if(BEWERBERTOOL_STUDIENAUSWAHL_ANZEIGEN)
                 {
                     $studiengaenge = filter_input(INPUT_POST, 'studiengaenge', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY);
@@ -291,6 +292,7 @@ elseif($username && $password)
                                 $prestudent_status->updatevon = '';
                                 $prestudent_status->new = true;
                                 $prestudent_status->anmerkung_status = $anmerkungen[$studiengaenge[$i]];
+								$prestudent_status->orgform_kurzbz = $orgform[$studiengaenge[$i]];
 
                                 if(!$prestudent_status->save_rolle())
                                 {
@@ -418,7 +420,7 @@ elseif($username && $password)
 							<input type="email" maxlength="128" name="email" id="email" value="<?php echo $email ?>" class="form-control">
 						</div>
 					</div>
-                    
+
                     <?php if(BEWERBERTOOL_STUDIENAUSWAHL_ANZEIGEN): ?>
 					<div class="form-group">
 						<label for="studiensemester_kurzbz" class="col-sm-3 control-label">
@@ -468,7 +470,7 @@ elseif($username && $password)
 										echo '<h4>'.$stgtyp->studiengang_typ_arr[$result->typ].'</h4>';
 										$lasttyp=$result->typ;
 									}
-									
+
 									$checked = '';
 									$typ = new studiengang();
 									$typ->getStudiengangTyp($result->typ);
@@ -491,7 +493,7 @@ elseif($username && $password)
 									if(in_array($result->studiengang_kz, $studiengaenge) || $result->studiengang_kz == $stg_auswahl)
 									{
 										$checked = 'checked';
-									} 
+									}
 									echo '
 									<div class="checkbox">
 										<label>
@@ -508,6 +510,7 @@ elseif($username && $password)
 									echo '
 											<span class="badge" id="badge'.$result->studiengang_kz.'"></span>
 											<input type="hidden" id="anmerkung'.$result->studiengang_kz.'" name="anmerkung['.$result->studiengang_kz.']">
+											<input type="hidden" id="orgform'.$result->studiengang_kz.'" name="orgform['.$result->studiengang_kz.']">
 										</label>
 									</div>
 									';
@@ -594,9 +597,9 @@ elseif($username && $password)
 				</div>
 			<?php endif; ?>
 		</div>
-		<?php 
+		<?php
         if(BEWERBERTOOL_STUDIENAUSWAHL_ANZEIGEN)
-            require('views/modal_sprache_orgform.php'); 
+            require('views/modal_sprache_orgform.php');
         ?>
 		<script src="../../../include/js/jquery.min.1.11.1.js"></script>
 		<script src="../../../submodules/bootstrap/dist/js/bootstrap.min.js"></script>
@@ -721,7 +724,9 @@ elseif($username && $password)
 						anm;
 
 					anm = checkPrios(0);
+					orgform = getPrioOrgform();
 
+					$('#orgform' + stgkz).val(orgform);
 					$('#anmerkung' + stgkz).val(anm);
 					$('#badge' + stgkz).html(anm);
 				});
@@ -746,17 +751,17 @@ elseif($username && $password)
 <?php
 function sendMail($zugangscode, $email)
 {
-	global $p, $vorname, $nachname; 
-   
+	global $p, $vorname, $nachname;
+
 	$mail = new mail($email, 'no-reply', $p->t('bewerbung/registration'), $p->t('bewerbung/mailtextHtml'));
 	$text = $p->t('bewerbung/mailtext',array($vorname, $nachname, $zugangscode));
-    $mail->setHTMLContent($text); 
+    $mail->setHTMLContent($text);
 	if(!$mail->send())
 		$msg= '<span class="error">'.$p->t('bewerbung/fehlerBeimSenden').'</span><br /><a href='.$_SERVER['PHP_SELF'].'?method=registration>'.$p->t('bewerbung/zurueckZurAnmeldung').'</a>';
 	else
 		$msg= $p->t('global/emailgesendetan')." $email!<br><a href=".$_SERVER['PHP_SELF'].">".$p->t('bewerbung/zurueckZurAnmeldung')."</a>";
-	
-    // sende Nachricht an Assistenz 
 
-	return $msg; 
+    // sende Nachricht an Assistenz
+
+	return $msg;
 }

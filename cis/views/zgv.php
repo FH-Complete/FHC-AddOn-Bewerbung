@@ -34,7 +34,7 @@ foreach ($prestudent->result as $prestudent_eintrag)
 {
     $studiengaenge[] = $prestudent_eintrag->studiengang_kz;
 }
-
+$sprache = getSprache();
 if(!empty($studiengaenge))
     $types = $stg->getTypes($studiengaenge);
 ?>
@@ -77,7 +77,7 @@ if(!empty($studiengaenge))
 								{
 		                            $selected = (isset($attribute['art']) && $attribute['art'] == $zgvma_option->zgvmas_code) ? 'selected' : '';
 
-									echo '<option value="'.$zgvma_option->zgvmas_code.'" '.$selected.'>'.$zgvma_option->convert_html_chars($zgvma_option->zgvmas_bez).'</option>';
+									echo '<option value="'.$zgvma_option->zgvmas_code.'" '.$selected.'>'.$zgvma_option->convert_html_chars($zgvma_option->bezeichnung[$sprache]).'</option>';
 		                        }
 
 							}
@@ -87,7 +87,7 @@ if(!empty($studiengaenge))
 								{
 		                            $selected = (isset($attribute['art']) && $attribute['art'] == $zgv_option->zgv_code) ? 'selected' : '';
 
-									echo '<option value="'.$zgv_option->zgv_code.'" '.$selected.'>'.$zgv_option->convert_html_chars($zgv_option->zgv_bez).'</option>';
+									echo '<option value="'.$zgv_option->zgv_code.'" '.$selected.'>'.$zgv_option->convert_html_chars($zgv_option->bezeichnung[$sprache]).'</option>';
 		                        }
 							}
 
