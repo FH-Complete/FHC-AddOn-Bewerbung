@@ -54,7 +54,7 @@ if(!isset($person_id))
 	?>
 
 
-	<form method="POST" action="<?php echo $_SERVER['PHP_SELF'] ?>?active=dokumente" class="form-horizontal">
+	<form method="POST" action="<?php echo $_SERVER['PHP_SELF'] ?>?active=kontakt" class="form-horizontal">
 		<fieldset>
 			<legend><?php echo $p->t('bewerbung/kontakt') ?></legend>
 			<div class="form-group">

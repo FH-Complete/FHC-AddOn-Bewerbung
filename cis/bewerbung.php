@@ -239,7 +239,7 @@ if(isset($_POST['btn_bewerbung_abschicken']))
                 die($p->t('global/fehlerBeimSpeichernDerDaten'));
         }
 
-        if(sendBewerbung($pr_id))
+        if(sendBewerbung($pr_id,$prestudent_status->studiensemester_kurzbz,$prestudent_status->orgform_kurzbz))
 		{
 			echo '<script type="text/javascript">alert("'.$p->t('bewerbung/erfolgreichBeworben').'");</script>';
 		}
@@ -395,9 +395,11 @@ if(isset($_POST['btn_kontakt']))
     // gibt es schon kontakte von user
     if(count($kontakt_t->result)>0)
     {
-        // Es gibt bereits einen Emailkontakt
+        // Es gibt bereits eine Telefonnummer
         $kontakt_id = $kontakt_t->result[0]->kontakt_id;
-
+		
+        // Telefonnummer validieren
+        $telefonnummer = preg_replace("/[^0-9+]/", '', $_POST['telefonnummer']);
         if($_POST['telefonnummer'] == '')
         {
             // löschen
@@ -409,7 +411,7 @@ if(isset($_POST['btn_kontakt']))
 	        $kontakt_t->kontakt_id = $kontakt_id;
 	        $kontakt_t->zustellung = true;
 	        $kontakt_t->kontakttyp = 'telefon';
-	        $kontakt_t->kontakt = $_POST['telefonnummer'];
+	        $kontakt_t->kontakt = $telefonnummer;
 	        $kontakt_t->new = false;
 
 	        $kontakt_t->save();
@@ -419,11 +421,13 @@ if(isset($_POST['btn_kontakt']))
     {
 		if($_POST['telefonnummer']!='')
 		{
+			// Telefonnummer validieren
+			$telefonnummer = preg_replace("/[^0-9+]/", '', $_POST['telefonnummer']);
 		    // neuen Kontakt anlegen
 		    $kontakt_t->person_id = $person->person_id;
 		    $kontakt_t->zustellung = true;
 		    $kontakt_t->kontakttyp = 'telefon';
-		    $kontakt_t->kontakt = $_POST['telefonnummer'];
+		    $kontakt_t->kontakt = $telefonnummer;
 		    $kontakt_t->new = true;
 
 		    $kontakt_t->save();
@@ -780,6 +784,11 @@ else
 								<?php echo $p->t('bewerbung/menuBewerbungAbschicken') ?> <br> &nbsp;
 							</a>
 						</li>
+						<li>
+							<a href="bewerbung.php?logout=true">
+								<?php echo $p->t('bewerbung/logout') ?> <br> &nbsp;
+							</a>
+						</li>
 					</ul>
 				</div>
 			</div>
@@ -815,7 +824,7 @@ else
 <?php
 
 // sendet eine Email an die Assistenz dass die Bewerbung abgeschlossen ist
-function sendBewerbung($prestudent_id)
+function sendBewerbung($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz)
 {
     global $person_id, $p;
 
@@ -829,10 +838,15 @@ function sendBewerbung($prestudent_id)
     $studiengang = new studiengang();
     if(!$studiengang->load($prestudent->studiengang_kz))
         die($p->t('global/fehlerBeimLadenDesDatensatzes'));
+    
+    $typ = new studiengang();
+    $typ->getStudiengangTyp($studiengang->typ);
 
     $email = $p->t('bewerbung/emailBodyStart');
-    $email.= $p->t('global/name').': '.$person->vorname.' '.$person->nachname.'<br>';
-    $email.= $p->t('global/studiengang').': '.$studiengang->bezeichnung.'<br><br>';
+    $email.= '<br>';
+    $email.= $p->t('global/studiengang').': '.$typ->bezeichnung.' '.$studiengang->bezeichnung.($orgform_kurzbz!=''?' ('.$orgform_kurzbz.')':'').' <br>';
+    $email.= $p->t('global/studiensemester').': '.$studiensemester_kurzbz.'<br>';
+    $email.= $p->t('global/name').': '.$person->vorname.' '.$person->nachname.'<br><br>';
     $email.= $p->t('bewerbung/emailBodyEnde');
 
 	if(defined('BEWERBERTOOL_MAILEMPFANG') && BEWERBERTOOL_MAILEMPFANG!='')

@@ -78,12 +78,27 @@ if(!isset($person_id))
 			</table>
 		</div>
 	<br>
-	<button class="btn-nav btn btn-default" type="button" data-toggle="modal" data-target="#liste-studiengaenge">
+	<?php 
+	//Solange ANZAHL_PREINTERESSENT-1 noch nicht ueberschritten ist, koennen Studiengaenge hinzugefuegt werden
+    if(count($bereits_angemeldet)>=ANZAHL_PREINTERESSENT-1)
+    {
+    	$disabled = 'disabled="disabled"';
+    	$anzahl = ANZAHL_PREINTERESSENT-1;
+    	$message = '<p>'.$p->t('bewerbung/nichtMehrAlsXStudiengaenge', array($anzahl)).'</p>';
+    }
+    else 
+    {
+    	$disabled = '';
+    	$message = '';
+    }
+    	?>
+	<button class="btn-nav btn btn-default" type="button" data-toggle="modal" data-target="#liste-studiengaenge" <?php echo $disabled; ?>>
 		<?php echo $p->t('bewerbung/studiengangHinzufuegen'); ?>
 	</button>
 	<button class="btn-nav btn btn-default" type="button" data-jump-tab="daten">
 		<?php echo $p->t('bewerbung/weiter'); ?>
 	</button>
+	<?php echo $message; ?>
 
 	<div class="modal fade" id="liste-studiengaenge"><div class="modal-dialog"><div class="modal-content">
 		<div class="modal-header">
@@ -129,16 +144,15 @@ if(!isset($person_id))
                 $options = array();
                 $stg = new studiengang();
                 $stg->getAllForBewerbung();
-
+                
                 foreach($stg->result as $result)
                 {
-
 					if($sprache!='German' && $result->studiengangbezeichnung_englisch!='')
 						$stg_bezeichnung = $result->studiengangbezeichnung_englisch;
 					else
 						$stg_bezeichnung = $result->studiengangbezeichnung;
 
-                    if($result->studiengang_kz > 0)
+                    if($result->studiengang_kz > 0 )
                     {
                         $typ = new studiengang();
                         $typ->getStudiengangTyp($result->typ);

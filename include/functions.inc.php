@@ -60,4 +60,49 @@ function BewerbungPersonAddStudiengang($studiengang_kz, $anmerkung, $person, $st
 		return true;
 	}
 }
+/**
+ * Prueft, ob fuer die uebergebene Mailadresse und studiensemester, schon eine Person mit PreStudentstatus im System ist und laedt ggf. den entsprechenden Personendatensatz
+ * @param string $mailadresse Zu pruefende E-Mail-Adresse.
+ * @param string $studiensemester_kurzbz. Studiensemester fuer die Bewerbung
+ * @return person_id und zugangscode; Ffalse im Fehlerfall
+ */
+function check_load_bewerbungen($mailadresse,$studiensemester_kurzbz)
+{
+	$mailadresse = trim($mailadresse);
+	$db = new basis_db();
+	
+	$qry = "SELECT DISTINCT tbl_person.person_id,tbl_person.zugangscode,tbl_person.insertamum
+				FROM public.tbl_kontakt 
+					JOIN public.tbl_person USING (person_id) 
+					JOIN public.tbl_prestudent USING (person_id) 
+					JOIN public.tbl_prestudentstatus USING (prestudent_id) 
+				WHERE kontakttyp='email' 
+				AND kontakt=".$db->db_add_param($mailadresse, FHC_STRING)." 
+				AND studiensemester_kurzbz=".$db->db_add_param($studiensemester_kurzbz, FHC_STRING)." 
+				ORDER BY tbl_person.insertamum DESC 
+				LIMIT 1;";
+
+	if($db->db_query($qry))
+	{
+		if($row = $db->db_fetch_object())
+		{		
+			$obj = new stdClass();
+			
+			$obj->person_id = $row->person_id;
+			$obj->zugangscode = $row->zugangscode;
+			
+			return $obj;
+		}
+		else
+		{
+			$db->errormsg = 'Datensatz wurde nicht gefunden';
+			return false;
+		}
+	}
+	else
+	{
+		$db->errormsg = 'Fehler beim Laden der Daten';
+		return false;
+	}
+}
 ?>

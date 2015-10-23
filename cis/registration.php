@@ -34,6 +34,7 @@ require_once('../../../include/studiensemester.class.php');
 require_once('../../../include/datum.class.php');
 require_once('../../../include/sprache.class.php');
 require_once('../../../include/benutzer.class.php');
+require_once('../include/functions.inc.php');
 
 require_once '../../../include/securimage/securimage.php';
 
@@ -208,146 +209,167 @@ elseif($username && $password)
 					$geb_datum = date('Y-m-d', strtotime($geb_datum));
 				}
 
-				$submit = filter_input(INPUT_POST, 'submit');
+				$submit = filter_input(INPUT_POST, 'submit_btn');
 
-				if(isset($submit))
+				// Pruefen, ob fuer dieses Semester schon eine Bewerbung fuer diese Mailadresse existiert->Wenn ja, Code nochmal dorthin schicken
+				$return = check_load_bewerbungen($email, $std_semester);
+				if($return)
 				{
-					$securimage = new Securimage();
-					// Sicherheitscode wurde falsch eingegeben
-					if ($securimage->check($_POST['captcha_code']) == false)
-					{
-						$message = '<p class="bg-danger padding-10">'.$p->t('bewerbung/sicherheitscodeFalsch').'</p>';
-					}
-					elseif (BEWERBERTOOL_STUDIENAUSWAHL_ANZEIGEN && count($studiengaenge)==0)
-					{
-						$message = '<p class="bg-danger padding-10">'.$p->t('bewerbung/bitteStudienrichtungWaehlen').'</p>';
-					}
-					else
-					{
-						// Person anlegen
-						$person = new person();
-
-						$zugangscode = substr(md5(openssl_random_pseudo_bytes(20)), 0, 10);
-
-						$person->nachname = $nachname;
-						$person->vorname = $vorname;
-						$person->gebdatum = $geb_datum;
-						$person->geschlecht = $geschlecht;
-						$person->aktiv = true;
-						$person->zugangscode = $zugangscode;
-						$person->insertamum = date('Y-m-d H:i:s');
-						$person->updateamum = date('Y-m-d H:i:s');
-						$person->new = true;
-
-						if(!$person->save())
-						{
-							die($p->t('global/fehlerBeimSpeichernDerDaten'));
-						}
-
-						// Email Kontakt zu Person speichern
-						$kontakt = new kontakt();
-						$kontakt->person_id = $person->person_id;
-						$kontakt->kontakttyp = 'email';
-						$kontakt->kontakt = $email;
-						$kontakt->insertamum = date('Y-m-d H:i:s');
-						$kontakt->updateamum = date('Y-m-d H:i:s');
-						$kontakt->new = true;
-
-						if(!$kontakt->save())
-						{
-							die($p->t('global/fehlerBeimSpeichernDerDaten'));
-						}
-
-						if(BEWERBERTOOL_STUDIENAUSWAHL_ANZEIGEN && count($studiengaenge) < ANZAHL_PREINTERESSENT)
-                        {
-                            $anzStg = count($studiengaenge);
-
-                            // Prestudenten anlegen
-                            for($i = 0; $i<$anzStg; $i++)
-                            {
-                                $prestudent = new prestudent();
-                                $prestudent->person_id = $person->person_id;
-                                $prestudent->studiengang_kz = $studiengaenge[$i];
-                                $prestudent->aufmerksamdurch_kurzbz = 'k.A.';
-                                $prestudent->insertamum = date('Y-m-d H:i:s');
-                                $prestudent->updateamum = date('Y-m-d H:i:s');
-                                $prestudent->reihungstestangetreten = false;
-                                $prestudent->new = true;
-
-                                if(!$prestudent->save())
-                                {
-                                    die($p->t('global/fehlerBeimSpeichernDerDaten'));
-                                }
-
-                                // Interessenten Status anlegen
-                                $prestudent_status = new prestudent();
-                                $prestudent_status->load($prestudent->prestudent_id);
-                                $prestudent_status->status_kurzbz = 'Interessent';
-                                $prestudent_status->studiensemester_kurzbz = $std_semester;
-                                $prestudent_status->ausbildungssemester = '1';
-                                $prestudent_status->datum = date("Y-m-d H:m:s");
-                                $prestudent_status->insertamum = date("Y-m-d H:m:s");
-                                $prestudent_status->insertvon = '';
-                                $prestudent_status->updateamum = date("Y-m-d H:m:s");
-                                $prestudent_status->updatevon = '';
-                                $prestudent_status->new = true;
-                                $prestudent_status->anmerkung_status = $anmerkungen[$studiengaenge[$i]];
-								$prestudent_status->orgform_kurzbz = $orgform[$studiengaenge[$i]];
-
-                                if(!$prestudent_status->save_rolle())
-                                {
-                                    die($p->t('global/fehlerBeimSpeichernDerDaten'));
-                                }
-                            }
-                        }
-						else
-						{
-                            // Preinteressent anlegen
-                            $timestamp = time();
-                            $preInteressent = new preinteressent();
-                            $preInteressent->person_id = $person->person_id;
-                            $preInteressent->aufmerksamdurch_kurzbz = 'k.A.';
-                            $preInteressent->kontaktmedium_kurzbz = 'bewerbungonline';
-                            $preInteressent->erfassungsdatum = date('Y-m-d', $timestamp);
-                            $preInteressent->insertamum = date('Y-m-d H:i:s');
-                            $preInteressent->updateamum = date('Y-m-d H:i:s');
-                            $preInteressent->new = true;
-
-                            if(!$preInteressent->save())
-                            {
-                                die($p->t('global/fehlerBeimSpeichernDerDaten'));
-                            }
-
-							if(BEWERBERTOOL_STUDIENAUSWAHL_ANZEIGEN)
-                            {
-                                // Zuordnungen anlegen
-                                $anzStg = count($studiengaenge);
-                                for($i = 0; $i<$anzStg; $i++)
-                                {
-                                    $preIntZuordnung = new preinteressent();
-                                    $preIntZuordnung->preinteressent_id = $preInteressent->preinteressent_id;
-                                    $preIntZuordnung->studiengang_kz = $studiengaenge[$i];
-                                    $preIntZuordnung->prioritaet = '1';
-                                    $preIntZuordnung->insertamum = date('Y-m-d H:i:s');
-                                    $preIntZuordnung->updateamum = date('Y-m-d H:i:s');
-                                    $preIntZuordnung->new = true;
-
-                                    if(!$preIntZuordnung->saveZuordnung())
-                                    {
-                                        die($p->t('global/fehlerBeimSpeichernDerDaten'));
-                                    }
-                                }
-                            }
-						}
-
-                        //Email schicken
+					$resend_code = filter_input(INPUT_GET, 'ReSendCode');
+					if (isset($resend_code))
+					{					
+						$zugangscode = $return->zugangscode;
 						echo sendMail($zugangscode, $email);
 						exit();
+					}
+					else 
+						$message = '<p class="bg-danger padding-10">Diese E-Mail Adresse wurde bereits für eine Bewerbung genutzt. Möchten Sie den Zugangscode noch einmal an diese Adresse senden?</p>
+								<button type="submit" class="btn btn-primary" value="Ja" onclick="document.RegistrationLoginForm.action=\''.basename(__FILE__).'?method=registration&ReSendCode\'; document.getElementById(\'RegistrationLoginForm\').submit();">Ja</button>
+								<button type="submit" class="btn btn-primary" value="Nein" onclick="document.RegistrationLoginForm.email.value=\'\'; document.getElementById(\'RegistrationLoginForm\').submit();">Nein</button>'; //@todo: Phrasenmodul
+					
+				}
+				else
+				{
+					if(isset($submit))
+					{
+						$securimage = new Securimage();
+						// Sicherheitscode wurde falsch eingegeben
+						if ($securimage->check($_POST['captcha_code']) == false)
+						{
+							$message = '<p class="bg-danger padding-10">'.$p->t('bewerbung/sicherheitscodeFalsch').'</p>';
+						}
+						if (BEWERBERTOOL_STUDIENAUSWAHL_ANZEIGEN && count($studiengaenge)==0)
+						{
+							$message = '<p class="bg-danger padding-10">'.$p->t('bewerbung/bitteStudienrichtungWaehlen').'</p>';
+						}
+						else
+						{
+							// Person anlegen
+							$person = new person();
+	
+							$zugangscode = substr(md5(openssl_random_pseudo_bytes(20)), 0, 10);
+	
+							$person->nachname = $nachname;
+							$person->vorname = $vorname;
+							$person->gebdatum = $geb_datum;
+							$person->geschlecht = $geschlecht;
+							$person->aktiv = true;
+							$person->zugangscode = $zugangscode;
+							$person->insertamum = date('Y-m-d H:i:s');
+							$person->updateamum = date('Y-m-d H:i:s');
+							$person->new = true;
+	
+							if(!$person->save())
+							{
+								die($p->t('global/fehlerBeimSpeichernDerDaten'));
+							}
+	
+							// Email Kontakt zu Person speichern
+							$kontakt = new kontakt();
+							$kontakt->person_id = $person->person_id;
+							$kontakt->kontakttyp = 'email';
+							$kontakt->kontakt = $email;
+							$kontakt->insertamum = date('Y-m-d H:i:s');
+							$kontakt->updateamum = date('Y-m-d H:i:s');
+							$kontakt->new = true;
+	
+							if(!$kontakt->save())
+							{
+								die($p->t('global/fehlerBeimSpeichernDerDaten'));
+							}
+	
+							if(BEWERBERTOOL_STUDIENAUSWAHL_ANZEIGEN && count($studiengaenge) < ANZAHL_PREINTERESSENT)
+	                        {
+	                            $anzStg = count($studiengaenge);
+	
+	                            // Prestudenten anlegen
+	                            for($i = 0; $i<$anzStg; $i++)
+	                            {
+	                                $prestudent = new prestudent();
+	                                $prestudent->person_id = $person->person_id;
+	                                $prestudent->studiengang_kz = $studiengaenge[$i];
+	                                $prestudent->aufmerksamdurch_kurzbz = 'k.A.';
+	                                $prestudent->insertamum = date('Y-m-d H:i:s');
+	                                $prestudent->updateamum = date('Y-m-d H:i:s');
+	                                $prestudent->reihungstestangetreten = false;
+	                                $prestudent->new = true;
+	
+	                                if(!$prestudent->save())
+	                                {
+	                                    die($p->t('global/fehlerBeimSpeichernDerDaten'));
+	                                }
+	
+	                                // Interessenten Status anlegen
+	                                $prestudent_status = new prestudent();
+	                                $prestudent_status->load($prestudent->prestudent_id);
+	                                $prestudent_status->status_kurzbz = 'Interessent';
+	                                $prestudent_status->studiensemester_kurzbz = $std_semester;
+	                                $prestudent_status->ausbildungssemester = '1';
+	                                $prestudent_status->datum = date("Y-m-d H:m:s");
+	                                $prestudent_status->insertamum = date("Y-m-d H:m:s");
+	                                $prestudent_status->insertvon = '';
+	                                $prestudent_status->updateamum = date("Y-m-d H:m:s");
+	                                $prestudent_status->updatevon = '';
+	                                $prestudent_status->new = true;
+	                                $prestudent_status->anmerkung_status = $anmerkungen[$studiengaenge[$i]];
+									$prestudent_status->orgform_kurzbz = $orgform[$studiengaenge[$i]];
+	
+	                                if(!$prestudent_status->save_rolle())
+	                                {
+	                                    die($p->t('global/fehlerBeimSpeichernDerDaten'));
+	                                }
+	                            }
+	                        }
+							else
+							{
+	                            // Preinteressent anlegen
+	                            $timestamp = time();
+	                            $preInteressent = new preinteressent();
+	                            $preInteressent->person_id = $person->person_id;
+	                            $preInteressent->studiensemester_kurzbz = $std_semester;
+	                            $preInteressent->aufmerksamdurch_kurzbz = 'k.A.';
+	                            $preInteressent->kontaktmedium_kurzbz = 'bewerbungonline';
+	                            $preInteressent->erfassungsdatum = date('Y-m-d', $timestamp);
+	                            $preInteressent->insertamum = date('Y-m-d H:i:s');
+	                            $preInteressent->updateamum = date('Y-m-d H:i:s');
+	                            $preInteressent->new = true;
+	
+	                            if(!$preInteressent->save())
+	                            {
+	                                die($p->t('global/fehlerBeimSpeichernDerDaten'));
+	                            }
+	
+								if(BEWERBERTOOL_STUDIENAUSWAHL_ANZEIGEN)
+	                            {
+	                                // Zuordnungen anlegen
+	                                $anzStg = count($studiengaenge);
+	                                for($i = 0; $i<$anzStg; $i++)
+	                                {
+	                                    $preIntZuordnung = new preinteressent();
+	                                    $preIntZuordnung->preinteressent_id = $preInteressent->preinteressent_id;
+	                                    $preIntZuordnung->studiengang_kz = $studiengaenge[$i];
+	                                    $preIntZuordnung->prioritaet = '1';
+	                                    $preIntZuordnung->insertamum = date('Y-m-d H:i:s');
+	                                    $preIntZuordnung->updateamum = date('Y-m-d H:i:s');
+	                                    $preIntZuordnung->new = true;
+	
+	                                    if(!$preIntZuordnung->saveZuordnung())
+	                                    {
+	                                        die($p->t('global/fehlerBeimSpeichernDerDaten'));
+	                                    }
+	                                }
+	                            }
+							}
+	
+	                        //Email schicken
+							echo sendMail($zugangscode, $email);
+							exit();
+						}
 					}
 				} ?>
 
 				<?php echo $message ?>
-				<form method="post" action="<?php echo basename(__FILE__) ?>?method=registration" name="RegistrationLoginForm" class="form-horizontal">
+				<form method="post" action="<?php echo basename(__FILE__) ?>?method=registration" id="RegistrationLoginForm" name="RegistrationLoginForm" class="form-horizontal">
 					<p class="infotext">
 						<?php echo $p->t('bewerbung/einleitungstext') ?>
 					</p>
@@ -535,7 +557,7 @@ elseif($username && $password)
 					</div>
 					<div class="form-group">
 						<div class="col-sm-4 col-sm-offset-3">
-							<input type="submit" name="submit" value="<?php echo $p->t('bewerbung/registrieren') ?>" onclick="return checkRegistration()" class="btn btn-primary">
+							<input type="submit" name="submit_btn" value="<?php echo $p->t('bewerbung/registrieren') ?>" onclick="return checkRegistration()" class="btn btn-primary">
 						</div>
 					</div>
 				</form>
@@ -553,7 +575,7 @@ elseif($username && $password)
 								<div class="input-group">
 									<input class="form-control" type="text" placeholder="<?php echo $p->t('bewerbung/zugangscode') ?>" name="userid" autofocus="autofocus">
 									<span class="input-group-btn">
-										<button class="btn btn-primary" type="submit" name="submit">
+										<button class="btn btn-primary" type="submit" name="submit_btn">
 											Login
 										</button>
 									</span>
@@ -578,7 +600,7 @@ elseif($username && $password)
                             </div>
                             <div class="form-group">
                                 <span class="col-sm-4 col-sm-offset-3">
-                                    <button class="btn btn-primary" type="submit" name="submit">
+                                    <button class="btn btn-primary" type="submit" name="submit_btn">
                                         Login
                                     </button>
                                 </span>
@@ -751,10 +773,14 @@ elseif($username && $password)
 <?php
 function sendMail($zugangscode, $email)
 {
-	global $p, $vorname, $nachname;
+	global $p, $vorname, $nachname, $geschlecht;
+	if($geschlecht=='m')
+		$anrede=$p->t('bewerbung/anredeMaennlich');
+	else 
+		$anrede=$p->t('bewerbung/anredeWeiblich');
 
 	$mail = new mail($email, 'no-reply', $p->t('bewerbung/registration'), $p->t('bewerbung/mailtextHtml'));
-	$text = $p->t('bewerbung/mailtext',array($vorname, $nachname, $zugangscode));
+	$text = $p->t('bewerbung/mailtext',array($vorname, $nachname, $zugangscode, $anrede));
     $mail->setHTMLContent($text);
 	if(!$mail->send())
 		$msg= '<span class="error">'.$p->t('bewerbung/fehlerBeimSenden').'</span><br /><a href='.$_SERVER['PHP_SELF'].'?method=registration>'.$p->t('bewerbung/zurueckZurAnmeldung').'</a>';

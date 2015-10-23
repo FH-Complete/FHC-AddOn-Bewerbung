@@ -10,7 +10,9 @@ $this->phrasen['bewerbung/login']='Login';
 $this->phrasen['bewerbung/zugangscode']='Access Code';
 $this->phrasen['bewerbung/fallsVorhanden']='(if available)';
 $this->phrasen['bewerbung/mailtextHtml']='Please look at the message in the HTML view, in order to display the link fully.';
-$this->phrasen['bewerbung/mailtext']='Dear Mr / Ms %1$s %2$s.<br><br>
+$this->phrasen['bewerbung/anredeMaennlich']='Mr';
+$this->phrasen['bewerbung/anredeWeiblich']='Ms';
+$this->phrasen['bewerbung/mailtext']='Dear %4$s %1$s %2$s.<br><br>
                                         Thank you for your interest in a degree program at '.CAMPUS_NAME.'. <br>
                                         To apply for a course, please use the following link and access code:<br><br>
                                         <a href="'.APP_ROOT.'addons/bewerbung/cis/registration.php">Link to registration</a><br>
@@ -110,6 +112,7 @@ $this->phrasen['bewerbung/erklaerungBewerbungAbschicken']='If you have filled in
                                                                The degree program administrative assistant responsible will contact you in the course of the next few days regarding the application.<br><br>
                                                                Please double-check your data.<br>
                                                                To complete your application click on the following link:';
+
 $this->phrasen['bewerbung/bewerbungAbschickenFuer']='Send application for';
 $this->phrasen['bewerbung/buttonBewerbungAbschicken']='Send application';
 $this->phrasen['bewerbung/logout']='Logout';
@@ -140,6 +143,12 @@ $this->phrasen['bewerbung/ausbildungstyp']='Type of Education';
 $this->phrasen['bewerbung/lehrgang']='Course';
 $this->phrasen['bewerbung/keineStgAngeboten']='There are no degree programs available at the moment';
 $this->phrasen['bewerbung/keineLehrgAngeboten']='There are no courses available at the moment';
+$this->phrasen['bewerbung/aufmerksamdurch']='Where did you first heard about us?';
+$this->phrasen['bewerbung/BewerbungBereitsVerschickt']='Your application was registered and is proceeded';
 $this->phrasen['bewerbung/bitteZuerstStudiengangWaehlen']='Please select at least one field of study first (see section "General").';
 $this->phrasen['bewerbung/ExtensionInformation']='Supported File formats:';
 $this->phrasen['bewerbung/falscherDateityp']='This File format is not supported';
+$this->phrasen['bewerbung/nichtMehrAlsXStudiengaenge']='You can only apply for %s degree program(s) per semester';
+
+
+
