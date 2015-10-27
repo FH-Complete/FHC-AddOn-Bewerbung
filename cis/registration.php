@@ -672,14 +672,13 @@ elseif($username && $password)
 						return false;
 					}
 
-					var date = new Date(gebDat[2], gebDat[1], gebDat[0]);
-					date.setMonth(date.getMonth()-1);
+					var date = new Date(gebDat[2], gebDat[1]-1, gebDat[0]);
 
 					gebDat[0] = parseInt(gebDat[0], 10);
-					gebDat[1] = parseInt(gebDat[1], 10)-1;
+					gebDat[1] = parseInt(gebDat[1], 10);
 					gebDat[2] = parseInt(gebDat[2], 10);
 
-					if(!(date.getFullYear() === gebDat[2] && date.getMonth() === gebDat[1] && date.getDate() === gebDat[0]))
+					if(!(date.getFullYear() === gebDat[2] && (date.getMonth()+1) === gebDat[1] && date.getDate() === gebDat[0]))
 					{
 						alert("<?php echo $p->t('bewerbung/bitteGeburtsdatumEintragen')?>");
 						return false;
