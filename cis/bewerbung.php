@@ -83,7 +83,7 @@ $eingabegesperrt=false;
 // Wenn die eingeloggte Person bereits Student oder Mitarbeiter ist
 // duerfen die Stammdaten nicht mehr geaendert werden
 $benutzer = new benutzer();
-if($benutzer->getBenutzerFromPerson($person->person_id))
+if($benutzer->getBenutzerFromPerson($person->person_id,false))
 {
 	if(count($benutzer->result)>0)
 	{
