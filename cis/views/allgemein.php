@@ -56,21 +56,26 @@ if(!isset($person_id))
 					if(!$stg->load($row->studiengang_kz))
 						die($p->t('global/fehlerBeimLadenDesDatensatzes'));
 
-					$bereits_angemeldet[] = $stg->studiengang_kz;
-
 					$prestudent_status = new prestudent();
 					$prestatus_help= ($prestudent_status->getLastStatus($row->prestudent_id))?$prestudent_status->status_kurzbz:$p->t('bewerbung/keinStatus');
 					$bewerberstatus =($prestudent_status->bestaetigtam != '' || $prestudent_status->bestaetigtvon != '')?$p->t('bewerbung/bestaetigt'):$p->t('bewerbung/nichtBestaetigt'); 
 
+					//$bereits_angemeldet[]= $stg->studiengang_kz;
+					$bereits_angemeldet[$prestudent_status->studiensemester_kurzbz][]= $stg->studiengang_kz;
+					//$bereits_angemeldet[]= $stg->studiengang_kz.$prestudent_status->studiensemester_kurzbz;
+					
 					if($sprache!='German' && $stg->english!='')
 						$stg_bezeichnung = $stg->english;
 					else
 						$stg_bezeichnung = $stg->bezeichnung;
+					
+					$typ = new studiengang();
+					$typ->getStudiengangTyp($stg->typ);
 					?>
 
 					<tr>
-						<td><?php echo $stg_bezeichnung ?></td>
-						<td><?php echo $prestatus_help ?></td>
+						<td><?php echo $typ->bezeichnung.' '.$stg_bezeichnung ?></td>
+						<td><?php echo $prestatus_help.' ('.$prestudent_status->studiensemester_kurzbz.')' ?></td>
 						<td><?php echo $datum->formatDatum($prestudent_status->datum, 'd.m.Y') ?></td>
 						<td><?php echo $bewerberstatus ?></td>
 					</tr>
@@ -78,27 +83,12 @@ if(!isset($person_id))
 			</table>
 		</div>
 	<br>
-	<?php 
-	//Solange ANZAHL_PREINTERESSENT-1 noch nicht ueberschritten ist, koennen Studiengaenge hinzugefuegt werden
-    if(count($bereits_angemeldet)>=ANZAHL_PREINTERESSENT-1)
-    {
-    	$disabled = 'disabled="disabled"';
-    	$anzahl = ANZAHL_PREINTERESSENT-1;
-    	$message = '<p>'.$p->t('bewerbung/nichtMehrAlsXStudiengaenge', array($anzahl)).'</p>';
-    }
-    else 
-    {
-    	$disabled = '';
-    	$message = '';
-    }
-    	?>
-	<button class="btn-nav btn btn-default" type="button" data-toggle="modal" data-target="#liste-studiengaenge" <?php echo $disabled; ?>>
+	<button class="btn-nav btn btn-default" type="button" data-toggle="modal" data-target="#liste-studiengaenge">
 		<?php echo $p->t('bewerbung/studiengangHinzufuegen'); ?>
 	</button>
 	<button class="btn-nav btn btn-default" type="button" data-jump-tab="daten">
 		<?php echo $p->t('bewerbung/weiter'); ?>
 	</button>
-	<?php echo $message; ?>
 
 	<div class="modal fade" id="liste-studiengaenge"><div class="modal-dialog"><div class="modal-content">
 		<div class="modal-header">
@@ -135,7 +125,7 @@ if(!isset($person_id))
 					</select>
 				</div>
 			</div>
-			<div class="form-group">
+			<div id="form-group-stg" class="form-group">
                 <?php 
                 $orgeinheit = new organisationseinheit();
                 $standorte = $orgeinheit->getAllStandorte();
@@ -147,19 +137,21 @@ if(!isset($person_id))
                 
                 foreach($stg->result as $result)
                 {
-					if($sprache!='German' && $result->studiengangbezeichnung_englisch!='')
-						$stg_bezeichnung = $result->studiengangbezeichnung_englisch;
+					$typ = new studiengang();
+					$typ->getStudiengangTyp($result->typ);
+                	if($sprache!='German' && $result->studiengangbezeichnung_englisch!='')
+						$stg_bezeichnung = $typ->bezeichnung.' '.$result->studiengangbezeichnung_englisch;
 					else
-						$stg_bezeichnung = $result->studiengangbezeichnung;
+						$stg_bezeichnung =  $typ->bezeichnung.' '.$result->studiengangbezeichnung;
 
                     if($result->studiengang_kz > 0 )
                     {
                         $typ = new studiengang();
                         $typ->getStudiengangTyp($result->typ);
-                        if(in_array($result->studiengang_kz, $bereits_angemeldet))
+                        /*if(in_array($result->studiengang_kz, $bereits_angemeldet['WS2016']))
                         {
                             continue;
-                        } 
+                        } */
 
                         $orgform = $stg->getOrgForm($result->studiengang_kz);
                         $stgSprache = $stg->getSprache($result->studiengang_kz);
@@ -366,7 +358,11 @@ if(!isset($person_id))
                     $('#auswahlLehrg').show();
                     $('#auswahlStg').hide();
                 }
-            })
+            });
+
+            $('#studiensemester_kurzbz').change(function() {
+            	$("#form-group-stg").load(document.URL +  ' #form-group-stg')
+            });
 
 		});
 		function saveStudiengang(stgkz, anm, stsem)

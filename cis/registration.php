@@ -223,9 +223,9 @@ elseif($username && $password)
 						exit();
 					}
 					else 
-						$message = '<p class="bg-danger padding-10">Diese E-Mail Adresse wurde bereits für eine Bewerbung genutzt. Möchten Sie den Zugangscode noch einmal an diese Adresse senden?</p>
-								<button type="submit" class="btn btn-primary" value="Ja" onclick="document.RegistrationLoginForm.action=\''.basename(__FILE__).'?method=registration&ReSendCode\'; document.getElementById(\'RegistrationLoginForm\').submit();">Ja</button>
-								<button type="submit" class="btn btn-primary" value="Nein" onclick="document.RegistrationLoginForm.email.value=\'\'; document.getElementById(\'RegistrationLoginForm\').submit();">Nein</button>'; //@todo: Phrasenmodul
+						$message = '<p class="bg-danger padding-10">'.$p->t('bewerbung/mailadresseBereitsGenutzt').'</p>
+								<button type="submit" class="btn btn-primary" value="Ja" onclick="document.RegistrationLoginForm.action=\''.basename(__FILE__).'?method=registration&ReSendCode\'; document.getElementById(\'RegistrationLoginForm\').submit();">'.$p->t('global/ja').'</button>
+								<button type="submit" class="btn btn-primary" value="Nein" onclick="document.RegistrationLoginForm.email.value=\'\'; document.getElementById(\'RegistrationLoginForm\').submit();">'.$p->t('global/nein').'</button>';
 					
 				}
 				else
@@ -238,7 +238,7 @@ elseif($username && $password)
 						{
 							$message = '<p class="bg-danger padding-10">'.$p->t('bewerbung/sicherheitscodeFalsch').'</p>';
 						}
-						if (BEWERBERTOOL_STUDIENAUSWAHL_ANZEIGEN && count($studiengaenge)==0)
+						elseif (BEWERBERTOOL_STUDIENAUSWAHL_ANZEIGEN && count($studiengaenge)==0)
 						{
 							$message = '<p class="bg-danger padding-10">'.$p->t('bewerbung/bitteStudienrichtungWaehlen').'</p>';
 						}
@@ -670,7 +670,7 @@ elseif($username && $password)
 
 					var date = new Date(gebDat[2], gebDat[1], gebDat[0]);
 					date.setMonth(date.getMonth()-1);
-
+					
 					gebDat[0] = parseInt(gebDat[0], 10);
 					gebDat[1] = parseInt(gebDat[1], 10)-1;
 					gebDat[2] = parseInt(gebDat[2], 10);

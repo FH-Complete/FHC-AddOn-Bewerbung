@@ -149,6 +149,5 @@ $this->phrasen['bewerbung/bitteZuerstStudiengangWaehlen']='Please select at leas
 $this->phrasen['bewerbung/ExtensionInformation']='Supported File formats:';
 $this->phrasen['bewerbung/falscherDateityp']='This File format is not supported';
 $this->phrasen['bewerbung/nichtMehrAlsXStudiengaenge']='You can only apply for %s degree program(s) per semester';
-
-
-
+$this->phrasen['bewerbung/mailadresseBereitsGenutzt']='This E-Mail Adress has already been used for application. Would you like to resend the acces code to this adress?';
+?>

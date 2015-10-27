@@ -34,7 +34,7 @@ if(!isset($person_id))
 	<p><?php echo $p->t('bewerbung/dokumenteZumHochladen'); ?></p>
 	<?php
 	$dokumente_person = new dokument();
-	$dokumente_person->getAllDokumenteForPerson($person_id, true); ?>
+	$dokumente_person->getAllDokumenteForPerson($person_id, true);?>
 
 	<div class="table-responsive">
 		<table class="table table-striped">
@@ -122,10 +122,11 @@ if(!isset($person_id))
 			}
 
 			$ben_stg = new basis_db();
-			$qry = "SELECT studiengang_kz FROM public.tbl_dokumentstudiengang
-				JOIN public.tbl_prestudent using (studiengang_kz)
-				JOIN public.tbl_dokument using (dokument_kurzbz)
-				WHERE dokument_kurzbz = ".$ben_stg->db_add_param($dok->dokument_kurzbz)." and person_id =".$ben_stg->db_add_param($person_id, FHC_INTEGER);
+			$qry = "SELECT DISTINCT studiengang_kz,typ||kurzbz AS kuerzel FROM public.tbl_dokumentstudiengang
+				JOIN public.tbl_prestudent USING (studiengang_kz)
+				JOIN public.tbl_dokument USING (dokument_kurzbz)
+				JOIN public.tbl_studiengang USING (studiengang_kz)
+				WHERE dokument_kurzbz = ".$ben_stg->db_add_param($dok->dokument_kurzbz)." and person_id =".$ben_stg->db_add_param($person_id, FHC_INTEGER)." ORDER BY kuerzel";
 
 			$ben = "";
 			if($result = $ben_stg->db_query($qry))
