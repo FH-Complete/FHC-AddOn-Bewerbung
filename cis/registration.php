@@ -203,6 +203,10 @@ elseif($username && $password)
                         $studiengaenge = array();
                     }
                 }
+                else
+                {
+                    $std_semester = null;
+                }
 
 				if($geb_datum)
 				{
