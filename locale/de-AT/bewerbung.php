@@ -150,4 +150,5 @@ $this->phrasen['bewerbung/ExtensionInformation']='Unterstützte Dateiformate:';
 $this->phrasen['bewerbung/falscherDateityp']='Dieses Dateiformat wird nicht unterstützt';
 $this->phrasen['bewerbung/nichtMehrAlsXStudiengaenge']='Sie können sich für maximal %s Studiengänge pro Semester bewerben';
 $this->phrasen['bewerbung/mailadresseBereitsGenutzt']='Diese E-Mail Adresse wurde bereits für eine Bewerbung genutzt. Möchten Sie den Zugangscode noch einmal an diese Adresse senden?';
+$this->phrasen['bewerbung/maturazeugnis']='Maturazeugnis';
 ?>
