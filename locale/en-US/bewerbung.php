@@ -156,4 +156,5 @@ $this->phrasen['bewerbung/buttonBewerbungUnvollstaendig']='Required fields incom
 $this->phrasen['bewerbung/prestudentID']='Prestudent ID';
 $this->phrasen['bewerbung/bewerbung']='Application';
 $this->phrasen['bewerbung/dokumentuploadZuBewerbung']='Documentupload for Application';
+$this->phrasen['bewerbung/maturazeugnis']='school leaving certificate';
 ?>

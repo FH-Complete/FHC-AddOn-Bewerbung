@@ -159,4 +159,5 @@ $this->phrasen['bewerbung/bewerbung']='Bewerbung';
 $this->phrasen['bewerbung/dokumentuploadZuBewerbung']='Dokumentupload %s zu Bewerbung';
 $this->phrasen['bewerbung/maennlich']='Männlich';
 $this->phrasen['bewerbung/weiblich']='Weiblich';
+$this->phrasen['bewerbung/maturazeugnis']='Maturazeugnis';
 ?>

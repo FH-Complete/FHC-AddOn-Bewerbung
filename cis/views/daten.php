@@ -184,11 +184,12 @@ if(!isset($person_id))
 						$aufmerksamdurch_kurzbz ='';
 
 					foreach($aufmerksamdurch->result as $row_aufm):
+						if($row_aufm->aktiv):
 						$selected = ($aufmerksamdurch_kurzbz == $row_aufm->aufmerksamdurch_kurzbz) ? 'selected' : ''; ?>
 						<option value="<?php echo $row_aufm->aufmerksamdurch_kurzbz; ?>" <?php echo $selected ?>>
-							<?php echo $row_aufm->beschreibung ?>
+							<?php echo $row_aufm->bezeichnung[$sprache]; ?>
 						</option>
-					<?php endforeach; ?>
+					<?php endif; endforeach; ?>
 				</select>
 			</div>
 		</div>

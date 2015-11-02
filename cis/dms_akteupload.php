@@ -219,7 +219,7 @@ if(isset($_POST['submitbild']))
 		$titel = '';
 
 		// da nur 32 zeichen gespeichert werden dürfen, muss anhand vom typ gekürzt werden
-		if($_REQUEST['dokumenttyp']=='Lebenslf')
+        if($_REQUEST['dokumenttyp']=='Lebenslf')
 			$titel = $p->t('incoming/lebenslauf').".".$extension;
 		if($_REQUEST['dokumenttyp']=='LearnAgr')
 			$titel = $p->t('incoming/learningAgreement').".".$extension;
@@ -229,10 +229,12 @@ if(isset($_POST['submitbild']))
 			$titel = $p->t('incoming/zeugnis').".".$extension;
 		if($_REQUEST['dokumenttyp']=='Lichtbil')
 			$titel = $p->t('incoming/lichtbild').".".$extension;
+        if($_REQUEST['dokumenttyp']=='Maturaze')
+			$titel = $p->t('bewerbung/maturazeugnis').".".$extension;
 
 
 		$akte->dokument_kurzbz = $_REQUEST['dokumenttyp'];
-                $akte->bezeichnung = $_FILES['file']['name'];
+        $akte->bezeichnung = mb_substr($_FILES['file']['name'], 0, 32);
 		$akte->person_id = $_GET['person_id'];
 		//$akte->inhalt = base64_encode($content);
 		$akte->mimetype = $_FILES['file']['type'];
