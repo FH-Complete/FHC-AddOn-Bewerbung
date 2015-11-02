@@ -26,6 +26,7 @@
 require_once('../../../config/cis.config.inc.php');
 require_once('../../../include/functions.inc.php');
 require_once('../../../include/person.class.php');
+require_once('../../../include/prestudent.class.php');
 require_once('../../../include/benutzerberechtigung.class.php');
 require_once('../../../include/akte.class.php');
 require_once('../../../include/dokument.class.php');
@@ -33,6 +34,7 @@ require_once('../../../include/mail.class.php');
 require_once('../../../include/phrasen.class.php');
 require_once('../../../include/dms.class.php');
 require_once('../../../include/fotostatus.class.php');
+require_once('../../../include/studiensemester.class.php');
 
 header("Content-Type: text/html; charset=utf-8");
 
@@ -97,7 +99,7 @@ echo '<!DOCTYPE HTML>
         </head>
 		<body>';
 
-//Bei Upload des Bildes
+//Bei Upload eines Dokuments
 if(isset($_POST['submitbild']))
 {
     $error = false;
@@ -123,9 +125,31 @@ if(isset($_POST['submitbild']))
                     echo 'CHMOD failed';
                 //exec('sudo chown wwwrun '.$uploadfile);
 				*/
+                //Wenn Akte mit DMS-ID vorhanden, dann neue DMS-Version hochladen
+                $akte = new akte();
+                $version='0';
+                $dms_id='';
+                if($akte->getAkten($_GET['person_id'], $_REQUEST['dokumenttyp']))
+                {
+                	//erste Akte @todo: Ist auch so in content/akte.php. Kann irrefuehrende Ergebisse liefern, wenn bereits mehrere Akten des selben Typs vorhanden sind. 
+                	if(isset($akte->result[0]))
+                	{
+                		$akte = $akte->result[0];
+                		if ($akte->dms_id!='')
+                		{
+                			$dms = new dms();
+                			$dms->load($akte->dms_id);
+                			
+                			$version=$dms->version+1;
+                			$dms_id=$akte->dms_id;                			
+                		}
+                	}
+                }
+                
                 $dms = new dms();
-
-                $dms->version='0';
+				
+                $dms->dms_id=$dms_id;
+                $dms->version=$version;
                 $dms->kategorie_kurzbz=$kategorie_kurzbz;
 
                 $dms->insertamum=date('Y-m-d H:i:s');
@@ -137,7 +161,6 @@ if(isset($_POST['submitbild']))
                 if($dms->save(true))
                 {
                     $dms_id=$dms->dms_id;
-
                 }
                 else
                 {
@@ -173,7 +196,7 @@ if(isset($_POST['submitbild']))
 
 		$akte = new akte();
 
-		if($akte->getAkten($_GET['person_id'], 'Lichtbil'))
+		if($akte->getAkten($_GET['person_id'], $_REQUEST['dokumenttyp']))
 		{
 			if(count($akte->result)>0)
 			{
@@ -225,7 +248,6 @@ if(isset($_POST['submitbild']))
 	//	$akte->insertvon = $user;
 		$akte->uid = '';
         $akte->dms_id = $dms_id;
-		$akte->new = true;
 
 
         if (!$akte->save())
@@ -281,7 +303,48 @@ if(isset($_POST['submitbild']))
                 }
             }
         }
+        //Wenn nach dem Abschicken einer Bewerbung ein Dokument hochgeladen wird, wird ein Infomail verschickt
+		$benoetigt_stg = new basis_db();
+		$qry = "SELECT DISTINCT studiengang_kz,typ||kurzbz AS kuerzel FROM public.tbl_dokumentstudiengang
+			JOIN public.tbl_prestudent USING (studiengang_kz)
+			JOIN public.tbl_dokument USING (dokument_kurzbz)
+			JOIN public.tbl_studiengang USING (studiengang_kz)
+			WHERE dokument_kurzbz = ".$benoetigt_stg->db_add_param($_REQUEST['dokumenttyp'])." and person_id =".$benoetigt_stg->db_add_param($person_id, FHC_INTEGER)." ORDER BY kuerzel";
 
+		$benoetigt = array();
+		if($result = $benoetigt_stg->db_query($qry))
+		{
+			while($row = $benoetigt_stg->db_fetch_object($result))
+			{
+				$benoetigt[] = $row->studiengang_kz;
+			}
+		}
+        
+		$abgeschickt = array();
+		$prestudent= new prestudent();
+		$prestudent->getPrestudenten($person_id);
+		$studiensemester = new studiensemester();
+		$studiensemester->getStudiensemesterOnlinebewerbung();
+		$stsem_array = array();
+		foreach($studiensemester->studiensemester AS $s)
+			$stsem_array[] = $s->studiensemester_kurzbz;
+		
+		foreach($prestudent->result as $prest)
+		{
+			$prestudent2 = new prestudent();
+			$prestudent2->getPrestudentRolle($prest->prestudent_id,'Interessent');
+			foreach($prestudent2->result AS $row)
+			{
+				if(in_array($row->studiensemester_kurzbz, $stsem_array))
+				{
+					if($row->bestaetigtam!='' && in_array($prest->studiengang_kz, $benoetigt))
+					{
+						sendDokumentupload($prest->studiengang_kz,$dokument->bezeichnung,$row->orgform_kurzbz,$row->studiensemester_kurzbz,$row->prestudent_id);
+					}
+				}
+			}
+		}
+		        
 		echo "<script>
                 var loc = window.opener.location;
                 window.opener.location = 'bewerbung.php?active=dokumente';
@@ -360,6 +423,50 @@ function resize($filename, $width, $height)
 	@imagedestroy($image);
     return $tmpfname;
 }
+
+// Sendet eine Email an die Assistenz, dass ein neues Dokument hochgeladen wurde
+function sendDokumentupload($empfaenger_stgkz,$dokumentbezeichnung,$orgform_kurzbz,$studiensemester_kurzbz,$prestudent_id)
+{
+	global $person_id, $p;
+	
+	//Array fuer Mailempfaenger. Vorruebergehende Loesung. Kindlm am 28.10.2015
+	$empf_array = array();
+	if(defined('BEWERBERTOOL_UPLOAD_EMPFAENGER'))
+		$empf_array = unserialize(BEWERBERTOOL_UPLOAD_EMPFAENGER);
+	
+	$person = new person();
+	$person->load($person_id);
+
+	$studiengang = new studiengang();
+	$studiengang->load($empfaenger_stgkz);
+	$typ = new studiengang();
+	$typ->getStudiengangTyp($studiengang->typ);
+
+	$email = $p->t('bewerbung/emailDokumentuploadStart');
+	$email.= '<br>';
+	$email.= $p->t('global/studiengang').': '.$typ->bezeichnung.' '.$studiengang->bezeichnung.($orgform_kurzbz!=''?' ('.$orgform_kurzbz.')':'').' <br>';
+	$email.= $p->t('global/studiensemester').': '.$studiensemester_kurzbz.'<br>';
+	$email.= $p->t('global/name').': '.$person->vorname.' '.$person->nachname.'<br>';
+	$email.= $p->t('bewerbung/dokument').': '.$dokumentbezeichnung.'<br>';
+	$email.= $p->t('bewerbung/prestudentID').': '.$prestudent_id.'<br><br>';
+	$email.= $p->t('bewerbung/emailBodyEnde');
+
+	if(defined('BEWERBERTOOL_MAILEMPFANG') && BEWERBERTOOL_MAILEMPFANG!='')
+		$empfaenger = BEWERBERTOOL_MAILEMPFANG;
+	elseif(isset($empf_array[$empfaenger_stgkz]))
+		$empfaenger = $empf_array[$empfaenger_stgkz];
+	else
+		$empfaenger = $studiengang->email;
+
+	$mail = new mail($empfaenger, 'no-reply', $p->t('bewerbung/dokumentuploadZuBewerbung',array($dokumentbezeichnung)).' '.$person->vorname.' '.$person->nachname, 'Bitte sehen Sie sich die Nachricht in HTML Sicht an, um den Link vollständig darzustellen.');
+	$mail->setHTMLContent($email);
+	if(!$mail->send())
+		return false;
+		else
+			return true;
+
+}
+
 
 ?>
 </body>

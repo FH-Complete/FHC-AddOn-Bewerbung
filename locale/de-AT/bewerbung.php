@@ -35,7 +35,7 @@ $this->phrasen['bewerbung/bitteStudienbeginnWaehlen']='Bitte wählen Sie den gew
 $this->phrasen['bewerbung/captcha']='Geben Sie bitte hier die Zeichen aus der Grafik ein (Spamschutz).';
 $this->phrasen['bewerbung/andereGrafik']='Andere Grafik';
 $this->phrasen['bewerbung/datumFormat']='tt.mm.jjjj';
-$this->phrasen['bewerbung/egal']='egal';
+$this->phrasen['bewerbung/egal']='gleichgültig';
 $this->phrasen['bewerbung/orgform']='Organisationsform';
 $this->phrasen['bewerbung/orgform/berufsbegleitend']='Berufsbegleitend';
 $this->phrasen['bewerbung/orgform/vollzeit']='Vollzeit';
@@ -81,13 +81,15 @@ $this->phrasen['bewerbung/menuKontaktinformationen']='Kontaktinformationen';
 $this->phrasen['bewerbung/kontakt']='Kontakt';
 $this->phrasen['bewerbung/nation']='Nation';
 $this->phrasen['bewerbung/menuDokumente']='Dokumente';
-$this->phrasen['bewerbung/bitteDokumenteHochladen']='Bitte laden Sie alle vorhandenen Dokumente, die für Ihre Bewerbung relevant sind, über folgenden Link hoch:';
+$this->phrasen['bewerbung/dokument']='Dokument';
+$this->phrasen['bewerbung/bitteDokumenteHochladen']='Sie können hier vorab Dokumente hochladen, die für Ihr Studium benötigt werden. Sollte ein Dokument als "erforderlich" markiert sein, können Sie Ihre Bewerbung erst abschließen, 
+		wenn Sie eine Datei hochladen oder das Symbol für "Dokument wird nachgereicht" klicken. In diesem Fall haben Sie die Möglichkeit, eine kurze Anmerkung einzutragen und das Dokument später hochzuladen.';
 $this->phrasen['bewerbung/linkDokumenteHochladen']='Dokumente hochladen';
 $this->phrasen['bewerbung/dokumenteZumHochladen']='Benötigte Dokumente:';
 $this->phrasen['bewerbung/dokumentName']='Name';
 $this->phrasen['bewerbung/benoetigtFuer']='Benötigt für';
 $this->phrasen['bewerbung/dokumentErforderlich']='Dokument erforderlich';
-$this->phrasen['bewerbung/dokumentOffen']='Dokument noch nicht abgegeben (offen)';
+$this->phrasen['bewerbung/dokumentOffen']='Dokument hochladen';
 $this->phrasen['bewerbung/dokumentNichtUeberprueft']='Dokument wurde abgegeben aber noch nicht überprüft';
 $this->phrasen['bewerbung/dokumentWirdNachgereicht']='Dokument wird nachgereicht';
 $this->phrasen['bewerbung/dokumentWurdeUeberprueft']='Dokument wurde bereits überprüft';
@@ -109,7 +111,7 @@ $this->phrasen['bewerbung/uhrzeit']='Uhrzeit';
 $this->phrasen['bewerbung/stornieren']='stornieren';
 $this->phrasen['bewerbung/menuBewerbungAbschicken']='Bewerbung abschicken';
 $this->phrasen['bewerbung/erklaerungBewerbungAbschicken']='Haben Sie alle Daten korrekt ausgefüllt bzw. alle Dokumente auf das System hochgeladen, können Sie Ihre Bewerbung abschicken.<br>
-		Die jeweilige Studiengangsassistenz wird sich in den folgenden Tagen bezüglich der Bewerbung bei Ihnen melden.
+		Die jeweilige Assistenz wird sich in den folgenden Tagen bezüglich der Bewerbung bei Ihnen melden.
 		<br><br>
 		Bitte überprüfen Sie nochmals Ihre Daten.<br>
 		Um Ihre Bewerbung abzuschließen klicken Sie auf die entsprechende Schaltfläche:';
@@ -130,11 +132,12 @@ $this->phrasen['bewerbung/buchungsnummerNichtVorhanden']='Buchungsnummer %s nich
 $this->phrasen['bewerbung/vollstaendig']='vollständig';
 $this->phrasen['bewerbung/unvollstaendig']='unvollständig';
 $this->phrasen['bewerbung/maxAnzahlTeilnehmer']='max. Teilnehmeranzahl erreicht';
-$this->phrasen['bewerbung/erfolgreichBeworben']='Sie haben sich erfolgreich beworben. Die zuständige Assistenz wird sich in den nächsten Tagen bei Ihnen melden.';
+$this->phrasen['bewerbung/erfolgreichBeworben']='Sie haben sich erfolgreich für %s beworben. Die zuständige Assistenz wird sich in den nächsten Tagen bei Ihnen melden.';
 $this->phrasen['bewerbung/fehlerBeimVersendenDerBewerbung']='Es ist ein Fehler beim Versenden der Bewerbung aufgetreten. Bitte versuchen Sie es nocheinmal.';
 $this->phrasen['bewerbung/svnrBereitsVorhanden']='SVNR bereits vorhanden';
 $this->phrasen['bewerbung/menuBewerbungFuerStudiengang']='Bewerbung für einen Studiengang';
 $this->phrasen['bewerbung/emailBodyStart']='Es hat sich ein/e Student/in für folgenden Studiengang beworben: <br>';
+$this->phrasen['bewerbung/emailDokumentuploadStart']='Das folgende Dokument wurde hochgeladen: <br>';
 $this->phrasen['bewerbung/emailBodyEnde']='Für mehr Details öffnen Sie bitte den Personendatensatz im FAS.';
 $this->phrasen['bewerbung/fileUpload']='File-Upload';
 $this->phrasen['bewerbung/fehlerKeinePersonId']='Es wurde keine Person_id angegeben';
@@ -150,4 +153,10 @@ $this->phrasen['bewerbung/ExtensionInformation']='Unterstützte Dateiformate:';
 $this->phrasen['bewerbung/falscherDateityp']='Dieses Dateiformat wird nicht unterstützt';
 $this->phrasen['bewerbung/nichtMehrAlsXStudiengaenge']='Sie können sich für maximal %s Studiengänge pro Semester bewerben';
 $this->phrasen['bewerbung/mailadresseBereitsGenutzt']='Diese E-Mail Adresse wurde bereits für eine Bewerbung genutzt. Möchten Sie den Zugangscode noch einmal an diese Adresse senden?';
+$this->phrasen['bewerbung/buttonBewerbungUnvollstaendig']='Pflichtfelder unvollständig';
+$this->phrasen['bewerbung/prestudentID']='Prestudent ID';
+$this->phrasen['bewerbung/bewerbung']='Bewerbung';
+$this->phrasen['bewerbung/dokumentuploadZuBewerbung']='Dokumentupload %s zu Bewerbung';
+$this->phrasen['bewerbung/maennlich']='Männlich';
+$this->phrasen['bewerbung/weiblich']='Weiblich';
 ?>

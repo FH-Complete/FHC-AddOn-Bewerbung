@@ -45,34 +45,47 @@ foreach($prestudent_help->result as $prest)
 
 	$prestudent_help2 = new prestudent();
 	$prestudent_help2->getPrestudentRolle($prest->prestudent_id,'Interessent');
-	if($prestudent_help2->result[0]->bestaetigtam!='')
+	
+	$studiensemester = new studiensemester();
+	$studiensemester->getStudiensemesterOnlinebewerbung();
+	$stsem_array = array();
+	foreach($studiensemester->studiensemester AS $s)
+		$stsem_array[] = $s->studiensemester_kurzbz;
+	
+	foreach($prestudent_help2->result AS $row)
 	{
-		// Bewerbung bereits geschickt
-		echo '
-		<div class="row">
-			<div class="col-md-6 col-sm-8 col-xs-10">
-					<div class="form-group">
-						<label for="'.$stg->kurzbzlang.'">'.$p->t('bewerbung/bewerbungAbschickenFuer').' '.$stg_bezeichnung.'</label>
-						<input class="btn btn-default form-control" type="button" value="'.$p->t('bewerbung/BewerbungBereitsVerschickt').'" disabled="disabled">
+		if(in_array($row->studiensemester_kurzbz, $stsem_array)) //Fuer Studiensemester ohne Onlinebewerbung kann sich nicht mehr beworben werden @todo: Dies soll zukuenftig je Studiengang abgespeichert werden koennen
+		{
+			if($row->bestaetigtam!='')
+			{
+				// Bewerbung bereits geschickt
+				echo '
+				<div class="row">
+					<div class="col-md-6 col-sm-8 col-xs-10">
+							<div class="form-group">
+								<label for="'.$stg->kurzbzlang.'">'.$p->t('bewerbung/bewerbungAbschickenFuer').' '.$stg_bezeichnung.' ('.$row->studiensemester_kurzbz.')</label>
+								<input class="btn btn-default form-control" type="button" value="'.$p->t('bewerbung/BewerbungBereitsVerschickt').'" disabled="disabled">
+							</div>
 					</div>
-			</div>
-		</div>';
-	}
-	else
-	{
-		// Bewerbung noch nicht geschickt
-		echo '
-		<div class="row">
-			<div class="col-md-6 col-sm-8 col-xs-10">
-				<form method="POST"  action="'.$_SERVER['PHP_SELF'].'?active=abschicken">
-					<div class="form-group">
-						<label for="'.$stg->kurzbzlang.'">'.$p->t('bewerbung/bewerbungAbschickenFuer').' '.$stg_bezeichnung.'</label>
-						<input id="'.$stg->kurzbzlang.'" class="btn btn-default form-control" type="submit" value="'.$p->t('bewerbung/buttonBewerbungAbschicken').' ('.$stg->kurzbzlang.')" name="btn_bewerbung_abschicken" '.$disabled.'>
-						<input type="hidden" name="prestudent_id" value="'.$prest->prestudent_id.'">
+				</div>';
+			}
+			else
+			{
+				// Bewerbung noch nicht geschickt
+				echo '
+				<div class="row">
+					<div class="col-md-6 col-sm-8 col-xs-10">
+						<form method="POST"  action="'.$_SERVER['PHP_SELF'].'?active=abschicken">
+							<div class="form-group">
+								<label for="'.$stg->kurzbzlang.'">'.$p->t('bewerbung/bewerbungAbschickenFuer').' '.$stg_bezeichnung.' ('.$row->studiensemester_kurzbz.')</label>
+								<input id="'.$stg->kurzbzlang.'" class="btn btn-default form-control" type="submit" value="'.($disabled!=''?$p->t('bewerbung/buttonBewerbungUnvollstaendig'):$p->t('bewerbung/buttonBewerbungAbschicken').' ('.$stg->kurzbzlang.' '.$row->studiensemester_kurzbz.')').'" name="btn_bewerbung_abschicken" '.$disabled.'>
+								<input type="hidden" name="prestudent_id" value="'.$prest->prestudent_id.'">
+							</div>
+						</form>
 					</div>
-				</form>
-			</div>
-		</div>';
+				</div>';
+			}
+		}
 	}
 }
 

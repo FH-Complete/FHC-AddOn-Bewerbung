@@ -238,10 +238,14 @@ if(isset($_POST['btn_bewerbung_abschicken']))
             if(!$prestudent_status->save_rolle())
                 die($p->t('global/fehlerBeimSpeichernDerDaten'));
         }
-
+		
+        $prestudent = new prestudent();
+        $prestudent->load($pr_id);
+        $studiengang = new studiengang();
+        $studiengang->load($prestudent->studiengang_kz);
         if(sendBewerbung($pr_id,$prestudent_status->studiensemester_kurzbz,$prestudent_status->orgform_kurzbz))
 		{
-			echo '<script type="text/javascript">alert("'.$p->t('bewerbung/erfolgreichBeworben').'");</script>';
+			echo '<script type="text/javascript">alert("'.$p->t('bewerbung/erfolgreichBeworben',array($studiengang->bezeichnung_arr[$sprache])).'");</script>';
 		}
         else
 		{
@@ -287,7 +291,7 @@ if(!$active)
 {
 	$active = 'allgemein';
 }
-$save_error=false;
+$save_error='';
 // Persönliche Daten speichern
 if(isset($_POST['btn_person']) && !$eingabegesperrt)
 {
@@ -298,23 +302,27 @@ if(isset($_POST['btn_person']) && !$eingabegesperrt)
     $person->gebdatum = $datum->formatDatum($_POST['geburtsdatum'], 'Y-m-d');
     $person->staatsbuergerschaft = $_POST['staatsbuergerschaft'];
     $person->geschlecht = $_POST['geschlecht'];
+    $person->anrede = ($_POST['geschlecht']=='m'?'Herr':'Frau');
     $person->svnr = $_POST['svnr'];
 	$person->gebort = $_POST['gebort'];
 	$person->geburtsnation = $_POST['geburtsnation'];
 
     $person->new = false;
+    
     if(!$person->save())
 	{
-        $message = $person->errormsg;;
+        $message = $person->errormsg;
 		$save_error=true;
 	}
-
-	if($person->checkSvnr($person->svnr, $person_id))
+	else
+		$save_error=false;
+	
+	if(!$save_error && $person->checkSvnr($person->svnr, $person_id))
 	{
 		$message = $p->t('bewerbung/svnrBereitsVorhanden');
 		$save_error=true;
 	}
-
+	
     $berufstaetig = filter_input(INPUT_POST, 'berufstaetig');
 
     if(in_array($berufstaetig, array('Vollzeit', 'Teilzeit'), true))
@@ -698,7 +706,13 @@ else
 				length = document.getElementById(id).value.length;
 				rest = 128 - length;
 				document.getElementById('countdown_'+id).innerHTML = rest;
-			}
+			};
+			
+			window.setTimeout(function() {
+			    $("#success-alert").fadeTo(500, 0).slideUp(500, function(){
+			        $(this).remove(); 
+			    });
+			}, 1500);
 		</script>
 		<style type="text/css">
 		dokument a:hover
@@ -826,7 +840,12 @@ else
 // sendet eine Email an die Assistenz dass die Bewerbung abgeschlossen ist
 function sendBewerbung($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz)
 {
-    global $person_id, $p;
+	global $person_id, $p;
+	
+	//Array fuer Mailempfaenger. Vorruebergehende Loesung. Kindlm am 28.10.2015
+	$empf_array = array();
+	if(defined('BEWERBERTOOL_BEWERBUNG_EMPFAENGER'))
+		$empf_array = unserialize(BEWERBERTOOL_BEWERBUNG_EMPFAENGER);
 
     $person = new person();
     $person->load($person_id);
@@ -846,15 +865,18 @@ function sendBewerbung($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz)
     $email.= '<br>';
     $email.= $p->t('global/studiengang').': '.$typ->bezeichnung.' '.$studiengang->bezeichnung.($orgform_kurzbz!=''?' ('.$orgform_kurzbz.')':'').' <br>';
     $email.= $p->t('global/studiensemester').': '.$studiensemester_kurzbz.'<br>';
-    $email.= $p->t('global/name').': '.$person->vorname.' '.$person->nachname.'<br><br>';
+    $email.= $p->t('global/name').': '.$person->vorname.' '.$person->nachname.'<br>';
+    $email.= $p->t('bewerbung/prestudentID').': '.$prestudent_id.'<br><br>';
     $email.= $p->t('bewerbung/emailBodyEnde');
 
 	if(defined('BEWERBERTOOL_MAILEMPFANG') && BEWERBERTOOL_MAILEMPFANG!='')
 		$empfaenger = BEWERBERTOOL_MAILEMPFANG;
+	elseif(isset($empf_array[$prestudent->studiengang_kz]))
+		$empfaenger = $empf_array[$prestudent->studiengang_kz];
 	else
 		$empfaenger = $studiengang->email;
 
-    $mail = new mail($empfaenger, 'no-reply', 'Bewerbung '.$person->vorname.' '.$person->nachname, 'Bitte sehen Sie sich die Nachricht in HTML Sicht an, um den Link vollständig darzustellen.');
+    $mail = new mail($empfaenger, 'no-reply', $p->t('bewerbung/bewerbung').' '.$person->vorname.' '.$person->nachname, 'Bitte sehen Sie sich die Nachricht in HTML Sicht an, um den Link vollständig darzustellen.');
 	$mail->setHTMLContent($email);
 	if(!$mail->send())
 		return false;

@@ -257,6 +257,7 @@ elseif($username && $password)
 							$person->vorname = $vorname;
 							$person->gebdatum = $geb_datum;
 							$person->geschlecht = $geschlecht;
+							$person->anrede = ($geschlecht=='m'?'Herr':'Frau');
 							$person->aktiv = true;
 							$person->zugangscode = $zugangscode;
 							$person->insertamum = date('Y-m-d H:i:s');
@@ -429,11 +430,11 @@ elseif($username && $password)
 						<div class="col-sm-4 text-center">
 							<label class="radio-inline">
 								<input type="radio" name="geschlecht" id="geschlechtm" value="m" <?php echo $geschlecht == 'm' ? 'checked' : '' ?>>
-								<?php echo $p->t('global/mann'); ?>
+								<?php echo $p->t('bewerbung/maennlich'); ?>
 							</label>
 							<label class="radio-inline">
 								<input type="radio" name="geschlecht" id="geschlechtw" value="w" <?php echo $geschlecht == 'w' ? 'checked' : '' ?>>
-								<?php echo $p->t('global/frau') ?>
+								<?php echo $p->t('bewerbung/weiblich') ?>
 							</label>
 						</div>
 					</div>
@@ -468,7 +469,6 @@ elseif($username && $password)
 							</select>
 						</div>
 					</div>
-
 					<div class="form-group">
 						<label class="col-sm-3 control-label">
 							<?php echo $p->t('bewerbung/studienrichtung') ?>

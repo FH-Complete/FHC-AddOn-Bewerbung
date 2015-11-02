@@ -47,13 +47,28 @@ if(!isset($person_id))
 		echo $p->t('bewerbung/accountVorhanden');
 	}
 
-	if($save_error)
+	/*if($save_error)
 	{
 		echo '<div class="bg-danger">
 		    <h4>'.$p->t('global/fehlerBeimSpeichernDerDaten').'</h4>
 		    <p>'.$message.'</p>
 		  </div>';
+	}*/
+	if($save_error===false)
+	{
+		echo '	<div class="alert alert-success" id="success-alert">
+				<button type="button" class="close" data-dismiss="alert">x</button>
+					<strong>'.$p->t('global/erfolgreichgespeichert').'</strong>
+				</div>';
 	}
+	elseif($save_error===true)
+	{
+		echo '	<div class="alert alert-danger" id="danger-alert">
+			<button type="button" class="close" data-dismiss="alert">x</button>
+				<strong>'.$p->t('global/fehleraufgetreten').' </strong>'.$message.'
+			</div>';
+	}
+	
 
 	?>
 

@@ -17,13 +17,28 @@
  *
  * Authors: Andreas Oesterreicher <oesi@technikum-wien.at>
  */
+require_once('../../../include/student.class.php');
 
 // Fuegt einen Studiengang zu einem Bewerber hinzu
 function BewerbungPersonAddStudiengang($studiengang_kz, $anmerkung, $person, $studiensemester_kurzbz)
 {
+	//Wenn Person noch kein Student in diesem Studiengang war, PreStudent_id des aktuellsten PreStudenten (hoechste ID) ermitteln und Interessentenstatus zu diesem hinzufuegen, sonst neuen PreStudenten anlegen.
+	$student = new student();
+	$std = $student->load_person($person->person_id, $studiengang_kz);
+	$prestudent_id='';
+	if(!$std)
+	{
+		$pre = new prestudent();
+		$pre->getPrestudenten($person->person_id);
+		foreach ($pre->result AS $row)
+		{
+			if($row->studiengang_kz==$studiengang_kz && $row->prestudent_id > $prestudent_id)
+				$prestudent_id=$row->prestudent_id;
+		}
+	}
+	
 	$prestudent = new prestudent();
-
-	if(!$prestudent->exists($person->person_id, $studiengang_kz))
+	if($std || $prestudent_id=='')
 	{
 		$prestudent->studiengang_kz=$studiengang_kz;
 		$prestudent->person_id = $person->person_id;
@@ -37,28 +52,30 @@ function BewerbungPersonAddStudiengang($studiengang_kz, $anmerkung, $person, $st
 		{
 			return false;
 		}
-
-		// Interessenten Status anlegen
-		$prestudent_status = new prestudent();
-		$prestudent_status->load($prestudent->prestudent_id);
-		$prestudent_status->status_kurzbz = 'Interessent';
-		$prestudent_status->studiensemester_kurzbz = $studiensemester_kurzbz;
-		$prestudent_status->ausbildungssemester = '1';
-		$prestudent_status->datum = date("Y-m-d H:i:s");
-		$prestudent_status->insertamum = date("Y-m-d H:i:s");
-		$prestudent_status->insertvon = '';
-		$prestudent_status->updateamum = date("Y-m-d H:i:s");
-		$prestudent_status->updatevon = '';
-		$prestudent_status->new = true;
-		$prestudent_status->anmerkung_status = $anmerkung;
-
-		if(!$prestudent_status->save_rolle())
-		{
-			return false;
-		}
-
-		return true;
+		
+		$prestudent_id=$prestudent->prestudent_id;
 	}
+
+	// Interessenten Status anlegen
+	$prestudent_status = new prestudent();
+	$prestudent_status->load($prestudent_id);
+	$prestudent_status->status_kurzbz = 'Interessent';
+	$prestudent_status->studiensemester_kurzbz = $studiensemester_kurzbz;
+	$prestudent_status->ausbildungssemester = '1';
+	$prestudent_status->datum = date("Y-m-d H:i:s");
+	$prestudent_status->insertamum = date("Y-m-d H:i:s");
+	$prestudent_status->insertvon = '';
+	$prestudent_status->updateamum = date("Y-m-d H:i:s");
+	$prestudent_status->updatevon = '';
+	$prestudent_status->new = true;
+	$prestudent_status->anmerkung_status = $anmerkung;
+
+	if(!$prestudent_status->save_rolle())
+	{
+		return false;
+	}
+
+	return true;
 }
 /**
  * Prueft, ob fuer die uebergebene Mailadresse und studiensemester, schon eine Person mit PreStudentstatus im System ist und laedt ggf. den entsprechenden Personendatensatz
