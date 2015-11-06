@@ -150,7 +150,7 @@ if(!isset($person_id))
 			</div>
 		</div>
 		<div class="form-group">
-			<label for="svnr" class="col-sm-3 control-label"><?php echo $p->t('bewerbung/svnr') ?></label>
+			<label for="svnr" class="col-sm-3 control-label"><?php echo $p->t('bewerbung/svnr').' '.$p->t('bewerbung/fallsVorhanden') ?></label>
 			<div class="col-sm-9">
 				<input type="text" name="svnr" id="svnr"  <?php echo $disabled; ?> value="<?php echo $svnr ?>" class="form-control">
 			</div>

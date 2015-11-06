@@ -375,6 +375,10 @@ elseif($username && $password)
 
 				<?php echo $message ?>
 				<form method="post" action="<?php echo basename(__FILE__) ?>?method=registration" id="RegistrationLoginForm" name="RegistrationLoginForm" class="form-horizontal">
+					<img style="width:150px;" class="center-block img-responsive" src="../../../skin/styles/<?php echo DEFAULT_STYLE ?>/logo.png">	
+					<h2 class="text-center">
+						<?php echo $p->t('bewerbung/welcome') ?>
+					</h2>		
 					<p class="infotext">
 						<?php echo $p->t('bewerbung/einleitungstext') ?>
 					</p>
@@ -478,7 +482,6 @@ elseif($username && $password)
 							$stg = new studiengang();
 							$stg->getAllForBewerbung();
 
-
 							$stghlp = new studiengang();
 							$stghlp->getLehrgangstyp();
 							$lgtyparr=array();
@@ -493,7 +496,10 @@ elseif($username && $password)
 							{
 									if($lasttyp!=$result->typ)
 									{
-										echo '<h4>'.$stgtyp->studiengang_typ_arr[$result->typ].'</h4>';
+										if($lasttyp!='')
+											echo '</div>';
+										echo '<a href="#'.$stgtyp->studiengang_typ_arr[$result->typ].'" data-toggle="collapse"><h4>'.$stgtyp->studiengang_typ_arr[$result->typ].'  <span style="font-size: inherit;" class="glyphicon glyphicon-collapse-down"></span></h4></a>';
+										echo '<div id="'.$stgtyp->studiengang_typ_arr[$result->typ].'" class="collapse">';
 										$lasttyp=$result->typ;
 									}
 
@@ -541,7 +547,7 @@ elseif($username && $password)
 									</div>
 									';
 							}
-							?>
+							?></div>
 						</div>
 					</div>
                     <?php endif; ?>
