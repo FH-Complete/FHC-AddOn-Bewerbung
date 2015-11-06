@@ -726,6 +726,10 @@ else
 		</style>
 	</head>
 	<body class="bewerbung">
+        <?php
+        if(defined('BEWERBERTOOL_GTM')) {
+            echo BEWERBERTOOL_GTM;
+        } ?>
 		<nav class="navbar navbar-default">
 			<div class="container">
 				<div class="navbar-header">
