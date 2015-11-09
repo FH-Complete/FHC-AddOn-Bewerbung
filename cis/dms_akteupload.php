@@ -24,6 +24,7 @@
 // Oberflaeche zur Aenderung von Beispielen und Upload von Bildern
 
 require_once('../../../config/cis.config.inc.php');
+require_once('../../../config/global.config.inc.php');
 require_once('../../../include/functions.inc.php');
 require_once('../../../include/person.class.php');
 require_once('../../../include/prestudent.class.php');
