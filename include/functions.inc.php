@@ -78,12 +78,13 @@ function BewerbungPersonAddStudiengang($studiengang_kz, $anmerkung, $person, $st
 	return true;
 }
 /**
- * Prueft, ob fuer die uebergebene Mailadresse und studiensemester, schon eine Person mit PreStudentstatus im System ist und laedt ggf. den entsprechenden Personendatensatz
+ * Prueft, ob fuer die uebergebene Mailadresse, schon eine Person mit PreStudentstatus im System ist und laedt ggf. den entsprechenden Personendatensatz.
+ * Optional kann eine studiensemester_kurzbz uebergeben werden, ob speziell dafuer schon eine Bewerbung existiert.
  * @param string $mailadresse Zu pruefende E-Mail-Adresse.
- * @param string $studiensemester_kurzbz. Studiensemester fuer die Bewerbung
- * @return person_id und zugangscode; Ffalse im Fehlerfall
+ * @param string $studiensemester_kurzbz. Optional. Studiensemester fuer welches eine Bewerbung vorliegt.
+ * @return person_id und zugangscode; False im Fehlerfall
  */
-function check_load_bewerbungen($mailadresse,$studiensemester_kurzbz)
+function check_load_bewerbungen($mailadresse,$studiensemester_kurzbz=null)
 {
 	$mailadresse = trim($mailadresse);
 	$db = new basis_db();
@@ -94,10 +95,12 @@ function check_load_bewerbungen($mailadresse,$studiensemester_kurzbz)
 					JOIN public.tbl_prestudent USING (person_id) 
 					JOIN public.tbl_prestudentstatus USING (prestudent_id) 
 				WHERE kontakttyp='email' 
-				AND kontakt=".$db->db_add_param($mailadresse, FHC_STRING)." 
-				AND studiensemester_kurzbz=".$db->db_add_param($studiensemester_kurzbz, FHC_STRING)." 
-				ORDER BY tbl_person.insertamum DESC 
-				LIMIT 1;";
+				AND kontakt=".$db->db_add_param($mailadresse, FHC_STRING);
+				
+				if ($studiensemester_kurzbz!='')
+					$qry .= " AND studiensemester_kurzbz=".$db->db_add_param($studiensemester_kurzbz, FHC_STRING);
+				
+				$qry .= " ORDER BY tbl_person.insertamum DESC LIMIT 1;";
 
 	if($db->db_query($qry))
 	{

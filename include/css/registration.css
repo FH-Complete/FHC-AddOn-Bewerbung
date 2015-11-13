@@ -3,6 +3,10 @@
 	margin: 50px auto;
 }
 
+#ResendCodeForm h1, #ResendCodeForm img {
+	margin: 50px auto;
+}
+
 p.infotext {
 	margin: 40px 0;
 }

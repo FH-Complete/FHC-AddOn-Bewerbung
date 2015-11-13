@@ -37,6 +37,21 @@ foreach ($prestudent->result as $prestudent_eintrag)
 $sprache = getSprache();
 if(!empty($studiengaenge))
     $types = $stg->getTypes($studiengaenge);
+
+if($save_error===false)
+{
+	echo '	<div class="alert alert-success" id="success-alert_zgv">
+			<button type="button" class="close" data-dismiss="alert">x</button>
+			<strong>'.$p->t('global/erfolgreichgespeichert').'</strong>
+			</div>';
+}
+elseif($save_error===true)
+{
+	echo '	<div class="alert alert-danger" id="danger-alert_zgv">
+			<button type="button" class="close" data-dismiss="alert">x</button>
+				<strong>'.$p->t('global/fehleraufgetreten').' </strong>'.$message.'
+			</div>';
+}
 ?>
 <div role="tabpanel" class="tab-pane" id="zgv">
     <h2><?php echo $p->t('bewerbung/menuZugangsvoraussetzungen'); ?></h2>
@@ -143,15 +158,15 @@ if(!empty($studiengaenge))
                 </div>
             </fieldset>
         <?php endforeach ?>
-        <button class="btn-nav btn btn-default" type="button" data-jump-tab="dokumente">
+        <button class="btn-nav btn btn-default" type="button" data-jump-tab="<?php echo $tabs[array_search('zgv', $tabs)-1] ?>">
             <?php echo $p->t('global/zurueck') ?>
         </button>
-        <button class="btn btn-default" type="submit" name="btn_zgv">
+        <button class="btn btn-success" type="submit" name="btn_zgv">
             <?php echo $p->t('global/speichern') ?>
         </button>
-        <button class="btn-nav btn btn-default" type="button" data-jump-tab="zahlungen">
+        <button class="btn-nav btn btn-default" type="button" data-jump-tab="<?php echo $tabs[array_search('zgv', $tabs)+1] ?>">
             <?php echo $p->t('bewerbung/weiter'); ?>
-        </button>
+        </button><br/><br/>
     </form>
     <?php endif; ?>
 </div>

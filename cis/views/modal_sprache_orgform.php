@@ -16,6 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * Authors: Robert Hofer <robert.hofer@technikum-wien.at>
+ * 			Manfred Kindl <manfred.kindl@technikum-wien.at>
  */
 ?>
 
@@ -41,7 +42,7 @@
 				<h4><?php echo $p->t('bewerbung/orgform') ?></h4>
 				<div class="radio">
 					<label>
-						<input type="radio" name="<?php echo $prio ?>Orgform" value="egal">
+						<input type="radio" name="<?php echo $prio ?>Orgform" value="keine">
 						<?php echo $p->t('bewerbung/egal') ?>
 					</label>
 				</div>
@@ -68,7 +69,7 @@
 				<h4><?php echo $p->t('global/sprache') ?></h4>
 				<div class="radio">
 					<label>
-						<input type="radio" name="<?php echo $prio ?>Sprache" value="egal">
+						<input type="radio" name="<?php echo $prio ?>Sprache" value="keine">
 						<?php echo $p->t('bewerbung/egal') ?>
 					</label>
 				</div>
@@ -99,7 +100,7 @@
 
 		var anm = 'keine Prio';
 
-		if($('#topprio input:checked[value="egal"]').length === 2) {
+		if($('#topprio input:checked[value="keine"]').length === 2) {
 
 			$('#alternative')
 				.addClass('inactive')
@@ -135,7 +136,7 @@
 	function prioAvailable(modal_orgform, modal_sprache) {
 
 		var prios = {
-				egal:'egal',
+				egal:'keine',
 				German: 'De',
 				English: 'En'
 			};

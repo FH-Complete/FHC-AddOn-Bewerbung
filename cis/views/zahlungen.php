@@ -113,11 +113,11 @@ if(!isset($person_id))
 	<?php else: ?>
 		<p><?php echo $p->t('tools/keineZahlungenVorhanden') ?></p>
 	<?php endif; ?>
-	<button class="btn-nav btn btn-default" type="button" data-jump-tab="zgv">
+	<button class="btn-nav btn btn-default" type="button" data-jump-tab="<?php echo $tabs[array_search('zahlungen', $tabs)-1] ?>">
 		<?php echo $p->t('global/zurueck') ?>
 	</button>
-	<button class="btn-nav btn btn-default" type="button" data-jump-tab="aufnahme">
+	<button class="btn-nav btn btn-default" type="button" data-jump-tab="<?php echo $tabs[array_search('zahlungen', $tabs)+1] ?>">
 		<?php echo $p->t('bewerbung/weiter'); ?>
-	</button>
+	</button><br/><br/>
 </div>
 

@@ -72,7 +72,7 @@ if(!isset($person_id))
 		</fieldset>
 
 		<fieldset>
-			<legend><?php echo $p->t('global/adresse') ?></legend>
+			<legend><?php echo $p->t('bewerbung/adresse') ?></legend>
 			<div class="form-group">
 				<label for="strasse" class="col-sm-2 control-label"><?php echo $p->t('global/strasse') ?>*</label>
 				<div class="col-sm-10">
@@ -112,14 +112,14 @@ if(!isset($person_id))
 				</div>
 			</div>
 		</fieldset>
-		<button class="btn-nav btn btn-default" type="button" data-jump-tab="daten">
+		<button class="btn-nav btn btn-default" type="button" data-jump-tab="<?php echo $tabs[array_search('kontakt', $tabs)-1] ?>">
 			<?php echo $p->t('global/zurueck') ?>
 		</button>
-		<button class="btn btn-default" type="submit"  <?php echo $disabled; ?> name="btn_kontakt">
+		<button class="btn btn-success" type="submit"  <?php echo $disabled; ?> name="btn_kontakt">
 			<?php echo $p->t('global/speichern') ?>
 		</button>
-		<button class="btn-nav btn btn-default" type="button" data-jump-tab="dokumente">
+		<button class="btn-nav btn btn-default" type="button" data-jump-tab="<?php echo $tabs[array_search('kontakt', $tabs)+1] ?>">
 			<?php echo $p->t('bewerbung/weiter') ?>
-		</button>
+		</button><br/><br/>
 	</form>
 </div>

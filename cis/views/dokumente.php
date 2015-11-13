@@ -41,6 +41,7 @@ if(!isset($person_id))
 			<thead>
 				<tr>
 					<th><?php echo $p->t('bewerbung/dokumentName'); ?></th>
+					<th><?php echo $p->t('bewerbung/details');?></th>
 					<th><?php echo $p->t('bewerbung/status'); ?></th>
 					<th><?php echo $p->t('global/aktion'); ?></th>
 					<th></th>
@@ -52,7 +53,64 @@ if(!isset($person_id))
 		foreach($dokumente_person->result as $dok):
 			$akte = new akte;
 			$akte->getAkten($person_id, $dok->dokument_kurzbz);
+			
+			$ben_stg = new basis_db();
+			$qry = "SELECT DISTINCT studiengang_kz,typ||kurzbz AS kuerzel FROM public.tbl_dokumentstudiengang
+				JOIN public.tbl_prestudent USING (studiengang_kz)
+				JOIN public.tbl_dokument USING (dokument_kurzbz)
+				JOIN public.tbl_studiengang USING (studiengang_kz)
+				WHERE dokument_kurzbz = ".$ben_stg->db_add_param($dok->dokument_kurzbz)." and person_id =".$ben_stg->db_add_param($person_id, FHC_INTEGER)." ORDER BY kuerzel";
+			
+			$ben = "";
+			$ben_kz = array();
+			$detailstring = '';
+			if($result = $ben_stg->db_query($qry))
+			{
+				while($row = $ben_stg->db_fetch_object($result))
+				{
+					if($ben!='')
+						$ben.=', ';
+			
+					$stg = new studiengang();
+					$stg->load($row->studiengang_kz);
+		
+					$ben .= $stg->kuerzel;
+					$ben_kz[] .= $row->studiengang_kz;
+				}
+			}
 
+			$details = new dokument();
+			$details->getBeschreibungenDokumente($ben_kz, $dok->dokument_kurzbz);
+			$i=0;
+			
+			foreach($details->result AS $row)
+			{
+				$stg = new studiengang();
+				$stg->load($row->studiengang_kz);
+				
+				if($detailstring!='' && ($row->beschreibung_mehrsprachig[getSprache()]!='' || ($row->dokumentbeschreibung_mehrsprachig[getSprache()]!='' && $i==0)))
+					$detailstring .= '<br/><hr/>';
+				if ($row->beschreibung_mehrsprachig[getSprache()]!='')
+				{
+					$detailstring .= '<b>'.$stg->kuerzel.'</b>: '.$row->beschreibung_mehrsprachig[getSprache()];
+				}
+				elseif($row->dokumentbeschreibung_mehrsprachig[getSprache()]!='' && $i==0)
+				{
+					$detailstring .= $row->dokumentbeschreibung_mehrsprachig[getSprache()];
+					//Allgemeine Dokumentbeschreibung nur einmal ausgeben
+					$i++;
+				}
+				else
+					$detailstring .= '';
+			}
+			
+			if($detailstring!='')
+				$beschreibung = '<button class="btn btn-md btn-info" data-toggle="popover" title="'.$p->t('bewerbung/details').'" data-trigger="focus" data-content="'.$detailstring.'">Details</button>';
+			else 
+				$beschreibung = '';
+			
+			$dokument = new dokument();
+			
 			if(count($akte->result)>0)
 			{
 				$akte_id = isset($akte->result[0]->akte_id)?$akte->result[0]->akte_id:'';
@@ -70,15 +128,17 @@ if(!isset($person_id))
 				}
 				else
 				{
-
-					$dokument = new dokument();
-
 					if($dokument->akzeptiert($akte->result[0]->dokument_kurzbz,$person->person_id))
 					{
 						// Dokument wurde bereits überprüft
 						$status = '<span class="glyphicon glyphicon-ok" aria-hidden="true" title="'.$p->t('bewerbung/abgegeben').'"></span>';
 						$nachgereicht_help = '';
-						$div = "<form method='POST' action='".$_SERVER['PHP_SELF']."&active=dokumente'><span id='nachgereicht_".$dok->dokument_kurzbz."' style='display:none;'>wird nachgereicht:<input type='checkbox' name='check_nachgereicht' ".$nachgereicht_help."><input type='text' size='15' maxlength='128' name='txt_anmerkung'><input type='submit' value='OK' name='submit_nachgereicht' class='btn btn-default'></span><input type='hidden' name='dok_kurzbz' value='".$dok->dokument_kurzbz."'><input type='hidden' name='akte_id' value='".$akte_id."'></form>";
+						$div = "<form method='POST' action='".$_SERVER['PHP_SELF']."&active=dokumente'>
+									<span id='nachgereicht_".$dok->dokument_kurzbz."' style='display:none;'>wird nachgereicht:<input type='checkbox' name='check_nachgereicht' ".$nachgereicht_help.">
+										<input type='text' size='15' maxlength='128' name='txt_anmerkung'>
+										<input type='submit' value='OK' name='submit_nachgereicht' class='btn btn-default'>
+									</span><input type='hidden' name='dok_kurzbz' value='".$dok->dokument_kurzbz."'>
+								<input type='hidden' name='akte_id' value='".$akte_id."'></form>";
 						$aktion = '';
 					}
 					else
@@ -86,13 +146,34 @@ if(!isset($person_id))
 						// Dokument hochgeladen ohne überprüfung der Assistenz*/
 						$status = '<span class="glyphicon glyphicon-eye-open" aria-hidden="true" title="'.$p->t('bewerbung/dokumentNichtUeberprueft').'"></span>';
 						$nachgereicht_help = '';
-						$div = "<form method='POST' action='".$_SERVER['PHP_SELF']."&active=dokumente'><span id='nachgereicht_".$dok->dokument_kurzbz."' style='display:none;'>wird nachgereicht:<input type='checkbox' name='check_nachgereicht' ".$nachgereicht_help."><input type='text' size='15' maxlength='128' name='txt_anmerkung'><input type='submit' value='OK' name='submit_nachgereicht' class='btn btn-default'></span><input type='hidden' name='dok_kurzbz' value='".$dok->dokument_kurzbz."'><input type='hidden' name='akte_id' value='".$akte_id."'></form>";
+						$div = "<form method='POST' action='".$_SERVER['PHP_SELF']."&active=dokumente'>
+									<span id='nachgereicht_".$dok->dokument_kurzbz."' style='display:none;'>wird nachgereicht:<input type='checkbox' name='check_nachgereicht' ".$nachgereicht_help.">
+										<input type='text' size='15' maxlength='128' name='txt_anmerkung'>
+										<input type='submit' value='OK' name='submit_nachgereicht' class='btn btn-default'>
+									</span>
+									<input type='hidden' name='dok_kurzbz' value='".$dok->dokument_kurzbz."'><input type='hidden' name='akte_id' value='".$akte_id."'>
+  								</form>";
 						$aktion = '	<button type="button" title="'.$p->t('global/löschen').'" class="btn btn-default" onclick="location.href=\''.$_SERVER['PHP_SELF'].'?method=delete&akte_id='.$akte_id.'&active=dokumente\'; return false;">
   										<span class="glyphicon glyphicon-remove" aria-hidden="true" title="'.$p->t('global/löschen').'"></span>
 									</button>';
 
 					}
 				}
+			}
+			//Wenn kein Dokument hochgeladen ist und trotzdem akzeptiert wurde
+			elseif($dokument->akzeptiert($dok->dokument_kurzbz,$person->person_id))
+			{
+				$status = '<span class="glyphicon glyphicon-ok" aria-hidden="true" title="'.$p->t('bewerbung/abgegeben').'"></span>';
+				$nachgereicht_help = '';
+				$div = "<form method='POST' action='".$_SERVER['PHP_SELF']."&active=dokumente'>
+							<span id='nachgereicht_".$dok->dokument_kurzbz."' style='display:none;'>wird nachgereicht:
+								<input type='checkbox' name='check_nachgereicht' ".$nachgereicht_help.">
+								<input type='text' size='15' maxlength='128' name='txt_anmerkung'>
+								<input type='submit' value='OK' name='submit_nachgereicht' class='btn btn-default'>
+							</span><input type='hidden' name='dok_kurzbz' value='".$dok->dokument_kurzbz."'>
+							<input type='hidden' name='akte_id' value='".$akte_id."'>
+						</form>";
+				$aktion = '';
 			}
 			else
 			{
@@ -112,7 +193,7 @@ if(!isset($person_id))
 				$div = "<form method='POST' action='".$_SERVER['PHP_SELF']."?active=dokumente'>
 							<span id='nachgereicht_".$dok->dokument_kurzbz."' style='display:none;'>".$p->t('global/anmerkung').":
 								<input type='checkbox' name='check_nachgereicht' checked=\"checked\" style='display:none'>
-								<input id='anmerkung_".$dok->dokument_kurzbz."' type='text' size='15' maxlength='128' name='txt_anmerkung' onInput='zeichenCountdown(\"anmerkung_".$dok->dokument_kurzbz."\")'>
+								<input id='anmerkung_".$dok->dokument_kurzbz."' type='text' size='15' maxlength='128' name='txt_anmerkung' onInput='zeichenCountdown(\"anmerkung_".$dok->dokument_kurzbz."\",128)'>
 								<span style='color: grey; display: inline-block; width: 30px;' id='countdown_anmerkung_".$dok->dokument_kurzbz."'>128</span>
 								<input type='submit' value='OK' name='submit_nachgereicht' class='btn btn-default'>
 							</span>
@@ -121,27 +202,7 @@ if(!isset($person_id))
 
 			}
 
-			$ben_stg = new basis_db();
-			$qry = "SELECT DISTINCT studiengang_kz,typ||kurzbz AS kuerzel FROM public.tbl_dokumentstudiengang
-				JOIN public.tbl_prestudent USING (studiengang_kz)
-				JOIN public.tbl_dokument USING (dokument_kurzbz)
-				JOIN public.tbl_studiengang USING (studiengang_kz)
-				WHERE dokument_kurzbz = ".$ben_stg->db_add_param($dok->dokument_kurzbz)." and person_id =".$ben_stg->db_add_param($person_id, FHC_INTEGER)." ORDER BY kuerzel";
-
-			$ben = "";
-			if($result = $ben_stg->db_query($qry))
-			{
-				while($row = $ben_stg->db_fetch_object($result))
-				{
-					if($ben!='')
-						$ben.=', ';
-
-					$stg = new studiengang();
-					$stg->load($row->studiengang_kz);
-
-					$ben .= $stg->kuerzel;
-				}
-			} ?>
+			 ?>
 
 			<tr>
 				<td style="vertical-align: middle">
@@ -153,6 +214,8 @@ if(!isset($person_id))
                         <span class="text-danger glyphicon glyphicon-asterisk"></span>
                     <?php endif; ?>
                 </td>
+				
+                <td style="vertical-align: middle"><?php echo $beschreibung ?></td>
 				<td style="vertical-align: middle"><?php echo $status ?></td>
 				<td style="vertical-align: middle" nowrap><?php echo $aktion ?></td>
 				<td style="vertical-align: middle"><?php echo $div ?></td>
@@ -202,11 +265,11 @@ if(!isset($person_id))
 			<td><?php echo $p->t('global/löschen'); ?></td>
 		</tr>
 	</table>
-	<button class="btn-nav btn btn-default" type="button" data-jump-tab="kontakt">
+	<button class="btn-nav btn btn-default" type="button" data-jump-tab="<?php echo $tabs[array_search('dokumente', $tabs)-1] ?>">
 		<?php echo $p->t('global/zurueck') ?>
 	</button>
-	<button class="btn-nav btn btn-default" type="button" data-jump-tab="zgv">
+	<button class="btn-nav btn btn-default" type="button" data-jump-tab="<?php echo $tabs[array_search('dokumente', $tabs)+1] ?>">
 		<?php echo $p->t('bewerbung/weiter'); ?>
 	</button>
-	<br><?php echo $message ?>
+	<br><?php echo $message ?><br/><br/>
 </div>

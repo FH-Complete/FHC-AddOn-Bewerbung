@@ -104,10 +104,10 @@ if(!isset($person_id))
 	}
 
 	?>
-	<button class="btn-nav btn btn-default" type="button" data-jump-tab="zahlungen">
+	<button class="btn-nav btn btn-default" type="button" data-jump-tab="<?php echo $tabs[array_search('aufnahme', $tabs)-1] ?>">
 		<?php echo $p->t('global/zurueck') ?>
 	</button>
-	<button class="btn-nav btn btn-default" type="button" data-jump-tab="abschicken">
+	<button class="btn-nav btn btn-default" type="button" data-jump-tab="<?php echo $tabs[array_search('aufnahme', $tabs)+1] ?>">
 		<?php echo $p->t('bewerbung/weiter'); ?>
-	</button>
+	</button><br/><br/>
 </div>

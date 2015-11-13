@@ -215,19 +215,19 @@ elseif($username && $password)
 
 				$submit = filter_input(INPUT_POST, 'submit_btn');
 
-				// Pruefen, ob fuer dieses Semester schon eine Bewerbung fuer diese Mailadresse existiert->Wenn ja, Code nochmal dorthin schicken
-				$return = check_load_bewerbungen($email, $std_semester);
+				// Pruefen, ob schon eine Bewerbung fuer diese Mailadresse existiert->Wenn ja, Code nochmal dorthin schicken
+				$return = check_load_bewerbungen($email);
 				if($return)
 				{
 					$resend_code = filter_input(INPUT_GET, 'ReSendCode');
 					if (isset($resend_code))
 					{					
 						$zugangscode = $return->zugangscode;
-						echo sendMail($zugangscode, $email);
+						echo '<p class="alert alert-success">'.sendMail($zugangscode, $email).'</p>';
 						exit();
 					}
 					else 
-						$message = '<p class="bg-danger padding-10">'.$p->t('bewerbung/mailadresseBereitsGenutzt').'</p>
+						$message = '<p class="alert alert-danger" id="danger-alert">'.$p->t('bewerbung/mailadresseBereitsGenutzt',array($email)).'</p>
 								<button type="submit" class="btn btn-primary" value="Ja" onclick="document.RegistrationLoginForm.action=\''.basename(__FILE__).'?method=registration&ReSendCode\'; document.getElementById(\'RegistrationLoginForm\').submit();">'.$p->t('global/ja').'</button>
 								<button type="submit" class="btn btn-primary" value="Nein" onclick="document.RegistrationLoginForm.email.value=\'\'; document.getElementById(\'RegistrationLoginForm\').submit();">'.$p->t('global/nein').'</button>';
 					
@@ -295,6 +295,7 @@ elseif($username && $password)
 	                                $prestudent->studiengang_kz = $studiengaenge[$i];
 	                                $prestudent->aufmerksamdurch_kurzbz = 'k.A.';
 	                                $prestudent->insertamum = date('Y-m-d H:i:s');
+	                                $prestudent->insertvon = 'online';
 	                                $prestudent->updateamum = date('Y-m-d H:i:s');
 	                                $prestudent->reihungstestangetreten = false;
 	                                $prestudent->new = true;
@@ -312,9 +313,9 @@ elseif($username && $password)
 	                                $prestudent_status->ausbildungssemester = '1';
 	                                $prestudent_status->datum = date("Y-m-d H:m:s");
 	                                $prestudent_status->insertamum = date("Y-m-d H:m:s");
-	                                $prestudent_status->insertvon = '';
+	                                $prestudent_status->insertvon = 'online';
 	                                $prestudent_status->updateamum = date("Y-m-d H:m:s");
-	                                $prestudent_status->updatevon = '';
+	                                $prestudent_status->updatevon = 'online';
 	                                $prestudent_status->new = true;
 	                                $prestudent_status->anmerkung_status = $anmerkungen[$studiengaenge[$i]];
 									$prestudent_status->orgform_kurzbz = $orgform[$studiengaenge[$i]];
@@ -336,7 +337,9 @@ elseif($username && $password)
 	                            $preInteressent->kontaktmedium_kurzbz = 'bewerbungonline';
 	                            $preInteressent->erfassungsdatum = date('Y-m-d', $timestamp);
 	                            $preInteressent->insertamum = date('Y-m-d H:i:s');
+	                            $preInteressent->insertvon = 'online';
 	                            $preInteressent->updateamum = date('Y-m-d H:i:s');
+	                            $preInteressent->updatevon ='online';;
 	                            $preInteressent->new = true;
 	
 	                            if(!$preInteressent->save())
@@ -355,7 +358,9 @@ elseif($username && $password)
 	                                    $preIntZuordnung->studiengang_kz = $studiengaenge[$i];
 	                                    $preIntZuordnung->prioritaet = '1';
 	                                    $preIntZuordnung->insertamum = date('Y-m-d H:i:s');
+	                                    $preIntZuordnung->insertvon = 'online';
 	                                    $preIntZuordnung->updateamum = date('Y-m-d H:i:s');
+	                                    $preIntZuordnung->updatevon = 'online';
 	                                    $preIntZuordnung->new = true;
 	
 	                                    if(!$preIntZuordnung->saveZuordnung())
@@ -367,7 +372,7 @@ elseif($username && $password)
 							}
 	
 	                        //Email schicken
-							echo sendMail($zugangscode, $email);
+							echo '<p class="alert alert-success">'.sendMail($zugangscode, $email).'</p>';
 							exit();
 						}
 					}
@@ -395,6 +400,9 @@ elseif($username && $password)
 									</button>
 								</span>
 							</div>
+						</div>
+						<div class="col-sm-4">
+							<a href="<?php echo basename(__FILE__) ?>?method=resendcode">Zugangscode vergessen?</a>
 						</div>
 					</div>
 
@@ -467,7 +475,7 @@ elseif($username && $password)
 								foreach($stsem->studiensemester as $row): ?>
 									<option value="<?php echo $row->studiensemester_kurzbz ?>"
 										<?php echo $std_semester == $row->studiensemester_kurzbz ? 'selected' : '' ?>>
-										<?php echo $row->bezeichnung ?>
+										<?php echo $row->bezeichnung.' ('.$p->t('bewerbung/ab').' '.$datum->formatDatum($stsem->convert_html_chars($row->start),'d.m.Y').')' ?>
 									</option>
 								<?php endforeach; ?>
 							</select>
@@ -490,62 +498,76 @@ elseif($username && $password)
 
 							$stgtyp = new studiengang();
 							$stgtyp->getAllTypes();
+							
+							//In der Stg-Auswahl verwendete Typen
+							$typen = array();
+							$anzStg = count($studiengaenge);
+							for($i = 0; $i<$anzStg; $i++)
+							{
+								$stgtypen = new studiengang();
+								$stgtypen->load($studiengaenge[$i]);
+								$typen[] .= $stgtypen->typ;
+							}
 
 							$lasttyp='';
 							foreach($stg->result as $result)
 							{
-									if($lasttyp!=$result->typ)
-									{
-										if($lasttyp!='')
-											echo '</div>';
-										echo '<a href="#'.$stgtyp->studiengang_typ_arr[$result->typ].'" data-toggle="collapse"><h4>'.$stgtyp->studiengang_typ_arr[$result->typ].'  <span style="font-size: inherit;" class="glyphicon glyphicon-collapse-down"></span></h4></a>';
-										echo '<div id="'.$stgtyp->studiengang_typ_arr[$result->typ].'" class="collapse">';
-										$lasttyp=$result->typ;
-									}
-
-									$checked = '';
-									$typ = new studiengang();
-									$typ->getStudiengangTyp($result->typ);
-
-									if($sprache!='German' && $result->studiengangbezeichnung_englisch!='')
-										$stg_bezeichnung = $result->studiengangbezeichnung_englisch;
+								if($lasttyp!=$result->typ)
+								{
+									if($lasttyp!='')
+										echo '</div>';
+									$stud = new studiengang();
+									
+									if(in_array($result->typ, $typen))
+										$collapse = 'collapse in';
 									else
-										$stg_bezeichnung = $result->studiengangbezeichnung;
+										$collapse = 'collapse';
+									echo '<a href="#'.$stgtyp->studiengang_typ_arr[$result->typ].'" data-toggle="collapse"><h4>'.$stgtyp->studiengang_typ_arr[$result->typ].'  <span style="font-size: inherit;" class="glyphicon glyphicon-collapse-down"></span></h4></a>';
+									echo '<div id="'.$stgtyp->studiengang_typ_arr[$result->typ].'" class="'.$collapse.'">';
+									$lasttyp=$result->typ;
+								}
 
-									$orgform = $stg->getOrgForm($result->studiengang_kz);
-									$sprache_lv = $stg->getSprache($result->studiengang_kz);
+								$checked = '';
 
-									$modal = false;
+								if($sprache!='German' && $result->studiengangbezeichnung_englisch!='')
+									$stg_bezeichnung = $result->studiengangbezeichnung_englisch;
+								else
+									$stg_bezeichnung = $result->studiengangbezeichnung;
 
-									if(count($orgform) !== 1 || count($sprache) !== 1)
-									{
-										$modal = true;
-									}
+								$orgform_stg = $stg->getOrgForm($result->studiengang_kz);
+								$sprache_lv = $stg->getSprache($result->studiengang_kz);
 
-									if(in_array($result->studiengang_kz, $studiengaenge) || $result->studiengang_kz == $stg_auswahl)
-									{
-										$checked = 'checked';
-									}
-									echo '
-									<div class="checkbox">
-										<label>
-											<input type="checkbox" name="studiengaenge[]" value="'.$result->studiengang_kz.'" '.$checked.'
-												   data-modal="'.$modal.'"
-												   data-modal-sprache="'.implode(',', $sprache_lv).'"
-												   data-modal-orgform="'.implode(',', $orgform).'">
-											'.$stg_bezeichnung;
-									if($result->typ=='l' && isset($lgtyparr[$result->lgartcode]))
-									{
-										echo ' ('.$lgtyparr[$result->lgartcode].')';
-									}
+								$modal = false;
 
-									echo '
-											<span class="badge" id="badge'.$result->studiengang_kz.'"></span>
-											<input type="hidden" id="anmerkung'.$result->studiengang_kz.'" name="anmerkung['.$result->studiengang_kz.']">
-											<input type="hidden" id="orgform'.$result->studiengang_kz.'" name="orgform['.$result->studiengang_kz.']">
-										</label>
-									</div>
-									';
+								if(count($orgform_stg) !== 1 || count($sprache) !== 1)
+								{
+									$modal = true;
+								}
+
+								if(in_array($result->studiengang_kz, $studiengaenge) || $result->studiengang_kz == $stg_auswahl)
+								{
+									$checked = 'checked';
+								}
+								echo '
+								<div class="checkbox">
+									<label>
+										<input type="checkbox" name="studiengaenge[]" value="'.$result->studiengang_kz.'" '.$checked.'
+											   data-modal="'.$modal.'"
+											   data-modal-sprache="'.implode(',', $sprache_lv).'"
+											   data-modal-orgform="'.implode(',', $orgform_stg).'">
+										'.$stg_bezeichnung;
+								if($result->typ=='l' && isset($lgtyparr[$result->lgartcode]))
+								{
+									echo ' ('.$lgtyparr[$result->lgartcode].')';
+								}
+
+								echo '
+										<span class="badge" id="badge'.$result->studiengang_kz.'">'.$anmerkungen[$result->studiengang_kz].'</span>
+										<input type="hidden" id="anmerkung'.$result->studiengang_kz.'" name="anmerkung['.$result->studiengang_kz.']" value="'.$anmerkungen[$result->studiengang_kz].'">
+										<input type="hidden" id="orgform'.$result->studiengang_kz.'" name="orgform['.$result->studiengang_kz.']" value="'.$orgform[$result->studiengang_kz].'">
+									</label>
+								</div>
+								';
 							}
 							?></div>
 						</div>
@@ -571,6 +593,64 @@ elseif($username && $password)
 						</div>
 					</div>
 				</form>
+			<?php 
+			/**
+			 * Maske zum erneuten Zusenden des Zugangscodes
+			 * 
+			 */
+			elseif($method == 'resendcode'): ?>
+				<?php echo $message;
+				
+				$email = filter_input(INPUT_POST, 'email');
+				$return = check_load_bewerbungen($email);
+				$resend_code = filter_input(INPUT_POST, 'resend_code');
+				
+				if (isset($resend_code))
+				{
+					if($return)
+					{
+						$zugangscode = $return->zugangscode;
+						echo '<p class="alert alert-success"><button type="button" class="close" data-dismiss="alert">x</button>'.sendMail($zugangscode, $email, $return->person_id).'</p>';
+					}
+					else
+						echo '<p class="alert alert-danger"><button type="button" class="close" data-dismiss="alert">x</button>'.$p->t('bewerbung/keinCodeVorhanden').'</p>';
+				}
+				else
+					$message = '<p class="alert alert-danger" id="danger-alert">Fehler aufgetreten</p>';
+				?>
+				<div class="row">
+					<div class="col-xs-10 col-xs-offset-1 col-sm-6 col-sm-offset-3">
+                        <form method="post" action="<?php echo basename(__FILE__) ?>?method=resendcode" id="ResendCodeForm" name="ResendCodeForm" class="form-horizontal">
+							<h1 class="text-center">
+								<?php echo $p->t('bewerbung/welcome') ?>
+							</h1>
+							<img class="center-block img-responsive" src="../../../skin/styles/<?php echo DEFAULT_STYLE ?>/logo.png">
+							<p class="text-center"><?php echo $p->t('bewerbung/codeZuschickenAnleitung') ?></p>
+							<div class="form-group">
+								<label for="email" class="col-sm-3 control-label">
+									<?php echo $p->t('global/emailAdresse') ?>
+								</label>
+								<div class="col-sm-4">
+									<input type="email" maxlength="128" name="email" id="email" value="<?php echo $email ?>" class="form-control">
+								</div>
+							</div>
+							<div class="form-group">
+								<div class="col-sm-4 col-sm-offset-3">
+									<input type="submit" name="resend_code" value="<?php echo $p->t('bewerbung/codeZuschicken') ?>" onclick="return validateEmail()" class="btn btn-primary">
+								</div>
+							</div>
+							<br><br><br><br><br><br><br>
+							<br><br><br><br><br><br><br>
+							<br><br><br><br><br><br><br>
+							<?php
+							if(isset($errormsg))
+							{
+								echo $errormsg;
+							}
+							?>
+						</form>
+					</div>
+				</div>
 			<?php else: ?>
 				<?php echo $message ?>
 				<div class="row">
@@ -586,7 +666,7 @@ elseif($username && $password)
 									<input class="form-control" type="text" placeholder="<?php echo $p->t('bewerbung/zugangscode') ?>" name="userid" autofocus="autofocus">
 									<span class="input-group-btn">
 										<button class="btn btn-primary" type="submit" name="submit_btn">
-											Login
+											<?php echo $p->t('bewerbung/login') ?>
 										</button>
 									</span>
 								</div>
@@ -611,7 +691,7 @@ elseif($username && $password)
                             <div class="form-group">
                                 <span class="col-sm-4 col-sm-offset-3">
                                     <button class="btn btn-primary" type="submit" name="submit_btn">
-                                        Login
+                                        <?php echo $p->t('bewerbung/login') ?>
                                     </button>
                                 </span>
                             </div>
@@ -709,6 +789,19 @@ elseif($username && $password)
                 <?php endif; ?>
 				return true;
 			}
+			
+			function validateEmail() 
+			{
+				var email = document.ResendCodeForm.email.value;
+			    var re = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
+			    if(re.test(email)===false)
+			    {
+			    	alert("<?php echo $p->t('bewerbung/bitteEmailAngeben')?>");
+		    		return false;
+			    }
+			    else
+				    return true;
+			}
 
 			$(function() {
 
@@ -775,14 +868,29 @@ elseif($username && $password)
                 <?php endif; ?>
 			});
 
+			window.setTimeout(function() {
+			    $("#success-alert").fadeTo(500, 0).slideUp(500, function(){
+			        $(this).remove(); 
+			    });
+			}, 1500);
+
 		</script>
 	</body>
 </html>
 
 <?php
-function sendMail($zugangscode, $email)
+function sendMail($zugangscode, $email, $person_id=null)
 {
 	global $p, $vorname, $nachname, $geschlecht;
+	
+	if($person_id!='')
+	{
+		$person = new person();
+		$person->load($person_id);
+		$vorname = $person->vorname;
+		$nachname  = $person->nachname;
+		$geschlecht = $person->geschlecht;
+	}
 	if($geschlecht=='m')
 		$anrede=$p->t('bewerbung/anredeMaennlich');
 	else 

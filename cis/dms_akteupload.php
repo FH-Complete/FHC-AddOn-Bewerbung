@@ -359,6 +359,7 @@ if($person_id !='')
 {
 	$dokument = new dokument();
 	$dokument->getAllDokumenteForPerson($person_id, true);
+	$akzeptiert = new dokument();
 
 	echo '	<form method="POST" enctype="multipart/form-data" action="'.$PHP_SELF.'?person_id='.$_GET['person_id'].'" class="form-horizontal">
             <div class="form-group">
@@ -373,8 +374,11 @@ if($person_id !='')
 					<SELECT name="dokumenttyp" id="dokumenttyp" onchange="showExtensionInfo()" class="form-control">';
 				foreach ($dokument->result as $dok)
 				{
-                    $selected=($dokumenttyp == $dok->dokument_kurzbz)?'selected':'';
-                    echo '<option '.$selected.' value="'.$dok->dokument_kurzbz.'" >'.$dok->bezeichnung_mehrsprachig[$sprache]."</option>\n";
+                    if (!$akzeptiert->akzeptiert($dok->dokument_kurzbz,$person_id))
+                    {
+						$selected=($dokumenttyp == $dok->dokument_kurzbz)?'selected':'';
+                    	echo '<option '.$selected.' value="'.$dok->dokument_kurzbz.'" >'.$dok->bezeichnung_mehrsprachig[$sprache]."</option>\n";
+                    }
 				}
 	echo '			</select>
                 </div>

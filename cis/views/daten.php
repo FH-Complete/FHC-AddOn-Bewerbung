@@ -204,14 +204,16 @@ if(!isset($person_id))
             $notiz->getBewerbungstoolNotizen($person_id);
             if(count($notiz->result)):
                 foreach($notiz->result as $berufstaetig): ?>
-                    <div class="form-group">
-                        <label for="berufstaetig" class="col-sm-3 control-label">
-                            <?php echo $p->t('bewerbung/eintragVom') ?> <?php echo date('j.n.y H:i', strtotime($berufstaetig->insertamum)) ?>
-                        </label>
-                        <div class="col-sm-9">
-                            <input type="text" class="form-control" disabled value="<?php echo $berufstaetig->text ?>">
-                        </div>
-                    </div>
+                	<?php if($berufstaetig->insertvon == 'online'.$person_id):	?>
+	                    <div class="form-group">
+	                        <label for="berufstaetig" class="col-sm-3 control-label">
+	                            <?php echo $p->t('bewerbung/eintragVom') ?> <?php echo date('j.n.y H:i', strtotime($berufstaetig->insertamum)) ?>
+	                        </label>
+	                        <div class="col-sm-9">
+	                            <input type="text" class="form-control" disabled value="<?php echo htmlspecialchars($berufstaetig->text) ?>">
+	                        </div>
+	                    </div>
+                    <?php endif; ?>
                 <?php endforeach; ?>
             <?php else: ?>
                 <div class="form-group">
@@ -239,14 +241,14 @@ if(!isset($person_id))
 		<?php
 		endif;
 		?>
-		<button class="btn-nav btn btn-default" type="button" data-jump-tab="allgemein">
+		<button class="btn-nav btn btn-default" type="button" data-jump-tab="<?php echo $tabs[array_search('daten', $tabs)-1] ?>">
 			<?php echo $p->t('global/zurueck') ?>
 		</button>
-		<button class="btn btn-default" type="submit"  <?php echo $disabled; ?> name="btn_person">
+		<button class="btn btn-success" type="submit"  <?php echo $disabled; ?> name="btn_person">
 			<?php echo $p->t('global/speichern') ?>
 		</button>
-		<button class="btn-nav btn btn-default" type="button" data-jump-tab="kontakt">
+		<button class="btn-nav btn btn-default" type="button" data-jump-tab="<?php echo $tabs[array_search('daten', $tabs)+1] ?>">
 			<?php echo $p->t('bewerbung/weiter') ?>
-		</button>
+		</button><br/><br/>
 	</form>
 </div>

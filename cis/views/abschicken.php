@@ -25,7 +25,37 @@ if(!isset($person_id))
 
 echo '<div role="tabpanel" class="tab-pane" id="abschicken">
 	<h2>'.$p->t('bewerbung/menuBewerbungAbschicken').'</h2>
-	<p>'.$p->t('bewerbung/erklaerungBewerbungAbschicken').'</p>';
+	<p>'.$p->t('bewerbung/erklaerungBewerbungAbschicken').'</p>
+	<div class="row">';
+
+$notiz = new notiz;
+$notiz->getBewerbungstoolNotizen($person_id);
+if(count($notiz->result))
+{
+	foreach($notiz->result as $note)
+	{
+		if($note->insertvon == 'online_notiz'.$person_id)
+		{
+				echo '	<div class="col-sm-3">
+						<b>'.$p->t('bewerbung/notizVom').' '.date('j.n.y H:i', strtotime($note->insertamum)).'</b>
+					</div>
+					<div class="col-sm-9">
+						'.htmlspecialchars($note->text).'
+					</div><br>';
+		}
+	}
+	                
+}
+echo '	</div><form method="POST" action="'.$_SERVER['PHP_SELF'].'?active=abschicken">
+			<div class="form-group">
+			  <label for="anmerkung">'.$p->t('bewerbung/anmerkung').'</label>
+			  <textarea class="form-control" name="anmerkung" rows="4" maxlength="1024" id="anmerkung" style="width:80%" placeholder="'.$p->t('bewerbung/anmerkungPlaceholder').'" onInput="zeichenCountdown(\'anmerkung\',1024)"></textarea>
+			</div>
+			<button class="btn btn-default" type="submit" name="btn_notiz">
+				'.$p->t('global/speichern').'
+			</button>  <span style="color: grey; display: inline-block; width: 30px;" id="countdown_anmerkung">1024</span>
+		</form><br>';
+echo '<p>'.$p->t('bewerbung/erklaerungBewerbungAbschicken').'</p>';
 
 $disabled = 'disabled';
 if($status_person == true && $status_kontakt == true && $status_dokumente == true && $status_zahlungen == true && $status_reihungstest == true)
@@ -72,12 +102,14 @@ foreach($prestudent_help->result as $prest)
 			else
 			{
 				// Bewerbung noch nicht geschickt
+				$orgform = new organisationsform();
+				$orgform->load($row->orgform_kurzbz);
 				echo '
 				<div class="row">
 					<div class="col-md-6 col-sm-8 col-xs-10">
 						<form method="POST"  action="'.$_SERVER['PHP_SELF'].'?active=abschicken">
 							<div class="form-group">
-								<label for="'.$stg->kurzbzlang.'">'.$p->t('bewerbung/bewerbungAbschickenFuer').' '.$stg_bezeichnung.' ('.$row->studiensemester_kurzbz.')</label>
+								<label for="'.$stg->kurzbzlang.'">'.$p->t('bewerbung/bewerbungAbschickenFuer').' '.$stg_bezeichnung.($orgform->bezeichnung!=''?' '.$orgform->bezeichnung:'').' ('.$row->studiensemester_kurzbz.')</label>
 								<input id="'.$stg->kurzbzlang.'" class="btn btn-default form-control" type="submit" value="'.($disabled!=''?$p->t('bewerbung/buttonBewerbungUnvollstaendig'):$p->t('bewerbung/buttonBewerbungAbschicken').' ('.$stg->kurzbzlang.' '.$row->studiensemester_kurzbz.')').'" name="btn_bewerbung_abschicken" '.$disabled.'>
 								<input type="hidden" name="prestudent_id" value="'.$prest->prestudent_id.'">
 							</div>
@@ -90,11 +122,11 @@ foreach($prestudent_help->result as $prest)
 }
 
 echo '
-	<button class="btn-nav btn btn-default" type="button" onclick="window.location.href=\'bewerbung.php?logout=true\';">
-		'.$p->t('bewerbung/logout').'
-	</button>
-	<button class="btn-nav btn btn-default" type="button" data-jump-tab="aufnahme">
+	<button class="btn-nav btn btn-default" type="button" data-jump-tab="'.$tabs[array_search('abschicken', $tabs)-1].'">
 		'.$p->t('global/zurueck').'
 	</button>
+	<button class="btn-nav btn btn-warning" type="button" onclick="window.location.href=\'bewerbung.php?logout=true\';">
+		'.$p->t('bewerbung/logout').'
+	</button><br/><br/>
 </div>';
 ?>

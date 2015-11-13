@@ -44,6 +44,7 @@ if(!isset($person_id))
 			<table class="table">
 				<tr>
 					<th><?php echo $p->t('global/studiengang'); ?></th>
+					<th><?php echo $p->t('bewerbung/kontakt'); ?></th>
 					<th><?php echo $p->t('bewerbung/status'); ?></th>
 					<th><?php echo $p->t('global/datum'); ?></th>
 					<th><?php echo $p->t('bewerbung/bewerbungsstatus'); ?></th>
@@ -71,10 +72,25 @@ if(!isset($person_id))
 					
 					$typ = new studiengang();
 					$typ->getStudiengangTyp($stg->typ);
+					
+					$empf_array = array();
+					if(defined('BEWERBERTOOL_BEWERBUNG_EMPFAENGER'))
+						$empf_array = unserialize(BEWERBERTOOL_BEWERBUNG_EMPFAENGER);
+					
+					if(defined('BEWERBERTOOL_MAILEMPFANG') && BEWERBERTOOL_MAILEMPFANG!='')
+						$empfaenger = BEWERBERTOOL_MAILEMPFANG;
+					elseif(isset($empf_array[$stg->studiengang_kz]))
+						$empfaenger = $empf_array[$stg->studiengang_kz];
+					else
+						$empfaenger = $stg->email;
+					
+					$orgform = new organisationsform();
+					$orgform->load($prestudent_status->orgform_kurzbz);
 					?>
 
 					<tr>
-						<td><?php echo $typ->bezeichnung.' '.$stg_bezeichnung ?></td>
+						<td><?php echo $typ->bezeichnung.' '.$stg_bezeichnung.($orgform->bezeichnung!=''?' ('.$orgform->bezeichnung.')':'') ?></td>
+						<td><a href="mailto:<?php echo $empfaenger ?>"><span class="glyphicon glyphicon-envelope"></span></a></td>
 						<td><?php echo $prestatus_help.' ('.$prestudent_status->studiensemester_kurzbz.')' ?></td>
 						<td><?php echo $datum->formatDatum($prestudent_status->datum, 'd.m.Y') ?></td>
 						<td><?php echo $bewerberstatus ?></td>
@@ -86,9 +102,10 @@ if(!isset($person_id))
 	<button class="btn-nav btn btn-default" type="button" data-toggle="modal" data-target="#liste-studiengaenge">
 		<?php echo $p->t('bewerbung/studiengangHinzufuegen'); ?>
 	</button>
-	<button class="btn-nav btn btn-default" type="button" data-jump-tab="daten">
+	<button class="btn-nav btn btn-default" type="button" data-jump-tab="<?php echo $tabs[array_search('allgemein', $tabs)+1] ?>">
 		<?php echo $p->t('bewerbung/weiter'); ?>
 	</button>
+	<br/><br/>
 
 	<div class="modal fade" id="liste-studiengaenge"><div class="modal-dialog"><div class="modal-content">
 		<div class="modal-header">
@@ -119,7 +136,7 @@ if(!isset($person_id))
 
 						foreach($stsem->studiensemester as $row)
 						{
-							echo '<option value="'.$row->studiensemester_kurzbz.'">'.$stsem->convert_html_chars($row->bezeichnung).'</option>';
+							echo '<option value="'.$row->studiensemester_kurzbz.'">'.$stsem->convert_html_chars($row->bezeichnung).' ('.$p->t('bewerbung/ab').' '.$datum->formatDatum($stsem->convert_html_chars($row->start),'d.m.Y').')</option>';
 						}
 						?>
 					</select>

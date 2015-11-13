@@ -111,9 +111,8 @@ $this->phrasen['bewerbung/uhrzeit']='Uhrzeit';
 $this->phrasen['bewerbung/stornieren']='stornieren';
 $this->phrasen['bewerbung/menuBewerbungAbschicken']='Bewerbung abschicken';
 $this->phrasen['bewerbung/erklaerungBewerbungAbschicken']='Haben Sie alle Daten korrekt ausgefüllt bzw. alle Dokumente auf das System hochgeladen, können Sie Ihre Bewerbung abschicken.<br>
-		Die jeweilige Assistenz wird sich in den folgenden Tagen bezüglich der Bewerbung bei Ihnen melden.
-		<br><br>
-		Bitte überprüfen Sie nochmals Ihre Daten.<br>
+		Die jeweilige Assistenz wird sich in den folgenden Tagen bezüglich der Bewerbung bei Ihnen melden.';
+$this->phrasen['bewerbung/erklaerungBewerbungAbschicken2']='Bitte überprüfen Sie nochmals Ihre Daten.<br>
 		Um Ihre Bewerbung abzuschließen klicken Sie auf die entsprechende Schaltfläche:';
 $this->phrasen['bewerbung/bewerbungAbschickenFuer']='Bewerbung abschicken für';
 $this->phrasen['bewerbung/buttonBewerbungAbschicken']='Bewerbung abschicken';
@@ -152,7 +151,7 @@ $this->phrasen['bewerbung/bitteZuerstStudiengangWaehlen']='Bitte wählen Sie zue
 $this->phrasen['bewerbung/ExtensionInformation']='Unterstützte Dateiformate:';
 $this->phrasen['bewerbung/falscherDateityp']='Dieses Dateiformat wird nicht unterstützt';
 $this->phrasen['bewerbung/nichtMehrAlsXStudiengaenge']='Sie können sich für maximal %s Studiengänge pro Semester bewerben';
-$this->phrasen['bewerbung/mailadresseBereitsGenutzt']='Diese E-Mail Adresse wurde bereits für eine Bewerbung genutzt. Möchten Sie den Zugangscode noch einmal an diese Adresse senden?';
+$this->phrasen['bewerbung/mailadresseBereitsGenutzt']='Die E-Mail Adresse %s wurde bereits für eine Bewerbung genutzt. Möchten Sie den Zugangscode noch einmal an diese Adresse senden?';
 $this->phrasen['bewerbung/buttonBewerbungUnvollstaendig']='Pflichtfelder unvollständig';
 $this->phrasen['bewerbung/prestudentID']='Prestudent ID';
 $this->phrasen['bewerbung/bewerbung']='Bewerbung';
@@ -160,4 +159,14 @@ $this->phrasen['bewerbung/dokumentuploadZuBewerbung']='Dokumentupload %s zu Bewe
 $this->phrasen['bewerbung/maennlich']='Männlich';
 $this->phrasen['bewerbung/weiblich']='Weiblich';
 $this->phrasen['bewerbung/maturazeugnis']='Maturazeugnis';
+$this->phrasen['bewerbung/details']='Details';
+$this->phrasen['bewerbung/codeZuschicken']='Code zuschicken';
+$this->phrasen['bewerbung/codeZuschickenAnleitung']='Bitte geben Sie hier Ihre Mailadresse ein und drücken Sie auf "Code zuschicken"';
+$this->phrasen['bewerbung/keinCodeVorhanden']='Für diese E-Mail Adresse ist noch kein Zugangscode vorhanden. Bitte <a href="'.$_SERVER['PHP_SELF'].'?method=registration">registrieren</a> Sie sich vorher.';
+$this->phrasen['bewerbung/zgvDatumNichtZukunft']='Das Datum der Zugangsvoraussetzung darf nicht in der Zukunft liegen. Wenn Sie die Zugangsvoraussetzung erst später erbringen, lassen Sie das Datum bitte leer.';
+$this->phrasen['bewerbung/ab']='ab';
+$this->phrasen['bewerbung/adresse']='Adresse (Hauptwohnsitz)';
+$this->phrasen['bewerbung/notizVom']='Notiz vom';
+$this->phrasen['bewerbung/anmerkung']='Anmerkung';
+$this->phrasen['bewerbung/anmerkungPlaceholder']='Hier haben Sie noch die Möglichkeit, zusätzliche Anmerkungen einzutragen, die Sie der Assistenz mitteilen möchten';
 ?>
