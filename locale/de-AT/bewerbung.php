@@ -41,6 +41,7 @@ $this->phrasen['bewerbung/orgform/berufsbegleitend']='Berufsbegleitend';
 $this->phrasen['bewerbung/orgform/vollzeit']='Vollzeit';
 $this->phrasen['bewerbung/orgform/teilzeit']='Teilzeit';
 $this->phrasen['bewerbung/orgform/distance']='Fernstudium';
+$this->phrasen['bewerbung/orgform/parttime']='Part time';
 $this->phrasen['bewerbung/topprio']='Oberste Priorität';
 $this->phrasen['bewerbung/alternative']='Alternative';
 $this->phrasen['bewerbung/priowaehlen']='Primäre und alternative Variante auswählen';

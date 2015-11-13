@@ -41,6 +41,7 @@ $this->phrasen['bewerbung/orgform/berufsbegleitend']='extra-occupational';
 $this->phrasen['bewerbung/orgform/vollzeit']='Full time';
 $this->phrasen['bewerbung/orgform/teilzeit']='Part time';
 $this->phrasen['bewerbung/orgform/distance']='Distance Study';
+$this->phrasen['bewerbung/orgform/parttime']='Part time';
 $this->phrasen['bewerbung/topprio']='Top priority';
 $this->phrasen['bewerbung/alternative']='Alternative';
 $this->phrasen['bewerbung/priowaehlen']='Select primary and alternative variant';

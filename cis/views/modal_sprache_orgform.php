@@ -64,6 +64,12 @@
 						<?php echo $p->t('bewerbung/orgform/distance') ?>
 					</label>
 				</div>
+				<div class="radio">
+					<label>
+						<input type="radio" name="<?php echo $prio ?>Orgform" value="PT">
+						<?php echo $p->t('bewerbung/orgform/parttime') ?>
+					</label>
+				</div>
 			</div>
 			<div class="col-sm-6 priogroup">
 				<h4><?php echo $p->t('global/sprache') ?></h4>
