@@ -152,6 +152,12 @@ if(!isset($person_id))
 				$stg = new studiengang();
 				$stg->getAllForBewerbung();
 				
+				$stghlp = new studiengang();
+				$stghlp->getLehrgangstyp();
+				$lgtyparr=array();
+				foreach($stghlp->result as $row)
+					$lgtyparr[$row->lgartcode]=$row->bezeichnung;
+				
 				foreach($stg->result as $result)
 				{
 					$typ = new studiengang();
@@ -185,8 +191,12 @@ if(!isset($person_id))
 									data-modal="'.$modal.'"
 									data-modal-sprache="'.implode(',', $stgSprache).'"
 									data-modal-orgform="'.implode(',', $orgform).'">
-								'.$stg_bezeichnung.'
-								<input type="hidden" id="anmerkung'.$result->studiengang_kz.'">
+								'.$stg_bezeichnung;
+								if($result->typ=='l' && isset($lgtyparr[$result->lgartcode]))
+								{
+									$radioBtn .= ' ('.$lgtyparr[$result->lgartcode].')';
+								}
+								$radioBtn .= '<input type="hidden" id="anmerkung'.$result->studiengang_kz.'">
 							</label>
 						</div>
 						';
