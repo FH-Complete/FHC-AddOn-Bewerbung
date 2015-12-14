@@ -22,6 +22,20 @@ if(!isset($person_id))
 {
 	die($p->t('bewerbung/ungueltigerZugriff'));
 }
+if($save_error_kontakt===false)
+{
+	echo '	<div class="alert alert-success" id="success-alert_kontakt">
+			<button type="button" class="close" data-dismiss="alert">x</button>
+			<strong>'.$p->t('global/erfolgreichgespeichert').'</strong>
+			</div>';
+}
+elseif($save_error_kontakt===true)
+{
+	echo '	<div class="alert alert-danger" id="danger-alert_kontakt">
+			<button type="button" class="close" data-dismiss="alert">x</button>
+				<strong>'.$p->t('global/fehleraufgetreten').' </strong>'.$message.'
+			</div>';
+}
 ?>
 
 <div role="tabpanel" class="tab-pane" id="kontakt">
@@ -37,7 +51,13 @@ if(!isset($person_id))
 	$kontakt_t = new kontakt();
 	$kontakt_t->load_persKontakttyp($person->person_id, 'telefon');
 	$telefon = isset($kontakt_t->result[0]->kontakt)?$kontakt_t->result[0]->kontakt:'';
-
+	//Wenn Telefonnumer leer, alternativ Mobilnummer abfragen
+	if($telefon=='')
+	{
+		$kontakt_t->load_persKontakttyp($person->person_id, 'mobil');
+		$telefon = isset($kontakt_t->result[0]->kontakt)?$kontakt_t->result[0]->kontakt:'';
+	}	
+		
 	$adresse = new adresse();
 	$adresse->load_pers($person->person_id);
 	$strasse = isset($adresse->result[0]->strasse)?$adresse->result[0]->strasse:'';
@@ -57,13 +77,13 @@ if(!isset($person_id))
 	<form method="POST" action="<?php echo $_SERVER['PHP_SELF'] ?>?active=kontakt" class="form-horizontal">
 		<fieldset>
 			<legend><?php echo $p->t('bewerbung/kontakt') ?></legend>
-			<div class="form-group">
+			<div class="form-group <?php echo ($email==''?'has-error':'') ?>">
 				<label for="email" class="col-sm-2 control-label"><?php echo $p->t('global/emailAdresse') ?>*</label>
 				<div class="col-sm-10">
 					<input type="text" name="email" id="email" value="<?php echo $email ?>" <?php echo $disabled; ?> size="32" class="form-control">
 				</div>
 			</div>
-			<div class="form-group">
+			<div class="form-group <?php echo ($telefon==''?'has-error':'') ?>">
 				<label for="telefonnummer" class="col-sm-2 control-label"><?php echo $p->t('global/telefonnummer') ?>*</label>
 				<div class="col-sm-10">
 					<input type="text" name="telefonnummer" id="telefonnummer" value="<?php echo $telefon ?>"  <?php echo $disabled; ?> size="32" class="form-control">
@@ -73,25 +93,25 @@ if(!isset($person_id))
 
 		<fieldset>
 			<legend><?php echo $p->t('bewerbung/adresse') ?></legend>
-			<div class="form-group">
+			<div class="form-group <?php echo ($strasse==''?'has-error':'') ?>">
 				<label for="strasse" class="col-sm-2 control-label"><?php echo $p->t('global/strasse') ?>*</label>
 				<div class="col-sm-10">
 					<input type="text" name="strasse" id="strasse" value="<?php echo $strasse ?>"  <?php echo $disabled; ?> class="form-control">
 				</div>
 			</div>
-			<div class="form-group">
+			<div class="form-group <?php echo ($plz==''?'has-error':'') ?>">
 				<label for="plz" class="col-sm-2 control-label"><?php echo $p->t('global/plz') ?>*</label>
 				<div class="col-sm-10">
 					<input type="text" name="plz" id="plz" value="<?php echo $plz ?>"  <?php echo $disabled; ?> class="form-control">
 				</div>
 			</div>
-			<div class="form-group">
+			<div class="form-group <?php echo ($ort==''?'has-error':'') ?>">
 				<label for="ort" class="col-sm-2 control-label"><?php echo $p->t('global/ort') ?>*</label>
 				<div class="col-sm-10">
 					<input type="text" name="ort" id="ort" value="<?php echo $ort ?>"  <?php echo $disabled; ?> class="form-control">
 				</div>
 			</div>
-			<div class="form-group">
+			<div class="form-group <?php echo ($adr_nation==''?'has-error':'') ?>">
 				<label for="nation" class="col-sm-2 control-label"><?php echo $p->t('bewerbung/nation') ?>*</label>
 				<div class="col-sm-10">
 					<select name="nation" class="form-control" <?php echo $disabled; ?> >
