@@ -36,7 +36,7 @@ if(!isset($person_id))
 	$dokumente_person = new dokument();
 	$dokumente_person->getAllDokumenteForPerson($person_id, true);?>
 
-	<div class="table-responsive">
+	<div class="">
 		<table class="table table-striped">
 			<thead>
 				<tr>
@@ -90,15 +90,15 @@ if(!isset($person_id))
 				
 				if($detailstring!='' && ($row->beschreibung_mehrsprachig[getSprache()]!='' || ($row->dokumentbeschreibung_mehrsprachig[getSprache()]!='' && $i==0)))
 					$detailstring .= '<br/><hr/>';
-				if ($row->beschreibung_mehrsprachig[getSprache()]!='')
-				{
-					$detailstring .= '<b>'.$stg->kuerzel.'</b>: '.$row->beschreibung_mehrsprachig[getSprache()];
-				}
-				elseif($row->dokumentbeschreibung_mehrsprachig[getSprache()]!='' && $i==0)
+				if($row->dokumentbeschreibung_mehrsprachig[getSprache()]!='' && $i==0)
 				{
 					$detailstring .= $row->dokumentbeschreibung_mehrsprachig[getSprache()];
 					//Allgemeine Dokumentbeschreibung nur einmal ausgeben
 					$i++;
+				}
+				elseif ($row->beschreibung_mehrsprachig[getSprache()]!='')
+				{
+					$detailstring .= '<b>'.$stg->kuerzel.'</b>: '.$row->beschreibung_mehrsprachig[getSprache()];
 				}
 				else
 					$detailstring .= '';
@@ -110,7 +110,9 @@ if(!isset($person_id))
 				$beschreibung = '';
 			
 			$dokument = new dokument();
-			
+			$style = '';
+			if($dok->pflicht==true)
+				$style = 'danger';
 			if(count($akte->result)>0)
 			{
 				$akte_id = isset($akte->result[0]->akte_id)?$akte->result[0]->akte_id:'';
@@ -119,6 +121,7 @@ if(!isset($person_id))
 				if($akte->result[0]->nachgereicht == true)
 				{
 					// wird nachgereicht
+					$style = '';
 					$status = '<span class="glyphicon glyphicon-hourglass" aria-hidden="true" title="'.$p->t('bewerbung/dokumentWirdNachgereicht').'"></span>';
 					$nachgereicht_help = 'checked';
 					$div = "<form method='POST' action='".$_SERVER['PHP_SELF']."?active=dokumente'><span id='nachgereicht_".$dok->dokument_kurzbz."' style='display:true;'>".$akte->result[0]->anmerkung."</span></form>";
@@ -144,6 +147,7 @@ if(!isset($person_id))
 					else
 					{
 						// Dokument hochgeladen ohne überprüfung der Assistenz*/
+						$style = '';
 						$status = '<span class="glyphicon glyphicon-eye-open" aria-hidden="true" title="'.$p->t('bewerbung/dokumentNichtUeberprueft').'"></span>';
 						$nachgereicht_help = '';
 						$div = "<form method='POST' action='".$_SERVER['PHP_SELF']."&active=dokumente'>
@@ -163,6 +167,7 @@ if(!isset($person_id))
 			//Wenn kein Dokument hochgeladen ist und trotzdem akzeptiert wurde
 			elseif($dokument->akzeptiert($dok->dokument_kurzbz,$person->person_id))
 			{
+				$style = '';
 				$status = '<span class="glyphicon glyphicon-ok" aria-hidden="true" title="'.$p->t('bewerbung/abgegeben').'"></span>';
 				$nachgereicht_help = '';
 				$div = "<form method='POST' action='".$_SERVER['PHP_SELF']."&active=dokumente'>
@@ -201,11 +206,11 @@ if(!isset($person_id))
 						</form>";
 
 			}
-
+			
 			 ?>
-
+			
 			<tr>
-				<td style="vertical-align: middle">
+				<td style="vertical-align: middle" class="<?php echo $style ?>">
                     <?php
 					echo $dok->bezeichnung_mehrsprachig[getSprache()];
                     ?>
@@ -215,18 +220,18 @@ if(!isset($person_id))
                     <?php endif; ?>
                 </td>
 				
-                <td style="vertical-align: middle"><?php echo $beschreibung ?></td>
-				<td style="vertical-align: middle"><?php echo $status ?></td>
-				<td style="vertical-align: middle" nowrap><?php echo $aktion ?></td>
-				<td style="vertical-align: middle"><?php echo $div ?></td>
-				<td style="vertical-align: middle"><?php echo $ben ?></td>
+                <td style="vertical-align: middle" class="<?php echo $style ?>"><?php echo $beschreibung ?></td>
+				<td style="vertical-align: middle" class="<?php echo $style ?>"><?php echo $status ?></td>
+				<td style="vertical-align: middle" nowrap class="<?php echo $style ?>"><?php echo $aktion ?></td>
+				<td style="vertical-align: middle" class="<?php echo $style ?>"><?php echo $div ?></td>
+				<td style="vertical-align: middle" class="<?php echo $style ?>"><?php echo $ben ?></td>
 			</tr>
 		<?php endforeach; ?>
 			</tbody>
 		</table>
 	</div>
-			<br>
-	<h2><?php echo $p->t('bewerbung/status'); ?></h2>
+	<br>
+	<h4><?php echo $p->t('bewerbung/legende'); ?></h4>
 	<table class="table">
 		<tr>
 			<td>
@@ -271,5 +276,5 @@ if(!isset($person_id))
 	<button class="btn-nav btn btn-default" type="button" data-jump-tab="<?php echo $tabs[array_search('dokumente', $tabs)+1] ?>">
 		<?php echo $p->t('bewerbung/weiter'); ?>
 	</button>
-	<br><?php echo $message ?><br/><br/>
+	<br><?php //echo $message @todo: Braucht man das??><br/><br/>
 </div>
