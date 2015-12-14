@@ -154,7 +154,7 @@ if(isset($_POST['submitbild']))
                 $dms->kategorie_kurzbz=$kategorie_kurzbz;
 
                 $dms->insertamum=date('Y-m-d H:i:s');
-                //$dms->insertvon = $user;
+                $dms->insertvon = 'online';
                 $dms->mimetype=$_FILES['file']['type'];
                 $dms->filename = $filename;
                 $dms->name = $_FILES['file']['name'];
@@ -244,11 +244,11 @@ if(isset($_POST['submitbild']))
 		$akte->titel = $titel;
 		//$akte->bezeichnung = $dokument->bezeichnung;
 		$akte->updateamum = date('Y-m-d H:i:s');
-	//	$akte->updatevon = $user;
+		$akte->updatevon = 'online';
 		$akte->insertamum = date('Y-m-d H:i:s');
 		$akte->nachgereicht = false;
 		$akte->anmerkung = '';
-	//	$akte->insertvon = $user;
+		$akte->insertvon = 'online';
 		$akte->uid = '';
         $akte->dms_id = $dms_id;
 
@@ -289,9 +289,9 @@ if(isset($_POST['submitbild']))
     					$fs->fotostatus_kurzbz='hochgeladen';
     					$fs->datum = date('Y-m-d');
     					$fs->insertamum = date('Y-m-d H:i:s');
-    					$fs->insertvon = 'bewerbertool';
+    					$fs->insertvon = 'online';
     					$fs->updateamum = date('Y-m-d H:i:s');
-    					$fs->updatevon = 'bewerbertool';
+    					$fs->updatevon = 'online';
     					if(!$fs->save(true))
     						echo '<span class="error">Fehler beim Setzen des Bildstatus</span>';
     				}
@@ -361,7 +361,7 @@ if($person_id !='')
 	$dokument->getAllDokumenteForPerson($person_id, true);
 	$akzeptiert = new dokument();
 
-	echo '	<form method="POST" enctype="multipart/form-data" action="'.$PHP_SELF.'?person_id='.$_GET['person_id'].'" class="form-horizontal">
+	echo '	<form method="POST" enctype="multipart/form-data" action="'.$PHP_SELF.'?person_id='.$_GET['person_id'].'&dokumenttyp='.$dokumenttyp.'" class="form-horizontal">
             <div class="form-group">
 				<label for="file" class="col-xs-2 control-label">'.$p->t('incoming/dokument').':</label>
 				<div class="col-xs-5">
