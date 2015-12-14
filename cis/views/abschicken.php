@@ -24,8 +24,25 @@ if(!isset($person_id))
 }
 
 echo '<div role="tabpanel" class="tab-pane" id="abschicken">
-	<h2>'.$p->t('bewerbung/menuBewerbungAbschicken').'</h2>
-	<p>'.$p->t('bewerbung/erklaerungBewerbungAbschicken').'</p>
+	<h2>'.$p->t('bewerbung/menuBewerbungAbschicken').'</h2>';
+	
+			
+	if($save_error_abschicken===false)
+	{
+		echo '	<div class="alert alert-success" id="success-alert_abschicken">
+				<button type="button" class="close" data-dismiss="alert">x</button>
+					<strong>'.$message.'</strong>
+				</div>';
+	}
+	elseif($save_error_abschicken===true)
+	{
+		echo '	<div class="alert alert-danger" id="danger-alert">
+			<button type="button" class="close" data-dismiss="alert">x</button>
+				<strong>'.$p->t('global/fehleraufgetreten').' </strong>'.$message.'
+			</div>';
+	}
+					
+echo '<p>'.$p->t('bewerbung/erklaerungBewerbungAbschicken').'</p>
 	<div class="row">';
 
 $notiz = new notiz;
@@ -34,7 +51,7 @@ if(count($notiz->result))
 {
 	foreach($notiz->result as $note)
 	{
-		if($note->insertvon == 'online_notiz'.$person_id)
+		if($note->insertvon == 'online_notiz')
 		{
 				echo '	<div class="col-sm-3">
 						<b>'.$p->t('bewerbung/notizVom').' '.date('j.n.y H:i', strtotime($note->insertamum)).'</b>
@@ -55,18 +72,20 @@ echo '	</div><form method="POST" action="'.$_SERVER['PHP_SELF'].'?active=abschic
 				'.$p->t('global/speichern').'
 			</button>  <span style="color: grey; display: inline-block; width: 30px;" id="countdown_anmerkung">1024</span>
 		</form><br>';
-echo '<p>'.$p->t('bewerbung/erklaerungBewerbungAbschicken').'</p>';
+//echo '<p>'.$p->t('bewerbung/erklaerungBewerbungAbschicken').'</p>';
 
 $disabled = 'disabled';
-if($status_person == true && $status_kontakt == true && $status_dokumente == true && $status_zahlungen == true && $status_reihungstest == true)
+if($status_person==true && $status_kontakt==true && $status_dokumente==true && $status_zahlungen==true && $status_reihungstest==true && $status_zgv_bak==true)
 	$disabled = '';
 $prestudent_help= new prestudent();
 $prestudent_help->getPrestudenten($person->person_id);
 $stg = new studiengang();
+$typ = new studiengang();
 
 foreach($prestudent_help->result as $prest)
 {
 	$stg->load($prest->studiengang_kz);
+	$typ->getStudiengangTyp($stg->typ);
 
 	if($sprache!='German' && $stg->english!='')
 		$stg_bezeichnung = $stg->english;
@@ -84,6 +103,8 @@ foreach($prestudent_help->result as $prest)
 	
 	foreach($prestudent_help2->result AS $row)
 	{
+		if ($stg->typ=='m' && $status_zgv_mas==false)
+			$disabled = 'disabled';
 		if(in_array($row->studiensemester_kurzbz, $stsem_array)) //Fuer Studiensemester ohne Onlinebewerbung kann sich nicht mehr beworben werden @todo: Dies soll zukuenftig je Studiengang abgespeichert werden koennen
 		{
 			if($row->bestaetigtam!='')
@@ -93,8 +114,8 @@ foreach($prestudent_help->result as $prest)
 				<div class="row">
 					<div class="col-md-6 col-sm-8 col-xs-10">
 							<div class="form-group">
-								<label for="'.$stg->kurzbzlang.'">'.$p->t('bewerbung/bewerbungAbschickenFuer').' '.$stg_bezeichnung.' ('.$row->studiensemester_kurzbz.')</label>
-								<input class="btn btn-default form-control" type="button" value="'.$p->t('bewerbung/BewerbungBereitsVerschickt').'" disabled="disabled">
+								<label for="'.$stg->kurzbzlang.'">'.$p->t('bewerbung/bewerbungAbschickenFuer').' '.$typ->bezeichnung.' '.$stg_bezeichnung.' ('.$row->studiensemester_kurzbz.')</label>
+								<button class="btn btn-default form-control disabled" type="button">'.$p->t('bewerbung/BewerbungBereitsVerschickt').'</button>
 							</div>
 					</div>
 				</div>';
@@ -109,8 +130,8 @@ foreach($prestudent_help->result as $prest)
 					<div class="col-md-6 col-sm-8 col-xs-10">
 						<form method="POST"  action="'.$_SERVER['PHP_SELF'].'?active=abschicken">
 							<div class="form-group">
-								<label for="'.$stg->kurzbzlang.'">'.$p->t('bewerbung/bewerbungAbschickenFuer').' '.$stg_bezeichnung.($orgform->bezeichnung!=''?' '.$orgform->bezeichnung:'').' ('.$row->studiensemester_kurzbz.')</label>
-								<input id="'.$stg->kurzbzlang.'" class="btn btn-default form-control" type="submit" value="'.($disabled!=''?$p->t('bewerbung/buttonBewerbungUnvollstaendig'):$p->t('bewerbung/buttonBewerbungAbschicken').' ('.$stg->kurzbzlang.' '.$row->studiensemester_kurzbz.')').'" name="btn_bewerbung_abschicken" '.$disabled.'>
+								<label for="'.$stg->kurzbzlang.'">'.$p->t('bewerbung/bewerbungAbschickenFuer').' '.$typ->bezeichnung.' '.$stg_bezeichnung.($orgform->bezeichnung!=''?' '.$orgform->bezeichnung:'').' ('.$row->studiensemester_kurzbz.')</label>
+								<button id="'.$stg->kurzbzlang.'" class="btn btn-primary form-control '.$disabled.'" type="submit" name="btn_bewerbung_abschicken">'.($disabled!=''?$p->t('bewerbung/buttonBewerbungUnvollstaendig'):$p->t('bewerbung/buttonBewerbungAbschicken').' ('.$stg->kurzbzlang.' '.$row->studiensemester_kurzbz.')').'</button>
 								<input type="hidden" name="prestudent_id" value="'.$prest->prestudent_id.'">
 							</div>
 						</form>
@@ -121,7 +142,7 @@ foreach($prestudent_help->result as $prest)
 	}
 }
 
-echo '
+echo '<br><br>
 	<button class="btn-nav btn btn-default" type="button" data-jump-tab="'.$tabs[array_search('abschicken', $tabs)-1].'">
 		'.$p->t('global/zurueck').'
 	</button>
