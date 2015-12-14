@@ -38,14 +38,14 @@ $sprache = getSprache();
 if(!empty($studiengaenge))
     $types = $stg->getTypes($studiengaenge);
 
-if($save_error===false)
+if($save_error_zgv===false)
 {
 	echo '	<div class="alert alert-success" id="success-alert_zgv">
 			<button type="button" class="close" data-dismiss="alert">x</button>
 			<strong>'.$p->t('global/erfolgreichgespeichert').'</strong>
 			</div>';
 }
-elseif($save_error===true)
+elseif($save_error_zgv===true)
 {
 	echo '	<div class="alert alert-danger" id="danger-alert_zgv">
 			<button type="button" class="close" data-dismiss="alert">x</button>
@@ -75,7 +75,7 @@ elseif($save_error===true)
             } ?>
             <fieldset>
                 <legend><?php echo $p->t('bewerbung/fuer'); ?> <?php echo ucfirst($stufe) ?></legend>
-                <div class="form-group">
+                <div class="form-group <?php echo (!isset($attribute['art'])?'has-error':'') ?>">
                     <label for="<?php echo $stufe ?>_zgv_art" class="col-sm-3 control-label">
                         <?php echo $p->t('bewerbung/artDerVoraussetzung'); ?>
                     </label>
@@ -110,7 +110,7 @@ elseif($save_error===true)
                         </select>
                     </div>
                 </div>
-                <div class="form-group">
+                <div class="form-group <?php echo (!isset($attribute['ort'])?'has-error':'') ?>">
                     <label for="<?php echo $stufe ?>_zgv_ort" class="col-sm-3 control-label">
                         <?php echo $p->t('global/ort'); ?>
                     </label>
@@ -122,7 +122,7 @@ elseif($save_error===true)
                                placeholder="<?php echo $p->t('bewerbung/woWurdeUrkundeAusgestellt'); ?>">
                     </div>
                 </div>
-                <div class="form-group">
+                <div class="form-group <?php echo (!isset($attribute['nation'])?'has-error':'') ?>">
                     <label for="<?php echo $stufe ?>_zgv_nation" class="col-sm-3 control-label"><?php echo $p->t('bewerbung/nation'); ?></label>
 
                     <div class="col-sm-9">
@@ -144,7 +144,7 @@ elseif($save_error===true)
                         </select>
                     </div>
                 </div>
-                <div class="form-group">
+                <div class="form-group <?php echo (!isset($attribute['datum'])?'has-error':'') ?>">
                     <label for="<?php echo $stufe ?>_zgv_datum" class="col-sm-3 control-label">
                         <?php echo $p->t('global/datum'); ?>
                     </label>
