@@ -33,64 +33,33 @@
 				<p><?php echo $p->t('bewerbung/prioBeschreibungstext') ?></p>
 			</div>
 		</div>
-	<?php foreach(array('topprio', 'alternative') as $prio): ?>
+	<?php 
+	
+	$orgform_sprache = getOrgformSpracheForOnlinebewerbung();
+	
+	foreach(array('topprio', 'alternative') as $prio): ?>
 		<div class="row" id="<?php echo $prio ?>">
 			<div class="col-sm-12">
 				<h4><?php echo $p->t('bewerbung/prioUeberschrift' . $prio) ?></h4>
 			</div>
+			<!--<h4><?php echo $p->t('bewerbung/orgform') ?></h4>-->
 			<div class="col-sm-6 priogroup">
-				<h4><?php echo $p->t('bewerbung/orgform') ?></h4>
+			<?php if($prio!='topprio') //Es muss eine Topprio gewaehlt werden
+					echo '	<div class="radio">
+								<label>
+									<input type="radio" name="'.$prio.'Orgform" value="keine">
+									'.$p->t('bewerbung/egal').'
+								</label>
+							</div>'; ?>
+			<?php foreach($orgform_sprache as $row): ?>
+			
 				<div class="radio">
 					<label>
-						<input type="radio" name="<?php echo $prio ?>Orgform" value="keine">
-						<?php echo $p->t('bewerbung/egal') ?>
+						<input type="radio" name="<?php echo $prio ?>Orgform" value="<?php echo $row->orgform_kurzbz.'_'.$row->sprache; ?>">
+						<?php echo $p->t('bewerbung/orgform/'.$row->orgform_kurzbz) ?> - <?php echo $p->t('bewerbung/'.$row->sprache) ?>
 					</label>
 				</div>
-				<div class="radio">
-					<label>
-						<input type="radio" name="<?php echo $prio ?>Orgform" value="VZ">
-						<?php echo $p->t('bewerbung/orgform/vollzeit') ?>
-					</label>
-				</div>
-				<div class="radio">
-					<label>
-						<input type="radio" name="<?php echo $prio ?>Orgform" value="BB">
-						<?php echo $p->t('bewerbung/orgform/berufsbegleitend') ?>
-					</label>
-				</div>
-				<div class="radio">
-					<label>
-						<input type="radio" name="<?php echo $prio ?>Orgform" value="DL">
-						<?php echo $p->t('bewerbung/orgform/distance') ?>
-					</label>
-				</div>
-				<div class="radio">
-					<label>
-						<input type="radio" name="<?php echo $prio ?>Orgform" value="PT">
-						<?php echo $p->t('bewerbung/orgform/parttime') ?>
-					</label>
-				</div>
-			</div>
-			<div class="col-sm-6 priogroup">
-				<h4><?php echo $p->t('global/sprache') ?></h4>
-				<div class="radio">
-					<label>
-						<input type="radio" name="<?php echo $prio ?>Sprache" value="keine">
-						<?php echo $p->t('bewerbung/egal') ?>
-					</label>
-				</div>
-				<div class="radio">
-					<label>
-						<input type="radio" name="<?php echo $prio ?>Sprache" value="De">
-						<?php echo $p->t('global/deutsch') ?>
-					</label>
-				</div>
-				<div class="radio">
-					<label>
-						<input type="radio" name="<?php echo $prio ?>Sprache" value="En">
-						<?php echo $p->t('global/englisch') ?>
-					</label>
-				</div>
+			<?php endforeach; ?>
 			</div>
 		</div>
 	<?php endforeach; ?>
@@ -106,7 +75,7 @@
 
 		var anm = 'keine Prio';
 
-		if($('#topprio input:checked[value="keine"]').length === 2) {
+		if($('#topprio input:checked').length === 0) {
 
 			$('#alternative')
 				.addClass('inactive')
@@ -118,12 +87,10 @@
 				.removeClass('inactive')
 				.slideDown(slideDuration);
 
-			anm = 'Prio: ' + $('#topprio input[name="topprioOrgform"]:checked').val() + '/'
-					+ $('#topprio input[name="topprioSprache"]:checked').val();
+			anm = 'Prio: ' + $('#topprio input[name="topprioOrgform"]:checked').val();
 
-			if($('#alternative input:checked[value="egal"]').length !== 2) {
-				anm += '; Alt: ' + $('#alternative input[name="alternativeOrgform"]:checked').val() + '/'
-					+ $('#alternative input[name="alternativeSprache"]:checked').val();
+			if($('#alternative input:checked').length !== 0) {
+				anm += '; Alt: ' + $('#alternative input[name="alternativeOrgform"]:checked').val();
 			}
 		}
 
@@ -134,12 +101,18 @@
 	{
 
 		var orgform = '';
-		orgform = $('#topprio input[name="topprioOrgform"]:checked').val()
+		orgform = $('#topprio input[name="topprioOrgform"]:checked').val();
+		
+		if(orgform == undefined)
+			orgform = '';
+
+		if(orgform!='')
+			orgform = orgform.split('_')[0];
 
 		return orgform;
 	}
 
-	function prioAvailable(modal_orgform, modal_sprache) {
+	function prioAvailable(modal_orgformsprache) {
 
 		var prios = {
 				egal:'keine',
@@ -147,25 +120,49 @@
 				English: 'En'
 			};
 
+		modal_orgformsprache.push('keine');
+		$('#prio-dialog input').prop('disabled', true);
+		$('#prio-dialog input').parent().prop({
+			hidden: true
+		});
+
+		for(var i = 0; i < modal_orgformsprache.length; i++)
+		{
+			$('#prio-dialog input[value="' + modal_orgformsprache[i] + '"]').parent().prop({
+				hidden:false
+			});
+
+			$('#prio-dialog input[value="' + modal_orgformsprache[i] + '"]').prop({
+				disabled: false,
+				checked: false
+			});
+		}
+	}
+
+	//Orig
+	/*
+	function prioAvailable(modal_orgform, modal_sprache) {
+		var prios = {
+				egal:'keine',
+				German: 'De',
+				English: 'En'
+			};
 		modal_orgform.push('egal');
 		modal_sprache.push('egal');
 		$('#prio-dialog input').prop('disabled', true);
 		$('#prio-dialog input').parent().prop({
 			hidden:true
 		});
-
 		for(var i = 0; i < modal_orgform.length; i++)
 		{
 			$('#prio-dialog input[value="' + modal_orgform[i] + '"]').parent().prop({
 				hidden:false
 			});
-
 			$('#prio-dialog input[value="' + modal_orgform[i] + '"]').prop({
 				disabled: false,
 				checked: true
 			});
 		}
-
 		for(var i = 0; i < modal_sprache.length; i++)
 		{
 			$('#prio-dialog input[value="' + prios[modal_sprache[i]] + '"]').prop({
@@ -176,7 +173,7 @@
 				hidden:false,
 			});
 		}
-/*
+		
 		$('.priogroup').each(function(i, value) {
 			var disabled_inputs = $(value).find('input:disabled').length;
 
@@ -188,5 +185,4 @@
 				});
 			}
 		});*/
-	}
 </script>
