@@ -28,7 +28,13 @@ if(!isset($person_id))
 
 <div role="tabpanel" class="tab-pane" id="allgemein">
 	<h2><?php echo $p->t('bewerbung/menuAllgemein'); ?></h2>
-	<p><?php echo $p->t('bewerbung/allgemeineErklaerung'); ?></p>
+	<?php 
+	if($_SESSION['bewerbung/user']=='Login')
+		echo '<p>'.$p->t('bewerbung/erklaerungStudierende').'</p>';
+	else
+		echo '<p>'.$p->t('bewerbung/allgemeineErklaerung').'</p>';
+	?>
+	
 	<br><br>
 	<p><b><?php echo $p->t('bewerbung/aktuelleBewerbungen'); ?></b></p>
 	<?php
@@ -40,7 +46,7 @@ if(!isset($person_id))
 			die($p->t('global/fehlerBeimLadenDesDatensatzes'));
 		} ?>
 
-		<div class="table-responsive">
+		<div class="">
 			<table class="table">
 				<tr>
 					<th><?php echo $p->t('global/studiengang'); ?></th>
@@ -51,7 +57,7 @@ if(!isset($person_id))
 				</tr>
 				<?php
 				$bereits_angemeldet = array();
-
+				
 				foreach($prestudent->result as $row):
 					$stg = new studiengang();
 					if(!$stg->load($row->studiengang_kz))
@@ -99,7 +105,7 @@ if(!isset($person_id))
 			</table>
 		</div>
 	<br>
-	<button class="btn-nav btn btn-default" type="button" data-toggle="modal" data-target="#liste-studiengaenge">
+	<button class="btn-nav btn btn-success" type="button" data-toggle="modal" data-target="#liste-studiengaenge">
 		<?php echo $p->t('bewerbung/studiengangHinzufuegen'); ?>
 	</button>
 	<button class="btn-nav btn btn-default" type="button" data-jump-tab="<?php echo $tabs[array_search('allgemein', $tabs)+1] ?>">
@@ -176,7 +182,13 @@ if(!isset($person_id))
 
 					$orgform = $stg->getOrgForm($result->studiengang_kz);
 					$stgSprache = $stg->getSprache($result->studiengang_kz);
-
+					$studienplan = getStudienplaeneForOnlinebewerbung($result->studiengang_kz, '', '',''); //@todo: studiensemester und ausbildungssemester dynamisch
+					$orgformen_sprachen = array();
+					if($studienplan!='')
+					{
+						foreach ($studienplan as $row)
+							$orgformen_sprachen[] = $row->orgform_kurzbz.'_'.$row->sprache;
+					}
 					$modal = false;
 
 					if(count($orgform) !== 1 || count($stgSprache) !== 1)
@@ -190,7 +202,8 @@ if(!isset($person_id))
 								<input type="radio" name="studiengaenge[]" value="'.$result->studiengang_kz.'"
 									data-modal="'.$modal.'"
 									data-modal-sprache="'.implode(',', $stgSprache).'"
-									data-modal-orgform="'.implode(',', $orgform).'">
+									data-modal-orgform="'.implode(',', $orgform).'"
+									data-modal-orgformsprache="'.implode(',', $orgformen_sprachen).'">
 								'.$stg_bezeichnung;
 								if($result->typ=='l' && isset($lgtyparr[$result->lgartcode]))
 								{
@@ -331,13 +344,14 @@ if(!isset($person_id))
 
 				var	modal = item.attr('data-modal'),
 					modal_orgform = item.attr('data-modal-orgform').split(','),
-					modal_sprache = item.attr('data-modal-sprache').split(',');
+					modal_sprache = item.attr('data-modal-sprache').split(','),
+					modal_orgformsprache = item.attr('data-modal-orgformsprache').split(',');
 				$('#prio-dialog').data({stgkz: stgkz});
 
 				if(modal) 
 				{
-					$('#prio-dialog input[value="egal"]').prop('checked', true);
-					prioAvailable(modal_orgform, modal_sprache);
+					//$('#prio-dialog input[value="keine"]').prop('checked', true); Aktivieren, wenn keine als default ausgewaehlt sein soll
+					prioAvailable(modal_orgformsprache);
 					checkPrios(0);
 					$('#prio-dialog').data({stgkz: stgkz, stsem: stsem});
 					$('#prio-dialog').modal('show');
@@ -366,11 +380,27 @@ if(!isset($person_id))
 
 				var stgkz = $('#prio-dialog').data('stgkz'),
 					anm,
-					stsem = $('#prio-dialog').data('stsem');
+					stsem = $('#prio-dialog').data('stsem'),
+					orgform;
 
 				anm = checkPrios(0);
+				orgform = getPrioOrgform();
 
-				saveStudiengang(stgkz, anm, stsem);
+				if(orgform == '')
+				{
+					$('#liste-studiengaenge input[value="' + stgkz + '"]').prop('checked', false);
+					$('#badge' + stgkz).html('');
+					alert('<?php echo $p->t('bewerbung/orgformMussGewaehltWerden') ?>');
+					return false;
+				}
+				else
+				{	
+					$('#orgform' + stgkz).val(orgform);
+					$('#anmerkung' + stgkz).val(anm);
+					$('#badge' + stgkz).html(anm);
+				}
+
+				saveStudiengang(stgkz, anm, stsem, orgform);
 			});
 			
 			$('#ausbildungstyp').change(function() {
@@ -389,13 +419,14 @@ if(!isset($person_id))
 			});
 
 		});
-		function saveStudiengang(stgkz, anm, stsem)
+		function saveStudiengang(stgkz, anm, stsem, orgform)
 		{
 			data = {
 				anm: anm,
 				stgkz: stgkz,
 				addStudiengang: true,
-				studiensemester: stsem
+				studiensemester: stsem,
+				orgform: orgform
 			};
 
 			$.ajax({
@@ -412,7 +443,7 @@ if(!isset($person_id))
 				},
 				error: function(data) 
 				{
-					alert('<?php echo $p->t('global/fehlerBeimSpeichernDerDaten') ?>')
+					alert(data.msg)
 				}
 			});
 			
