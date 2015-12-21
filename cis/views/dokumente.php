@@ -216,7 +216,7 @@ if(!isset($person_id))
                     ?>
 
                     <?php if($dok->pflicht): ?>
-                        <span class="text-danger glyphicon glyphicon-asterisk"></span>
+                        <span>*</span>
                     <?php endif; ?>
                 </td>
 				
@@ -234,8 +234,8 @@ if(!isset($person_id))
 	<h4><?php echo $p->t('bewerbung/legende'); ?></h4>
 	<table class="table">
 		<tr>
-			<td>
-				<span class="text-danger glyphicon glyphicon-asterisk"></span>
+			<td class="danger">
+				<span>&nbsp;*</span>
 			</td>
 			<td><?php echo $p->t('bewerbung/dokumentErforderlich'); ?></td>
 		</tr>
