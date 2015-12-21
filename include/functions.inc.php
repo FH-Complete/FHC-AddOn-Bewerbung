@@ -141,8 +141,8 @@ function check_load_bewerbungen($mailadresse,$studiensemester_kurzbz=null)
 /**
  * Prueft, ob eine Person schon einen Bewerbung abgeschickt hat. Notwendig um herauszufinden, ob die Eingabe der Stammdaten gesperrt werden soll.
  * Optional kann eine studiensemester_kurzbz uebergeben werden, ob speziell dafuer schon eine Bewerbung abgeschickt wurde.
- * @param string $mailadresse Zu pruefende E-Mail-Adresse.
- * @param string $studiensemester_kurzbz. Optional. Studiensemester fuer welches eine Bewerbung vorliegt.
+ * @param integer $person_id Zu pruefende Person.
+ * @param string $studiensemester_kurzbz. Optional. Studiensemester fuer welches eine abgeschickte Bewerbung vorliegt.
  * @return true, wenn vorhanden, false im Fehlerfall
  */
 function check_person_bewerbungabgeschickt($person_id,$studiensemester_kurzbz=null)
@@ -155,7 +155,7 @@ function check_person_bewerbungabgeschickt($person_id,$studiensemester_kurzbz=nu
 			JOIN PUBLIC.tbl_prestudentstatus USING (prestudent_id)
 			WHERE person_id=".$db->db_add_param($person_id, FHC_INTEGER)."
 				AND status_kurzbz = 'Interessent'
-				AND bestaetigtam IS NOT NULL";
+				AND bewerbung_abgeschicktamum IS NOT NULL";
 
 	if($studiensemester_kurzbz!='')
 		$qry .= " AND studiensemester_kurzbz=".$db->db_add_param($studiensemester_kurzbz, FHC_STRING);
@@ -172,6 +172,43 @@ function check_person_bewerbungabgeschickt($person_id,$studiensemester_kurzbz=nu
 		$db->errormsg = 'Fehler beim Laden der Daten';
 		return false;
 	}
+}
+
+/**
+ * Prueft, ob der uebergebene Status der Person (irgendeines PreStudenten) bestaetigt ist.
+ * Optional kann eine studiensemester_kurzbz uebergeben werden, ob speziell dafuer schon eine Bestaetigung vorliegt.
+ * @param integer $person_id Zu pruefende Person.
+ * @param string $status_kurzbz Status_kurzbz, welche geprueft werden soll zB "Interessent".
+ * @param string $studiensemester_kurzbz. Optional. Studiensemester fuer welches eine Bewerbung vorliegt.
+ * @return true, wenn vorhanden, false im Fehlerfall
+ */
+function check_person_statusbestaetigt($person_id,$status_kurzbz,$studiensemester_kurzbz=null)
+{
+	$db = new basis_db();
+
+	$qry = "SELECT *
+			FROM PUBLIC.tbl_person
+			JOIN PUBLIC.tbl_prestudent USING (person_id)
+			JOIN PUBLIC.tbl_prestudentstatus USING (prestudent_id)
+			WHERE person_id=".$db->db_add_param($person_id, FHC_INTEGER)."
+				AND status_kurzbz = ".$db->db_add_param($status_kurzbz, FHC_STRING)."
+				AND bestaetigtam IS NOT NULL";
+
+	if($studiensemester_kurzbz!='')
+		$qry .= " AND studiensemester_kurzbz=".$db->db_add_param($studiensemester_kurzbz, FHC_STRING);
+
+		if($result = $db->db_query($qry))
+		{
+			if($db->db_num_rows($result)>0)
+				return true;
+				else
+					return false;
+		}
+		else
+		{
+			$db->errormsg = 'Fehler beim Laden der Daten';
+			return false;
+		}
 }
 
 /**

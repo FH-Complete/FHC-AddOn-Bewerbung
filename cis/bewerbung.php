@@ -95,7 +95,7 @@ if($benutzer->getBenutzerFromPerson($person->person_id,false))
 }
 
 //Wenn bereits eine Bewerbung abgeschickt wurde, duerfen die Stammdaten nicht mehr geaendert werden
-if(check_person_bewerbungabgeschickt($person_id))
+if(check_person_statusbestaetigt($person_id,'Interessent'))
 	$eingabegesperrt=true;
 
 $message = '&nbsp;';
@@ -104,6 +104,7 @@ $message = '&nbsp;';
 //$unvollstaendig = '<span class="badge alert-danger">'.$p->t('bewerbung/unvollstaendig').' <span class="glyphicon glyphicon-remove"></span></span>';
 $vollstaendig = '<span style="color: #3c763d;">'.$p->t('bewerbung/vollstaendig').'</span>';
 $unvollstaendig = '<span style="color: #a94442;">'.$p->t('bewerbung/unvollstaendig').'</span>';
+$teilvollstaendig = '<span style="color: #8A6D3B;">'.$p->t('bewerbung/teilweiseVollstaendig').'</span>';
 
 if($method=='delete')
 {
@@ -242,7 +243,7 @@ if(isset($_POST['btn_bewerbung_abschicken']))
 			$prestudent_status->studienplan_id = $alterstatus->studienplan_id;
 			$prestudent_status->new = true;
 			*/
-			$prestudent_status->bestaetigtam=date('Y-m-d H:i:s');
+			$prestudent_status->bewerbung_abgeschicktamum=date('Y-m-d H:i:s');
 			$prestudent_status->new=false;
 			$prestudent_status->updateamum = date('Y-m-d H:i:s');
 			$prestudent_status->updatevon = 'online';
@@ -753,12 +754,29 @@ foreach($dokument_help->result as $dok)
 	{
 		$missing = true;
 	}
+	if(CAMPUS_NAME=='FH Technikum Wien' && !in_array($dok->dokument_kurzbz, $help_array, true))
+	{
+		$missing = true;
+	}
 }
 
 if($missing && (!defined('BEWERBERTOOL_DOKUMENTE_ANZEIGEN') || BEWERBERTOOL_DOKUMENTE_ANZEIGEN==true))
 {
-	$status_dokumente = false;
-	$status_dokumente_text = $unvollstaendig;
+	if(CAMPUS_NAME=='FH Technikum Wien' && !check_person_statusbestaetigt($person_id,'Interessent'))
+	{
+		$status_dokumente = true;
+		$status_dokumente_text = $vollstaendig;
+	}
+	elseif(CAMPUS_NAME=='FH Technikum Wien' && count($help_array)>0)
+	{
+		$status_dokumente = true;
+		$status_dokumente_text = $teilvollstaendig;
+	}
+	else 
+	{
+		$status_dokumente = false;
+		$status_dokumente_text = $unvollstaendig;
+	}
 }
 else
 {
@@ -918,14 +936,29 @@ else
 							</a>
 						</li>
 						<?php
-						if(!defined('BEWERBERTOOL_DOKUMENTE_ANZEIGEN') || BEWERBERTOOL_DOKUMENTE_ANZEIGEN):
-						?>
-						<li>
-							<a href="#dokumente" aria-controls="dokumente" role="tab" data-toggle="tab" <?php echo ($status_dokumente_text == $unvollstaendig?'style="background-color: #F2DEDE !important"':'style="background-color: #DFF0D8 !important"');?>>
-								<?php echo $p->t('bewerbung/menuDokumente') ?> <br> <?php echo $status_dokumente_text;?>
-							</a>
-						</li>
-						<?php endif; ?>
+						if(!defined('BEWERBERTOOL_DOKUMENTE_ANZEIGEN') || BEWERBERTOOL_DOKUMENTE_ANZEIGEN)
+						{
+							if(CAMPUS_NAME=='FH Technikum Wien')
+							{
+								if(check_person_statusbestaetigt($person_id,'Interessent'))
+								{
+									echo '	<li>
+												<a href="#dokumente" aria-controls="dokumente" role="tab" data-toggle="tab" '.($status_dokumente_text == $unvollstaendig?'style="background-color: #F2DEDE !important"':($status_dokumente_text == $teilvollstaendig?'style="background-color: #FCF8E3 !important"':'style="background-color: #DFF0D8 !important"')).'>
+													'.$p->t('bewerbung/menuDokumente').' <br> '.$status_dokumente_text.'
+												</a>
+											</li>';
+								}
+							}
+							else
+							{
+								echo '	<li>
+											<a href="#dokumente" aria-controls="dokumente" role="tab" data-toggle="tab" '.($status_dokumente_text == $unvollstaendig?'style="background-color: #F2DEDE !important"':'style="background-color: #DFF0D8 !important"').'>
+												'.$p->t('bewerbung/menuDokumente').' <br> '.$status_dokumente_text.'
+											</a>
+										</li>';
+							}
+						}
+						 ?>
 
 						<?php
 						if(!defined('BEWERBERTOOL_ZGV_ANZEIGEN') || BEWERBERTOOL_ZGV_ANZEIGEN):
@@ -979,7 +1012,15 @@ else
 					'kontakt'					
 				);
 				if(!defined('BEWERBERTOOL_DOKUMENTE_ANZEIGEN') || BEWERBERTOOL_DOKUMENTE_ANZEIGEN)
-					$tabs[]='dokumente';
+				{
+					if(CAMPUS_NAME=='FH Technikum Wien')
+					{
+						if(check_person_statusbestaetigt($person_id,'Interessent'))
+							$tabs[]='dokumente';
+					}
+					else 
+						$tabs[]='dokumente';
+				}
 				if(!defined('BEWERBERTOOL_ZGV_ANZEIGEN') || BEWERBERTOOL_ZGV_ANZEIGEN)
 					$tabs[]='zgv';
 				if(!defined('BEWERBERTOOL_ZAHLUNGEN_ANZEIGEN') || BEWERBERTOOL_ZAHLUNGEN_ANZEIGEN)
@@ -1093,7 +1134,7 @@ function sendBewerbung($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz)
 				if($row->nachgereicht==true)
 					$email.= '- '.$dokument->bezeichnung_mehrsprachig[DEFAULT_LANGUAGE].' -> '.$p->t('bewerbung/dokumentWirdNachgereicht').'<br>';
 				else
-					$email.= '- <a href="https://vilesci.technikum-wien.at/content/akte.php?akte_id='.$row->akte_id.'">'.$dokument->bezeichnung_mehrsprachig[DEFAULT_LANGUAGE].'_'.$row->bezeichnung.'</a><br>';
+					$email.= '- <a href="'.APP_ROOT.'cms/dms.php?id='.$row->dms_id.'">'.$dokument->bezeichnung_mehrsprachig[DEFAULT_LANGUAGE].'_'.$row->bezeichnung.'</a><br>';
 			}
 		}
 		$email.= '</td></tr></tbody></table>';

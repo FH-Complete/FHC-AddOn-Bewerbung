@@ -144,6 +144,7 @@ elseif($save_error_zgv===true)
                         </select>
                     </div>
                 </div>
+                <?php if (CAMPUS_NAME!='FH Technikum Wien'): ?>
                 <div class="form-group <?php echo (!isset($attribute['datum'])?'has-error':'') ?>">
                     <label for="<?php echo $stufe ?>_zgv_datum" class="col-sm-3 control-label">
                         <?php echo $p->t('global/datum'); ?>
@@ -156,6 +157,7 @@ elseif($save_error_zgv===true)
                                placeholder="<?php echo $p->t('bewerbung/datumFormat') ?>">
                     </div>
                 </div>
+                <?php endif; ?>
             </fieldset>
         <?php endforeach ?>
         <button class="btn-nav btn btn-default" type="button" data-jump-tab="<?php echo $tabs[array_search('zgv', $tabs)-1] ?>">

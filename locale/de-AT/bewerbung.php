@@ -60,11 +60,8 @@ $this->phrasen['bewerbung/neuerStudiengang'] = 'Bitte wählen Sie einen Studieng
 $this->phrasen['bewerbung/geplanteStudienrichtung']='Geplante Studienrichtung';
 $this->phrasen['bewerbung/menuAllgemein']='Allgemein';
 $this->phrasen['bewerbung/loginmitAccount']='Wenn Sie bereits einen Account haben, können sie sich mit Ihrem Usernamen / Passwort anmelden';
-$this->phrasen['bewerbung/allgemeineErklaerung']='Wir freuen uns, dass Sie sich für einen oder mehrere unserer Studiengänge oder Lehrgänge bewerben.<br><br>
-	Bitte füllen Sie das Formular vollständig aus und schicken Sie es danach ab.<br><br>
-	<b>Bewerbungsmodus:</b><br>
-	<p style="text-align:justify;">Füllen Sie alle Punkte aus. Sind alle Werte vollständig eingetragen, können Sie unter "Bewerbung abschicken" Ihre Bewerbung an die zuständige Assistenz schicken.<br>
-	Diese wird sich in den nächsten Tagen bei Ihnen melden.';
+$this->phrasen['bewerbung/allgemeineErklaerung']='Wir freuen uns, dass Sie sich für einen oder mehrere unserer Studiengänge oder Lehrgänge interessieren.<br><br>
+	Bitte füllen Sie das Formular vollständig aus. Sind alle Werte eingetragen, können Sie unter "Abschließen" Ihre Bewerbung an die zuständige Assistenz schicken.';
 $this->phrasen['bewerbung/erklaerungStudierende']='Wir freuen uns über Ihr Interesse an unseren Weiterbildungsprogrammen.<br><br>
 	Bitte klicken Sie auf "Weiteren Studiengang/Lehrgang hinzufügen" um Ihrer Bewerbung einen Studiengang oder Lehrgang hinzuzufügen.
 	Gegebenenfalls sind danach weitere Daten zu ergänzen, bevor Sie die Bewerbung im letzten Schritt abschicken können.';
@@ -88,7 +85,7 @@ $this->phrasen['bewerbung/artDerTaetigkeit']='Art der Tätigkeit';
 $this->phrasen['bewerbung/weiter']='Weiter';
 $this->phrasen['bewerbung/eintragVom']='Eintrag vom';
 $this->phrasen['bewerbung/menuPersDaten']='Persönliche Daten';
-$this->phrasen['bewerbung/accountVorhanden']='Da sie bereits einen Account haben, können Sie Ihre Stammdaten nicht mehr ändern. Sollten hier Daten fehlerhaft sein, wenden Sie sich bitte an die zuständige Assistenz.<br><br>';
+$this->phrasen['bewerbung/accountVorhanden']='Da Sie bereits als InteressentIn bestätigt wurden oder Sie bereits einen Account an der FHTW haben, können Sie Ihre Stammdaten nicht mehr ändern. Sollten hier Daten fehlerhaft sein, wenden Sie sich bitte an die zuständige Assistenz.<br><br>';
 $this->phrasen['bewerbung/bitteAuswaehlen']='-- Bitte auswählen --';
 $this->phrasen['bewerbung/menuKontaktinformationen']='Kontaktinformationen';
 $this->phrasen['bewerbung/kontakt']='Kontakt';
@@ -124,7 +121,7 @@ $this->phrasen['bewerbung/uhrzeit']='Uhrzeit';
 $this->phrasen['bewerbung/stornieren']='stornieren';
 $this->phrasen['bewerbung/menuBewerbungAbschicken']='Bewerbung abschicken';
 $this->phrasen['bewerbung/erklaerungBewerbungAbschicken']='Wenn Sie alle Daten vervollständigt haben, können Sie Ihre Bewerbung abschicken.	Die jeweilige Assistenz wird sich in den folgenden Tagen bezüglich Ihrer Bewerbung bei Ihnen melden. <br>
-		Falls Sie innerhalb einer Woche keine Reaktion erhalten, nehmen Sie bitte Kontakt mit uns auf.';
+		Falls Sie innerhalb von 10 Werktagen keine Reaktion erhalten, nehmen Sie bitte Kontakt mit uns auf.';
 $this->phrasen['bewerbung/erklaerungBewerbungAbschicken2']='Bitte überprüfen Sie nochmals Ihre Daten.<br>
 		Um Ihre Bewerbung abzuschließen klicken Sie auf die entsprechende Schaltfläche:';
 $this->phrasen['bewerbung/bewerbungAbschickenFuer']='Bewerbung abschicken für';
@@ -143,8 +140,9 @@ $this->phrasen['bewerbung/zahlungsreferenz']='Zahlungsreferenz';
 $this->phrasen['bewerbung/buchungsnummerNichtVorhanden']='Buchungsnummer %s nicht vorhanden';
 $this->phrasen['bewerbung/vollstaendig']='vollständig';
 $this->phrasen['bewerbung/unvollstaendig']='unvollständig';
+$this->phrasen['bewerbung/teilweiseVollstaendig']='teilweise vollständig';
 $this->phrasen['bewerbung/maxAnzahlTeilnehmer']='max. Teilnehmeranzahl erreicht';
-$this->phrasen['bewerbung/erfolgreichBeworben']='Sie haben sich erfolgreich für %s beworben. Die zuständige Assistenz wird sich in den nächsten Tagen bei Ihnen melden. Falls Sie innerhalb einer Woche keine Reaktion erhalten, nehmen Sie bitte Kontakt mit uns auf.';
+$this->phrasen['bewerbung/erfolgreichBeworben']='Sie haben sich erfolgreich für %s beworben. Die zuständige Assistenz wird sich in den nächsten Tagen bei Ihnen melden. Falls Sie innerhalb von 10 Werktagen keine Reaktion erhalten, nehmen Sie bitte Kontakt mit uns auf.';
 $this->phrasen['bewerbung/fehlerBeimVersendenDerBewerbung']='Es ist ein Fehler beim Versenden der Bewerbung aufgetreten. Bitte versuchen Sie es nocheinmal.';
 $this->phrasen['bewerbung/svnrBereitsVorhanden']='SVNR bereits vorhanden';
 $this->phrasen['bewerbung/menuBewerbungFuerStudiengang']='Bewerbung für einen Studiengang';
@@ -189,4 +187,11 @@ $this->phrasen['bewerbung/bitteOrgformWaehlen']='Wenn Sie einen Studiengang mit 
 $this->phrasen['bewerbung/orgformWaehlen']='Organisationsform wählen';
 $this->phrasen['bewerbung/orgformBeschreibungstext']='Bitte geben Sie an, für welche Organisationsform Sie sich interessieren. Für den Fall, dass alle Plätze in Ihrer gewünschten Organisationsform vergeben sind, können Sie optional eine Alternative angeben';
 $this->phrasen['bewerbung/menuAbschließen']='Abschließen';
+$this->phrasen['bewerbung/sieHabenNochKeinenZugangscode']='Sie haben noch keinen Zugangscode oder Account an der FH Technikum Wien?';
+$this->phrasen['bewerbung/habenSieBereitsEinenZugangscode']='Sie haben bereits einen Zugangscode?';
+$this->phrasen['bewerbung/studierenOderArbeitenSieBereits']='Studieren oder arbeiten Sie bereits an der FH Technikum Wien?';
+$this->phrasen['bewerbung/zugangscodeVergessen']='Zugangscode vergessen?';
+$this->phrasen['bewerbung/dannHiermitAccountEinloggen']='Dann loggen Sie sich hier mit Ihrem CIS-Account ein';
+$this->phrasen['bewerbung/dannHierEinloggen']='Dann loggen Sie sich hier ein';
+$this->phrasen['bewerbung/dokumentHerunterladen']='Dokument herunterladen';
 ?>
