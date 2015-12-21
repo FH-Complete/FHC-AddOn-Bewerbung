@@ -841,7 +841,7 @@ elseif($username && $password)
 							</h1>
 							<div class="panel panel-info">
 							  <div class="panel-heading text-center">
-							    <h3 class="panel-title">Sie haben noch keinen Zugangscode oder Account an der FH Technikum Wien?</h3>
+							    <h3 class="panel-title"><?php echo $p->t('bewerbung/sieHabenNochKeinenZugangscode') ?></h3>
 							  </div>
 							  <div class="panel-body text-center">
 							  	<br>
@@ -851,10 +851,10 @@ elseif($username && $password)
 							</div>
 							<div class="panel panel-info">
 							  <div class="panel-heading text-center">
-							    <h3 class="panel-title">Haben Sie bereits einen Zugangscode?</h3>
+							    <h3 class="panel-title"><?php echo $p->t('bewerbung/habenSieBereitsEinenZugangscode') ?></h3>
 							  </div>
 							  <div class="panel-body text-center">
-							  	<p>Dann loggen Sie sich bitte hier ein</p>
+							  	<p><?php echo $p->t('bewerbung/dannHierEinloggen') ?></p>
 							    <div class="form-group">
 									<div class="input-group col-sm-6 col-sm-offset-3">
 										<p class="text-center"><input class="form-control" type="text" placeholder="<?php echo $p->t('bewerbung/zugangscode') ?>" name="userid" autofocus="autofocus" value="<?php echo $code ?>"></p>
@@ -866,7 +866,7 @@ elseif($username && $password)
 									</div>
 									<br>
 									<div class="col-sm-4 col-sm-offset-4">
-										<a href="<?php echo basename(__FILE__) ?>?method=resendcode">Zugangscode vergessen?</a>
+										<a href="<?php echo basename(__FILE__) ?>?method=resendcode"><?php echo $p->t('bewerbung/zugangscodeVergessen') ?></a>
 									</div>
 								</div>
 							    
@@ -874,10 +874,10 @@ elseif($username && $password)
 							</div>
 							<div class="panel panel-info">
 							  <div class="panel-heading text-center">
-							    <h3 class="panel-title">Studieren oder arbeiten Sie bereits an der FH Technikum Wien?</h3>
+							    <h3 class="panel-title"><?php echo $p->t('bewerbung/studierenOderArbeitenSieBereits') ?></h3>
 							  </div>
 							  <div class="panel-body text-center">
-							  	<p class="text-center">Dann loggen Sie sich hier mit Ihrem CIS-Account ein</p>
+							  	<p class="text-center"><?php echo $p->t('bewerbung/dannHiermitAccountEinloggen') ?></p>
 								<div class="form-group">
 									<label for="username" class="col-sm-3 control-label">
 										<?php echo $p->t('global/username') ?>
