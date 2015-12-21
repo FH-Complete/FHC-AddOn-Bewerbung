@@ -108,7 +108,7 @@ if(isset($_POST['submitbild']))
     // dms Eintrag anlegen
     if(isset($_POST['fileupload']))
     {
-        $ext = pathinfo($_FILES['file']['name'], PATHINFO_EXTENSION);
+        $ext = strtolower(pathinfo($_FILES['file']['name'], PATHINFO_EXTENSION));
 
         if((in_array($ext,array('jpg','jpeg')) && $_REQUEST['dokumenttyp']=='Lichtbil')
           || ($_REQUEST['dokumenttyp']!='Lichtbil' && in_array($ext, array('zip','pdf','doc','docx','jpg','png','gif','tiff','bmp'))))
@@ -342,7 +342,7 @@ if(isset($_POST['submitbild']))
 				{
 					if($row->bestaetigtam!='' && in_array($prest->studiengang_kz, $benoetigt))
 					{
-						sendDokumentupload($prest->studiengang_kz,$dokument->bezeichnung,$row->orgform_kurzbz,$row->studiensemester_kurzbz,$row->prestudent_id);
+						sendDokumentupload($prest->studiengang_kz,$dokument->dokument_kurzbz,$row->orgform_kurzbz,$row->studiensemester_kurzbz,$row->prestudent_id,$dms_id);
 					}
 				}
 			}
@@ -432,7 +432,7 @@ function resize($filename, $width, $height)
 }
 
 // Sendet eine Email an die Assistenz, dass ein neues Dokument hochgeladen wurde
-function sendDokumentupload($empfaenger_stgkz,$dokumentbezeichnung,$orgform_kurzbz,$studiensemester_kurzbz,$prestudent_id)
+function sendDokumentupload($empfaenger_stgkz,$dokument_kurzbz,$orgform_kurzbz,$studiensemester_kurzbz,$prestudent_id,$dms_id)
 {
 	global $person_id, $p;
 	
@@ -443,6 +443,7 @@ function sendDokumentupload($empfaenger_stgkz,$dokumentbezeichnung,$orgform_kurz
 	
 	$person = new person();
 	$person->load($person_id);
+	$dokumentbezeichnung = '';
 
 	$studiengang = new studiengang();
 	$studiengang->load($empfaenger_stgkz);
@@ -450,13 +451,30 @@ function sendDokumentupload($empfaenger_stgkz,$dokumentbezeichnung,$orgform_kurz
 	$typ->getStudiengangTyp($studiengang->typ);
 
 	$email = $p->t('bewerbung/emailDokumentuploadStart');
-	$email.= '<br>';
-	$email.= $p->t('global/studiengang').': '.$typ->bezeichnung.' '.$studiengang->bezeichnung.($orgform_kurzbz!=''?' ('.$orgform_kurzbz.')':'').' <br>';
-	$email.= $p->t('global/studiensemester').': '.$studiensemester_kurzbz.'<br>';
-	$email.= $p->t('global/name').': '.$person->vorname.' '.$person->nachname.'<br>';
-	$email.= $p->t('bewerbung/dokument').': '.$dokumentbezeichnung.'<br>';
-	$email.= $p->t('bewerbung/prestudentID').': '.$prestudent_id.'<br><br>';
-	$email.= $p->t('bewerbung/emailBodyEnde');
+	$email.= '<br><table style="font-size:small"><tbody>';
+	$email.= '<tr><td><b>'.$p->t('global/studiengang').'</b></td><td>'.$typ->bezeichnung.' '.$studiengang->bezeichnung.($orgform_kurzbz!=''?' ('.$orgform_kurzbz.')':'').'</td></tr>';
+	$email.= '<tr><td><b>'.$p->t('global/studiensemester').'</b></td><td>'.$studiensemester_kurzbz.'</td></tr>';
+	$email.= '<tr><td><b>'.$p->t('global/name').'</b></td><td>'.$person->vorname.' '.$person->nachname.'</td></tr>';
+	$email.= '<tr><td><b>'.$p->t('bewerbung/dokument').'</b></td><td>';
+	$akte = new akte;
+	$akte->getAkten($person_id,$dokument_kurzbz);
+	foreach($akte->result AS $row)
+	{
+		$dokument = new dokument();
+		$dokument->loadDokumenttyp($row->dokument_kurzbz);
+		if ($row->insertvon=='online')
+		{
+			if($row->nachgereicht==true)
+				$email.= '- '.$dokument->bezeichnung_mehrsprachig[DEFAULT_LANGUAGE].' -> '.$p->t('bewerbung/dokumentWirdNachgereicht').'<br>';
+				else
+					$email.= '<a href="'.APP_ROOT.'cms/dms.php?id='.$dms_id.'">'.$dokument->bezeichnung_mehrsprachig[DEFAULT_LANGUAGE].' ['.$row->bezeichnung.']</a><br>';
+			$dokumentbezeichnung = $dokument->bezeichnung_mehrsprachig[DEFAULT_LANGUAGE];
+		}
+	}
+	$email.= '</td>';
+	$email.= '<tr><td><b>'.$p->t('bewerbung/prestudentID').'</b></td><td>'.$prestudent_id.'</td></tr>';
+	$email.= '</tbody></table>';
+	$email.= '<br>'.$p->t('bewerbung/emailBodyEnde');
 
 	if(defined('BEWERBERTOOL_MAILEMPFANG') && BEWERBERTOOL_MAILEMPFANG!='')
 		$empfaenger = BEWERBERTOOL_MAILEMPFANG;
