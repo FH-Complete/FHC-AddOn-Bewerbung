@@ -95,7 +95,7 @@ $this->phrasen['bewerbung/kontakt']='Kontakt';
 $this->phrasen['bewerbung/nation']='Nation';
 $this->phrasen['bewerbung/menuDokumente']='Dokumente';
 $this->phrasen['bewerbung/dokument']='Dokument';
-$this->phrasen['bewerbung/bitteDokumenteHochladen']='Sie können hier vorab Dokumente hochladen, die für Ihr Studium benötigt werden. Sollte ein Dokument als "erforderlich" markiert sein, können Sie Ihre Bewerbung erst abschließen, 
+$this->phrasen['bewerbung/bitteDokumenteHochladen']='Sie können hier vorab Dokumente hochladen, die für Ihr Studium benötigt werden. Sollte ein Dokument als "erforderlich" markiert sein, können Sie Ihre Bewerbung erst abschließen,
 		wenn Sie eine Datei hochladen oder das Symbol für "Dokument wird nachgereicht" klicken. In diesem Fall haben Sie die Möglichkeit, eine kurze Anmerkung einzutragen und das Dokument später hochzuladen.';
 $this->phrasen['bewerbung/linkDokumenteHochladen']='Dokumente hochladen';
 $this->phrasen['bewerbung/dokumenteZumHochladen']='Benötigte Dokumente:';
@@ -141,6 +141,7 @@ $this->phrasen['bewerbung/iban']='IBAN';
 $this->phrasen['bewerbung/bic']='BIC';
 $this->phrasen['bewerbung/zahlungsreferenz']='Zahlungsreferenz';
 $this->phrasen['bewerbung/buchungsnummerNichtVorhanden']='Buchungsnummer %s nicht vorhanden';
+$this->phrasen['bewerbung/teilweiseVollstaendig']='teilweise vollständig';
 $this->phrasen['bewerbung/vollstaendig']='vollständig';
 $this->phrasen['bewerbung/unvollstaendig']='unvollständig';
 $this->phrasen['bewerbung/maxAnzahlTeilnehmer']='max. Teilnehmeranzahl erreicht';
@@ -189,4 +190,12 @@ $this->phrasen['bewerbung/bitteOrgformWaehlen']='Wenn Sie einen Studiengang mit 
 $this->phrasen['bewerbung/orgformWaehlen']='Organisationsform wählen';
 $this->phrasen['bewerbung/orgformBeschreibungstext']='Bitte geben Sie an, für welche Organisationsform Sie sich interessieren. Für den Fall, dass alle Plätze in Ihrer gewünschten Organisationsform vergeben sind, können Sie optional eine Alternative angeben';
 $this->phrasen['bewerbung/menuAbschließen']='Abschließen';
+$this->phrasen['bewerbung/sieHabenNochKeinenZugangscode']='Sie haben noch keinen Zugangscode oder Account?';
+$this->phrasen['bewerbung/habenSieBereitsEinenZugangscode']='Sie haben bereits einen Zugangscode?';
+$this->phrasen['bewerbung/studierenOderArbeitenSieBereits']='Sie haben bereits einen Account?';
+$this->phrasen['bewerbung/zugangscodeVergessen']='Zugangscode vergessen?';
+$this->phrasen['bewerbung/dannHiermitAccountEinloggen']='Dann loggen Sie sich hier mit Ihrem CIS-Account ein';
+$this->phrasen['bewerbung/dannHierEinloggen']='Dann loggen Sie sich hier ein';
+$this->phrasen['bewerbung/dokumentHerunterladen']='Dokument herunterladen';
+
 ?>
