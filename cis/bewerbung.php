@@ -575,14 +575,16 @@ if(isset($_POST['btn_zgv']))
 		$prestudent_eintrag->new = false;
 		$prestudent_eintrag->zgv_code = filter_input(INPUT_POST, 'bachelor_zgv_art', FILTER_VALIDATE_INT);
 		$prestudent_eintrag->zgvort = filter_input(INPUT_POST, 'bachelor_zgv_ort');
-		$prestudent_eintrag->zgvdatum = $datum_bachelor;
+		if (CAMPUS_NAME!='FH Technikum Wien')
+		{	$prestudent_eintrag->zgvdatum = $datum_bachelor;}
 		$prestudent_eintrag->zgvnation = filter_input(INPUT_POST, 'bachelor_zgv_nation');
 		$prestudent_eintrag->updateamum = date('Y-m-d H:i:s');
 		$prestudent_eintrag->updatevon = 'online';
 	
 		$prestudent_eintrag->zgvmas_code = filter_input(INPUT_POST, 'master_zgv_art', FILTER_VALIDATE_INT);
 		$prestudent_eintrag->zgvmaort = filter_input(INPUT_POST, 'master_zgv_ort');
-		$prestudent_eintrag->zgvmadatum = $datum_master;
+		if (CAMPUS_NAME!='FH Technikum Wien')
+		{	$prestudent_eintrag->zgvmadatum = $datum_master;}
 		$prestudent_eintrag->zgvmanation = filter_input(INPUT_POST, 'master_zgv_nation');
 		$prestudent_eintrag->updateamum = date('Y-m-d H:i:s');
 		$prestudent_eintrag->updatevon = 'online';
