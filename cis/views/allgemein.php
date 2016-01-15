@@ -183,10 +183,20 @@ if(!isset($person_id))
 					$orgform = $stg->getOrgForm($result->studiengang_kz);
 					$stgSprache = $stg->getSprache($result->studiengang_kz);
 					$studienplan = getStudienplaeneForOnlinebewerbung($result->studiengang_kz, '', '',''); //@todo: studiensemester und ausbildungssemester dynamisch
+					
+					$studiensemester = new studiensemester();
+					$studiensemester->getPlusMinus(10,1);
+						
+					$studiensemester_kurzbz=array();
+					foreach($studiensemester->studiensemester AS $row)
+						$studiensemester_kurzbz[] .= $row->studiensemester_kurzbz;
+							
+					$orgform_sprache = getOrgformSpracheForOnlinebewerbung($result->studiengang_kz,$studiensemester_kurzbz,'');
+						
 					$orgformen_sprachen = array();
-					if($studienplan!='')
+					if($orgform_sprache!='')
 					{
-						foreach ($studienplan as $row)
+						foreach ($orgform_sprache as $row)
 							$orgformen_sprachen[] = $row->orgform_kurzbz.'_'.$row->sprache;
 					}
 					$modal = false;
