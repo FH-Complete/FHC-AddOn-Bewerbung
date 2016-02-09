@@ -118,7 +118,7 @@ foreach($prestudent_help->result as $prest)
 					<div class="col-md-6 col-sm-8 col-xs-10">
 							<div class="form-group">
 								<label for="'.$stg->kurzbzlang.'">'.$p->t('bewerbung/bewerbungAbschickenFuer').' '.$typ->bezeichnung.' '.$stg_bezeichnung.' ('.$row->studiensemester_kurzbz.')</label>
-								<button class="btn btn-default form-control disabled" type="button">'.$p->t('bewerbung/BewerbungBereitsVerschickt').'</button>
+								<button class="btn btn-default form-control" disabled type="button">'.$p->t('bewerbung/BewerbungBereitsVerschickt').'</button>
 							</div>
 					</div>
 				</div>';
@@ -134,7 +134,7 @@ foreach($prestudent_help->result as $prest)
 						<form method="POST"  action="'.$_SERVER['PHP_SELF'].'?active=abschicken">
 							<div class="form-group">
 								<label for="'.$stg->kurzbzlang.'">'.$p->t('bewerbung/bewerbungAbschickenFuer').' '.$typ->bezeichnung.' '.$stg_bezeichnung.($orgform->bezeichnung!=''?' '.$orgform->bezeichnung:'').' ('.$row->studiensemester_kurzbz.')</label>
-								<button id="'.$stg->kurzbzlang.'" class="btn btn-primary form-control '.$disabled.'" type="submit" name="btn_bewerbung_abschicken">'.($disabled!=''?$p->t('bewerbung/buttonBewerbungUnvollstaendig'):$p->t('bewerbung/buttonBewerbungAbschicken').' ('.$stg->kurzbzlang.' '.$row->studiensemester_kurzbz.')').'</button>
+								<button id="'.$stg->kurzbzlang.'" class="btn btn-primary form-control" '.$disabled.' type="submit" name="btn_bewerbung_abschicken">'.($disabled!=''?$p->t('bewerbung/buttonBewerbungUnvollstaendig'):$p->t('bewerbung/buttonBewerbungAbschicken').' ('.$stg->kurzbzlang.' '.$row->studiensemester_kurzbz.')').'</button>
 								<input type="hidden" name="prestudent_id" value="'.$prest->prestudent_id.'">
 							</div>
 						</form>

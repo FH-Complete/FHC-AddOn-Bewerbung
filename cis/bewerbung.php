@@ -1230,13 +1230,13 @@ function sendAddStudiengang($prestudent_id, $studiensemester_kurzbz, $orgform_ku
 		}
 	}
 	
-	$email = $p->t('bewerbung/emailBodyStart');
+	$email = 'Es hat sich '.($geschlecht=='m'?'ein Bewerber':'eine Bewerberin').' am System registriert<br>';
 	$email.= '<br><table style="font-size:small"><tbody>';
 	$email.= '<tr><td><b>'.$p->t('global/studiengang').'</b></td><td>'.$typ->bezeichnung.' '.$studiengang->bezeichnung.($orgform_kurzbz!=''?' ('.$orgform_kurzbz.')':'').'</td></tr>';
 	$email.= '<tr><td><b>'.$p->t('global/studiensemester').'</b></td><td>'.$studiensemester_kurzbz.'</td></tr>';
 	$email.= '<tr><td><b>'.$p->t('global/geschlecht').'</b></td><td>'.($person->geschlecht=='m'?$p->t('bewerbung/maennlich'):$p->t('bewerbung/weiblich')).'</td></tr>';
-	$email.= '<tr><td><b>'.$p->t('global/titel').'</b></td><td>'.$person->titelpre.'</td></tr>';
-	$email.= '<tr><td><b>'.$p->t('global/postnomen').'</b></td><td>'.$person->titelpost.'</td></tr>';
+	//$email.= '<tr><td><b>'.$p->t('global/titel').'</b></td><td>'.$person->titelpre.'</td></tr>';
+	//$email.= '<tr><td><b>'.$p->t('global/postnomen').'</b></td><td>'.$person->titelpost.'</td></tr>';
 	$email.= '<tr><td><b>'.$p->t('global/vorname').'</b></td><td>'.$person->vorname.'</td></tr>';
 	$email.= '<tr><td><b>'.$p->t('global/nachname').'</b></td><td>'.$person->nachname.'</td></tr>';
 	$email.= '<tr><td><b>'.$p->t('global/geburtsdatum').'</b></td><td>'.date('d.m.Y', strtotime($person->gebdatum)).'</td></tr>';
