@@ -81,7 +81,7 @@ elseif($save_error_zgv===true)
                     </label>
 
                     <div class="col-sm-9">
-                        <select name="<?php echo $stufe ?>_zgv_art" id="<?php echo $stufe ?>_zgv_art"
+                        <select name="<?php echo $stufe ?>_zgv_art<?php echo ($stufe!=='master'&& $eingabegesperrt==true?'_disabled':'') ?>" id="<?php echo $stufe ?>_zgv_art" <?php echo ($stufe!=='master'&& $eingabegesperrt==true?'disabled':'') ?>
                                 class="form-control">
                             <option value=""><?php echo $p->t('bewerbung/bitteAuswaehlen'); ?></option>
                             <?php
@@ -108,6 +108,8 @@ elseif($save_error_zgv===true)
 
 							?>
                         </select>
+                        <?php //Hidden inputfeld, wenn select=disabled, damit Daten per POST uebertragen werden
+							echo ($stufe!=='master'&& $eingabegesperrt==true?'<input type="hidden" name="'.$stufe.'_zgv_art" value="'.(isset($attribute['art'])?$attribute['art']:'').'">':'') ?>
                     </div>
                 </div>
                 <div class="form-group <?php echo (!isset($attribute['ort'])?'has-error':'') ?>">
@@ -119,14 +121,14 @@ elseif($save_error_zgv===true)
                         <input type="text" name="<?php echo $stufe ?>_zgv_ort" id="<?php echo $stufe ?>_zgv_ort"
                                class="form-control"
                                value="<?php echo isset($attribute['ort']) ? $attribute['ort'] : '' ?>"
-                               placeholder="<?php echo $p->t('bewerbung/woWurdeUrkundeAusgestellt'); ?>">
+                               placeholder="<?php echo $p->t('bewerbung/woWurdeUrkundeAusgestellt'); ?>" <?php echo ($stufe!=='master'&& $eingabegesperrt==true?'readonly="readonly"':'') ?>>
                     </div>
                 </div>
                 <div class="form-group <?php echo (!isset($attribute['nation'])?'has-error':'') ?>">
                     <label for="<?php echo $stufe ?>_zgv_nation" class="col-sm-3 control-label"><?php echo $p->t('bewerbung/nation'); ?></label>
 
                     <div class="col-sm-9">
-                        <select name="<?php echo $stufe ?>_zgv_nation" id="<?php echo $stufe ?>_zgv_nation"
+                        <select name="<?php echo $stufe ?>_zgv_nation" id="<?php echo $stufe ?>_zgv_nation" <?php echo ($stufe!=='master'&& $eingabegesperrt==true?'disabled':'') ?>
                                 class="form-control">
                             <option value=""><?php echo $p->t('bewerbung/bitteAuswaehlen'); ?></option>
                             <?php $selected = '';
@@ -142,6 +144,8 @@ elseif($save_error_zgv===true)
                                 </option>
                             <?php endforeach; ?>
                         </select>
+                        <?php //Hidden inputfeld, wenn select=disabled, damit Daten per POST uebertragen werden
+							echo ($stufe!=='master'&& $eingabegesperrt==true?'<input type="hidden" name="'.$stufe.'_zgv_nation" value="'.(isset($attribute['nation'])?$attribute['nation']:'').'">':'') ?>
                     </div>
                 </div>
                 <?php if (CAMPUS_NAME!='FH Technikum Wien'): ?>
@@ -151,7 +155,7 @@ elseif($save_error_zgv===true)
                     </label>
 
                     <div class="col-sm-9">
-                        <input type="text" name="<?php echo $stufe ?>_zgv_datum" id="<?php echo $stufe ?>_zgv_datum"
+                        <input type="text" name="<?php echo $stufe ?>_zgv_datum" id="<?php echo $stufe ?>_zgv_datum" <?php echo ($stufe!=='master'&& $eingabegesperrt==true?'disabled':'') ?>
                                class="form-control"
                                value="<?php echo isset($attribute['datum']) ? date('d.m.Y', strtotime($attribute['datum'])) : '' ?>"
                                placeholder="<?php echo $p->t('bewerbung/datumFormat') ?>">
