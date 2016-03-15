@@ -45,6 +45,8 @@ session_start();
 $sprache = getSprache();
 $p=new phrasen($sprache);
 
+$db = new basis_db();
+
 if (!isset($_SESSION['bewerbung/user']) || $_SESSION['bewerbung/user']=='')
 {
     header('registration.php?method=allgemein');
@@ -99,6 +101,31 @@ echo '<!DOCTYPE HTML>
         </style>
         </head>
 		<body>';
+
+// Benoetigte Dokumente abfragen
+$studiensemester = new studiensemester();
+$studiensemester->getStudiensemesterOnlinebewerbung();
+$stsem_array = array();
+foreach($studiensemester->studiensemester AS $s)
+	$stsem_array[] = $s->studiensemester_kurzbz;
+
+	$qry = "SELECT DISTINCT studiengang_kz,typ||kurzbz AS kuerzel FROM public.tbl_dokumentstudiengang
+				JOIN public.tbl_prestudent USING (studiengang_kz)
+				JOIN public.tbl_prestudentstatus USING (prestudent_id)
+				JOIN public.tbl_studiengang USING (studiengang_kz)
+				WHERE person_id =".$db->db_add_param($person_id, FHC_INTEGER)."
+ 				AND tbl_prestudentstatus.status_kurzbz = 'Interessent'
+ 				/*AND tbl_prestudentstatus.studiensemester_kurzbz IN (".$db->implode4SQL($stsem_array).")*/
+ 				ORDER BY kuerzel";
+
+	$benoetigt = array();
+	if($result = $db->db_query($qry))
+	{
+		while($row = $db->db_fetch_object($result))
+		{
+			$benoetigt[] = $row->studiengang_kz;
+		}
+	}
 
 //Bei Upload eines Dokuments
 if(isset($_POST['submitbild']))
@@ -307,31 +334,11 @@ if(isset($_POST['submitbild']))
             }
         }
         //Wenn nach dem Abschicken einer Bewerbung ein Dokument hochgeladen wird, wird ein Infomail verschickt
-		$benoetigt_stg = new basis_db();
-		$qry = "SELECT DISTINCT studiengang_kz,typ||kurzbz AS kuerzel FROM public.tbl_dokumentstudiengang
-			JOIN public.tbl_prestudent USING (studiengang_kz)
-			JOIN public.tbl_dokument USING (dokument_kurzbz)
-			JOIN public.tbl_studiengang USING (studiengang_kz)
-			WHERE dokument_kurzbz = ".$benoetigt_stg->db_add_param($_REQUEST['dokumenttyp'])." and person_id =".$benoetigt_stg->db_add_param($person_id, FHC_INTEGER)." ORDER BY kuerzel";
-
-		$benoetigt = array();
-		if($result = $benoetigt_stg->db_query($qry))
-		{
-			while($row = $benoetigt_stg->db_fetch_object($result))
-			{
-				$benoetigt[] = $row->studiengang_kz;
-			}
-		}
-        
+		
 		$abgeschickt = array();
 		$prestudent= new prestudent();
 		$prestudent->getPrestudenten($person_id);
-		$studiensemester = new studiensemester();
-		$studiensemester->getStudiensemesterOnlinebewerbung();
-		$stsem_array = array();
-		foreach($studiensemester->studiensemester AS $s)
-			$stsem_array[] = $s->studiensemester_kurzbz;
-		
+
 		foreach($prestudent->result as $prest)
 		{
 			$prestudent2 = new prestudent();
@@ -374,11 +381,24 @@ if($person_id !='')
 					<SELECT name="dokumenttyp" id="dokumenttyp" onchange="showExtensionInfo()" class="form-control">';
 				foreach ($dokument->result as $dok)
 				{
-                    if (!$akzeptiert->akzeptiert($dok->dokument_kurzbz,$person_id))
-                    {
-						$selected=($dokumenttyp == $dok->dokument_kurzbz)?'selected':'';
-                    	echo '<option '.$selected.' value="'.$dok->dokument_kurzbz.'" >'.$dok->bezeichnung_mehrsprachig[$sprache]."</option>\n";
-                    }
+					if (CAMPUS_NAME=='FH Technikum Wien')// An der FHTW koennen auch akzeptierte Dokumente hochgeladen werden, wenn noch keine Akte dazu existiert
+					{
+						$akte = new akte;
+						$akte->getAkten($person_id, $dok->dokument_kurzbz);
+						if (count($akte->result)==0)
+						{
+							$selected=($dokumenttyp == $dok->dokument_kurzbz)?'selected':'';
+							echo '<option '.$selected.' value="'.$dok->dokument_kurzbz.'" >'.$dok->bezeichnung_mehrsprachig[$sprache]."</option>\n";
+						}
+					}
+					else 
+					{
+						if (!$akzeptiert->akzeptiert($dok->dokument_kurzbz,$person_id))
+						{
+							$selected=($dokumenttyp == $dok->dokument_kurzbz)?'selected':'';
+							echo '<option '.$selected.' value="'.$dok->dokument_kurzbz.'" >'.$dok->bezeichnung_mehrsprachig[$sprache]."</option>\n";
+						}
+					}
 				}
 	echo '			</select>
                 </div>
@@ -466,8 +486,8 @@ function sendDokumentupload($empfaenger_stgkz,$dokument_kurzbz,$orgform_kurzbz,$
 		{
 			if($row->nachgereicht==true)
 				$email.= '- '.$dokument->bezeichnung_mehrsprachig[DEFAULT_LANGUAGE].' -> '.$p->t('bewerbung/dokumentWirdNachgereicht').'<br>';
-				else
-					$email.= '<a href="'.APP_ROOT.'cms/dms.php?id='.$dms_id.'">'.$dokument->bezeichnung_mehrsprachig[DEFAULT_LANGUAGE].' ['.$row->bezeichnung.']</a><br>';
+			else
+				$email.= '<a href="'.APP_ROOT.'cms/dms.php?id='.$dms_id.'">'.$dokument->bezeichnung_mehrsprachig[DEFAULT_LANGUAGE].' ['.$row->bezeichnung.']</a><br>';
 			$dokumentbezeichnung = $dokument->bezeichnung_mehrsprachig[DEFAULT_LANGUAGE];
 		}
 	}
