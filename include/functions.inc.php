@@ -23,26 +23,78 @@ require_once('../../../include/studienplan.class.php');
 // Fuegt einen Studiengang zu einem Bewerber hinzu
 function BewerbungPersonAddStudiengang($studiengang_kz, $anmerkung, $person, $studiensemester_kurzbz, $orgform_kurzbz)
 {
-	//Wenn Person noch kein Student in diesem Studiengang war, PreStudent_id des aktuellsten PreStudenten (hoechste ID) ermitteln und Interessentenstatus zu diesem hinzufuegen, sonst neuen PreStudenten anlegen.
+	//Wenn Person noch kein Student in diesem Studiengang war, PreStudent_id des aktuellsten PreStudenten (hoechste ID) ermitteln und Interessentenstatus zu diesem hinzufuegen,
+	//sonst nach irgendeiner prestudent_id suchen, um dessen ZGV uebernehmen zu koennen.
 	$student = new student();
 	$std = $student->load_person($person->person_id, $studiengang_kz);
-	$prestudent_id='';
-	if(!$std)
+	$prestudent_id=0;
+	$zgv_code = '';
+	$zgvort = '';
+	$zgvdatum = '';
+	$zgvnation = '';
+	$zgvmas_code = '';
+	$zgvmaort = '';
+	$zgvmadatum = '';
+	$zgvmanation = '';
+	
+	$pre = new prestudent();
+	$pre->getPrestudenten($person->person_id); //Alle Prestudenten der Person laden
+	foreach ($pre->result AS $row)
 	{
-		$pre = new prestudent();
-		$pre->getPrestudenten($person->person_id);
-		foreach ($pre->result AS $row)
+		//Wenn Person schon Prestudent in dem Studiengang war, hoechste prestudent_id ermittel (die nicht jene des Studenten-Datensatzes war) und bei diesem spaeter einen neuen Status hinzufuegen
+		if($row->studiengang_kz==$studiengang_kz && $row->prestudent_id > $prestudent_id && $row->prestudent_id!=$student->prestudent_id)
+			$prestudent_id=$row->prestudent_id;
+	}
+	//Wenn die Person noch kein Student in diesem Studiengang war, nach irgendeiner prestudent_id suchen, um dessen ZGV uebernehmen zu koennen
+	if($prestudent_id==0)
+	{
+		if ($pre->result[0]->prestudent_id!='')
 		{
-			if($row->studiengang_kz==$studiengang_kz && $row->prestudent_id > $prestudent_id)
-				$prestudent_id=$row->prestudent_id;
+			$prestudent_help=$pre->result[0]->prestudent_id;
+		
+			$prestudent_zgv = new prestudent();
+			$prestudent_zgv->load($prestudent_help);
+			
+			$zgv_code = $prestudent_zgv->zgv_code;
+			$zgvort = $prestudent_zgv->zgvort;
+			$zgvdatum = $prestudent_zgv->zgvdatum;
+			$zgvnation = $prestudent_zgv->zgvnation;
+			$zgvmas_code = $prestudent_zgv->zgvmas_code;
+			$zgvmaort = $prestudent_zgv->zgvmaort;
+			$zgvmadatum = $prestudent_zgv->zgvmadatum;
+			$zgvmanation = $prestudent_zgv->zgvmanation;
 		}
+		
 	}
 	
-	$prestudent = new prestudent();
-	if($std || $prestudent_id=='')
+	if($prestudent_id==0) //Wenn kein PreStudent-Datensatz gefunden wurde, neuen Prestudenten anlegen
 	{
+		if($std) //Wenn Person schon Student war, ZGV-Daten von dort holen
+		{	
+			$prestudent_zgv = new prestudent();
+			$prestudent_zgv->load($student->prestudent_id);
+	
+			$zgv_code = $prestudent_zgv->zgv_code;
+			$zgvort = $prestudent_zgv->zgvort;
+			$zgvdatum = $prestudent_zgv->zgvdatum;
+			$zgvnation = $prestudent_zgv->zgvnation;
+			$zgvmas_code = $prestudent_zgv->zgvmas_code;
+			$zgvmaort = $prestudent_zgv->zgvmaort;
+			$zgvmadatum = $prestudent_zgv->zgvmadatum;
+			$zgvmanation = $prestudent_zgv->zgvmanation;
+		}
+		$prestudent = new prestudent();
+		
 		$prestudent->studiengang_kz=$studiengang_kz;
 		$prestudent->person_id = $person->person_id;
+		$prestudent->zgv_code = $zgv_code;
+		$prestudent->zgvort = $zgvort;
+		$prestudent->zgvdatum = $zgvdatum;
+		$prestudent->zgvnation = $zgvnation;
+		$prestudent->zgvmas_code = $zgvmas_code;
+		$prestudent->zgvmaort = $zgvmaort;
+		$prestudent->zgvmadatum = $zgvmadatum;
+		$prestudent->zgvmanation = $zgvmanation;
 		$prestudent->aufmerksamdurch_kurzbz = 'k.A.';
 		$prestudent->insertamum = date('Y-m-d H:i:s');
 		$prestudent->updateamum = date('Y-m-d H:i:s');
