@@ -553,9 +553,51 @@ if(isset($_POST['btn_zgv']))
 	$prestudent->getPrestudenten($person_id);
 
 	//$master_zgv_art = filter_input(INPUT_POST, 'master_zgv_art', FILTER_VALIDATE_INT);
+	
+	$save_error_zgv=false;
+	//Datumsformat Bachelor überprüfen
+	if(filter_input(INPUT_POST, 'bachelor_zgv_datum')!='')
+	{
+		if(!preg_match('/^\d{2}\.\d{2}\.(\d{2}|\d{4})$/ ', filter_input(INPUT_POST, 'bachelor_zgv_datum')))
+		{
+			$message = $p->t('bewerbung/datumUngueltig');
+			$save_error_zgv=true;
+			$datum_bachelor = '';
+		}
+		else
+		{
+			$ds = explode('.',filter_input(INPUT_POST, 'bachelor_zgv_datum'));
+			if(!checkdate($ds[1], $ds[0], $ds[2]))
+			{
+				$message = $p->t('bewerbung/datumUngueltig');
+				$save_error_zgv=true;
+				$datum_bachelor = '';
+			}
+		}
+	}
+	//Datumsformat Master überprüfen
+	if(filter_input(INPUT_POST, 'master_zgv_datum')!='')
+	{
+		if(!preg_match('/^\d{2}\.\d{2}\.(\d{2}|\d{4})$/ ', filter_input(INPUT_POST, 'master_zgv_datum')))
+		{
+			$message = $p->t('bewerbung/datumUngueltig');
+			$save_error_zgv=true;
+			$datum_master = '';
+		}
+		else
+		{
+			$ds = explode('.',filter_input(INPUT_POST, 'master_zgv_datum'));
+			if(!checkdate($ds[1], $ds[0], $ds[2]))
+			{
+				$message = $p->t('bewerbung/datumUngueltig');
+				$save_error_zgv=true;
+				$datum_master = '';
+			}
+		}
+	}
 	$datum_bachelor = $datum->formatDatum(filter_input(INPUT_POST, 'bachelor_zgv_datum'), 'Y-m-d');
 	$datum_master = $datum->formatDatum(filter_input(INPUT_POST, 'master_zgv_datum'), 'Y-m-d');
-	$save_error_zgv=false;
+	
 	if($datum_bachelor>date('Y-m-d'))
 	{
 		$message = $p->t('bewerbung/zgvDatumNichtZukunft');
@@ -569,31 +611,34 @@ if(isset($_POST['btn_zgv']))
 		$datum_master = '';
 	}
 
-	foreach($prestudent->result as $prestudent_eintrag)
+	if(!$save_error_zgv)
 	{
-	
-		$prestudent_eintrag->new = false;
-		$prestudent_eintrag->zgv_code = filter_input(INPUT_POST, 'bachelor_zgv_art', FILTER_VALIDATE_INT);
-		$prestudent_eintrag->zgvort = filter_input(INPUT_POST, 'bachelor_zgv_ort');
-		if (CAMPUS_NAME!='FH Technikum Wien')
-		{	$prestudent_eintrag->zgvdatum = $datum_bachelor;}
-		$prestudent_eintrag->zgvnation = filter_input(INPUT_POST, 'bachelor_zgv_nation');
-		$prestudent_eintrag->updateamum = date('Y-m-d H:i:s');
-		$prestudent_eintrag->updatevon = 'online';
-	
-		$prestudent_eintrag->zgvmas_code = filter_input(INPUT_POST, 'master_zgv_art', FILTER_VALIDATE_INT);
-		$prestudent_eintrag->zgvmaort = filter_input(INPUT_POST, 'master_zgv_ort');
-		if (CAMPUS_NAME!='FH Technikum Wien')
-		{	$prestudent_eintrag->zgvmadatum = $datum_master;}
-		$prestudent_eintrag->zgvmanation = filter_input(INPUT_POST, 'master_zgv_nation');
-		$prestudent_eintrag->updateamum = date('Y-m-d H:i:s');
-		$prestudent_eintrag->updatevon = 'online';
-	
-		$prestudent_eintrag->updateamum = date('c');
-	
-		if(!$prestudent_eintrag->save())
+		foreach($prestudent->result as $prestudent_eintrag)
 		{
-			die($p->t('global/fehlerBeimSpeichernDerDaten'));
+		
+			$prestudent_eintrag->new = false;
+			$prestudent_eintrag->zgv_code = ($prestudent_eintrag->zgv_code==''?filter_input(INPUT_POST, 'bachelor_zgv_art', FILTER_VALIDATE_INT):$prestudent_eintrag->zgv_code);
+			$prestudent_eintrag->zgvort = ($prestudent_eintrag->zgvort==''?filter_input(INPUT_POST, 'bachelor_zgv_ort'):$prestudent_eintrag->zgvort);
+			if (CAMPUS_NAME!='FH Technikum Wien')
+			{	$prestudent_eintrag->zgvdatum = ($prestudent_eintrag->zgvdatum==''?$datum_bachelor:$prestudent_eintrag->zgvdatum);}
+			$prestudent_eintrag->zgvnation = ($prestudent_eintrag->zgvnation==''?filter_input(INPUT_POST, 'bachelor_zgv_nation'):$prestudent_eintrag->zgvnation);
+			$prestudent_eintrag->updateamum = date('Y-m-d H:i:s');
+			$prestudent_eintrag->updatevon = 'online';
+		
+			$prestudent_eintrag->zgvmas_code = ($prestudent_eintrag->zgvmas_code==''?filter_input(INPUT_POST, 'master_zgv_art', FILTER_VALIDATE_INT):$prestudent_eintrag->zgvmas_code);
+			$prestudent_eintrag->zgvmaort = ($prestudent_eintrag->zgvmaort==''?filter_input(INPUT_POST, 'master_zgv_ort'):$prestudent_eintrag->zgvmaort);
+			if (CAMPUS_NAME!='FH Technikum Wien')
+			{	$prestudent_eintrag->zgvmadatum = ($prestudent_eintrag->zgvmadatum==''?$datum_master:$prestudent_eintrag->zgvmadatum);}
+			$prestudent_eintrag->zgvmanation = ($prestudent_eintrag->zgvmanation==''?filter_input(INPUT_POST, 'master_zgv_nation'):$prestudent_eintrag->zgvmanation);
+			$prestudent_eintrag->updateamum = date('Y-m-d H:i:s');
+			$prestudent_eintrag->updatevon = 'online';
+		
+			$prestudent_eintrag->updateamum = date('c');
+		
+			if(!$prestudent_eintrag->save())
+			{
+				die($p->t('global/fehlerBeimSpeichernDerDaten'));
+			}
 		}
 	}
 }
@@ -901,6 +946,10 @@ else
 		.navbar-default .navbar-nav>.active>a:hover 
 		{
 			font-weight: bold
+		}
+		.popover
+		{
+			max-width: 400px;
 		}
 		</style>
 	</head>
@@ -1230,7 +1279,7 @@ function sendAddStudiengang($prestudent_id, $studiensemester_kurzbz, $orgform_ku
 		}
 	}
 	
-	$email = 'Es hat sich '.($geschlecht=='m'?'ein Bewerber':'eine Bewerberin').' am System registriert<br>';
+	$email = 'Es hat sich '.($person->geschlecht=='m'?'ein Bewerber':'eine Bewerberin').' am System registriert<br>';
 	$email.= '<br><table style="font-size:small"><tbody>';
 	$email.= '<tr><td><b>'.$p->t('global/studiengang').'</b></td><td>'.$typ->bezeichnung.' '.$studiengang->bezeichnung.($orgform_kurzbz!=''?' ('.$orgform_kurzbz.')':'').'</td></tr>';
 	$email.= '<tr><td><b>'.$p->t('global/studiensemester').'</b></td><td>'.$studiensemester_kurzbz.'</td></tr>';
