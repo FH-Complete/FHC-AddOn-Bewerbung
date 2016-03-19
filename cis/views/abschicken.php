@@ -25,8 +25,8 @@ if(!isset($person_id))
 
 echo '<div role="tabpanel" class="tab-pane" id="abschicken">
 	<h2>'.$p->t('bewerbung/menuBewerbungAbschicken').'</h2>';
-	
-			
+
+
 	if($save_error_abschicken===false)
 	{
 		echo '	<div class="alert alert-success" id="success-alert_abschicken">
@@ -41,7 +41,7 @@ echo '<div role="tabpanel" class="tab-pane" id="abschicken">
 				<strong>'.$p->t('global/fehleraufgetreten').' </strong>'.$message.'
 			</div>';
 	}
-					
+
 echo '<p>'.$p->t('bewerbung/erklaerungBewerbungAbschicken').'</p>
 	<div class="row">';
 
@@ -61,8 +61,10 @@ if(count($notiz->result))
 					</div><br>';
 		}
 	}
-	                
+
 }
+if(!defined('BEWERBERTOOL_ABSCHICKEN_ANMERKUNG') || BEWERBERTOOL_ABSCHICKEN_ANMERKUNG)
+{
 echo '	</div><form method="POST" action="'.$_SERVER['PHP_SELF'].'?active=abschicken">
 			<div class="form-group">
 			  <label for="anmerkung">'.$p->t('bewerbung/anmerkung').'</label>
@@ -72,6 +74,7 @@ echo '	</div><form method="POST" action="'.$_SERVER['PHP_SELF'].'?active=abschic
 				'.$p->t('global/speichern').'
 			</button>  <span style="color: grey; display: inline-block; width: 30px;" id="countdown_anmerkung">1024</span>
 		</form><br>';
+}
 //echo '<p>'.$p->t('bewerbung/erklaerungBewerbungAbschicken').'</p>';
 
 $disabled = 'disabled';
@@ -94,13 +97,13 @@ foreach($prestudent_help->result as $prest)
 
 	$prestudent_help2 = new prestudent();
 	$prestudent_help2->getPrestudentRolle($prest->prestudent_id,'Interessent');
-	
+
 	$studiensemester = new studiensemester();
 	$studiensemester->getStudiensemesterOnlinebewerbung();
 	$stsem_array = array();
 	foreach($studiensemester->studiensemester AS $s)
 		$stsem_array[] = $s->studiensemester_kurzbz;
-	
+
 	foreach($prestudent_help2->result AS $row)
 	{
 		if ($stg->typ=='m' && $status_zgv_mas==false)
