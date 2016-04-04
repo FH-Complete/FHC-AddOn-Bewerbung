@@ -23,7 +23,7 @@ require_once('../../../include/studienplan.class.php');
 // Fuegt einen Studiengang zu einem Bewerber hinzu
 function BewerbungPersonAddStudiengang($studiengang_kz, $anmerkung, $person, $studiensemester_kurzbz, $orgform_kurzbz)
 {
-	//Wenn Person noch kein Student in diesem Studiengang war, PreStudent_id des aktuellsten PreStudenten (hoechste ID) ermitteln und Interessentenstatus zu diesem hinzufuegen,
+	//PreStudent_id des aktuellsten PreStudenten (hoechste ID) ermitteln und Interessentenstatus zu diesem hinzufuegen,
 	//sonst nach irgendeiner prestudent_id suchen, um dessen ZGV uebernehmen zu koennen.
 	$student = new student();
 	$std = $student->load_person($person->person_id, $studiengang_kz);

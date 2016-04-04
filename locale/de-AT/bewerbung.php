@@ -86,7 +86,7 @@ $this->phrasen['bewerbung/artDerTaetigkeit']='Art der Tätigkeit';
 $this->phrasen['bewerbung/weiter']='Weiter';
 $this->phrasen['bewerbung/eintragVom']='Eintrag vom';
 $this->phrasen['bewerbung/menuPersDaten']='Persönliche Daten';
-$this->phrasen['bewerbung/accountVorhanden']='Da Sie bereits als InteressentIn bestätigt wurden oder Sie bereits einen Account an der FHTW haben, können Sie Ihre Stammdaten nicht mehr ändern. Sollten hier Daten fehlerhaft sein, wenden Sie sich bitte an die zuständige Assistenz.<br><br>';
+$this->phrasen['bewerbung/accountVorhanden']='Da Sie bereits als InteressentIn bestätigt wurden oder Sie bereits einen Account an der FHTW haben, können Sie Ihre Stammdaten nicht mehr ändern. Sollten hier Daten fehlerhaft sein, wenden Sie sich bitte an die zuständige Assistenz.';
 $this->phrasen['bewerbung/bitteAuswaehlen']='-- Bitte auswählen --';
 $this->phrasen['bewerbung/menuKontaktinformationen']='Kontaktinformationen';
 $this->phrasen['bewerbung/kontakt']='Kontakt';
@@ -197,4 +197,5 @@ $this->phrasen['bewerbung/zugangscodeVergessen']='Zugangscode vergessen?';
 $this->phrasen['bewerbung/dannHiermitAccountEinloggen']='Dann loggen Sie sich hier mit Ihrem CIS-Account ein';
 $this->phrasen['bewerbung/dannHierEinloggen']='Dann loggen Sie sich hier ein';
 $this->phrasen['bewerbung/dokumentHerunterladen']='Dokument herunterladen';
+$this->phrasen['bewerbung/hinweisZGVdatenaenderung']='<b>Hinweis:</b> Aus organisatorischen Gründen können gespeicherte Angaben hier nicht mehr verändert werden. Sollten Angaben fehlerhaft sein, verwenden Sie bitte das Notizfeld im Schritt "Abschließen" oder kontaktieren Sie die Assistenz per E-Mail.';
 ?>
