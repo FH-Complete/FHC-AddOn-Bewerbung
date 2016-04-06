@@ -94,9 +94,18 @@ if($benutzer->getBenutzerFromPerson($person->person_id,false))
 	}
 }
 
-//Wenn bereits eine Bewerbung abgeschickt wurde, duerfen die Stammdaten nicht mehr geaendert werden
-if(check_person_statusbestaetigt($person_id,'Interessent'))
-	$eingabegesperrt=true;
+if (CAMPUS_NAME=='FH Technikum Wien')
+{
+	//Wenn der Status nestaetigt wurde, duerfen die Stammdaten nicht mehr geaendert werden
+	if(check_person_statusbestaetigt($person_id,'Interessent'))
+		$eingabegesperrt=true;
+}
+else
+{
+	//Wenn bereits eine Bewerbung abgeschickt wurde, duerfen die Stammdaten nicht mehr geaendert werden
+	if(check_person_bewerbungabgeschickt($person_id))
+		$eingabegesperrt=true;
+}
 
 $message = '&nbsp;';
 
@@ -219,6 +228,7 @@ if(isset($_POST['btn_bewerbung_abschicken']))
 {
    // Mail an zuständige Assistenz schicken
 	$pr_id = isset($_POST['prestudent_id']) ? $_POST['prestudent_id'] : '';
+	$sendmail = false; //Damit das Mail beim Seitenreload nicht nochmal geschickt wird
 
 	if($pr_id != '')
 	{
@@ -243,8 +253,18 @@ if(isset($_POST['btn_bewerbung_abschicken']))
 			$prestudent_status->studienplan_id = $alterstatus->studienplan_id;
 			$prestudent_status->new = true;
 			*/
-			$prestudent_status->bewerbung_abgeschicktamum=date('Y-m-d H:i:s');
-			$prestudent_status->new=false;
+			if (CAMPUS_NAME!='FH Technikum Wien')
+				$prestudent_status->bestaetigtam = date('Y-m-d H:i:s');
+			
+			if($prestudent_status->bewerbung_abgeschicktamum=='')
+			{
+				$prestudent_status->bewerbung_abgeschicktamum = date('Y-m-d H:i:s');
+				$sendmail=true;
+			}
+			else 
+				$sendmail=false;
+				
+			$prestudent_status->new = false;
 			$prestudent_status->updateamum = date('Y-m-d H:i:s');
 			$prestudent_status->updatevon = 'online';
 			
@@ -256,18 +276,21 @@ if(isset($_POST['btn_bewerbung_abschicken']))
 		$prestudent->load($pr_id);
 		$studiengang = new studiengang();
 		$studiengang->load($prestudent->studiengang_kz);
-		if(sendBewerbung($pr_id,$prestudent_status->studiensemester_kurzbz,$prestudent_status->orgform_kurzbz))
+		if($sendmail==true)
 		{
-			$message = $p->t('bewerbung/erfolgreichBeworben',array($studiengang->bezeichnung_arr[$sprache]));
-			//echo '<script type="text/javascript">alert("'.$p->t('bewerbung/erfolgreichBeworben',array($studiengang->bezeichnung_arr[$sprache])).'");</script>';
-			//echo '<script type="text/javascript">window.location="'.$_SERVER['PHP_SELF'].'?active=abschicken";</script>';
-			$save_error_abschicken=false;
-		}
-		else
-		{
-			echo '<script type="text/javascript">alert("'.$p->t('bewerbung/fehlerBeimVersendenDerBewerbung').'");</script>';
-			$save_error_abschicken==true;
-		}
+			if(sendBewerbung($pr_id,$prestudent_status->studiensemester_kurzbz,$prestudent_status->orgform_kurzbz))
+			{
+				$message = $p->t('bewerbung/erfolgreichBeworben',array($studiengang->bezeichnung_arr[$sprache]));
+				//echo '<script type="text/javascript">alert("'.$p->t('bewerbung/erfolgreichBeworben',array($studiengang->bezeichnung_arr[$sprache])).'");</script>';
+				//echo '<script type="text/javascript">window.location="'.$_SERVER['PHP_SELF'].'?active=abschicken";</script>';
+				$save_error_abschicken=false;
+			}
+			else
+			{
+				echo '<script type="text/javascript">alert("'.$p->t('bewerbung/fehlerBeimVersendenDerBewerbung').'");</script>';
+				$save_error_abschicken==true;
+			}
+		}		
 	}
 }
 
