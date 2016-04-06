@@ -94,9 +94,18 @@ if($benutzer->getBenutzerFromPerson($person->person_id,false))
 	}
 }
 
-//Wenn bereits eine Bewerbung abgeschickt wurde, duerfen die Stammdaten nicht mehr geaendert werden
-if(check_person_bewerbungabgeschickt($person_id))
-	$eingabegesperrt=true;
+if (CAMPUS_NAME=='FH Technikum Wien')
+{
+	//Wenn der Status nestaetigt wurde, duerfen die Stammdaten nicht mehr geaendert werden
+	if(check_person_statusbestaetigt($person_id,'Interessent'))
+		$eingabegesperrt=true;
+}
+else
+{
+	//Wenn bereits eine Bewerbung abgeschickt wurde, duerfen die Stammdaten nicht mehr geaendert werden
+	if(check_person_bewerbungabgeschickt($person_id))
+		$eingabegesperrt=true;
+}
 
 $message = '&nbsp;';
 
@@ -104,6 +113,7 @@ $message = '&nbsp;';
 //$unvollstaendig = '<span class="badge alert-danger">'.$p->t('bewerbung/unvollstaendig').' <span class="glyphicon glyphicon-remove"></span></span>';
 $vollstaendig = '<span style="color: #3c763d;">'.$p->t('bewerbung/vollstaendig').'</span>';
 $unvollstaendig = '<span style="color: #a94442;">'.$p->t('bewerbung/unvollstaendig').'</span>';
+$teilvollstaendig = '<span style="color: #8A6D3B;">'.$p->t('bewerbung/teilweiseVollstaendig').'</span>';
 
 if($method=='delete')
 {
@@ -218,6 +228,7 @@ if(isset($_POST['btn_bewerbung_abschicken']))
 {
    // Mail an zuständige Assistenz schicken
 	$pr_id = isset($_POST['prestudent_id']) ? $_POST['prestudent_id'] : '';
+	$sendmail = false; //Damit das Mail beim Seitenreload nicht nochmal geschickt wird
 
 	if($pr_id != '')
 	{
@@ -242,8 +253,18 @@ if(isset($_POST['btn_bewerbung_abschicken']))
 			$prestudent_status->studienplan_id = $alterstatus->studienplan_id;
 			$prestudent_status->new = true;
 			*/
-			$prestudent_status->bestaetigtam=date('Y-m-d H:i:s');
-			$prestudent_status->new=false;
+			if (CAMPUS_NAME!='FH Technikum Wien')
+				$prestudent_status->bestaetigtam = date('Y-m-d H:i:s');
+			
+			if($prestudent_status->bewerbung_abgeschicktamum=='')
+			{
+				$prestudent_status->bewerbung_abgeschicktamum = date('Y-m-d H:i:s');
+				$sendmail=true;
+			}
+			else 
+				$sendmail=false;
+				
+			$prestudent_status->new = false;
 			$prestudent_status->updateamum = date('Y-m-d H:i:s');
 			$prestudent_status->updatevon = 'online';
 			
@@ -255,18 +276,21 @@ if(isset($_POST['btn_bewerbung_abschicken']))
 		$prestudent->load($pr_id);
 		$studiengang = new studiengang();
 		$studiengang->load($prestudent->studiengang_kz);
-		if(sendBewerbung($pr_id,$prestudent_status->studiensemester_kurzbz,$prestudent_status->orgform_kurzbz))
+		if($sendmail==true)
 		{
-			$message = $p->t('bewerbung/erfolgreichBeworben',array($studiengang->bezeichnung_arr[$sprache]));
-			//echo '<script type="text/javascript">alert("'.$p->t('bewerbung/erfolgreichBeworben',array($studiengang->bezeichnung_arr[$sprache])).'");</script>';
-			//echo '<script type="text/javascript">window.location="'.$_SERVER['PHP_SELF'].'?active=abschicken";</script>';
-			$save_error_abschicken=false;
-		}
-		else
-		{
-			echo '<script type="text/javascript">alert("'.$p->t('bewerbung/fehlerBeimVersendenDerBewerbung').'");</script>';
-			$save_error_abschicken==true;
-		}
+			if(sendBewerbung($pr_id,$prestudent_status->studiensemester_kurzbz,$prestudent_status->orgform_kurzbz))
+			{
+				$message = $p->t('bewerbung/erfolgreichBeworben',array($studiengang->bezeichnung_arr[$sprache]));
+				//echo '<script type="text/javascript">alert("'.$p->t('bewerbung/erfolgreichBeworben',array($studiengang->bezeichnung_arr[$sprache])).'");</script>';
+				//echo '<script type="text/javascript">window.location="'.$_SERVER['PHP_SELF'].'?active=abschicken";</script>';
+				$save_error_abschicken=false;
+			}
+			else
+			{
+				echo '<script type="text/javascript">alert("'.$p->t('bewerbung/fehlerBeimVersendenDerBewerbung').'");</script>';
+				$save_error_abschicken==true;
+			}
+		}		
 	}
 }
 
@@ -552,9 +576,51 @@ if(isset($_POST['btn_zgv']))
 	$prestudent->getPrestudenten($person_id);
 
 	//$master_zgv_art = filter_input(INPUT_POST, 'master_zgv_art', FILTER_VALIDATE_INT);
+	
+	$save_error_zgv=false;
+	//Datumsformat Bachelor überprüfen
+	if(filter_input(INPUT_POST, 'bachelor_zgv_datum')!='')
+	{
+		if(!preg_match('/^\d{2}\.\d{2}\.(\d{2}|\d{4})$/ ', filter_input(INPUT_POST, 'bachelor_zgv_datum')))
+		{
+			$message = $p->t('bewerbung/datumUngueltig');
+			$save_error_zgv=true;
+			$datum_bachelor = '';
+		}
+		else
+		{
+			$ds = explode('.',filter_input(INPUT_POST, 'bachelor_zgv_datum'));
+			if(!checkdate($ds[1], $ds[0], $ds[2]))
+			{
+				$message = $p->t('bewerbung/datumUngueltig');
+				$save_error_zgv=true;
+				$datum_bachelor = '';
+			}
+		}
+	}
+	//Datumsformat Master überprüfen
+	if(filter_input(INPUT_POST, 'master_zgv_datum')!='')
+	{
+		if(!preg_match('/^\d{2}\.\d{2}\.(\d{2}|\d{4})$/ ', filter_input(INPUT_POST, 'master_zgv_datum')))
+		{
+			$message = $p->t('bewerbung/datumUngueltig');
+			$save_error_zgv=true;
+			$datum_master = '';
+		}
+		else
+		{
+			$ds = explode('.',filter_input(INPUT_POST, 'master_zgv_datum'));
+			if(!checkdate($ds[1], $ds[0], $ds[2]))
+			{
+				$message = $p->t('bewerbung/datumUngueltig');
+				$save_error_zgv=true;
+				$datum_master = '';
+			}
+		}
+	}
 	$datum_bachelor = $datum->formatDatum(filter_input(INPUT_POST, 'bachelor_zgv_datum'), 'Y-m-d');
 	$datum_master = $datum->formatDatum(filter_input(INPUT_POST, 'master_zgv_datum'), 'Y-m-d');
-	$save_error_zgv=false;
+	
 	if($datum_bachelor>date('Y-m-d'))
 	{
 		$message = $p->t('bewerbung/zgvDatumNichtZukunft');
@@ -568,29 +634,34 @@ if(isset($_POST['btn_zgv']))
 		$datum_master = '';
 	}
 
-	foreach($prestudent->result as $prestudent_eintrag)
+	if(!$save_error_zgv)
 	{
-	
-		$prestudent_eintrag->new = false;
-		$prestudent_eintrag->zgv_code = filter_input(INPUT_POST, 'bachelor_zgv_art', FILTER_VALIDATE_INT);
-		$prestudent_eintrag->zgvort = filter_input(INPUT_POST, 'bachelor_zgv_ort');
-		$prestudent_eintrag->zgvdatum = $datum_bachelor;
-		$prestudent_eintrag->zgvnation = filter_input(INPUT_POST, 'bachelor_zgv_nation');
-		$prestudent_eintrag->updateamum = date('Y-m-d H:i:s');
-		$prestudent_eintrag->updatevon = 'online';
-	
-		$prestudent_eintrag->zgvmas_code = filter_input(INPUT_POST, 'master_zgv_art', FILTER_VALIDATE_INT);
-		$prestudent_eintrag->zgvmaort = filter_input(INPUT_POST, 'master_zgv_ort');
-		$prestudent_eintrag->zgvmadatum = $datum_master;
-		$prestudent_eintrag->zgvmanation = filter_input(INPUT_POST, 'master_zgv_nation');
-		$prestudent_eintrag->updateamum = date('Y-m-d H:i:s');
-		$prestudent_eintrag->updatevon = 'online';
-	
-		$prestudent_eintrag->updateamum = date('c');
-	
-		if(!$prestudent_eintrag->save())
+		foreach($prestudent->result as $prestudent_eintrag)
 		{
-			die($p->t('global/fehlerBeimSpeichernDerDaten'));
+		
+			$prestudent_eintrag->new = false;
+			$prestudent_eintrag->zgv_code = ($prestudent_eintrag->zgv_code==''?filter_input(INPUT_POST, 'bachelor_zgv_art', FILTER_VALIDATE_INT):$prestudent_eintrag->zgv_code);
+			$prestudent_eintrag->zgvort = ($prestudent_eintrag->zgvort==''?filter_input(INPUT_POST, 'bachelor_zgv_ort'):$prestudent_eintrag->zgvort);
+			if (CAMPUS_NAME!='FH Technikum Wien')
+			{	$prestudent_eintrag->zgvdatum = ($prestudent_eintrag->zgvdatum==''?$datum_bachelor:$prestudent_eintrag->zgvdatum);}
+			$prestudent_eintrag->zgvnation = ($prestudent_eintrag->zgvnation==''?filter_input(INPUT_POST, 'bachelor_zgv_nation'):$prestudent_eintrag->zgvnation);
+			$prestudent_eintrag->updateamum = date('Y-m-d H:i:s');
+			$prestudent_eintrag->updatevon = 'online';
+		
+			$prestudent_eintrag->zgvmas_code = ($prestudent_eintrag->zgvmas_code==''?filter_input(INPUT_POST, 'master_zgv_art', FILTER_VALIDATE_INT):$prestudent_eintrag->zgvmas_code);
+			$prestudent_eintrag->zgvmaort = ($prestudent_eintrag->zgvmaort==''?filter_input(INPUT_POST, 'master_zgv_ort'):$prestudent_eintrag->zgvmaort);
+			if (CAMPUS_NAME!='FH Technikum Wien')
+			{	$prestudent_eintrag->zgvmadatum = ($prestudent_eintrag->zgvmadatum==''?$datum_master:$prestudent_eintrag->zgvmadatum);}
+			$prestudent_eintrag->zgvmanation = ($prestudent_eintrag->zgvmanation==''?filter_input(INPUT_POST, 'master_zgv_nation'):$prestudent_eintrag->zgvmanation);
+			$prestudent_eintrag->updateamum = date('Y-m-d H:i:s');
+			$prestudent_eintrag->updatevon = 'online';
+		
+			$prestudent_eintrag->updateamum = date('c');
+		
+			if(!$prestudent_eintrag->save())
+			{
+				die($p->t('global/fehlerBeimSpeichernDerDaten'));
+			}
 		}
 	}
 }
@@ -753,12 +824,29 @@ foreach($dokument_help->result as $dok)
 	{
 		$missing = true;
 	}
+	if(CAMPUS_NAME=='FH Technikum Wien' && !in_array($dok->dokument_kurzbz, $help_array, true))
+	{
+		$missing = true;
+	}
 }
 
 if($missing && (!defined('BEWERBERTOOL_DOKUMENTE_ANZEIGEN') || BEWERBERTOOL_DOKUMENTE_ANZEIGEN==true))
 {
-	$status_dokumente = false;
-	$status_dokumente_text = $unvollstaendig;
+	if(CAMPUS_NAME=='FH Technikum Wien' && !check_person_statusbestaetigt($person_id,'Interessent'))
+	{
+		$status_dokumente = true;
+		$status_dokumente_text = $vollstaendig;
+	}
+	elseif(CAMPUS_NAME=='FH Technikum Wien' && count($help_array)>0)
+	{
+		$status_dokumente = true;
+		$status_dokumente_text = $teilvollstaendig;
+	}
+	else 
+	{
+		$status_dokumente = false;
+		$status_dokumente_text = $unvollstaendig;
+	}
 }
 else
 {
@@ -882,6 +970,10 @@ else
 		{
 			font-weight: bold
 		}
+		.popover
+		{
+			max-width: 400px;
+		}
 		</style>
 	</head>
 	<body class="bewerbung">
@@ -918,14 +1010,29 @@ else
 							</a>
 						</li>
 						<?php
-						if(!defined('BEWERBERTOOL_DOKUMENTE_ANZEIGEN') || BEWERBERTOOL_DOKUMENTE_ANZEIGEN):
-						?>
-						<li>
-							<a href="#dokumente" aria-controls="dokumente" role="tab" data-toggle="tab" <?php echo ($status_dokumente_text == $unvollstaendig?'style="background-color: #F2DEDE !important"':'style="background-color: #DFF0D8 !important"');?>>
-								<?php echo $p->t('bewerbung/menuDokumente') ?> <br> <?php echo $status_dokumente_text;?>
-							</a>
-						</li>
-						<?php endif; ?>
+						if(!defined('BEWERBERTOOL_DOKUMENTE_ANZEIGEN') || BEWERBERTOOL_DOKUMENTE_ANZEIGEN)
+						{
+							if(CAMPUS_NAME=='FH Technikum Wien')
+							{
+								if(check_person_statusbestaetigt($person_id,'Interessent'))
+								{
+									echo '	<li>
+												<a href="#dokumente" aria-controls="dokumente" role="tab" data-toggle="tab" '.($status_dokumente_text == $unvollstaendig?'style="background-color: #F2DEDE !important"':($status_dokumente_text == $teilvollstaendig?'style="background-color: #FCF8E3 !important"':'style="background-color: #DFF0D8 !important"')).'>
+													'.$p->t('bewerbung/menuDokumente').' <br> '.$status_dokumente_text.'
+												</a>
+											</li>';
+								}
+							}
+							else
+							{
+								echo '	<li>
+											<a href="#dokumente" aria-controls="dokumente" role="tab" data-toggle="tab" '.($status_dokumente_text == $unvollstaendig?'style="background-color: #F2DEDE !important"':'style="background-color: #DFF0D8 !important"').'>
+												'.$p->t('bewerbung/menuDokumente').' <br> '.$status_dokumente_text.'
+											</a>
+										</li>';
+							}
+						}
+						 ?>
 
 						<?php
 						if(!defined('BEWERBERTOOL_ZGV_ANZEIGEN') || BEWERBERTOOL_ZGV_ANZEIGEN):
@@ -979,7 +1086,15 @@ else
 					'kontakt'					
 				);
 				if(!defined('BEWERBERTOOL_DOKUMENTE_ANZEIGEN') || BEWERBERTOOL_DOKUMENTE_ANZEIGEN)
-					$tabs[]='dokumente';
+				{
+					if(CAMPUS_NAME=='FH Technikum Wien')
+					{
+						if(check_person_statusbestaetigt($person_id,'Interessent'))
+							$tabs[]='dokumente';
+					}
+					else 
+						$tabs[]='dokumente';
+				}
 				if(!defined('BEWERBERTOOL_ZGV_ANZEIGEN') || BEWERBERTOOL_ZGV_ANZEIGEN)
 					$tabs[]='zgv';
 				if(!defined('BEWERBERTOOL_ZAHLUNGEN_ANZEIGEN') || BEWERBERTOOL_ZAHLUNGEN_ANZEIGEN)
@@ -1093,7 +1208,7 @@ function sendBewerbung($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz)
 				if($row->nachgereicht==true)
 					$email.= '- '.$dokument->bezeichnung_mehrsprachig[DEFAULT_LANGUAGE].' -> '.$p->t('bewerbung/dokumentWirdNachgereicht').'<br>';
 				else
-					$email.= '- <a href="https://vilesci.technikum-wien.at/content/akte.php?akte_id='.$row->akte_id.'">'.$dokument->bezeichnung_mehrsprachig[DEFAULT_LANGUAGE].'_'.$row->bezeichnung.'</a><br>';
+					$email.= '- <a href="'.APP_ROOT.'cms/dms.php?id='.$row->dms_id.'">'.$dokument->bezeichnung_mehrsprachig[DEFAULT_LANGUAGE].'_'.$row->bezeichnung.'</a><br>';
 			}
 		}
 		$email.= '</td></tr></tbody></table>';
@@ -1187,7 +1302,7 @@ function sendAddStudiengang($prestudent_id, $studiensemester_kurzbz, $orgform_ku
 		}
 	}
 	
-	$email = 'Es hat sich '.($geschlecht=='m'?'ein Bewerber':'eine Bewerberin').' am System registriert<br>';
+	$email = 'Es hat sich '.($person->geschlecht=='m'?'ein Bewerber':'eine Bewerberin').' am System registriert<br>';
 	$email.= '<br><table style="font-size:small"><tbody>';
 	$email.= '<tr><td><b>'.$p->t('global/studiengang').'</b></td><td>'.$typ->bezeichnung.' '.$studiengang->bezeichnung.($orgform_kurzbz!=''?' ('.$orgform_kurzbz.')':'').'</td></tr>';
 	$email.= '<tr><td><b>'.$p->t('global/studiensemester').'</b></td><td>'.$studiensemester_kurzbz.'</td></tr>';

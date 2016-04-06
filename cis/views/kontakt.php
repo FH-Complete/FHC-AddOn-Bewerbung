@@ -69,7 +69,7 @@ elseif($save_error_kontakt===true)
 	if($eingabegesperrt)
 	{
 		$disabled='disabled="disabled"';
-		echo $p->t('bewerbung/accountVorhanden');
+		echo '<div class="alert alert-info">'.$p->t('bewerbung/accountVorhanden').'</div>';
 	}
 	?>
 

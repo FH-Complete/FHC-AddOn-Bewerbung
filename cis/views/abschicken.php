@@ -75,8 +75,12 @@ echo '	</div><form method="POST" action="'.$_SERVER['PHP_SELF'].'?active=abschic
 //echo '<p>'.$p->t('bewerbung/erklaerungBewerbungAbschicken').'</p>';
 
 $disabled = 'disabled';
-if($status_person==true && $status_kontakt==true && $status_dokumente==true && $status_zahlungen==true && $status_reihungstest==true && $status_zgv_bak==true)
+if($status_person==true && $status_kontakt==true && $status_zahlungen==true && $status_reihungstest==true && $status_zgv_bak==true && $status_dokumente==true)
 	$disabled = '';
+
+if(CAMPUS_NAME=='FH Technikum Wien' && $status_person==true && $status_kontakt==true && $status_zahlungen==true && $status_reihungstest==true && $status_zgv_bak==true && $status_dokumente==false)	
+	$disabled = '';
+
 $prestudent_help= new prestudent();
 $prestudent_help->getPrestudenten($person->person_id);
 $stg = new studiengang();
@@ -107,7 +111,7 @@ foreach($prestudent_help->result as $prest)
 			$disabled = 'disabled';
 		if(in_array($row->studiensemester_kurzbz, $stsem_array)) //Fuer Studiensemester ohne Onlinebewerbung kann sich nicht mehr beworben werden @todo: Dies soll zukuenftig je Studiengang abgespeichert werden koennen
 		{
-			if($row->bestaetigtam!='')
+			if($row->bewerbung_abgeschicktamum!='')
 			{
 				// Bewerbung bereits geschickt
 				echo '

@@ -39,6 +39,7 @@ $this->phrasen['bewerbung/bitteStudienbeginnWaehlen']='Please select the desired
 $this->phrasen['bewerbung/captcha']='Please enter the characters shown in the picture (spam protection).';
 $this->phrasen['bewerbung/andereGrafik']='Reload picture';
 $this->phrasen['bewerbung/datumFormat']='dd.mm.yyyy';
+$this->phrasen['bewerbung/datumUngueltig']='Date is invalid or out of range. Please enter a valid date in the format dd.mm.yyyy.';
 $this->phrasen['bewerbung/egal']='no preference';
 $this->phrasen['bewerbung/orgform']='Organizational structure';
 $this->phrasen['bewerbung/orgform/BB']='Part time';
@@ -62,9 +63,7 @@ $this->phrasen['bewerbung/menuAllgemein']='General';
 $this->phrasen['bewerbung/loginmitAccount']='Login with account';
 $this->phrasen['bewerbung/allgemeineErklaerung']='We are pleased that you are applying for one or more of our programs.<br><br>
                                                     Please fill out the form in full and then send it off.<br><br>
-                                                    <b>Application Mode:</b><br>
-                                                    <p style="text-align:justify;">Fill in all points. If all the values are entered correctly, under "Submit application" you can send your application to the administrative assistant responsible.<br>
-                                                    They will contact you in the course of the next few days.</p>';
+                                                    If all the values are entered correctly, under "Finish" you can send your application to the administrative assistant responsible.';
 
 
 
@@ -88,7 +87,7 @@ $this->phrasen['bewerbung/artDerTaetigkeit']='Type of Occupation';
 $this->phrasen['bewerbung/weiter']='Next';
 $this->phrasen['bewerbung/eintragVom']='Date of record:';
 $this->phrasen['bewerbung/menuPersDaten']='Personal Data';
-$this->phrasen['bewerbung/accountVorhanden']='Since you already have an account, you can no longer change your basic data. If there are some incorrect details here, please contact the administrative assistant responsible.<br><br>';
+$this->phrasen['bewerbung/accountVorhanden']='Since your status as applicant has already been confirmed or you already have an account at the UASTW, you can no longer change your basic data. If there are some incorrect details here, please contact the administrative assistant responsible.';//Satz 1 nur grob uebersetzt 
 $this->phrasen['bewerbung/bitteAuswaehlen']='-- please select --';
 $this->phrasen['bewerbung/menuKontaktinformationen']='Contact Details';
 $this->phrasen['bewerbung/kontakt']='Contact';
@@ -106,6 +105,7 @@ $this->phrasen['bewerbung/dokumentOffen']='Document not yet submitted (open)';
 $this->phrasen['bewerbung/dokumentNichtUeberprueft']='Document has been submitted but not yet examined';
 $this->phrasen['bewerbung/dokumentWirdNachgereicht']='Document will be submitted later';
 $this->phrasen['bewerbung/dokumentWurdeUeberprueft']='Document has already been examined';
+$this->phrasen['bewerbung/dokumentHerunterladen']='Download document';
 $this->phrasen['bewerbung/abgegeben']='Submitted';
 $this->phrasen['bewerbung/upload']='Upload';
 $this->phrasen['bewerbung/menuZgv']='Admission requirements';
@@ -124,7 +124,7 @@ $this->phrasen['bewerbung/uhrzeit']='Time';
 $this->phrasen['bewerbung/stornieren']='cancel';
 $this->phrasen['bewerbung/menuBewerbungAbschicken']='Send Application';
 $this->phrasen['bewerbung/erklaerungBewerbungAbschicken']='If you have filled in all the information correctly and / or uploaded all the documents on the system, you can submit your application.<br>
-                                                               The degree program administrative assistant responsible will contact you in the course of the next few days regarding the application.<br><br>
+                                                               The degree program administrative assistant responsible will contact you in the course of the next 10 working days regarding the application.<br><br>
                                                                Please double-check your data.<br>
                                                                To complete your application click on the following link:';
 $this->phrasen['bewerbung/bewerbungAbschickenFuer']='Send application for';
@@ -144,8 +144,9 @@ $this->phrasen['bewerbung/buchungsnummerNichtVorhanden']='Booking number %s not 
 $this->phrasen['bewerbung/teilweiseVollstaendig']='partially complete';
 $this->phrasen['bewerbung/vollstaendig']='complete';
 $this->phrasen['bewerbung/unvollstaendig']='incomplete';
+$this->phrasen['bewerbung/teilweiseVollstaendig']='partially complete';
 $this->phrasen['bewerbung/maxAnzahlTeilnehmer']='Maximum number of participants reached';
-$this->phrasen['bewerbung/erfolgreichBeworben']='You have applied successfully. The administrative assistant responsible will contact you in the course of the next few days.';
+$this->phrasen['bewerbung/erfolgreichBeworben']='You have applied successfully. The administrative assistant responsible will contact you in the course of the next 10 working days.';
 $this->phrasen['bewerbung/fehlerBeimVersendenDerBewerbung']='An error occured while sending the application. Please try again.';
 $this->phrasen['bewerbung/svnrBereitsVorhanden']='Social Security Number already exists.';
 $this->phrasen['bewerbung/menuBewerbungFuerStudiengang']='Application for a degree program';
@@ -190,11 +191,12 @@ $this->phrasen['bewerbung/bitteOrgformWaehlen']='If you choose a degree program 
 $this->phrasen['bewerbung/orgformWaehlen']='Choose an organisation form'; //nur grob uebersetzt
 $this->phrasen['bewerbung/orgformBeschreibungstext']='Please check the organisation form(s) in which you are interested in.'; //nur grob uebersetzt
 $this->phrasen['bewerbung/menuAbschließen']='Finish';
-$this->phrasen['bewerbung/sieHabenNochKeinenZugangscode']='You don\'t have an access code or account?';
+$this->phrasen['bewerbung/sieHabenNochKeinenZugangscode']='You don\'t have an access code or account at the UAS Technikum Wien?';
 $this->phrasen['bewerbung/habenSieBereitsEinenZugangscode']='You already have an access code?';
-$this->phrasen['bewerbung/studierenOderArbeitenSieBereits']='You already have an account?';
+$this->phrasen['bewerbung/studierenOderArbeitenSieBereits']='You already study or work at the UAS Technikum Wien?';
 $this->phrasen['bewerbung/zugangscodeVergessen']='Forgot access code?';
 $this->phrasen['bewerbung/dannHiermitAccountEinloggen']='Then login here with your CIS-account';
 $this->phrasen['bewerbung/dannHierEinloggen']='Then login here';
 $this->phrasen['bewerbung/dokumentHerunterladen']='Download document';
+$this->phrasen['bewerbung/hinweisZGVdatenaenderung']='<b>Notice:</b> Saved data cannot be changed afterwards due to organisational reasons. If there is incorrect data please use the comment-area under "Finish" or contact your administrative assistant responsible.';
 ?>

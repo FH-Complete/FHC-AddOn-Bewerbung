@@ -620,14 +620,14 @@ elseif($username && $password)
 												</div>
 											</div>';
 											
-											$studiesemester = new studiensemester();
-											$studiesemester->getPlusMinus(10,1);
+											$studiensemester = new studiensemester();
+											$studiensemester->getPlusMinus(10,1);
 											
-											$studiesemester_kurzbz=array();
-											foreach($studiesemester->studiensemester AS $row)
-												$studiesemester_kurzbz[] .= $row->studiensemester_kurzbz;
+											$studiensemester_kurzbz=array();
+											foreach($studiensemester->studiensemester AS $row)
+												$studiensemester_kurzbz[] .= $row->studiensemester_kurzbz;
 											
-											$orgform_sprache = getOrgformSpracheForOnlinebewerbung($result->studiengang_kz,$studiesemester_kurzbz,'');
+											$orgform_sprache = getOrgformSpracheForOnlinebewerbung($result->studiengang_kz,$studiensemester_kurzbz,'');
 											
 											echo '<div class="row" id="topprio'.$result->studiengang_kz.'">
 												<div class="col-sm-6 priogroup">';

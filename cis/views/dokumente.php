@@ -33,8 +33,17 @@ if(!isset($person_id))
 	</a>
 	<p><?php echo $p->t('bewerbung/dokumenteZumHochladen'); ?></p>
 	<?php
+	$db = new basis_db();
+	
 	$dokumente_person = new dokument();
-	$dokumente_person->getAllDokumenteForPerson($person_id, true);?>
+	$dokumente_person->getAllDokumenteForPerson($person_id, true);
+	
+	$studiensemester = new studiensemester();
+	$studiensemester->getStudiensemesterOnlinebewerbung();
+	$stsem_array = array();
+	foreach($studiensemester->studiensemester AS $s)
+		$stsem_array[] = $s->studiensemester_kurzbz;
+	?>
 
 	<div class="">
 		<table class="table table-striped">
@@ -54,19 +63,22 @@ if(!isset($person_id))
 			$akte = new akte;
 			$akte->getAkten($person_id, $dok->dokument_kurzbz);
 			
-			$ben_stg = new basis_db();
 			$qry = "SELECT DISTINCT studiengang_kz,typ||kurzbz AS kuerzel FROM public.tbl_dokumentstudiengang
 				JOIN public.tbl_prestudent USING (studiengang_kz)
-				JOIN public.tbl_dokument USING (dokument_kurzbz)
+				JOIN public.tbl_prestudentstatus USING (prestudent_id)
 				JOIN public.tbl_studiengang USING (studiengang_kz)
-				WHERE dokument_kurzbz = ".$ben_stg->db_add_param($dok->dokument_kurzbz)." and person_id =".$ben_stg->db_add_param($person_id, FHC_INTEGER)." ORDER BY kuerzel";
+				WHERE dokument_kurzbz = ".$db->db_add_param($dok->dokument_kurzbz)." 
+ 				AND person_id =".$db->db_add_param($person_id, FHC_INTEGER)." 
+ 				AND tbl_prestudentstatus.status_kurzbz = 'Interessent'
+ 				/*AND tbl_prestudentstatus.studiensemester_kurzbz IN (".$db->implode4SQL($stsem_array).") */
+ 				ORDER BY kuerzel";
 			
 			$ben = "";
 			$ben_kz = array();
 			$detailstring = '';
-			if($result = $ben_stg->db_query($qry))
+			if($result = $db->db_query($qry))
 			{
-				while($row = $ben_stg->db_fetch_object($result))
+				while($row = $db->db_fetch_object($result))
 				{
 					if($ben!='')
 						$ben.=', ';
@@ -142,7 +154,9 @@ if(!isset($person_id))
 										<input type='submit' value='OK' name='submit_nachgereicht' class='btn btn-default'>
 									</span><input type='hidden' name='dok_kurzbz' value='".$dok->dokument_kurzbz."'>
 								<input type='hidden' name='akte_id' value='".$akte_id."'></form>";
-						$aktion = '';
+						$aktion = '	<button type="button" title="'.$p->t('bewerbung/dokumentHerunterladen').'" class="btn btn-default" href="'.APP_ROOT.'cms/dms.php?id='.$akte->result[0]->dms_id.'"  onclick="FensterOeffnen(\''.APP_ROOT.'cms/dms.php?id='.$akte->result[0]->dms_id.'&akte_id='.$akte_id.'\'); return false;">
+  										<span class="glyphicon glyphicon glyphicon-download-alt" aria-hidden="true" title="'.$p->t('bewerbung/dokumentHerunterladen').'"></span>
+									</button>';
 					}
 					else
 					{
@@ -160,12 +174,16 @@ if(!isset($person_id))
 						$aktion = '	<button type="button" title="'.$p->t('global/löschen').'" class="btn btn-default" onclick="location.href=\''.$_SERVER['PHP_SELF'].'?method=delete&akte_id='.$akte_id.'&active=dokumente\'; return false;">
   										<span class="glyphicon glyphicon-remove" aria-hidden="true" title="'.$p->t('global/löschen').'"></span>
 									</button>';
+						$aktion .= '	<button type="button" title="'.$p->t('bewerbung/dokumentHerunterladen').'" class="btn btn-default" href="'.APP_ROOT.'cms/dms.php?id='.$akte->result[0]->dms_id.'"  onclick="FensterOeffnen(\''.APP_ROOT.'cms/dms.php?id='.$akte->result[0]->dms_id.'&akte_id='.$akte_id.'\'); return false;">
+  										<span class="glyphicon glyphicon glyphicon-download-alt" aria-hidden="true" title="'.$p->t('bewerbung/dokumentHerunterladen').'"></span>
+									</button>';
 
 					}
 				}
 			}
+			//Fuer FHTW deaktiviert, damit Bewerber auch im Akzeptiert-Status Dokumente hochladen koennen, wenn noch keines hochgeladen war
 			//Wenn kein Dokument hochgeladen ist und trotzdem akzeptiert wurde
-			elseif($dokument->akzeptiert($dok->dokument_kurzbz,$person->person_id))
+			elseif(CAMPUS_NAME!='FH Technikum Wien' && $dokument->akzeptiert($dok->dokument_kurzbz,$person->person_id,$ben_kz))
 			{
 				$style = '';
 				$status = '<span class="glyphicon glyphicon-ok" aria-hidden="true" title="'.$p->t('bewerbung/abgegeben').'"></span>';
@@ -245,6 +263,13 @@ if(!isset($person_id))
 			</td>
 			<td><?php echo $p->t('bewerbung/dokumentOffen'); ?></td>
 		</tr>
+		<tr>
+			<td>
+				<span class="glyphicon glyphicon glyphicon-download-alt" aria-hidden="true" title="<?php echo $p->t('bewerbung/dokumentHerunterladen'); ?>"></span>
+			</td>
+			<td><?php echo $p->t('bewerbung/dokumentHerunterladen'); ?></td>
+		</tr>
+		
 		<tr>
 			<td>
 				<span class="glyphicon glyphicon-eye-open" aria-hidden="true" title="<?php echo $p->t('bewerbung/dokumentNichtUeberprueft'); ?>"></span>
