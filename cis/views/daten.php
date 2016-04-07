@@ -68,17 +68,21 @@ if(!isset($person_id))
 				<strong>'.$p->t('global/fehleraufgetreten').' </strong>'.$message.'
 			</div>';
 	}
-	
+
 
 	?>
 
 	<form method="POST" action="<?php echo $_SERVER['PHP_SELF'] ?>?active=daten" class="form-horizontal">
+		<?php
+		if(!defined('BEWERBERTOOL_DATEN_TITEL_ANZEIGEN') || BEWERBERTOOL_DATEN_TITEL_ANZEIGEN):
+		?>
 		<div class="form-group">
 			<label for="titel_pre" class="col-sm-3 control-label"><?php echo $p->t('global/titel') ?></label>
 			<div class="col-sm-9">
 				<input type="text" name="titel_pre" id="titel_pre" <?php echo $disabled; ?> value="<?php echo $titelpre ?>" class="form-control">
 			</div>
 		</div>
+		<?php endif; ?>
 		<div class="form-group <?php echo ($vorname==''?'has-error':'') ?>">
 			<label for="vorname" class="col-sm-3 control-label"><?php echo $p->t('global/vorname') ?>*</label>
 			<div class="col-sm-9">
@@ -91,12 +95,16 @@ if(!isset($person_id))
 				<input type="text" name="nachname" id="nachname"  <?php echo $disabled; ?> value="<?php echo $nachname ?>" class="form-control">
 			</div>
 		</div>
+		<?php
+		if(!defined('BEWERBERTOOL_DATEN_TITEL_ANZEIGEN') || BEWERBERTOOL_DATEN_TITEL_ANZEIGEN):
+		?>
 		<div class="form-group">
 			<label for="titel_post" class="col-sm-3 control-label"><?php echo $p->t('global/postnomen') ?></label>
 			<div class="col-sm-9">
 				<input type="text" name="titel_post" id="titel_post"  <?php echo $disabled; ?> value="<?php echo $titelpost ?>" class="form-control">
 			</div>
 		</div>
+		<?php endif; ?>
 		<div class="form-group <?php echo ($geburtstag==''?'has-error':'') ?>">
 			<label for="gebdatum" class="col-sm-3 control-label"><?php echo $p->t('global/geburtsdatum') ?>* (<?php echo $p->t('bewerbung/datumFormat') ?>)</label>
 			<div class="col-sm-9">
@@ -203,7 +211,7 @@ if(!isset($person_id))
             $notiz = new notiz;
             $notiz->getBewerbungstoolNotizen($person_id);
             $counter = 0;
-            if(count($notiz->result)>0): 
+            if(count($notiz->result)>0):
                 foreach($notiz->result as $berufstaetig): ?>
                 	<?php if($berufstaetig->insertvon == 'online'): $counter++ ?>
 	                    <div class="form-group">
@@ -215,7 +223,7 @@ if(!isset($person_id))
 	                        </div>
 	                    </div>
                     <?php endif; ?>
-                <?php endforeach; 
+                <?php endforeach;
                 $berufstaetigkeit_code='';
                 if($counter==0)
                 {
@@ -228,7 +236,7 @@ if(!isset($person_id))
                 	{
                 		$berufstaetigkeit = new bisberufstaetigkeit();
 	                	$berufstaetigkeit->load($berufstaetigkeit_code);
-	                	
+
 	                	echo '<div class="form-group">
 		                        <label for="berufstaetig" class="col-sm-3 control-label">
 		                            '.$p->t('bewerbung/berufstaetigkeit').'
