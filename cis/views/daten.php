@@ -82,6 +82,8 @@ if(!isset($person_id))
 				<input type="text" name="titel_pre" id="titel_pre" <?php echo $disabled; ?> value="<?php echo $titelpre ?>" class="form-control">
 			</div>
 		</div>
+		<?php else: ?>
+			<input type="hidden" name="titel_pre" id="titel_pre">
 		<?php endif; ?>
 		<div class="form-group <?php echo ($vorname==''?'has-error':'') ?>">
 			<label for="vorname" class="col-sm-3 control-label"><?php echo $p->t('global/vorname') ?>*</label>
@@ -104,6 +106,8 @@ if(!isset($person_id))
 				<input type="text" name="titel_post" id="titel_post"  <?php echo $disabled; ?> value="<?php echo $titelpost ?>" class="form-control">
 			</div>
 		</div>
+		<?php else: ?>
+			<input type="hidden" name="titel_post" id="titel_post">
 		<?php endif; ?>
 		<div class="form-group <?php echo ($geburtstag==''?'has-error':'') ?>">
 			<label for="gebdatum" class="col-sm-3 control-label"><?php echo $p->t('global/geburtsdatum') ?>* (<?php echo $p->t('bewerbung/datumFormat') ?>)</label>
