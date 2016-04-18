@@ -64,7 +64,7 @@ if(!isset($person_id))
 						die($p->t('global/fehlerBeimLadenDesDatensatzes'));
 
 					$prestudent_status = new prestudent();
-					$prestatus_help= ($prestudent_status->getLastStatus($row->prestudent_id))?$prestudent_status->status_kurzbz:$p->t('bewerbung/keinStatus');
+					$prestatus_help= ($prestudent_status->getLastStatus($row->prestudent_id))?$prestudent_status->status_mehrsprachig[$sprache]:$p->t('bewerbung/keinStatus');
 					$bewerberstatus =($prestudent_status->bestaetigtam != '' || $prestudent_status->bestaetigtvon != '')?$p->t('bewerbung/bestaetigt'):$p->t('bewerbung/nichtBestaetigt'); 
 
 					//$bereits_angemeldet[]= $stg->studiengang_kz;
