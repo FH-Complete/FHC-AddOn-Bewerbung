@@ -1,5 +1,5 @@
 <?php
-/* 
+/*
  * Copyright (C) 2015 fhcomplete.org
  *
  * This program is free software: you can redistribute it and/or modify
@@ -28,13 +28,13 @@ if(!isset($person_id))
 
 <div role="tabpanel" class="tab-pane" id="allgemein">
 	<h2><?php echo $p->t('bewerbung/menuAllgemein'); ?></h2>
-	<?php 
+	<?php
 	if($_SESSION['bewerbung/user']=='Login')
 		echo '<p>'.$p->t('bewerbung/erklaerungStudierende').'</p>';
 	else
 		echo '<p>'.$p->t('bewerbung/allgemeineErklaerung').'</p>';
 	?>
-	
+
 	<br><br>
 	<p><b><?php echo $p->t('bewerbung/aktuelleBewerbungen'); ?></b></p>
 	<?php
@@ -57,7 +57,7 @@ if(!isset($person_id))
 				</tr>
 				<?php
 				$bereits_angemeldet = array();
-				
+
 				foreach($prestudent->result as $row):
 					$stg = new studiengang();
 					if(!$stg->load($row->studiengang_kz))
@@ -65,31 +65,31 @@ if(!isset($person_id))
 
 					$prestudent_status = new prestudent();
 					$prestatus_help= ($prestudent_status->getLastStatus($row->prestudent_id))?$prestudent_status->status_mehrsprachig[$sprache]:$p->t('bewerbung/keinStatus');
-					$bewerberstatus =($prestudent_status->bestaetigtam != '' || $prestudent_status->bestaetigtvon != '')?$p->t('bewerbung/bestaetigt'):$p->t('bewerbung/nichtBestaetigt'); 
+					$bewerberstatus =($prestudent_status->bestaetigtam != '' || $prestudent_status->bestaetigtvon != '')?$p->t('bewerbung/bestaetigt'):$p->t('bewerbung/nichtBestaetigt');
 
 					//$bereits_angemeldet[]= $stg->studiengang_kz;
 					$bereits_angemeldet[$prestudent_status->studiensemester_kurzbz][]= $stg->studiengang_kz;
 					//$bereits_angemeldet[]= $stg->studiengang_kz.$prestudent_status->studiensemester_kurzbz;
-					
+
 					if($sprache!='German' && $stg->english!='')
 						$stg_bezeichnung = $stg->english;
 					else
 						$stg_bezeichnung = $stg->bezeichnung;
-					
+
 					$typ = new studiengang();
 					$typ->getStudiengangTyp($stg->typ);
-					
+
 					$empf_array = array();
 					if(defined('BEWERBERTOOL_BEWERBUNG_EMPFAENGER'))
 						$empf_array = unserialize(BEWERBERTOOL_BEWERBUNG_EMPFAENGER);
-					
+
 					if(defined('BEWERBERTOOL_MAILEMPFANG') && BEWERBERTOOL_MAILEMPFANG!='')
 						$empfaenger = BEWERBERTOOL_MAILEMPFANG;
 					elseif(isset($empf_array[$stg->studiengang_kz]))
 						$empfaenger = $empf_array[$stg->studiengang_kz];
 					else
 						$empfaenger = $stg->email;
-					
+
 					$orgform = new organisationsform();
 					$orgform->load($prestudent_status->orgform_kurzbz);
 					?>
@@ -149,7 +149,7 @@ if(!isset($person_id))
 				</div>
 			</div>
 			<div id="form-group-stg" class="form-group">
-				<?php 
+				<?php
 				$orgeinheit = new organisationseinheit();
 				$standorte = $orgeinheit->getAllStandorte();
 				$optionsStg = null;
@@ -157,13 +157,13 @@ if(!isset($person_id))
 				$options = array();
 				$stg = new studiengang();
 				$stg->getAllForBewerbung();
-				
+
 				$stghlp = new studiengang();
 				$stghlp->getLehrgangstyp();
 				$lgtyparr=array();
 				foreach($stghlp->result as $row)
 					$lgtyparr[$row->lgartcode]=$row->bezeichnung;
-				
+
 				foreach($stg->result as $result)
 				{
 					$typ = new studiengang();
@@ -183,16 +183,16 @@ if(!isset($person_id))
 					$orgform = $stg->getOrgForm($result->studiengang_kz);
 					$stgSprache = $stg->getSprache($result->studiengang_kz);
 					$studienplan = getStudienplaeneForOnlinebewerbung($result->studiengang_kz, '', '',''); //@todo: studiensemester und ausbildungssemester dynamisch
-					
+
 					$studiensemester = new studiensemester();
 					$studiensemester->getPlusMinus(10,1);
-						
+
 					$studiensemester_kurzbz=array();
 					foreach($studiensemester->studiensemester AS $row)
 						$studiensemester_kurzbz[] .= $row->studiensemester_kurzbz;
-							
+
 					$orgform_sprache = getOrgformSpracheForOnlinebewerbung($result->studiengang_kz,$studiensemester_kurzbz,'');
-						
+
 					$orgformen_sprachen = array();
 					if($orgform_sprache!='')
 					{
@@ -223,7 +223,7 @@ if(!isset($person_id))
 							</label>
 						</div>
 						';
-					
+
 					if($result->organisationseinheittyp_kurzbz == "Studiengang")
 					{
 						if(BEWERBERTOOL_STANDORTAUSWAHL_ANZEIGEN)
@@ -257,12 +257,12 @@ if(!isset($person_id))
 				<label class="control-label">
 					<?php echo $p->t('bewerbung/geplanteStudienrichtung') ?>
 				</label>
-				
+
 				<?php if(BEWERBERTOOL_STANDORTAUSWAHL_ANZEIGEN): ?>
 				<div id="auswahlStg">
 					<div class="panel-group" id="accordionStg" role="tablist" aria-multiselectable="true">
 						<div class="panel panel-default">
-							
+
 							<?php foreach($standorte as $standort): ?>
 							<div class="panel-heading" role="tab" id="heading<?php echo $standort; ?>">
 								<h4 class="panel-title">
@@ -273,23 +273,23 @@ if(!isset($person_id))
 							</div>
 							<div id="collapse<?php echo $standort; ?>" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading<?php echo $standort; ?>">
 								<div class="panel-body">
-									<?php 
+									<?php
 									if(isset($options["Stg"][$standort]))
-										echo $options["Stg"][$standort]; 
+										echo $options["Stg"][$standort];
 									else
 										echo $p->t('bewerbung/keineStgAngeboten');
 									?>
 								</div>
 							</div>
 							<?php endforeach; ?>
-							
+
 						</div>
 					</div>
 				</div>
 				<div id="auswahlLehrg" style="display: none;">
 					<div class="panel-group" id="accordionLehrg" role="tablist" aria-multiselectable="true">
 						<div class="panel panel-default">
-							
+
 							<?php foreach($standorte as $standort): ?>
 							<div class="panel-heading" role="tab" id="heading<?php echo $standort; ?>Lehrg">
 								<h4 class="panel-title">
@@ -300,24 +300,24 @@ if(!isset($person_id))
 							</div>
 							<div id="collapse<?php echo $standort; ?>Lehrg" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading<?php echo $standort; ?>Lehrg">
 								<div class="panel-body">
-									<?php 
+									<?php
 									if(isset($options["Lehrg"][$standort]))
-										echo $options["Lehrg"][$standort]; 
+										echo $options["Lehrg"][$standort];
 									else
 										echo $p->t('bewerbung/keineLehrgAngeboten');
 									?>
 								</div>
 							</div>
 							<?php endforeach; ?>
-							
+
 						</div>
 					</div>
 				</div>
-				
+
 				<?php else: ?>
-				
+
 				<div id="auswahlStg">
-					<?php 
+					<?php
 					if(!empty($optionsStg))
 						echo $optionsStg;
 					else
@@ -325,7 +325,7 @@ if(!isset($person_id))
 					?>
 				</div>
 				<div id="auswahlLehrg" style="display: none;">
-					<?php 
+					<?php
 					if(!empty($optionsLehrg))
 						echo $optionsLehrg;
 					else
@@ -333,7 +333,7 @@ if(!isset($person_id))
 					?>
 				</div>
 				<?php endif; ?>
-				
+
 			</div>
 		</div>
 		<div class="modal-footer">
@@ -345,7 +345,7 @@ if(!isset($person_id))
 	<script type="text/javascript">
 		$(function() {
 
-			$('#liste-studiengaenge button.ok-studiengang').on('click', function() 
+			$('#liste-studiengaenge button.ok-studiengang').on('click', function()
 			{
 
 				var item = $('#liste-studiengaenge input:checked');
@@ -358,7 +358,7 @@ if(!isset($person_id))
 					modal_orgformsprache = item.attr('data-modal-orgformsprache').split(',');
 				$('#prio-dialog').data({stgkz: stgkz});
 
-				if(modal) 
+				if(modal)
 				{
 					//$('#prio-dialog input[value="keine"]').prop('checked', true); Aktivieren, wenn keine als default ausgewaehlt sein soll
 					prioAvailable(modal_orgformsprache);
@@ -404,7 +404,7 @@ if(!isset($person_id))
 					return false;
 				}
 				else
-				{	
+				{
 					$('#orgform' + stgkz).val(orgform);
 					$('#anmerkung' + stgkz).val(anm);
 					$('#badge' + stgkz).html(anm);
@@ -412,7 +412,7 @@ if(!isset($person_id))
 
 				saveStudiengang(stgkz, anm, stsem, orgform);
 			});
-			
+
 			$('#ausbildungstyp').change(function() {
 				if($('#ausbildungstyp').val() == "stg") {
 					$('#auswahlLehrg').hide();
@@ -444,19 +444,19 @@ if(!isset($person_id))
 				data: data,
 				type: 'POST',
 				dataType: "json",
-				success: function(data) 
+				success: function(data)
 				{
 					if(data.status!='ok')
 						alert(data.msg);
 					else
 						window.location.href='bewerbung.php?active=allgemein';
 				},
-				error: function(data) 
+				error: function(data)
 				{
 					alert(data.msg)
 				}
 			});
-			
+
 		}
 	</script>
 </div>
