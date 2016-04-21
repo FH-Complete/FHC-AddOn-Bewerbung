@@ -15,7 +15,7 @@ $this->phrasen['bewerbung/fallsVorhanden']='(se disponibile)';
 $this->phrasen['bewerbung/mailtextHtml']='Per favore leggere il messaggio in visualizzazione HTML per vedere il link completo.';
 $this->phrasen['bewerbung/anredeMaennlich']='Signore';
 $this->phrasen['bewerbung/anredeWeiblich']='Signora';
-$this->phrasen['bewerbung/mailtext']='Gentile %4$s %1$s %2$s!<br><br>
+$this->phrasen['bewerbung/mailtext']='Gentile %4$s %1$s %2$s,<br><br>
         Grazie per l’interesse a un corso di studi di '.CAMPUS_NAME.'. <br>
         Per la sua richiesta colloquio utilizzi il seguente link e codice di accesso: <br><br>
         <a href="'.APP_ROOT.'addons/bewerbung/cis/registration.php?code=%3$s">Link alla richiesta colloquio</a><br>
