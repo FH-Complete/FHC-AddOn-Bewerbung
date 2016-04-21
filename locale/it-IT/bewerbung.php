@@ -5,8 +5,8 @@ $this->phrasen['bewerbung/registration']='Codice di accesso per la registrazione
 $this->phrasen['bewerbung/registrieren']='Registrati';
 $this->phrasen['bewerbung/abschicken']='Invia';
 $this->phrasen['bewerbung/registrierenOderZugangscode']='<a href="'.$_SERVER['PHP_SELF'].'?method=registration">Registrarsi qui</a> o inserire il codice di accesso';
-$this->phrasen['bewerbung/einleitungstext']='Compilare il formulario, scegliere il percorso di studi e cliccare su “Invia”.<br>Verrà inviata, all’indirizzo fornito, una e-mail con il codice di accesso.
-		Con il codice di accesso sarà possibile accedere, completare l’inserimento dei dati, selezionare il programma di studi e inviare la propria richiesta colloquio in maniera non vincolante.';
+$this->phrasen['bewerbung/einleitungstext']='Compilare il formulario, scegliere il corso di studi e cliccare su “Invia”.<br>Verrà inviata, all’indirizzo fornito, una e-mail con il codice di accesso.
+		Con il codice di accesso sarà possibile accedere, completare l’inserimento dei dati, confermare il corso di studi scelto e inviare la propria richiesta di colloquio in maniera non vincolante.';
 /*$this->phrasen['bewerbung/einleitungstext']='Per la registrazione compilare il formulario <u>in tutte le sue parti</u> e cliccare su ”Registrati”. <br>
 												Rimarrà in seguito la possibilità di modificare i dati e di caricare documenti prima di inviare la richiesta colloquio.';*/
 $this->phrasen['bewerbung/login']='Login';
@@ -15,7 +15,7 @@ $this->phrasen['bewerbung/fallsVorhanden']='(se disponibile)';
 $this->phrasen['bewerbung/mailtextHtml']='Per favore leggere il messaggio in visualizzazione HTML per vedere il link completo.';
 $this->phrasen['bewerbung/anredeMaennlich']='Signore';
 $this->phrasen['bewerbung/anredeWeiblich']='Signora';
-$this->phrasen['bewerbung/mailtext']='Gentile %4$s %1$s %2$s,<br><br>
+$this->phrasen['bewerbung/mailtext']='Gentile %4$s %1$s %2$s!<br><br>
         Grazie per l’interesse a un corso di studi di '.CAMPUS_NAME.'. <br>
         Per la sua richiesta colloquio utilizzi il seguente link e codice di accesso: <br><br>
         <a href="'.APP_ROOT.'addons/bewerbung/cis/registration.php?code=%3$s">Link alla richiesta colloquio</a><br>
@@ -28,8 +28,8 @@ $this->phrasen['bewerbung/emailgesendetan']='L’e-mail con il suo codice di acc
 $this->phrasen['bewerbung/zurueckZurAnmeldung']='Torna alla pagina di login.';
 $this->phrasen['bewerbung/sicherheitscodeFalsch']='Il codice di sicurezza inserito è errato.';
 $this->phrasen['bewerbung/geplanterStudienbeginn']='Inizio periodo di studi';
-$this->phrasen['bewerbung/studienrichtung']='Percorso di studi';
-$this->phrasen['bewerbung/bitteStudienrichtungWaehlen']='Per favore selezionare almeno un percorso di studi.';
+$this->phrasen['bewerbung/studienrichtung']='Corso di studi';
+$this->phrasen['bewerbung/bitteStudienrichtungWaehlen']='Per favore selezionare almeno un corso di studi.';
 $this->phrasen['bewerbung/bitteVornameAngeben']='Per favore inserire il nome.';
 $this->phrasen['bewerbung/bitteNachnameAngeben']='Per favore inserire il cognome.';
 $this->phrasen['bewerbung/bitteGeburtsdatumEintragen']='Per favore inserire la data di nascita.';
@@ -53,11 +53,11 @@ $this->phrasen['bewerbung/English']='Inglese';
 $this->phrasen['bewerbung/topprio']='Massima priorità';
 $this->phrasen['bewerbung/alternative']='Alternativa';
 $this->phrasen['bewerbung/priowaehlen']='Esprimere prima e seconda scelta';
-$this->phrasen['bewerbung/prioBeschreibungstext'] = 'Per favore selezionare la forma di organizzazione e la lingua del percorso di studi. Per l’eventualità di esaurimento posti è possibile indicare una alternativa.';
+$this->phrasen['bewerbung/prioBeschreibungstext'] = 'Per favore selezionare la forma di organizzazione e la lingua del corso di studi. Per l’eventualità di esaurimento posti è possibile indicare una alternativa.';
 $this->phrasen['bewerbung/prioUeberschrifttopprio'] = 'Massima priorità';
 $this->phrasen['bewerbung/prioUeberschriftalternative'] = 'Alternativa (opzionale)';
-$this->phrasen['bewerbung/neuerStudiengang'] = 'Per favore scegliere un percorso di studi per il quale candidarsi';
-$this->phrasen['bewerbung/geplanteStudienrichtung']='Indirizzo';
+$this->phrasen['bewerbung/neuerStudiengang'] = 'Per favore scegliere un corso di studi per il quale inviare la richiesta di colloquio';
+$this->phrasen['bewerbung/geplanteStudienrichtung']='Corso di studi';
 $this->phrasen['bewerbung/menuAllgemein']='Generale';
 $this->phrasen['bewerbung/loginmitAccount']='Se è già in possesso di un account, può accedere con il proprio username / password';
 $this->phrasen['bewerbung/allgemeineErklaerung']='La ringraziamo per la sua richiesta colloquio.<br><br>
@@ -65,17 +65,17 @@ $this->phrasen['bewerbung/allgemeineErklaerung']='La ringraziamo per la sua rich
 	<b>Modalità di richiesta colloquio:</b><br>
 	<p style="text-align:justify;">Compili tutti i campi. Quando saranno inseriti tutti i dati sarà possibile inviare la richiesta colloquio.<br>
 	Nei prossimi giorni verrà contattato/a.';
-$this->phrasen['bewerbung/erklaerungStudierende']='Grazie per il suo interesse ai nostri percorsi di studi.<br><br>
-	Per favore clicchi su "Aggiungi percorso di studi" per aggiungere alla sua richiesta colloquio un percorso di studi.
+$this->phrasen['bewerbung/erklaerungStudierende']='Grazie per il suo interesse ai nostri corsi di studi.<br><br>
+	Per favore clicchi su "Aggiungi corso di studi" per aggiungere alla sua richiesta di colloquio un corso di studi.
 	Potrebbe essere necessario inserire ulteriori dati prima di poter inviare la propria richiesta colloquio nell’ultima fase di questo processo.';
-$this->phrasen['bewerbung/aktuelleBewerbungen']='Candidature attuali:';
+$this->phrasen['bewerbung/aktuelleBewerbungen']='Richieste di colloquio in corso:';
 $this->phrasen['bewerbung/status']='Stato';
 $this->phrasen['bewerbung/legende']='Legenda';
 $this->phrasen['bewerbung/bewerbungsstatus']='Stato richiesta colloquio';
 $this->phrasen['bewerbung/keinStatus']='Nessuno stato disponibile al momento';
 $this->phrasen['bewerbung/bestaetigt']='confermato';
 $this->phrasen['bewerbung/nichtBestaetigt']='non ancora confermato';
-$this->phrasen['bewerbung/studiengangHinzufuegen']='Aggiungi percorso di studi';
+$this->phrasen['bewerbung/studiengangHinzufuegen']='Aggiungi corso di studi';
 $this->phrasen['bewerbung/weiter']='Avanti';
 $this->phrasen['bewerbung/geburtsnation']='Paese di nascita';
 $this->phrasen['bewerbung/svnr']='Codice fiscale';
@@ -95,7 +95,7 @@ $this->phrasen['bewerbung/kontakt']='Contatto';
 $this->phrasen['bewerbung/nation']='Nazione';
 $this->phrasen['bewerbung/menuDokumente']='Documenti';
 $this->phrasen['bewerbung/dokument']='Documento';
-$this->phrasen['bewerbung/bitteDokumenteHochladen']='E’ qui possibile caricare i documenti necessari per candidarsi al percorso di studi desiderato. Se un documento è indicato come "obbligatorio" sarà possibile completare l’invio della richiesta colloquio solamente in seguito al caricamento o alla selezione dell’opzione "Documento verrà inviato prossimamente".
+$this->phrasen['bewerbung/bitteDokumenteHochladen']='E’ qui possibile caricare i documenti necessari per candidarsi al corso di studi desiderato. Se un documento è indicato come "obbligatorio" sarà possibile completare l’invio della richiesta di colloquio solamente in seguito al caricamento o alla selezione dell’opzione "Documento verrà inviato prossimamente".
 		In questo caso sarà possibile inviare il documento in un momento successivo.';
 $this->phrasen['bewerbung/linkDokumenteHochladen']='Carica documenti';
 $this->phrasen['bewerbung/dokumenteZumHochladen']='Documenti utili:';
@@ -147,24 +147,24 @@ $this->phrasen['bewerbung/maxAnzahlTeilnehmer']='numero massimo di partecipanti 
 $this->phrasen['bewerbung/erfolgreichBeworben']='Ha inviato con successo la sua richiesta colloquio per %s. La segreteria la contatterà nei prossimi giorni.';
 $this->phrasen['bewerbung/fehlerBeimVersendenDerBewerbung']='Si è verificato un errore durante l’invio della richiesta colloquio. Si prega di riprovare.';
 $this->phrasen['bewerbung/svnrBereitsVorhanden']='Codice fiscale già presente';
-$this->phrasen['bewerbung/menuBewerbungFuerStudiengang']='richiesta colloquio per il percorso di studi';
+$this->phrasen['bewerbung/menuBewerbungFuerStudiengang']='richiesta colloquio per il corso di studi';
 $this->phrasen['bewerbung/emailBodyStart']='E’ presente una nuova richiesta colloquio con i seguenti dati: <br>';
 $this->phrasen['bewerbung/emailDokumentuploadStart']='Il seguente documento è stato caricato: <br>';
 $this->phrasen['bewerbung/emailBodyEnde']='Per maggiori dettagli accedere ai dettagli della persona in FAS.';
 $this->phrasen['bewerbung/fileUpload']='Upload del file';
 $this->phrasen['bewerbung/fehlerKeinePersonId']='Non è stato indicato un Person_id ';
 $this->phrasen['bewerbung/woWurdeUrkundeAusgestellt']='Dove è stato emesso il diploma?';
-$this->phrasen['bewerbung/ausbildungstyp']='Tipo di titolo di studio';
-$this->phrasen['bewerbung/lehrgang']='Percorso di studi';
-$this->phrasen['bewerbung/keineStgAngeboten']='Al momento non è offerto alcun percorso di studi';
-$this->phrasen['bewerbung/keineLehrgAngeboten']='Al momento non è offerto alcun percorso di studi';
+$this->phrasen['bewerbung/ausbildungstyp']='Tipo corso di studi';
+$this->phrasen['bewerbung/lehrgang']='Altro corso non curriculare';
+$this->phrasen['bewerbung/keineStgAngeboten']='Al momento non è offerto alcun corso di studi';
+$this->phrasen['bewerbung/keineLehrgAngeboten']='Al momento non è offerto alcun corso non curriculare';
 $this->phrasen['bewerbung/aufmerksamdurch']='Come ha scoperto il nostro istituto?';
 $this->phrasen['bewerbung/BewerbungBereitsVerschickt']='La sua richiesta colloquio viene elaborata';
-$this->phrasen['bewerbung/bitteZuerstStudiengangWaehlen']='Per favore selezionare il percorso di studi desiderato nell’ambito "Generale".';
+$this->phrasen['bewerbung/bitteZuerstStudiengangWaehlen']='Per favore selezionare il corso di studi desiderato nell’ambito "Generale".';
 $this->phrasen['bewerbung/ExtensionInformation']='Grandezza massima del file per ciascun documento: 15 MB.<br>Tipi di file supportati:';
 $this->phrasen['bewerbung/falscherDateityp']='Questo formato di file non è supportato';
-$this->phrasen['bewerbung/nichtMehrAlsXStudiengaenge']='E’ possibile candidarsi per al massimo %s percorso/i di studi per ciascun semestre';
-$this->phrasen['bewerbung/mailadresseBereitsGenutzt']='L’indirizzo e-mail %s è già stato utilizzato ed è disponbile il relativo codice di accesso. E’ possibile ricevere nuovamente il codice di accesso via e-mail e aggiungere ulteriori candidature.';
+$this->phrasen['bewerbung/nichtMehrAlsXStudiengaenge']='E’ possibile candidarsi per al massimo %s corsi di studi';
+$this->phrasen['bewerbung/mailadresseBereitsGenutzt']='L’indirizzo e-mail %s è già stato utilizzato ed è disponbile il relativo codice di accesso. E’ possibile ricevere nuovamente il codice di accesso via e-mail e aggiungere ulteriori richieste di colloquio.';
 $this->phrasen['bewerbung/buttonBewerbungUnvollstaendig']='Campi obbligatori non completati';
 $this->phrasen['bewerbung/prestudentID']='Prestudent ID';
 $this->phrasen['bewerbung/bewerbung']='richiesta colloquio';
@@ -185,10 +185,10 @@ $this->phrasen['bewerbung/anmerkungPlaceholder']='Qui è possibile inserire osse
 $this->phrasen['bewerbung/orgformMussGewaehltWerden']='E’ necessario selezionare una forma di organizzazione';
 $this->phrasen['bewerbung/hierUnverbindlichAnmelden']='Registrazione';
 $this->phrasen['bewerbung/keineOrgformVorhanden']='Per il semestre selezionato non è ancora stata definita una forma di organizzazione';
-$this->phrasen['bewerbung/bitteOrgformWaehlen']='Nella scelta di un percorso di studi con più forme di organizzazione è necessario indicare una priorità';
+$this->phrasen['bewerbung/bitteOrgformWaehlen']='Nella scelta di un corso di studi con più forme di organizzazione è necessario indicare una priorità';
 $this->phrasen['bewerbung/orgformWaehlen']='Scegliere la forma di organizzazione';
 $this->phrasen['bewerbung/orgformBeschreibungstext']='Per favore, indichi quale forma di organizzazione è di sua preferenza. Nel caso di esaurimento posti per la forma di organizzazione desiderata, sarà possibile indicare una alternativa.';
-$this->phrasen['bewerbung/menuAbschließen']='Invio';
+$this->phrasen['bewerbung/menuAbschließen']='Chiudere';
 $this->phrasen['bewerbung/sieHabenNochKeinenZugangscode']='Non ha ancora un codice di accesso o un account?';
 $this->phrasen['bewerbung/habenSieBereitsEinenZugangscode']='E’ già in possesso di un codice di accesso?';
 $this->phrasen['bewerbung/studierenOderArbeitenSieBereits']='E’ già in possesso di un account?';
@@ -196,4 +196,5 @@ $this->phrasen['bewerbung/zugangscodeVergessen']='Ha dimenticato il codice di ac
 $this->phrasen['bewerbung/dannHiermitAccountEinloggen']='Esegua qui il login con il suo account CIS';
 $this->phrasen['bewerbung/dannHierEinloggen']='Esegua qui il login';
 $this->phrasen['bewerbung/dokumentHerunterladen']='Scaricare documento';
+
 ?>
