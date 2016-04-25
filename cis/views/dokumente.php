@@ -34,10 +34,10 @@ if(!isset($person_id))
 	<p><?php echo $p->t('bewerbung/dokumenteZumHochladen'); ?></p>
 	<?php
 	$db = new basis_db();
-	
+
 	$dokumente_person = new dokument();
 	$dokumente_person->getAllDokumenteForPerson($person_id, true);
-	
+
 	$studiensemester = new studiensemester();
 	$studiensemester->getStudiensemesterOnlinebewerbung();
 	$stsem_array = array();
@@ -62,17 +62,17 @@ if(!isset($person_id))
 		foreach($dokumente_person->result as $dok):
 			$akte = new akte;
 			$akte->getAkten($person_id, $dok->dokument_kurzbz);
-			
+
 			$qry = "SELECT DISTINCT studiengang_kz,typ||kurzbz AS kuerzel FROM public.tbl_dokumentstudiengang
 				JOIN public.tbl_prestudent USING (studiengang_kz)
 				JOIN public.tbl_prestudentstatus USING (prestudent_id)
 				JOIN public.tbl_studiengang USING (studiengang_kz)
-				WHERE dokument_kurzbz = ".$db->db_add_param($dok->dokument_kurzbz)." 
- 				AND person_id =".$db->db_add_param($person_id, FHC_INTEGER)." 
+				WHERE dokument_kurzbz = ".$db->db_add_param($dok->dokument_kurzbz)."
+ 				AND person_id =".$db->db_add_param($person_id, FHC_INTEGER)."
  				AND tbl_prestudentstatus.status_kurzbz = 'Interessent'
  				/*AND tbl_prestudentstatus.studiensemester_kurzbz IN (".$db->implode4SQL($stsem_array).") */
  				ORDER BY kuerzel";
-			
+
 			$ben = "";
 			$ben_kz = array();
 			$detailstring = '';
@@ -82,10 +82,10 @@ if(!isset($person_id))
 				{
 					if($ben!='')
 						$ben.=', ';
-			
+
 					$stg = new studiengang();
 					$stg->load($row->studiengang_kz);
-		
+
 					$ben .= $stg->kuerzel;
 					$ben_kz[] .= $row->studiengang_kz;
 				}
@@ -94,12 +94,12 @@ if(!isset($person_id))
 			$details = new dokument();
 			$details->getBeschreibungenDokumente($ben_kz, $dok->dokument_kurzbz);
 			$i=0;
-			
+
 			foreach($details->result AS $row)
 			{
 				$stg = new studiengang();
 				$stg->load($row->studiengang_kz);
-				
+
 				if($detailstring!='' && ($row->beschreibung_mehrsprachig[getSprache()]!='' || ($row->dokumentbeschreibung_mehrsprachig[getSprache()]!='' && $i==0)))
 					$detailstring .= '<br/><hr/>';
 				if($row->dokumentbeschreibung_mehrsprachig[getSprache()]!='' && $i==0)
@@ -115,12 +115,12 @@ if(!isset($person_id))
 				else
 					$detailstring .= '';
 			}
-			
+
 			if($detailstring!='')
 				$beschreibung = '<button class="btn btn-md btn-info" data-toggle="popover" title="'.$p->t('bewerbung/details').'" data-trigger="focus" data-content="'.$detailstring.'">Details</button>';
-			else 
+			else
 				$beschreibung = '';
-			
+
 			$dokument = new dokument();
 			$style = '';
 			if($dok->pflicht==true)
@@ -224,9 +224,9 @@ if(!isset($person_id))
 						</form>";
 
 			}
-			
+
 			 ?>
-			
+
 			<tr>
 				<td style="vertical-align: middle" class="<?php echo $style ?>">
                     <?php
@@ -237,7 +237,7 @@ if(!isset($person_id))
                         <span>*</span>
                     <?php endif; ?>
                 </td>
-				
+
                 <td style="vertical-align: middle" class="<?php echo $style ?>"><?php echo $beschreibung ?></td>
 				<td style="vertical-align: middle" class="<?php echo $style ?>"><?php echo $status ?></td>
 				<td style="vertical-align: middle" nowrap class="<?php echo $style ?>"><?php echo $aktion ?></td>
@@ -269,19 +269,25 @@ if(!isset($person_id))
 			</td>
 			<td><?php echo $p->t('bewerbung/dokumentHerunterladen'); ?></td>
 		</tr>
-		
+
 		<tr>
 			<td>
 				<span class="glyphicon glyphicon-eye-open" aria-hidden="true" title="<?php echo $p->t('bewerbung/dokumentNichtUeberprueft'); ?>"></span>
 			</td>
 			<td><?php echo $p->t('bewerbung/dokumentNichtUeberprueft'); ?></td>
 		</tr>
-		<tr>
-			<td>
-				<span class="glyphicon glyphicon-hourglass" aria-hidden="true" title="<?php echo $p->t('bewerbung/dokumentWirdNachgereicht'); ?>"></span>
-			</td>
-			<td><?php echo $p->t('bewerbung/dokumentWirdNachgereicht'); ?></td>
-		</tr>
+		<?php
+		if(!defined('BEWERBERTOOL_DOKUMENTE_NACHREICHEN') || BEWERBERTOOL_DOKUMENTE_NACHREICHEN==true)
+		{
+			echo '
+			<tr>
+				<td>
+					<span class="glyphicon glyphicon-hourglass" aria-hidden="true" title="'.$p->t('bewerbung/dokumentWirdNachgereicht').'"></span>
+				</td>
+				<td>'.$p->t('bewerbung/dokumentWirdNachgereicht').'</td>
+			</tr>';
+		}
+		?>
 		<tr>
 			<td>
 				<span class="glyphicon glyphicon-ok" aria-hidden="true" title="<?php echo $p->t('bewerbung/dokumentWurdeUeberprueft'); ?>"></span>
