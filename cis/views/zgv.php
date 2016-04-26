@@ -56,7 +56,10 @@ elseif($save_error_zgv===true)
 <div role="tabpanel" class="tab-pane" id="zgv">
 	<h2><?php echo $p->t('bewerbung/menuZugangsvoraussetzungen'); ?></h2>
 	<div class="alert alert-info">
-		<?php echo $p->t('bewerbung/hinweisZGVdatenaenderung'); ?>
+		<?php echo $p->t('bewerbung/hinweisZGVdatenaenderung');
+		if (CAMPUS_NAME!='FH Technikum Wien')
+			echo '<br><br>'.$p->t('bewerbung/zgvDatumNichtZukunft');
+		?>
 	</div>
 	<?php if(empty($prestudent->result)): ?>
 	<p class="bg-danger" style="padding: 10px;">
@@ -74,7 +77,7 @@ elseif($save_error_zgv===true)
 		<?php foreach ($zgv as $stufe => $attribute):
 			if ($stufe === 'master' && !in_array('m', $types, true)) {
 				continue;
-			} 
+			}
 			if (count($zgv[$stufe])>0)
 				$gesperrt = true;
 			?>
