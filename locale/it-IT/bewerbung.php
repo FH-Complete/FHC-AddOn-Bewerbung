@@ -76,7 +76,7 @@ $this->phrasen['bewerbung/erklaerungStudierende']='
 	Idoneo: colloquio sostenuto con esito positivo e posizione utile per perfezionare l’immatricolazione entro 10 giorni lavorativi dalla data di comunicazione.<br>
 	In lista d’attesa: colloquio sostenuto e posizione in graduatoria in attesa di scorrimento.<br>
 	Studente: se visualizza questo stato, si rivolga alla segreteria per accedere all’area studenti.';
-$this->phrasen['bewerbung/aktuelleBewerbungen']='Stato selezione:'
+$this->phrasen['bewerbung/aktuelleBewerbungen']='Stato selezione:';
 $this->phrasen['bewerbung/status']='Stato';
 $this->phrasen['bewerbung/legende']='Legenda';
 $this->phrasen['bewerbung/bewerbungsstatus']='Stato richiesta colloquio';
