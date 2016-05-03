@@ -58,17 +58,25 @@ $this->phrasen['bewerbung/prioUeberschrifttopprio'] = 'Massima priorità';
 $this->phrasen['bewerbung/prioUeberschriftalternative'] = 'Alternativa (opzionale)';
 $this->phrasen['bewerbung/neuerStudiengang'] = 'Per favore scegliere un corso di studi per il quale inviare la richiesta di colloquio';
 $this->phrasen['bewerbung/geplanteStudienrichtung']='Corso di studi';
-$this->phrasen['bewerbung/menuAllgemein']='Generale';
+$this->phrasen['bewerbung/menuAllgemein']='Benvenuto';
 $this->phrasen['bewerbung/loginmitAccount']='Se è già in possesso di un account, può accedere con il proprio username / password';
 $this->phrasen['bewerbung/allgemeineErklaerung']='La ringraziamo per la sua richiesta colloquio.<br><br>
 	Per favore compili il formulario in tutte le sue parti per poi inviarlo.<br><br>
 	<b>Modalità di richiesta colloquio:</b><br>
 	<p style="text-align:justify;">Compili tutti i campi. Quando saranno inseriti tutti i dati sarà possibile inviare la richiesta colloquio.<br>
 	Nei prossimi giorni verrà contattato/a.';
-$this->phrasen['bewerbung/erklaerungStudierende']='Grazie per il suo interesse ai nostri corsi di studi.<br><br>
-	Per favore clicchi su "Aggiungi corso di studi" per aggiungere alla sua richiesta di colloquio un corso di studi.
-	Potrebbe essere necessario inserire ulteriori dati prima di poter inviare la propria richiesta colloquio nell’ultima fase di questo processo.';
-$this->phrasen['bewerbung/aktuelleBewerbungen']='Richieste di colloquio in corso:';
+
+$this->phrasen['bewerbung/erklaerungStudierende']='
+	<b>Guida al processo di selezione:</b><br>
+	<p style="text-align:justify;">Se accede per la prima volta, compili tutti i campi. Quando saranno inseriti tutti i dati sarà possibile inviare la richiesta di colloquio. Nei prossimi giorni verrà contattato/a.<br><br>
+	Se ha già inviato la richiesta di colloquio, potrà seguire la sua posizione nella sezione "stato selezione".<br><br>
+	<b>Descrizione degli stati:</b><br>
+	Interessato: ha inviato la richiesta di colloquio.<br>
+	Prenotato al colloquio: ha ricevuto conferma della data del colloquio.<br>
+	Idoneo: colloquio sostenuto con esito positivo e posizione utile per perfezionare l’immatricolazione entro 10 giorni lavorativi dalla data di comunicazione.<br>
+	In lista d’attesa: colloquio sostenuto e posizione in graduatoria in attesa di scorrimento.<br>
+	Studente: se visualizza questo stato, si rivolga alla segreteria per accedere all’area studenti.';
+$this->phrasen['bewerbung/aktuelleBewerbungen']='Stato selezione:'
 $this->phrasen['bewerbung/status']='Stato';
 $this->phrasen['bewerbung/legende']='Legenda';
 $this->phrasen['bewerbung/bewerbungsstatus']='Stato richiesta colloquio';
@@ -95,7 +103,7 @@ $this->phrasen['bewerbung/kontakt']='Contatto';
 $this->phrasen['bewerbung/nation']='Nazione';
 $this->phrasen['bewerbung/menuDokumente']='Documenti';
 $this->phrasen['bewerbung/dokument']='Documento';
-$this->phrasen['bewerbung/bitteDokumenteHochladen']='E’ qui possibile caricare i documenti necessari per candidarsi al corso di studi desiderato. Se un documento è indicato come "obbligatorio" sarà possibile completare l’invio della richiesta di colloquio solamente in seguito al caricamento o alla selezione dell’opzione "Documento verrà inviato prossimamente".
+$this->phrasen['bewerbung/bitteDokumenteHochladen']='E’ qui possibile caricare i documenti necessari per candidarsi al corso di studi desiderato. Se un documento è indicato come "obbligatorio" (indicato da sfondo rosa e asterisco) sarà possibile completare l’invio della richiesta di colloquio solamente in seguito al caricamento. In alternativa è possibile selezionare l’opzione "Documento verrà inviato prossimamente" (indicato da clessidra).
 		In questo caso sarà possibile inviare il documento in un momento successivo.';
 $this->phrasen['bewerbung/linkDokumenteHochladen']='Carica documenti';
 $this->phrasen['bewerbung/dokumenteZumHochladen']='Documenti utili:';
