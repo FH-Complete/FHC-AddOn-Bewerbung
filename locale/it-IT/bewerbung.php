@@ -5,7 +5,7 @@ $this->phrasen['bewerbung/registration']='Codice di accesso per la registrazione
 $this->phrasen['bewerbung/registrieren']='Registrati';
 $this->phrasen['bewerbung/abschicken']='Invia';
 $this->phrasen['bewerbung/registrierenOderZugangscode']='<a href="'.$_SERVER['PHP_SELF'].'?method=registration">Registrarsi qui</a> o inserire il codice di accesso';
-$this->phrasen['bewerbung/einleitungstext']='Compilare il formulario, scegliere il corso di studi e cliccare su “Invia”.<br>Verrà inviata, all’indirizzo fornito, una e-mail con il codice di accesso.
+$this->phrasen['bewerbung/einleitungstext']='Compilare il formulario, scegliere il corso di studi e cliccare su "Invia".<br>Verrà inviata, all’indirizzo fornito, una e-mail con il codice di accesso.
 		Con il codice di accesso sarà possibile accedere, completare l’inserimento dei dati, confermare il corso di studi scelto e inviare la propria richiesta di colloquio in maniera non vincolante.';
 /*$this->phrasen['bewerbung/einleitungstext']='Per la registrazione compilare il formulario <u>in tutte le sue parti</u> e cliccare su ”Registrati”. <br>
 												Rimarrà in seguito la possibilità di modificare i dati e di caricare documenti prima di inviare la richiesta colloquio.';*/
