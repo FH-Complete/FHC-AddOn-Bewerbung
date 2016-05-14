@@ -60,11 +60,21 @@ $this->phrasen['bewerbung/neuerStudiengang'] = 'Per favore scegliere un corso di
 $this->phrasen['bewerbung/geplanteStudienrichtung']='Corso di studi';
 $this->phrasen['bewerbung/menuAllgemein']='Benvenuto';
 $this->phrasen['bewerbung/loginmitAccount']='Se è già in possesso di un account, può accedere con il proprio username / password';
-$this->phrasen['bewerbung/allgemeineErklaerung']='La ringraziamo per la sua richiesta colloquio.<br><br>
+$this->phrasen['bewerbung/allgemeineErklaerung1']='La ringraziamo per la sua richiesta colloquio.<br><br>
 	Per favore compili il formulario in tutte le sue parti per poi inviarlo.<br><br>
 	<b>Modalità di richiesta colloquio:</b><br>
 	<p style="text-align:justify;">Compili tutti i campi. Quando saranno inseriti tutti i dati sarà possibile inviare la richiesta colloquio.<br>
 	Nei prossimi giorni verrà contattato/a.';
+$this->phrasen['bewerbung/allgemeineErklaerung']='
+	<b>Guida al processo di selezione:</b><br>
+	<p style="text-align:justify;">Se accede per la prima volta, compili tutti i campi. Quando saranno inseriti tutti i dati sarà possibile inviare la richiesta di colloquio. Nei prossimi giorni verrà contattato/a.<br><br>
+	Se ha già inviato la richiesta di colloquio, potrà seguire la sua posizione nella sezione "stato selezione".<br><br>
+	<b>Descrizione degli stati:</b><br>
+	Interessato: ha inviato la richiesta di colloquio.<br>
+	Prenotato al colloquio: ha ricevuto conferma della data del colloquio.<br>
+	Idoneo: colloquio sostenuto con esito positivo e posizione utile per perfezionare l’immatricolazione entro 10 giorni lavorativi dalla data di comunicazione.<br>
+	In lista d’attesa: colloquio sostenuto e posizione in graduatoria in attesa di scorrimento.<br>
+	Studente: se visualizza questo stato, si rivolga alla segreteria per accedere all’area studenti.';
 
 $this->phrasen['bewerbung/erklaerungStudierende']='
 	<b>Guida al processo di selezione:</b><br>
