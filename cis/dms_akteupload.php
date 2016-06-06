@@ -339,6 +339,10 @@ if(isset($_POST['submitbild']))
 		$prestudent= new prestudent();
 		$prestudent->getPrestudenten($person_id);
 
+		// Beim verschicken der Infomail wird auch das vorvorige Studiensemester hinzugefügt, damit auch Infomails für Studiensemester verschickt werden, für die man sich nicht mehr bewerben aber noch Dokumente hochladen kann. 
+		if (isset($stsem_array[0]))
+			array_unshift($stsem_array, $studiensemester->jump($stsem_array[0],-2));
+
 		foreach($prestudent->result as $prest)
 		{
 			$prestudent2 = new prestudent();
