@@ -274,21 +274,21 @@ function check_person_statusbestaetigt($person_id,$status_kurzbz,$studiensemeste
 function getStudienplaeneForOnlinebewerbung($studiengang_kz=null, $studiensemester_kurzbz=null, $ausbildungssemester=null, $orgform_kurzbz=null)
 {
 	$db = new basis_db();
-	$qry = "SELECT
-				    tbl_studienplan.*,
+	$qry = "SELECT DISTINCT
+					tbl_studienplan.*,
 					tbl_studienordnung.bezeichnung AS bezeichnung_studienordnung,
 					tbl_studienordnung.ects,
 					tbl_studienordnung.studiengangbezeichnung,
 					tbl_studienordnung.studiengangbezeichnung_englisch,
 					tbl_studienordnung.studiengangkurzbzlang,
 					tbl_studienordnung.akadgrad_id
-			    FROM
-				    lehre.tbl_studienplan
-				    JOIN lehre.tbl_studienordnung USING(studienordnung_id)
-				    JOIN lehre.tbl_studienordnung_semester USING(studienordnung_id)
+				FROM
+					lehre.tbl_studienplan
+					JOIN lehre.tbl_studienordnung USING(studienordnung_id)
+					JOIN lehre.tbl_studienordnung_semester USING(studienordnung_id)
 			    WHERE
-				    tbl_studienplan.aktiv";				    
-				    
+					tbl_studienplan.aktiv";
+
 	if($studiengang_kz!='')
 	{
 		$qry.=" AND tbl_studienordnung.studiengang_kz=".$db->db_add_param($studiengang_kz, FHC_INTEGER);

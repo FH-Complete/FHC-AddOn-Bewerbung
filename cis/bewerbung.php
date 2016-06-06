@@ -375,7 +375,7 @@ if(isset($_POST['btn_person']) && !$eingabegesperrt)
 
 		$notiz = new notiz;
 		$notiz->person_id = $person_id;
-		$notiz->verfasser_uid = '_DummyStudent';
+		$notiz->verfasser_uid = '';
 		$notiz->erledigt = false;
 		$notiz->insertvon = 'online'; //Nicht aendern, da in notiz.class.php nach insertvon abgefragt wird
 		$notiz->insertamum = date('c');
@@ -675,7 +675,7 @@ if(isset($_POST['btn_notiz']))
 	{
 		$notiz = new notiz;
 		$notiz->person_id = $person_id;
-		$notiz->verfasser_uid = '_DummyStudent';
+		$notiz->verfasser_uid = '';
 		$notiz->erledigt = false;
 		$notiz->insertvon = 'online_notiz'; //Nicht aendern, da in notiz.class.php nach insertvon abgefragt wird
 		$notiz->insertamum = date('c');
@@ -1212,6 +1212,14 @@ function sendBewerbung($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz)
 			}
 		}
 		$email.= '</td></tr></tbody></table>';
+		$email.= '<br>';
+		$email.= '<table border="0" cellspacing="0" cellpadding="0">
+					<tr><td>
+						<a href="'.APP_ROOT.'addons/bewerbung/cis/status_bestaetigen.php?prestudent_id='.$prestudent_id.'&studiensemester_kurzbz='.$studiensemester_kurzbz.'&bestaetigen=true" target="_blank" style="font-size: 16px; font-family: Helvetica, Arial, sans-serif; color: #ffffff; text-decoration: none; border-radius: 3px; -webkit-border-radius: 3px; -moz-border-radius: 3px; background-color: #5cb85c; border-top: 6px solid #5cb85c; border-bottom: 6px solid #5cb85c; border-right: 12px solid #5cb85c; border-left: 12px solid #5cb85c; display: inline-block;">
+							'.$p->t('bewerbung/statusBestaetigen').'
+						</a>
+					</td></tr>
+					</table>';
 		$email.= '<br>';
 		$email.= $p->t('bewerbung/emailBodyEnde');
 	}

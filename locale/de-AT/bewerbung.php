@@ -198,4 +198,5 @@ $this->phrasen['bewerbung/dannHiermitAccountEinloggen']='Dann loggen Sie sich hi
 $this->phrasen['bewerbung/dannHierEinloggen']='Dann loggen Sie sich hier ein';
 $this->phrasen['bewerbung/dokumentHerunterladen']='Dokument herunterladen';
 $this->phrasen['bewerbung/hinweisZGVdatenaenderung']='<b>Hinweis:</b> Aus organisatorischen Gründen können gespeicherte Angaben hier nicht mehr verändert werden. Sollten Angaben fehlerhaft sein, verwenden Sie bitte das Notizfeld im Schritt "Abschließen" oder kontaktieren Sie die Assistenz per E-Mail.';
+$this->phrasen['bewerbung/statusBestaetigen']='Status direkt bestätigen';
 ?>

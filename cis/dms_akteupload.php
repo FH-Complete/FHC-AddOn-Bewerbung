@@ -329,7 +329,7 @@ if(isset($_POST['submitbild']))
                 }
                 else
                 {
-                    echo '<span class="error">Personen nicht gefunden</sapn>';
+                    echo '<span class="error">Personen nicht gefunden</span>';
                 }
             }
         }

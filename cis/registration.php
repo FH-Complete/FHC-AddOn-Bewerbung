@@ -567,7 +567,8 @@ elseif($username && $password)
 									foreach ($studienplan as $row)
 										$orgformen_sprachen[] = $row->orgform_kurzbz.'_'.$row->sprache;
 								}
-								
+								$orgformen_sprachen = array_unique($orgformen_sprachen);
+
 								$modal = false;
 
 								if(count($orgform_stg) > 1 || count($sprache) > 1)
