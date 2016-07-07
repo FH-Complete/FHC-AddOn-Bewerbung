@@ -565,7 +565,12 @@ elseif($username && $password)
 								if($studienplan!='')
 								{
 									foreach ($studienplan as $row)
-										$orgformen_sprachen[] = $row->orgform_kurzbz.'_'.$row->sprache;
+									{
+										if ($result->studiengang_kz==334 && $row->studiengangbezeichnung=='Intelligent Transport Systems') //@todo: Pfuschloesung bis zum neuen Tool, damit MIT nicht mehr angezeigt wird
+											continue;
+										else
+											$orgformen_sprachen[] = $row->orgform_kurzbz.'_'.$row->sprache;
+									}
 								}
 								$orgformen_sprachen = array_unique($orgformen_sprachen);
 
@@ -576,31 +581,39 @@ elseif($username && $password)
 									$modal = true;
 								}
 
+								if ($result->studiengang_kz==334 && $stg_bezeichnung=='Integrative Stadtentwicklung – Smart City') //@todo: Pfuschloesung bis zum neuen Tool, damit kein Modal bei MSC angezeigt wird
+									$modal = false;
+									
 								if(in_array($result->studiengang_kz, $studiengaenge) || $result->studiengang_kz == $stg_auswahl)
 								{
 									$checked = 'checked';
 								}
-								echo '
-								<div class="checkbox">
-									<label data-toggle="collapse" data-target="#prio-dropown'.$result->studiengang_kz.'">
-										<input type="checkbox" name="studiengaenge[]" value="'.$result->studiengang_kz.'" '.$checked.'
-												data-modal="'.$modal.'"
-												data-modal-sprache="'.implode(',', $sprache_lv).'"
-												data-modal-orgform="'.implode(',', $orgform_stg).'"
-												data-modal-orgformsprache="'.implode(',', $orgformen_sprachen).'">
-										'.$stg_bezeichnung;
-								if($result->typ=='l' && isset($lgtyparr[$result->lgartcode]))
+								if ($result->studiengang_kz==334 && $stg_bezeichnung=='Intelligent Transport Systems') //@todo: Pfuschloesung bis zum neuen Tool, damit MIT nicht mehr angezeigt wird
+									continue;
+								else 
 								{
-									echo ' ('.$lgtyparr[$result->lgartcode].')';
+									echo '
+									<div class="checkbox">
+										<label data-toggle="collapse" data-target="#prio-dropown'.$result->studiengang_kz.'">
+											<input type="checkbox" name="studiengaenge[]" value="'.$result->studiengang_kz.'" '.$checked.'
+													data-modal="'.$modal.'"
+													data-modal-sprache="'.implode(',', $sprache_lv).'"
+													data-modal-orgform="'.implode(',', $orgform_stg).'"
+													data-modal-orgformsprache="'.implode(',', $orgformen_sprachen).'">
+											'.$stg_bezeichnung;
+									if($result->typ=='l' && isset($lgtyparr[$result->lgartcode]))
+									{
+										echo ' ('.$lgtyparr[$result->lgartcode].')';
+									}
+	
+									echo '
+											<span class="badge" id="badge'.$result->studiengang_kz.'">'.$anmerkungen[$result->studiengang_kz].'</span>
+											<input type="hidden" id="anmerkung'.$result->studiengang_kz.'" name="anmerkung['.$result->studiengang_kz.']" value="'.$anmerkungen[$result->studiengang_kz].'">
+											<input type="hidden" id="orgform'.$result->studiengang_kz.'" name="orgform['.$result->studiengang_kz.']" value="'.$orgform[$result->studiengang_kz].'">
+										</label>
+									</div>
+									';
 								}
-
-								echo '
-										<span class="badge" id="badge'.$result->studiengang_kz.'">'.$anmerkungen[$result->studiengang_kz].'</span>
-										<input type="hidden" id="anmerkung'.$result->studiengang_kz.'" name="anmerkung['.$result->studiengang_kz.']" value="'.$anmerkungen[$result->studiengang_kz].'">
-										<input type="hidden" id="orgform'.$result->studiengang_kz.'" name="orgform['.$result->studiengang_kz.']" value="'.$orgform[$result->studiengang_kz].'">
-									</label>
-								</div>
-								';
 								if(in_array($result->studiengang_kz, $studiengaenge))
 									$collapse = 'collapse in';
 								else
