@@ -16,9 +16,9 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
  *
  * Authors: Christian Paminger <christian.paminger@technikum-wien.at>,
- *          Andreas Oesterreicher <andreas.oesterreicher@technikum-wien.at>,
- *          Rudolf Hangl <rudolf.hangl@technikum-wien.at>,
- *          Karl Burkhart <burkhart@technikum-wien.at>.
+ *		  Andreas Oesterreicher <andreas.oesterreicher@technikum-wien.at>,
+ *		  Rudolf Hangl <rudolf.hangl@technikum-wien.at>,
+ *		  Karl Burkhart <burkhart@technikum-wien.at>.
  */
 
 // Oberflaeche zur Aenderung von Beispielen und Upload von Bildern
@@ -49,8 +49,8 @@ $db = new basis_db();
 
 if (!isset($_SESSION['bewerbung/user']) || $_SESSION['bewerbung/user']=='')
 {
-    header('registration.php?method=allgemein');
-    exit;
+	header('registration.php?method=allgemein');
+	exit;
 }
 
 if(isset($_GET['lang']))
@@ -71,35 +71,35 @@ $PHP_SELF = $_SERVER['PHP_SELF'];
 echo '<!DOCTYPE HTML>
 <html>
 		<head>
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-        <title>'.$p->t('bewerbung/fileUpload').'</title>
-        <link href="../../../submodules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" type="text/css">
-        <link href="../../../skin/fhcomplete.css" rel="stylesheet" type="text/css">
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+		<title>'.$p->t('bewerbung/fileUpload').'</title>
+		<link href="../../../submodules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+		<link href="../../../skin/fhcomplete.css" rel="stylesheet" type="text/css">
 		<script src="../../../include/js/jquery.min.1.11.1.js"></script>
 		<script src="../../../submodules/bootstrap/dist/js/bootstrap.min.js"></script>
-        <script>
-        function showExtensionInfo()
-        {
+		<script>
+		function showExtensionInfo()
+		{
 
-            var typ = $("#dokumenttyp").val();
-            var extinfo="";
-            if(typ=="Lichtbil")
-                extinfo="jpg";
-            else
-                extinfo="jpg, png, gif, tiff, bmp, pdf, zip, doc, docx";
-            $("#extinfo").html("'.$p->t('bewerbung/ExtensionInformation').'"+extinfo);
-        }
+			var typ = $("#dokumenttyp").val();
+			var extinfo="";
+			if(typ=="Lichtbil")
+				extinfo="jpg";
+			else
+				extinfo="jpg, png, gif, tiff, bmp, pdf, zip, doc, docx";
+			$("#extinfo").html("'.$p->t('bewerbung/ExtensionInformation').'"+extinfo);
+		}
 
-        $(function() {
-          showExtensionInfo()
-        });
-        </script>
-        <style>
-        body {
-            margin:10px;
-        }
-        </style>
-        </head>
+		$(function() {
+		  showExtensionInfo()
+		});
+		</script>
+		<style>
+		body {
+			margin:10px;
+		}
+		</style>
+		</head>
 		<body>';
 
 // Benoetigte Dokumente abfragen
@@ -130,90 +130,90 @@ foreach($studiensemester->studiensemester AS $s)
 //Bei Upload eines Dokuments
 if(isset($_POST['submitbild']))
 {
-    $error = false;
+	$error = false;
 
-    // dms Eintrag anlegen
-    if(isset($_POST['fileupload']))
-    {
-        $ext = strtolower(pathinfo($_FILES['file']['name'], PATHINFO_EXTENSION));
+	// dms Eintrag anlegen
+	if(isset($_POST['fileupload']))
+	{
+		$ext = strtolower(pathinfo($_FILES['file']['name'], PATHINFO_EXTENSION));
 
-        if((in_array($ext,array('jpg','jpeg')) && $_REQUEST['dokumenttyp']=='Lichtbil')
-          || ($_REQUEST['dokumenttyp']!='Lichtbil' && in_array($ext, array('zip','pdf','doc','docx','jpg','png','gif','tiff','bmp'))))
-        {
-            $filename = uniqid();
-            $filename.=".".$ext;
-            $uploadfile = DMS_PATH.$filename;
+		if((in_array($ext,array('jpg','jpeg')) && $_REQUEST['dokumenttyp']=='Lichtbil')
+		  || ($_REQUEST['dokumenttyp']!='Lichtbil' && in_array($ext, array('zip','pdf','doc','docx','jpg','png','gif','tiff','bmp'))))
+		{
+			$filename = uniqid();
+			$filename.=".".$ext;
+			$uploadfile = DMS_PATH.$filename;
 
-            if(move_uploaded_file($_FILES['file']['tmp_name'], $uploadfile))
-            {
+			if(move_uploaded_file($_FILES['file']['tmp_name'], $uploadfile))
+			{
 				/*
-                if(!@chgrp($uploadfile,'dms'))
-                    echo 'CHGRP failed';
-                if(!@chmod($uploadfile, 0774))
-                    echo 'CHMOD failed';
-                //exec('sudo chown wwwrun '.$uploadfile);
+				if(!@chgrp($uploadfile,'dms'))
+					echo 'CHGRP failed';
+				if(!@chmod($uploadfile, 0774))
+					echo 'CHMOD failed';
+				//exec('sudo chown wwwrun '.$uploadfile);
 				*/
-                //Wenn Akte mit DMS-ID vorhanden, dann neue DMS-Version hochladen
-                $akte = new akte();
-                $version='0';
-                $dms_id='';
-                if($akte->getAkten($_GET['person_id'], $_REQUEST['dokumenttyp']))
-                {
-                	//erste Akte @todo: Ist auch so in content/akte.php. Kann irrefuehrende Ergebisse liefern, wenn bereits mehrere Akten des selben Typs vorhanden sind. 
-                	if(isset($akte->result[0]))
-                	{
-                		$akte = $akte->result[0];
-                		if ($akte->dms_id!='')
-                		{
-                			$dms = new dms();
-                			$dms->load($akte->dms_id);
-                			
-                			$version=$dms->version+1;
-                			$dms_id=$akte->dms_id;                			
-                		}
-                	}
-                }
-                
-                $dms = new dms();
+				//Wenn Akte mit DMS-ID vorhanden, dann neue DMS-Version hochladen
+				$akte = new akte();
+				$version='0';
+				$dms_id='';
+				if($akte->getAkten($_GET['person_id'], $_REQUEST['dokumenttyp']))
+				{
+					//erste Akte @todo: Ist auch so in content/akte.php. Kann irrefuehrende Ergebisse liefern, wenn bereits mehrere Akten des selben Typs vorhanden sind. 
+					if(isset($akte->result[0]))
+					{
+						$akte = $akte->result[0];
+						if ($akte->dms_id!='')
+						{
+							$dms = new dms();
+							$dms->load($akte->dms_id);
+							
+							$version=$dms->version+1;
+							$dms_id=$akte->dms_id;							
+						}
+					}
+				}
 				
-                $dms->dms_id=$dms_id;
-                $dms->version=$version;
-                $dms->kategorie_kurzbz=$kategorie_kurzbz;
+				$dms = new dms();
+				
+				$dms->dms_id=$dms_id;
+				$dms->version=$version;
+				$dms->kategorie_kurzbz=$kategorie_kurzbz;
 
-                $dms->insertamum=date('Y-m-d H:i:s');
-                $dms->insertvon = 'online';
-                $dms->mimetype=$_FILES['file']['type'];
-                $dms->filename = $filename;
-                $dms->name = $_FILES['file']['name'];
+				$dms->insertamum=date('Y-m-d H:i:s');
+				$dms->insertvon = 'online';
+				$dms->mimetype=$_FILES['file']['type'];
+				$dms->filename = $filename;
+				$dms->name = $_FILES['file']['name'];
 
-                if($dms->save(true))
-                {
-                    $dms_id=$dms->dms_id;
-                }
-                else
-                {
-                    echo $p->t('global/fehlerBeimSpeichernDerDaten');
-                    $error = true;
-                }
-            }
-            else
-            {
-                echo $p->t('global/dateiNichtErfolgreichHochgeladen');
-                $error = true;
-            }
-        }
-        else
-        {
-            echo '<span class="error">'.$p->t('bewerbung/falscherDateityp').'</span>';
-            $error = true;
-        }
-    }
+				if($dms->save(true))
+				{
+					$dms_id=$dms->dms_id;
+				}
+				else
+				{
+					echo $p->t('global/fehlerBeimSpeichernDerDaten');
+					$error = true;
+				}
+			}
+			else
+			{
+				echo $p->t('global/dateiNichtErfolgreichHochgeladen');
+				$error = true;
+			}
+		}
+		else
+		{
+			echo '<span class="error">'.$p->t('bewerbung/falscherDateityp').'</span>';
+			$error = true;
+		}
+	}
 
 	if(isset($_FILES['file']['tmp_name']) && !$error)
 	{
 		//Extension herausfiltern
-    	$ext = explode('.',$_FILES['file']['name']);
-        $ext = mb_strtolower($ext[count($ext)-1]);
+		$ext = explode('.',$_FILES['file']['name']);
+		$ext = mb_strtolower($ext[count($ext)-1]);
 
 		$filename = $_FILES['file']['tmp_name'];
 
@@ -247,7 +247,7 @@ if(isset($_POST['submitbild']))
 		$titel = '';
 
 		// da nur 32 zeichen gespeichert werden dürfen, muss anhand vom typ gekürzt werden
-        if($_REQUEST['dokumenttyp']=='Lebenslf')
+		if($_REQUEST['dokumenttyp']=='Lebenslf')
 			$titel = $p->t('incoming/lebenslauf').".".$extension;
 		if($_REQUEST['dokumenttyp']=='LearnAgr')
 			$titel = $p->t('incoming/learningAgreement').".".$extension;
@@ -257,14 +257,26 @@ if(isset($_POST['submitbild']))
 			$titel = $p->t('incoming/zeugnis').".".$extension;
 		if($_REQUEST['dokumenttyp']=='Lichtbil')
 			$titel = $p->t('incoming/lichtbild').".".$extension;
-        if($_REQUEST['dokumenttyp']=='Maturaze')
+		if($_REQUEST['dokumenttyp']=='Maturaze')
 			$titel = $p->t('bewerbung/maturazeugnis').".".$extension;
 
 
 		$akte->dokument_kurzbz = $_REQUEST['dokumenttyp'];
-        $akte->bezeichnung = mb_substr($_FILES['file']['name'], 0, 32);
+		$akte->bezeichnung = mb_substr($_FILES['file']['name'], 0, 32);
 		$akte->person_id = $_GET['person_id'];
-		//$akte->inhalt = base64_encode($content);
+		if($_REQUEST['dokumenttyp']=='Lichtbil')
+		{
+			//Fotos auf maximal 827x1063 begrenzen
+			resize($uploadfile, 827, 1063);
+			
+			$fp = fopen($uploadfile,'r');
+			//auslesen
+			$content = fread($fp, filesize($uploadfile));
+			fclose($fp);
+			
+			$akte->inhalt = base64_encode($content);
+		}
+		
 		$akte->mimetype = $_FILES['file']['type'];
 		$akte->erstelltam = date('Y-m-d H:i:s');
 		$akte->gedruckt = false;
@@ -277,63 +289,63 @@ if(isset($_POST['submitbild']))
 		$akte->anmerkung = '';
 		$akte->insertvon = 'online';
 		$akte->uid = '';
-        $akte->dms_id = $dms_id;
+		$akte->dms_id = $dms_id;
 
 
-        if (!$akte->save())
-        {
-            echo "<b>" . $p->t('global/fehleraufgetreten') . ": $akte->errormsg</b>";
-        }
-        else
-        {
-            echo "<b>" . $p->t('global/erfolgreichgespeichert') . "</b>";
-            if($_REQUEST['dokumenttyp']=='Lichtbil')
-            {
-                // Wenn ein Foto hochgeladen wird dieses auch in die Person speichern
-                //groesse auf maximal 101x130 begrenzen
-    			$tempname = resize($uploadfile, 101, 130);
+		if (!$akte->save())
+		{
+			echo "<b>" . $p->t('global/fehleraufgetreten') . ": $akte->errormsg</b>";
+		}
+		else
+		{
+			echo "<b>" . $p->t('global/erfolgreichgespeichert') . "</b>";
+			if($_REQUEST['dokumenttyp']=='Lichtbil')
+			{
+				// Wenn ein Foto hochgeladen wird dieses auch in die Person speichern
+				//groesse auf maximal 101x130 begrenzen
+				$tempname = resize($uploadfile, 101, 130);
 
-    			//in DB speichern
-    			//File oeffnen
-    			$fp = fopen($tempname,'r');
-    			//auslesen
-    			$content = fread($fp, filesize($tempname));
-    			fclose($fp);
-                unset($tempname);
-    			//in base64 umrechnen
-    			$content = base64_encode($content);
+				//in DB speichern
+				//File oeffnen
+				$fp = fopen($tempname,'r');
+				//auslesen
+				$content = fread($fp, filesize($tempname));
+				fclose($fp);
+				unset($tempname);
+				//in base64 umrechnen
+				$content = base64_encode($content);
 
-    			$person = new person();
-    			if($person->load($_GET['person_id']))
-    			{
-    				//base64 Wert in die Datenbank speichern
-    				$person->foto = $content;
-    				$person->new = false;
-    				if($person->save())
-    				{
-    					$fs = new fotostatus();
-    					$fs->person_id=$person->person_id;
-    					$fs->fotostatus_kurzbz='hochgeladen';
-    					$fs->datum = date('Y-m-d');
-    					$fs->insertamum = date('Y-m-d H:i:s');
-    					$fs->insertvon = 'online';
-    					$fs->updateamum = date('Y-m-d H:i:s');
-    					$fs->updatevon = 'online';
-    					if(!$fs->save(true))
-    						echo '<span class="error">Fehler beim Setzen des Bildstatus</span>';
-    				}
-                    else
-                    {
-                        echo '<span class="error">Fehler beim Speichern der Person</span>';
-                    }
-                }
-                else
-                {
-                    echo '<span class="error">Personen nicht gefunden</span>';
-                }
-            }
-        }
-        //Wenn nach dem Abschicken einer Bewerbung ein Dokument hochgeladen wird, wird ein Infomail verschickt
+				$person = new person();
+				if($person->load($_GET['person_id']))
+				{
+					//base64 Wert in die Datenbank speichern
+					$person->foto = $content;
+					$person->new = false;
+					if($person->save())
+					{
+						$fs = new fotostatus();
+						$fs->person_id=$person->person_id;
+						$fs->fotostatus_kurzbz='hochgeladen';
+						$fs->datum = date('Y-m-d');
+						$fs->insertamum = date('Y-m-d H:i:s');
+						$fs->insertvon = 'online';
+						$fs->updateamum = date('Y-m-d H:i:s');
+						$fs->updatevon = 'online';
+						if(!$fs->save(true))
+							echo '<span class="error">Fehler beim Setzen des Bildstatus</span>';
+					}
+					else
+					{
+						echo '<span class="error">Fehler beim Speichern der Person</span>';
+					}
+				}
+				else
+				{
+					echo '<span class="error">Personen nicht gefunden</span>';
+				}
+			}
+		}
+		//Wenn nach dem Abschicken einer Bewerbung ein Dokument hochgeladen wird, wird ein Infomail verschickt
 		
 		$abgeschickt = array();
 		$prestudent= new prestudent();
@@ -358,11 +370,11 @@ if(isset($_POST['submitbild']))
 				}
 			}
 		}
-		        
+				
 		echo "<script>
-                var loc = window.opener.location;
-                window.opener.location = 'bewerbung.php?active=dokumente';
-            </script>";
+				var loc = window.opener.location;
+				window.opener.location = 'bewerbung.php?active=dokumente';
+			</script>";
 	}
 }
 
@@ -373,13 +385,13 @@ if($person_id !='')
 	$akzeptiert = new dokument();
 
 	echo '	<form method="POST" enctype="multipart/form-data" action="'.$PHP_SELF.'?person_id='.$_GET['person_id'].'&dokumenttyp='.$dokumenttyp.'" class="form-horizontal">
-            <div class="form-group">
+			<div class="form-group">
 				<label for="file" class="col-xs-2 control-label">'.$p->t('incoming/dokument').':</label>
 				<div class="col-xs-5">
 					<input type="file" name="file" class="file"/>
 				</div>
 			</div>
-            <div class="form-group">
+			<div class="form-group">
 				<label for="file" class="col-xs-2 control-label">'.$p->t('incoming/dokumenttyp').':</label>
 				<div class="col-xs-5">
 					<SELECT name="dokumenttyp" id="dokumenttyp" onchange="showExtensionInfo()" class="form-control">';
@@ -405,12 +417,12 @@ if($person_id !='')
 					}
 				}
 	echo '			</select>
-                </div>
-            </div>
-            <input type="submit" name="submitbild" value="Upload" class="btn btn-default">
-            <p class="help-block"><span id="extinfo"></span></p>
-            <input type="hidden" name="kategorie_kurzbz" id="kategorie_kurzbz" value="Akte">
-            <input type="hidden" name="fileupload" id="fileupload">
+				</div>
+			</div>
+			<input type="submit" name="submitbild" value="Upload" class="btn btn-default">
+			<p class="help-block"><span id="extinfo"></span></p>
+			<input type="hidden" name="kategorie_kurzbz" id="kategorie_kurzbz" value="Akte">
+			<input type="hidden" name="fileupload" id="fileupload">
 		</form>';
 
 }
@@ -422,7 +434,7 @@ else
 function resize($filename, $width, $height)
 {
 	$ext = explode('.',$_FILES['file']['name']);
-    $ext = mb_strtolower($ext[count($ext)-1]);
+	$ext = mb_strtolower($ext[count($ext)-1]);
 
 	// Hoehe und Breite neu berechnen
 	list($width_orig, $height_orig) = getimagesize($filename);
@@ -446,13 +458,13 @@ function resize($filename, $width, $height)
 	else
 		$image_p = $image;
 
-    $tmpfname = tempnam(sys_get_temp_dir(), 'FHC');
+	$tmpfname = tempnam(sys_get_temp_dir(), 'FHC');
 
 	imagejpeg($image_p, $tmpfname, 80);
 
-    imagedestroy($image_p);
+	imagedestroy($image_p);
 	@imagedestroy($image);
-    return $tmpfname;
+	return $tmpfname;
 }
 
 // Sendet eine Email an die Assistenz, dass ein neues Dokument hochgeladen wurde
