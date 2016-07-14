@@ -87,7 +87,7 @@ $this->phrasen['bewerbung/artDerTaetigkeit']='Type of Occupation';
 $this->phrasen['bewerbung/weiter']='Next';
 $this->phrasen['bewerbung/eintragVom']='Date of record:';
 $this->phrasen['bewerbung/menuPersDaten']='Personal Data';
-$this->phrasen['bewerbung/accountVorhanden']='Since your status as applicant has already been confirmed or you already have an account at the UASTW, you can no longer change your basic data. If there are some incorrect details here, please contact the administrative assistant responsible.';//Satz 1 nur grob uebersetzt 
+$this->phrasen['bewerbung/accountVorhanden']='Since your status as applicant has already been confirmed or you already have an account at the UASTW, you can no longer change your basic data. If there are some incorrect details here, please contact the administrative assistant responsible.';//Satz 1 nur grob uebersetzt
 $this->phrasen['bewerbung/bitteAuswaehlen']='-- please select --';
 $this->phrasen['bewerbung/menuKontaktinformationen']='Contact Details';
 $this->phrasen['bewerbung/kontakt']='Contact';
@@ -200,4 +200,5 @@ $this->phrasen['bewerbung/dannHierEinloggen']='Then login here';
 $this->phrasen['bewerbung/dokumentHerunterladen']='Download document';
 $this->phrasen['bewerbung/hinweisZGVdatenaenderung']='<b>Notice:</b> Saved data cannot be changed afterwards due to organisational reasons. If there is incorrect data please use the comment-area under "Finish" or contact your administrative assistant responsible.';
 $this->phrasen['bewerbung/statusBestaetigen']='Confirm status directly';
+$this->phrasen['bewerbung/footerText']='';
 ?>

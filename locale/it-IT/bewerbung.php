@@ -214,5 +214,5 @@ $this->phrasen['bewerbung/zugangscodeVergessen']='Ha dimenticato il codice di ac
 $this->phrasen['bewerbung/dannHiermitAccountEinloggen']='Esegua qui il login con il suo account CIS';
 $this->phrasen['bewerbung/dannHierEinloggen']='Esegua qui il login';
 $this->phrasen['bewerbung/dokumentHerunterladen']='Scaricare documento';
-
+$this->phrasen['bewerbung/footerText']='';
 ?>
