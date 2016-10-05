@@ -379,6 +379,7 @@ if(isset($_POST['btn_person']) && !$eingabegesperrt)
 		$notiz->erledigt = false;
 		$notiz->insertvon = 'online'; //Nicht aendern, da in notiz.class.php nach insertvon abgefragt wird
 		$notiz->insertamum = date('c');
+		$notiz->start = date('Y-m-d');
 		$notiz->titel = 'Berufstätigkeit';
 		$notiz->text = 'Berufstätig: ' . $berufstaetig . '; Dienstgeber: ' . $berufstaetig_dienstgeber
 				. '; Art der Tätigkeit: ' . $berufstaetig_art;
@@ -679,6 +680,7 @@ if(isset($_POST['btn_notiz']))
 		$notiz->erledigt = false;
 		$notiz->insertvon = 'online_notiz'; //Nicht aendern, da in notiz.class.php nach insertvon abgefragt wird
 		$notiz->insertamum = date('c');
+		$notiz->start = date('Y-m-d');
 		$notiz->titel = 'Anmerkung zur Bewerbung';
 		$notiz->text = $anmerkung;
 		$notiz->save(true);
