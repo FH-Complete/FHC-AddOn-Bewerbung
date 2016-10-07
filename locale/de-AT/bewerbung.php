@@ -200,4 +200,5 @@ $this->phrasen['bewerbung/dokumentHerunterladen']='Dokument herunterladen';
 $this->phrasen['bewerbung/hinweisZGVdatenaenderung']='<b>Hinweis:</b> Aus organisatorischen Gründen können gespeicherte Angaben hier nicht mehr verändert werden. Sollten Angaben fehlerhaft sein, verwenden Sie bitte das Notizfeld im Schritt "Abschließen" oder kontaktieren Sie die Assistenz per E-Mail.';
 $this->phrasen['bewerbung/statusBestaetigen']='Status direkt bestätigen';
 $this->phrasen['bewerbung/footerText']='';
+$this->phrasen['bewerbung/vorbehaltlichAkkreditierung']='Vorbehaltlich der Akkreditierung durch die AQ Austria';
 ?>

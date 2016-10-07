@@ -512,7 +512,7 @@ elseif($username && $password)
 						<div class="col-sm-6" id="liste-studiengaenge">
 							<?php
 							$stg = new studiengang();
-							$stg->getAllForBewerbung();
+							$stg->getAllForBewerbung('typ, tbl_lgartcode.bezeichnung ASC, studiengangbezeichnung');
 
 							$stghlp = new studiengang();
 							$stghlp->getLehrgangstyp();
@@ -533,14 +533,14 @@ elseif($username && $password)
 								$typen[] .= $stgtypen->typ;
 							}
 
-							$lasttyp='';
+							$lasttyp = '';
+							$last_lgtyp = '';
 							foreach($stg->result as $result)
 							{
 								if($lasttyp!=$result->typ)
 								{
 									if($lasttyp!='')
 										echo '</div>';
-									$stud = new studiengang();
 
 									if(in_array($result->typ, $typen))
 										$collapse = 'collapse in';
@@ -549,6 +549,11 @@ elseif($username && $password)
 									echo '<a href="#'.$stgtyp->studiengang_typ_arr[$result->typ].'" data-toggle="collapse"><h4>'.$stgtyp->studiengang_typ_arr[$result->typ].'  <small><span class="glyphicon glyphicon-collapse-down"></span></small></h4></a>';
 									echo '<div id="'.$stgtyp->studiengang_typ_arr[$result->typ].'" class="'.$collapse.'">';
 									$lasttyp=$result->typ;
+								}
+								if($last_lgtyp!=$result->bezeichnung && $result->bezeichnung != '')
+								{
+										echo '<p style="padding-top: 20px;"><b>'.$result->bezeichnung.'</b></p>';
+									$last_lgtyp=$result->bezeichnung;
 								}
 
 								$checked = '';
@@ -559,6 +564,7 @@ elseif($username && $password)
 									$stg_bezeichnung = $result->studiengangbezeichnung;
 
 								$orgform_stg = $stg->getOrgForm($result->studiengang_kz);
+
 								$sprache_lv = $stg->getSprache($result->studiengang_kz);
 								$studienplan = getStudienplaeneForOnlinebewerbung($result->studiengang_kz, '', '',''); //@todo: studiensemester und ausbildungssemester dynamisch
 								$orgformen_sprachen = array();
@@ -566,7 +572,7 @@ elseif($username && $password)
 								{
 									foreach ($studienplan as $row)
 									{
-										if ($result->studiengang_kz==334 && $row->studiengangbezeichnung=='Intelligent Transport Systems') //@todo: Pfuschloesung bis zum neuen Tool, damit MIT nicht mehr angezeigt wird
+										if (CAMPUS_NAME=='FH Technikum Wien' && $result->studiengang_kz==334) //@todo: Pfuschloesung bis zum neuen Tool, damit MIT nicht mehr angezeigt wird
 											continue;
 										else
 											$orgformen_sprachen[] = $row->orgform_kurzbz.'_'.$row->sprache;
@@ -576,19 +582,21 @@ elseif($username && $password)
 
 								$modal = false;
 
-								if(count($orgform_stg) > 1 || count($sprache) > 1)
+								if(count($orgform_stg) > 1 || count($sprache_lv) > 1)
 								{
 									$modal = true;
 								}
+								elseif ($result->typ!='l' && !isset($lgtyparr[$result->lgartcode]))
+									$stg_bezeichnung .= ' | <i>'.$p->t('bewerbung/orgform/'.$orgform_stg[0]).' - '.$p->t('bewerbung/'.$sprache_lv[0]).'</i>';
 
-								if ($result->studiengang_kz==334 && $stg_bezeichnung=='Integrative Stadtentwicklung – Smart City') //@todo: Pfuschloesung bis zum neuen Tool, damit kein Modal bei MSC angezeigt wird
+								if (CAMPUS_NAME=='FH Technikum Wien' && $result->studiengang_kz==334) //@todo: Pfuschloesung bis zum neuen Tool, damit kein Modal bei MSC angezeigt wird
 									$modal = false;
 
 								if(in_array($result->studiengang_kz, $studiengaenge) || $result->studiengang_kz == $stg_auswahl)
 								{
 									$checked = 'checked';
 								}
-								if ($result->studiengang_kz==334 && $stg_bezeichnung=='Intelligent Transport Systems') //@todo: Pfuschloesung bis zum neuen Tool, damit MIT nicht mehr angezeigt wird
+								if (CAMPUS_NAME=='FH Technikum Wien' && $result->studiengang_kz==334) //@todo: Pfuschloesung bis zum neuen Tool, damit MIT nicht mehr angezeigt wird
 									continue;
 								else
 								{
@@ -601,9 +609,11 @@ elseif($username && $password)
 													data-modal-orgform="'.implode(',', $orgform_stg).'"
 													data-modal-orgformsprache="'.implode(',', $orgformen_sprachen).'">
 											'.$stg_bezeichnung;
-									if($result->typ=='l' && isset($lgtyparr[$result->lgartcode]))
+									//if($result->typ=='l' && isset($lgtyparr[$result->lgartcode]))
+									if (CAMPUS_NAME=='FH Technikum Wien' && $result->studiengang_kz=='804') //@todo: Pfuschloesung bis zur Akkreditierung des Master Maschinenbau
 									{
-										echo ' ('.$lgtyparr[$result->lgartcode].')';
+										//echo ' ('.$lgtyparr[$result->lgartcode].')';
+										echo ' <span style="color: orange">('.$p->t('bewerbung/vorbehaltlichAkkreditierung').')</span>';
 									}
 
 									echo '

@@ -201,4 +201,5 @@ $this->phrasen['bewerbung/dokumentHerunterladen']='Download document';
 $this->phrasen['bewerbung/hinweisZGVdatenaenderung']='<b>Notice:</b> Saved data cannot be changed afterwards due to organisational reasons. If there is incorrect data please use the comment-area under "Finish" or contact your administrative assistant responsible.';
 $this->phrasen['bewerbung/statusBestaetigen']='Confirm status directly';
 $this->phrasen['bewerbung/footerText']='';
+$this->phrasen['bewerbung/vorbehaltlichAkkreditierung']='Subject to official accreditation by AQ Austria';
 ?>
