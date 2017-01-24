@@ -50,6 +50,7 @@ $this->phrasen['bewerbung/orgform/PT']='Part time';
 $this->phrasen['bewerbung/orgform/ZGS']='In gruppi ristretti';
 $this->phrasen['bewerbung/German']='Tedesco';
 $this->phrasen['bewerbung/English']='Inglese';
+$this->phrasen['bewerbung/Italian']='Italiano';
 $this->phrasen['bewerbung/topprio']='Massima priorità';
 $this->phrasen['bewerbung/alternative']='Alternativa';
 $this->phrasen['bewerbung/priowaehlen']='Esprimere prima e seconda scelta';

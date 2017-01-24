@@ -51,6 +51,7 @@ $this->phrasen['bewerbung/orgform/PT']='Part time';
 $this->phrasen['bewerbung/orgform/ZGS']='Zielgruppenspezifisch';
 $this->phrasen['bewerbung/German']='Deutsch';
 $this->phrasen['bewerbung/English']='Englisch';
+$this->phrasen['bewerbung/Italian']='Italienisch';
 $this->phrasen['bewerbung/topprio']='Oberste Priorität';
 $this->phrasen['bewerbung/alternative']='Alternative';
 $this->phrasen['bewerbung/priowaehlen']='Primäre und alternative Variante auswählen';
@@ -200,5 +201,4 @@ $this->phrasen['bewerbung/dokumentHerunterladen']='Dokument herunterladen';
 $this->phrasen['bewerbung/hinweisZGVdatenaenderung']='<b>Hinweis:</b> Aus organisatorischen Gründen können gespeicherte Angaben hier nicht mehr verändert werden. Sollten Angaben fehlerhaft sein, verwenden Sie bitte das Notizfeld im Schritt "Abschließen" oder kontaktieren Sie die Assistenz per E-Mail.';
 $this->phrasen['bewerbung/statusBestaetigen']='Status direkt bestätigen';
 $this->phrasen['bewerbung/footerText']='';
-$this->phrasen['bewerbung/vorbehaltlichAkkreditierung']='Vorbehaltlich der Akkreditierung durch die AQ Austria';
 ?>
