@@ -385,7 +385,7 @@ if(isset($_POST['btn_person']) && !$eingabegesperrt)
 	$person->staatsbuergerschaft = $_POST['staatsbuergerschaft'];
 	$person->geschlecht = $_POST['geschlecht'];
 	$person->anrede = ($_POST['geschlecht']=='m'?'Herr':'Frau');
-	$person->svnr = $_POST['svnr'];
+	$person->svnr = isset($_POST['svnr'])?$_POST['svnr']:'';
 	$person->gebort = $_POST['gebort'];
 	$person->geburtsnation = $_POST['geburtsnation'];
 

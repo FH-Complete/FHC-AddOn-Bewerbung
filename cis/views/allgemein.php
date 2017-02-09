@@ -160,7 +160,7 @@ if(!isset($person_id))
 							if (defined('BEWERBERTOOL_MAX_STUDIENGAENGE') && BEWERBERTOOL_MAX_STUDIENGAENGE != '')
 							{
 								if ($anzahl_studiengaenge[$row->studiensemester_kurzbz] >= BEWERBERTOOL_MAX_STUDIENGAENGE)
-									echo '<option value="" disabled="disabled" title="'.strip_tags($p->t('bewerbung/sieKoennenMaximalXStudiengaengeWaehlen')).'">-- '.$stsem->convert_html_chars($row->bezeichnung).' ('.$p->t('bewerbung/ab').' '.$datum->formatDatum($stsem->convert_html_chars($row->start),'d.m.Y').') --</option>';
+									echo '<option value="" disabled="disabled" title="'.strip_tags($p->t('bewerbung/sieKoennenMaximalXStudiengaengeWaehlen', array(BEWERBERTOOL_MAX_STUDIENGAENGE))).'">-- '.$stsem->convert_html_chars($row->bezeichnung).' ('.$p->t('bewerbung/ab').' '.$datum->formatDatum($stsem->convert_html_chars($row->start),'d.m.Y').') --</option>';
 								else 
 									echo '<option value="'.$row->studiensemester_kurzbz.'">'.$stsem->convert_html_chars($row->bezeichnung).' ('.$p->t('bewerbung/ab').' '.$datum->formatDatum($stsem->convert_html_chars($row->start),'d.m.Y').')</option>';
 							}

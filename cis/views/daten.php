@@ -172,9 +172,9 @@ if(!isset($person_id))
 			</div>
 		</div>
 		<?php
-		if(!defined('BEWERBERTOOL_SOZIALVERSICHERUNGSNUMMER_ANZEIGEN') || BEWERBERTOOL_SOZIALVERSICHERUNGSNUMMER_ANZEIGEN || is_string(BEWERBERTOOL_SOZIALVERSICHERUNGSNUMMER_ANZEIGEN)):
+		if(!defined('BEWERBERTOOL_SOZIALVERSICHERUNGSNUMMER_ANZEIGEN') || BEWERBERTOOL_SOZIALVERSICHERUNGSNUMMER_ANZEIGEN == true || is_string(BEWERBERTOOL_SOZIALVERSICHERUNGSNUMMER_ANZEIGEN)):
 		?>
-		<div id="input_svnr" class="form-group" <?php echo ($svnr == '' && !in_array($person->staatsbuergerschaft, explode(";", BEWERBERTOOL_SOZIALVERSICHERUNGSNUMMER_ANZEIGEN))?'style="display: none;"':'') ?>>
+		<div id="input_svnr" class="form-group" <?php echo ($svnr == '' && !in_array($person->staatsbuergerschaft, explode(";", BEWERBERTOOL_SOZIALVERSICHERUNGSNUMMER_ANZEIGEN)) && is_string(BEWERBERTOOL_SOZIALVERSICHERUNGSNUMMER_ANZEIGEN)?'style="display: none;"':'') ?>>
 			<label for="svnr" class="col-sm-3 control-label"><?php echo $p->t('bewerbung/svnr').' '.$p->t('bewerbung/fallsVorhanden') ?></label>
 			<div class="col-sm-9">
 				<input type="text" name="svnr" id="svnr"  <?php echo $disabled; ?> value="<?php echo $svnr ?>" class="form-control">
@@ -232,76 +232,79 @@ if(!isset($person_id))
 			* <?php echo $p->t('bewerbung/pflichtfelder') ?>
 			</div>
 		</div>
-        <?php endif; ?>
+		<?php endif; ?>
 		<?php
 		if(!defined('BEWERBERTOOL_BERUFSTAETIGKEIT_ANZEIGEN') || BEWERBERTOOL_BERUFSTAETIGKEIT_ANZEIGEN):
 		?>
-        <fieldset>
-            <legend><?php echo $p->t('bewerbung/berufstaetigkeit') ?></legend>
-            <?php
-            $notiz = new notiz;
-            $notiz->getBewerbungstoolNotizen($person_id);
-            $counter = 0;
-            if(count($notiz->result)>0):
-                foreach($notiz->result as $berufstaetig): ?>
-                	<?php if($berufstaetig->insertvon == 'online'): $counter++ ?>
-	                    <div class="form-group">
-	                        <label for="berufstaetig" class="col-sm-3 control-label">
-	                            <?php echo $p->t('bewerbung/eintragVom') ?> <?php echo date('j.n.y H:i', strtotime($berufstaetig->insertamum)) ?>
-	                        </label>
-	                        <div class="col-sm-9">
-	                            <input type="text" class="form-control" disabled value="<?php echo htmlspecialchars($berufstaetig->text) ?>">
-	                        </div>
-	                    </div>
-                    <?php endif; ?>
-                <?php endforeach;
-                $berufstaetigkeit_code='';
-                if($counter==0)
-                {
-                	foreach($prestudent->result AS $row)
-                	{
-                		if($row->berufstaetigkeit_code!='')
-                			$berufstaetigkeit_code = $row->berufstaetigkeit_code;
-                	}
-                	if($berufstaetigkeit_code!='')
-                	{
-                		$berufstaetigkeit = new bisberufstaetigkeit();
-	                	$berufstaetigkeit->load($berufstaetigkeit_code);
+		<fieldset>
+			<legend><?php echo $p->t('bewerbung/berufstaetigkeit') ?></legend>
+			<?php
+			$notiz = new notiz;
+			$notiz->getBewerbungstoolNotizen($person_id);
+			$counter = 0;
+			if(count($notiz->result)>0):
+				foreach($notiz->result as $berufstaetig): ?>
+					<?php if($berufstaetig->insertvon == 'online'): $counter++ ?>
+						<div class="form-group">
+							<label for="berufstaetig" class="col-sm-3 control-label">
+								<?php echo $p->t('bewerbung/eintragVom') ?> <?php echo date('j.n.y H:i', strtotime($berufstaetig->insertamum)) ?>
+							</label>
+							<div class="col-sm-9">
+								<input type="text" class="form-control" disabled value="<?php echo htmlspecialchars($berufstaetig->text) ?>">
+							</div>
+						</div>
+					<?php endif; ?>
+				<?php endforeach;
+				$berufstaetigkeit_code='';
+				if($counter == 0)
+				{
+					foreach($prestudent->result AS $row)
+					{
+						if($row->berufstaetigkeit_code!='')
+						{
+							$berufstaetigkeit_code = $row->berufstaetigkeit_code;
+							$counter++;
+						}
+					}
+					if($berufstaetigkeit_code!='')
+					{
+						$berufstaetigkeit = new bisberufstaetigkeit();
+						$berufstaetigkeit->load($berufstaetigkeit_code);
 
-	                	echo '<div class="form-group">
-		                        <label for="berufstaetig" class="col-sm-3 control-label">
-		                            '.$p->t('bewerbung/berufstaetigkeit').'
-		                        </label>
-		                        <div class="col-sm-9">
-		                            <input type="text" class="form-control" disabled value="'.($berufstaetigkeit->berufstaetigkeit_bez).'">
-		                        </div>
-		                    </div>';
-                	}
-                }
-                ?>
-            <?php else: ?>
-                <div class="form-group">
-                    <label for="berufstaetig" class="col-sm-3 control-label"><?php echo $p->t('bewerbung/berufstaetig') ?></label>
-                    <div class="col-sm-9">
-                        <?php echo $p->t('bewerbung/orgform/VZ') ?>: <input type="radio" name="berufstaetig" value="Vollzeit">
-                        <?php echo $p->t('bewerbung/orgform/teilzeit') ?>: <input type="radio" name="berufstaetig" value="Teilzeit">
-                        <?php echo $p->t('global/nein') ?>: <input type="radio" name="berufstaetig" value="n" checked>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="berufstaetig_dienstgeber" class="col-sm-3 control-label"><?php echo $p->t('bewerbung/dienstgeber') ?></label>
-                    <div class="col-sm-9">
-                        <input type="text" name="berufstaetig_dienstgeber" id="berufstaetig_dienstgeber" class="form-control">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="berufstaetig_art" class="col-sm-3 control-label"><?php echo $p->t('bewerbung/artDerTaetigkeit') ?></label>
-                    <div class="col-sm-9">
-                        <input type="text" name="berufstaetig_art" id="berufstaetig_art" class="form-control">
-                    </div>
-                </div>
-            <?php endif; ?>
-        </fieldset>
+						echo '<div class="form-group">
+								<label for="berufstaetig" class="col-sm-3 control-label">
+									'.$p->t('bewerbung/berufstaetigkeit').'
+								</label>
+								<div class="col-sm-9">
+									<input type="text" class="form-control" disabled value="'.($berufstaetigkeit->berufstaetigkeit_bez).'">
+								</div>
+							</div>';
+					}
+				}
+			endif;	?>
+			<?php if($counter == 0): ?>
+				<div class="form-group">
+					<label for="berufstaetig" class="col-sm-3 control-label"><?php echo $p->t('bewerbung/berufstaetig') ?></label>
+					<div class="col-sm-9">
+						<?php echo $p->t('bewerbung/orgform/VZ') ?>: <input type="radio" name="berufstaetig" value="Vollzeit">
+						<?php echo $p->t('bewerbung/orgform/teilzeit') ?>: <input type="radio" name="berufstaetig" value="Teilzeit">
+						<?php echo $p->t('global/nein') ?>: <input type="radio" name="berufstaetig" value="n" checked>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="berufstaetig_dienstgeber" class="col-sm-3 control-label"><?php echo $p->t('bewerbung/dienstgeber') ?></label>
+					<div class="col-sm-9">
+						<input type="text" name="berufstaetig_dienstgeber" id="berufstaetig_dienstgeber" class="form-control">
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="berufstaetig_art" class="col-sm-3 control-label"><?php echo $p->t('bewerbung/artDerTaetigkeit') ?></label>
+					<div class="col-sm-9">
+						<input type="text" name="berufstaetig_art" id="berufstaetig_art" class="form-control">
+					</div>
+				</div>
+			<?php endif; ?>
+		</fieldset>
 		<?php
 		endif;
 		?>

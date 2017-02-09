@@ -182,7 +182,6 @@ $this->phrasen['bewerbung/BewerbungBereitsVerschickt']='La sua richiesta colloqu
 $this->phrasen['bewerbung/bitteZuerstStudiengangWaehlen']='Per favore selezionare il corso di studi desiderato nell’ambito "Generale".';
 $this->phrasen['bewerbung/ExtensionInformation']='Grandezza massima del file per ciascun documento: 15 MB.<br>Tipi di file supportati:';
 $this->phrasen['bewerbung/falscherDateityp']='Questo formato di file non è supportato';
-$this->phrasen['bewerbung/nichtMehrAlsXStudiengaenge']='E’ possibile candidarsi per al massimo %s corsi di studi';
 $this->phrasen['bewerbung/mailadresseBereitsGenutzt']='L’indirizzo e-mail %s è già stato utilizzato ed è disponbile il relativo codice di accesso. E’ possibile ricevere nuovamente il codice di accesso via e-mail e aggiungere ulteriori richieste di colloquio.';
 $this->phrasen['bewerbung/buttonBewerbungUnvollstaendig']='Campi obbligatori non completati';
 $this->phrasen['bewerbung/prestudentID']='Prestudent ID';
