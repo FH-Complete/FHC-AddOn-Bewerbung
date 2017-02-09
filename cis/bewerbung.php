@@ -21,6 +21,7 @@
 
 require_once('../../../config/cis.config.inc.php');
 require_once('../../../config/global.config.inc.php');
+require_once('../bewerbung.config.inc.php');
 
 session_cache_limiter('none'); //muss gesetzt werden sonst funktioniert der Download mit IE8 nicht
 session_start();
@@ -37,6 +38,7 @@ require_once('../../../include/benutzer.class.php');
 require_once('../../../include/phrasen.class.php');
 require_once('../../../include/benutzerberechtigung.class.php');
 require_once('../../../include/nation.class.php');
+require_once('../../../include/gemeinde.class.php');
 require_once('../../../include/person.class.php');
 require_once('../../../include/datum.class.php');
 require_once('../../../include/kontakt.class.php');
@@ -148,9 +150,47 @@ if($method=='delete')
 			$message = $p->t('global/fehlerBeimLoeschenDesEintrags');
 		}
 	}
-
 }
 
+/*
+ * Der Web-User hat keine Berechtigung, aus der tbl_prestudent und tbl_prestudentstatus zu löschen.
+ * Der elegantere Weg ist vermutlich, einen neuen Status "gelöscht" oder "abgesagt" (ev. mit Begründung) einzufügen.
+ * Dann lassen sich auch schönere Statistiken fahren und wir haben eine Historie.
+ * Ich lasse die Methode vorerst stehen, um eventuell später daran anzuknüpfen.
+if($method=='deleteBewerbung' && isset($_GET['prestudent_id']))
+{
+	$prestudent_id = filter_input(INPUT_GET, 'prestudent_id', FILTER_VALIDATE_INT);
+
+	$prestudent_status = new prestudent();
+	$prestudent_status->getLastStatus($prestudent_id);
+	$statusbestaetigt = $prestudent_status->bestaetigtam != '' || $prestudent_status->bestaetigtvon != ''?true:false;
+	
+	if ($prestudent_status->status_kurzbz == 'Interessent' && $statusbestaetigt == false)
+	{
+		$prestudent = new prestudent();
+		
+		if($prestudent->delete_rolle($prestudent_id, 'Interessent', $prestudent_status->studiensemester_kurzbz, $prestudent_status->ausbildungssemester, false))
+		{
+			// Wenn es keinen weiteren PrestudentStatus-Eintrag gibt, auch den Prestudenten löschen
+			$prestudent_status = new prestudent();
+			if (!$prestudent_status->getLastStatus($prestudent_id))
+			{
+				if($prestudent->deletePrestudent($prestudent_id, false))
+				{
+					$message = $p->t('global/erfolgreichgelöscht');
+				}
+				else
+				{
+					$message = $p->t('global/fehlerBeimLoeschenDesEintrags');
+				}
+			}
+		}
+		else
+		{
+			$message = $p->t('global/fehlerBeimLoeschenDesEintrags');
+		}
+	}
+}*/
 
 if(isset($_GET['rt_id']))
 {
@@ -402,7 +442,7 @@ if(isset($_POST['btn_person']) && !$eingabegesperrt)
 }
 $save_error_kontakt='';
 // Kontaktdaten speichern
-if(isset($_POST['btn_kontakt']))
+if(isset($_POST['btn_kontakt']) && !$eingabegesperrt)
 {
 	$save_error_kontakt=false;
 	$kontakt = new kontakt();
@@ -410,10 +450,11 @@ if(isset($_POST['btn_kontakt']))
 	// gibt es schon kontakte von user
 	if(count($kontakt->result)>0)
 	{
+		/* Eine bestehende Mailadress darf nicht bearbeitet oder entfernt werden
 		// Es gibt bereits einen Emailkontakt
 		$kontakt_id = $kontakt->result[0]->kontakt_id;
 
-		if($_POST['email'] == '')
+		if(isset($_POST['email']) && $_POST['email'] == '')
 		{
 			// löschen
 			$kontakt->delete($kontakt_id);
@@ -424,7 +465,7 @@ if(isset($_POST['btn_kontakt']))
 			$kontakt->kontakt_id = $kontakt_id;
 			$kontakt->zustellung = true;
 			$kontakt->kontakttyp = 'email';
-			$kontakt->kontakt = $_POST['email'];
+			$kontakt->kontakt = trim($_POST['email']);
 			$kontakt->new = false;
 
 			if(!$kontakt->save())
@@ -434,24 +475,34 @@ if(isset($_POST['btn_kontakt']))
 			}
 			else
 				$save_error_kontakt=false;
-		}
+		}*/
 	}
 	else
 	{
-		// neuen Kontakt anlegen
-		$kontakt->person_id = $person->person_id;
-		$kontakt->zustellung = true;
-		$kontakt->kontakttyp = 'email';
-		$kontakt->kontakt = $_POST['email'];
-		$kontakt->new = true;
-
-		if(!$kontakt->save())
+		// Pruefen, ob die Mailadresse schon im System existiert
+		$return = check_load_bewerbungen(trim($_POST['email']));
+		if ($return)
 		{
-			$message = $kontakt->errormsg;
+			$message = $p->t('bewerbung/mailadresseBereitsVorhanden', array(trim($_POST['email'])));
 			$save_error_kontakt=true;
 		}
 		else
-			$save_error_kontakt=false;
+		{
+			// neuen Kontakt anlegen
+			$kontakt->person_id = $person->person_id;
+			$kontakt->zustellung = true;
+			$kontakt->kontakttyp = 'email';
+			$kontakt->kontakt = trim($_POST['email']);
+			$kontakt->new = true;
+	
+			if(!$kontakt->save())
+			{
+				$message = $kontakt->errormsg;
+				$save_error_kontakt=true;
+			}
+			else
+				$save_error_kontakt=false;
+		}
 	}
 	
 	if($save_error_kontakt===false)
@@ -516,21 +567,30 @@ if(isset($_POST['btn_kontakt']))
 	if($save_error_kontakt===false)
 	{
 		// Adresse Speichern
-		if($_POST['strasse']!='' || $_POST['plz']!='' || $_POST['ort']!='')
+		if((isset($_POST['strasse']) && $_POST['strasse'] !='') || (isset($_POST['plz']) && $_POST['plz'] !='') || (isset($_POST['ort']) && $_POST['ort'] !=''))
 		{
 			$adresse = new adresse();
 			$adresse->load_pers($person->person_id);
+			$gemeinde = '';
 			if(count($adresse->result)>0)
 			{
+				// Wenn die Nation Oesterreich ist, wird die Gemeinde aus der DB ermittelt
+				if (isset($_POST['nation']) && $_POST['nation'] == 'A')
+				{
+					$gemeinde_obj = new gemeinde();
+					$gemeinde_obj->getGemeinde($_POST['ort'], '', $_POST['plz']);
+					$gemeinde = $gemeinde_obj->result[0]->name;
+				}
 				// gibt es schon eine adresse, wird die erste adresse genommen und upgedatet
 				$adresse_help = new adresse();
 				$adresse_help->load($adresse->result[0]->adresse_id);
-	
+
 				// gibt schon eine Adresse
-				$adresse_help->strasse = $_POST['strasse'];
-				$adresse_help->plz = $_POST['plz'];
-				$adresse_help->ort = $_POST['ort'];
-				$adresse_help->nation = $_POST['nation'];
+				$adresse_help->strasse = isset($_POST['strasse'])?trim($_POST['strasse']):'';
+				$adresse_help->plz = isset($_POST['plz'])?trim($_POST['plz']):'';
+				$adresse_help->ort = isset($_POST['ort'])?trim($_POST['ort']):'';
+				$adresse_help->gemeinde = $gemeinde;
+				$adresse_help->nation = isset($_POST['nation'])?$_POST['nation']:'';
 				$adresse_help->updateamum = date('Y-m-d H:i:s');
 				$adresse_help->updatevon = 'online';
 				$adresse_help->new = false;
@@ -549,6 +609,7 @@ if(isset($_POST['btn_kontakt']))
 				$adresse->strasse = $_POST['strasse'];
 				$adresse->plz = $_POST['plz'];
 				$adresse->ort = $_POST['ort'];
+				$adresse->gemeinde = $_POST['gemeinde'];
 				$adresse->nation = $_POST['nation'];
 				$adresse->insertamum = date('Y-m-d H:i:s');
 				$adresse->insertvon = 'online';
@@ -697,6 +758,18 @@ if($addStudiengang)
 		echo json_encode(array('status'=>'ok'));
 	else
 		echo json_encode(array('status'=>'fehler','msg'=>$return));
+	exit;
+}
+
+$getGemeinden = filter_input(INPUT_POST, 'getGemeinden', FILTER_VALIDATE_BOOLEAN);
+
+if($getGemeinden)
+{
+	$return = BewerbungGetGemeinden($_POST['plz']);
+	if($return===false)
+		echo json_encode(array('status'=>'error','msg'=>$return));
+	else
+		echo json_encode(array('status'=>'ok','gemeinden'=>$return));
 	exit;
 }
 
@@ -955,6 +1028,7 @@ else
 			
 			$(document).ready(function(){
 				$('[data-toggle="popover"]').popover({html:true});
+				$('[data-toggle="tooltip"]').tooltip();
 			});
 		</script>
 		<style type="text/css">
@@ -1014,7 +1088,8 @@ else
 						<?php
 						if(!defined('BEWERBERTOOL_DOKUMENTE_ANZEIGEN') || BEWERBERTOOL_DOKUMENTE_ANZEIGEN)
 						{
-							if(CAMPUS_NAME=='FH Technikum Wien')
+							// An der FHTW wird der Punkt Dokumente erst angezeigt, wenn der Status bestätigt ist (außer im Mail-Debug-Mode)
+							if(CAMPUS_NAME=='FH Technikum Wien' && MAIL_DEBUG == '')
 							{
 								if(check_person_statusbestaetigt($person_id,'Interessent'))
 								{
@@ -1089,7 +1164,7 @@ else
 				);
 				if(!defined('BEWERBERTOOL_DOKUMENTE_ANZEIGEN') || BEWERBERTOOL_DOKUMENTE_ANZEIGEN)
 				{
-					if(CAMPUS_NAME=='FH Technikum Wien')
+					if(CAMPUS_NAME=='FH Technikum Wien' && MAIL_DEBUG == '')
 					{
 						if(check_person_statusbestaetigt($person_id,'Interessent'))
 							$tabs[]='dokumente';

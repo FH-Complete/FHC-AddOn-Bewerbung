@@ -36,6 +36,7 @@ require_once('../../../include/phrasen.class.php');
 require_once('../../../include/dms.class.php');
 require_once('../../../include/fotostatus.class.php');
 require_once('../../../include/studiensemester.class.php');
+require_once('../bewerbung.config.inc.php');
 
 header("Content-Type: text/html; charset=utf-8");
 
@@ -80,7 +81,6 @@ echo '<!DOCTYPE HTML>
 		<script>
 		function showExtensionInfo()
 		{
-
 			var typ = $("#dokumenttyp").val();
 			var extinfo="";
 			if(typ=="Lichtbil")
@@ -404,7 +404,10 @@ if($person_id !='')
 						if (count($akte->result)==0)
 						{
 							$selected=($dokumenttyp == $dok->dokument_kurzbz)?'selected':'';
-							echo '<option '.$selected.' value="'.$dok->dokument_kurzbz.'" >'.$dok->bezeichnung_mehrsprachig[$sprache]."</option>\n";
+							if ($dok->dokument_kurzbz == 'Lichtbil')
+								echo '<option '.$selected.' value="'.$dok->dokument_kurzbz.'" onclick="window.location.href=\'bildupload.php?person_id='.$person_id.'&dokumenttyp=Lichtbil\'; window.resizeTo(700, 800);" onselect="window.location.href=\'bildupload.php?person_id='.$person_id.'&dokumenttyp=Lichtbil\'; window.resizeTo(700, 800);">'.$dok->bezeichnung_mehrsprachig[$sprache]."</option>\n";
+							else 
+								echo '<option '.$selected.' value="'.$dok->dokument_kurzbz.'" >'.$dok->bezeichnung_mehrsprachig[$sprache]."</option>\n";
 						}
 					}
 					else 

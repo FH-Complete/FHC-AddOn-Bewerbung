@@ -62,9 +62,11 @@ $this->phrasen['bewerbung/geplanteStudienrichtung']='Geplante Studienrichtung';
 $this->phrasen['bewerbung/menuAllgemein']='Allgemein';
 $this->phrasen['bewerbung/loginmitAccount']='Wenn Sie bereits einen Account haben, können sie sich mit Ihrem Usernamen / Passwort anmelden';
 $this->phrasen['bewerbung/allgemeineErklaerung']='Wir freuen uns, dass Sie sich für einen oder mehrere unserer Studiengänge oder Lehrgänge interessieren.<br><br>
+	Sie können sich online für maximal 3 Studiengänge je Studiensemester bewerben. Falls Sie sich für weitere Studiengänge bewerben möchten oder noch unentschlossen sind, 
+	können Sie gerne unsere <a href=\'https://www.technikum-wien.at/studieninformationen/studienberatung-kontaktieren/\' target=\'_blank\'>Studienberatung</a> kontaktieren.<br><br>
 	Bitte füllen Sie das Formular vollständig aus. Sind alle Werte eingetragen, können Sie unter "Abschließen" Ihre Bewerbung an die zuständige Assistenz schicken.';
 $this->phrasen['bewerbung/erklaerungStudierende']='Wir freuen uns über Ihr Interesse an unseren Weiterbildungsprogrammen.<br><br>
-	Bitte klicken Sie auf "Weiteren Studiengang/Lehrgang hinzufügen" um Ihrer Bewerbung einen Studiengang oder Lehrgang hinzuzufügen.
+	Bitte klicken Sie auf "Neue Bewerbung für Studiengang/Lehrgang hinzufügen" um Ihrer Bewerbung einen Studiengang oder Lehrgang hinzuzufügen.
 	Gegebenenfalls sind danach weitere Daten zu ergänzen, bevor Sie die Bewerbung im letzten Schritt abschicken können.';
 $this->phrasen['bewerbung/aktuelleBewerbungen']='Aktuelle Bewerbungen:';
 $this->phrasen['bewerbung/status']='Status';
@@ -73,7 +75,7 @@ $this->phrasen['bewerbung/bewerbungsstatus']='Bewerbungsstatus';
 $this->phrasen['bewerbung/keinStatus']='Noch kein Status vorhanden';
 $this->phrasen['bewerbung/bestaetigt']='bestätigt';
 $this->phrasen['bewerbung/nichtBestaetigt']='noch nicht bestätigt';
-$this->phrasen['bewerbung/studiengangHinzufuegen']='Weiteren Studiengang/Lehrgang hinzufügen';
+$this->phrasen['bewerbung/studiengangHinzufuegen']='Neue Bewerbung für Studiengang/Lehrgang hinzufügen';
 $this->phrasen['bewerbung/weiter']='Weiter';
 $this->phrasen['bewerbung/geburtsnation']='Geburtsnation';
 $this->phrasen['bewerbung/svnr']='Österr. Sozialversicherungsnr.';
@@ -93,8 +95,7 @@ $this->phrasen['bewerbung/kontakt']='Kontakt';
 $this->phrasen['bewerbung/nation']='Nation';
 $this->phrasen['bewerbung/menuDokumente']='Dokumente';
 $this->phrasen['bewerbung/dokument']='Dokument';
-$this->phrasen['bewerbung/bitteDokumenteHochladen']='Sie können hier vorab Dokumente hochladen, die für Ihr Studium benötigt werden. Sollte ein Dokument als "erforderlich" markiert sein, können Sie Ihre Bewerbung erst abschließen,
-		wenn Sie eine Datei hochladen oder das Symbol für "Dokument wird nachgereicht" klicken. In diesem Fall haben Sie die Möglichkeit, eine kurze Anmerkung einzutragen und das Dokument später hochzuladen.';
+$this->phrasen['bewerbung/bitteDokumenteHochladen']='Die Studiengangsassistenz wird Sie darüber in Kenntnis setzen, welche Dokumente für Ihr Studium benötigt werden. Sie haben außerdem die Möglichkeit, Dokumente nachzureichen. Klicken Sie dazu das Symbol für "Dokument wird nachgereicht" (Sanduhr). Danach haben Sie die Möglichkeit, eine kurze Begründung einzutragen.';
 $this->phrasen['bewerbung/linkDokumenteHochladen']='Dokumente hochladen';
 $this->phrasen['bewerbung/dokumenteZumHochladen']='Benötigte Dokumente:';
 $this->phrasen['bewerbung/dokumentName']='Name';
@@ -166,6 +167,7 @@ $this->phrasen['bewerbung/ExtensionInformation']='Maximale Dateigröße je Dokum
 $this->phrasen['bewerbung/falscherDateityp']='Dieses Dateiformat wird nicht unterstützt';
 $this->phrasen['bewerbung/nichtMehrAlsXStudiengaenge']='Sie können sich für maximal %s Studiengänge pro Semester bewerben';
 $this->phrasen['bewerbung/mailadresseBereitsGenutzt']='Die E-Mail Adresse %s wurde bereits für eine Bewerbung genutzt und es ist ein Zugangscode vorhanden. Sie können sich den Zugangscode noch einmal an diese Adresse schicken lassen und nach dem Login weitere Bewerbungen hinzufügen.';
+$this->phrasen['bewerbung/mailadresseBereitsVorhanden']='Die E-Mail Adresse %s ist bereits im System vorhanden und kann nicht gespeichert werden. Bitte geben Sie eine andere E-Mail Adresse ein.';
 $this->phrasen['bewerbung/buttonBewerbungUnvollstaendig']='Pflichtfelder unvollständig';
 $this->phrasen['bewerbung/prestudentID']='Prestudent ID';
 $this->phrasen['bewerbung/bewerbung']='Bewerbung';
@@ -201,4 +203,16 @@ $this->phrasen['bewerbung/hinweisZGVdatenaenderung']='<b>Hinweis:</b> Aus organi
 $this->phrasen['bewerbung/statusBestaetigen']='Status direkt bestätigen';
 $this->phrasen['bewerbung/footerText']='';
 $this->phrasen['bewerbung/vorbehaltlichAkkreditierung']='Vorbehaltlich der Akkreditierung durch die AQ Austria';
+$this->phrasen['bewerbung/auswahlmöglichkeitenImNaechstenSchritt']='Auswahlmöglichkeiten im nächsten Schritt';
+$this->phrasen['bewerbung/sieKoennenMaximalXStudiengaengeWaehlen']='Sie können sich online für maximal %s Studiengänge pro Studiensemester gleichzeitig bewerben. Wenn Sie Interesse an weiteren Studiengängen haben, kontaktieren Sie bitte die <a href=\'https://www.technikum-wien.at/studieninformationen/studienberatung-kontaktieren/\' target=\'_blank\'>Studienberatung</a>'; // Link muss mit einfachen Hochkomma maskiert werden, das es sonst im Bewerbungstool zu Anzeigefehlern kommt
+$this->phrasen['bewerbung/bitteEineStudienrichtungWaehlen']='Bitte eine Studienrichtung auswählen.';
+$this->phrasen['bewerbung/beschreibungTitelPre']='Akademische Titel, die dem Namen vorangestellt werden. ZB.: DI, Mag., Dr.';
+$this->phrasen['bewerbung/beschreibungTitelPost']='Akademische Titel, die dem Namen nachgestellt werden. ZB.: BA, MA, PhD';
+$this->phrasen['bewerbung/BilduploadInfotext']='Sie können Bilder in den Formaten JPG, PNG oder GIF mit einer Maximalgröße von 15MB hochladen.<br><br><b>Bitte beachten Sie die <a href=\''.APP_ROOT.'cms/content.php?content_id=%s\' target=\'_blank\'>Richtlinien für den Bildupload</a></b>';
+$this->phrasen['bewerbung/fotoAuswaehlen']='Klicken Sie auf die Grafik um ein Foto hochzuladen und zuzuschneiden<br>Falls der Upload fehlschlägt, oder ihr Browser den Bildzuschnitt nicht unterstützt, <br>können Sie <a href="dms_akteupload.php?person_id=%s&dokumenttyp=Lichtbil"><b>hier</b></a> die Datei direkt hochladen';
+$this->phrasen['bewerbung/akademischeTitel']='Akademische(r) Titel';
+$this->phrasen['bewerbung/pflichtfelder']='Pflichtfelder';
+$this->phrasen['bewerbung/bitteGueltigeOesterreichischePlzEingeben']='Bitte geben Sie eine gültige österreichische Postleitzahl ein';
+$this->phrasen['bewerbung/plzMussGueltigSein']='Postleitzahl muss eine gültige Nummer sein';
+$this->phrasen['bewerbung/plzUnbekannt']='Postleitzahl unbekannt';
 ?>

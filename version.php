@@ -21,10 +21,10 @@
 $addon_name = 'Bewerbung';
 
 // Versionsnummer des Addons
-$addon_version = '0.01';
+$addon_version = '2.0';
 
 // FH-Complete Min-Version
-$fhcomplete_target_version = '3.0';
+$fhcomplete_target_version = '3.2';
 
 $addon_description = '
 Tool zur Onlinebewerbung

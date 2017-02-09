@@ -77,7 +77,11 @@ if(!isset($person_id))
 		if(!defined('BEWERBERTOOL_DATEN_TITEL_ANZEIGEN') || BEWERBERTOOL_DATEN_TITEL_ANZEIGEN):
 		?>
 		<div class="form-group">
-			<label for="titel_pre" class="col-sm-3 control-label"><?php echo $p->t('global/titel') ?></label>
+			<label for="titel_pre" class="col-sm-3 control-label"><?php echo $p->t('bewerbung/akademischeTitel') ?>
+				<a href="#" data-toggle="tooltip" data-placement="auto" title="" data-original-title="<?php echo $p->t('bewerbung/beschreibungTitelPre') ?>">
+					<span style="font-size: 1em;" class="glyphicon glyphicon-info-sign glyph" aria-hidden="true"></span>
+				</a>
+			</label>
 			<div class="col-sm-9">
 				<input type="text" name="titel_pre" id="titel_pre" <?php echo $disabled; ?> value="<?php echo $titelpre ?>" class="form-control">
 			</div>
@@ -101,7 +105,11 @@ if(!isset($person_id))
 		if(!defined('BEWERBERTOOL_DATEN_TITEL_ANZEIGEN') || BEWERBERTOOL_DATEN_TITEL_ANZEIGEN):
 		?>
 		<div class="form-group">
-			<label for="titel_post" class="col-sm-3 control-label"><?php echo $p->t('global/postnomen') ?></label>
+			<label for="titel_post" class="col-sm-3 control-label"><?php echo $p->t('global/postnomen') ?>
+				<a href="#" data-toggle="tooltip" data-placement="auto" title="" data-original-title="<?php echo $p->t('bewerbung/beschreibungTitelPost') ?>">
+					<span style="font-size: 1em;" class="glyphicon glyphicon-info-sign glyph" aria-hidden="true"></span>
+				</a>
+			</label>
 			<div class="col-sm-9">
 				<input type="text" name="titel_post" id="titel_post"  <?php echo $disabled; ?> value="<?php echo $titelpost ?>" class="form-control">
 			</div>
@@ -126,6 +134,7 @@ if(!isset($person_id))
 			<div class="col-sm-9">
 				<select name="geburtsnation" id="geburtsnation"  <?php echo $disabled; ?> class="form-control">
 					<option value=""><?php echo $p->t('bewerbung/bitteAuswaehlen') ?></option>
+					<option value="A"><?php	echo ($sprache=='German'? 'Österreich':'Austria'); ?></option>
 					<?php $selected = '';
 					foreach($nation->nation as $nat):
 						$selected = ($person->geburtsnation == $nat->code) ? 'selected' : ''; ?>
@@ -146,6 +155,7 @@ if(!isset($person_id))
 			<div class="col-sm-9">
 				<select name="staatsbuergerschaft" id="staatsbuergerschaft"  <?php echo $disabled; ?> class="form-control">
 					<option value=""><?php echo $p->t('bewerbung/bitteAuswaehlen') ?></option>
+					<option value="A"><?php	echo ($sprache=='German'? 'Österreich':'Austria'); ?></option>
 					<?php $selected = '';
 					foreach($nation->nation as $nat):
 						$selected = ($person->staatsbuergerschaft == $nat->code) ? 'selected' : ''; ?>
@@ -161,12 +171,16 @@ if(!isset($person_id))
 				</select>
 			</div>
 		</div>
-		<div class="form-group">
+		<?php
+		if(!defined('BEWERBERTOOL_SOZIALVERSICHERUNGSNUMMER_ANZEIGEN') || BEWERBERTOOL_SOZIALVERSICHERUNGSNUMMER_ANZEIGEN || is_string(BEWERBERTOOL_SOZIALVERSICHERUNGSNUMMER_ANZEIGEN)):
+		?>
+		<div id="input_svnr" class="form-group" <?php echo ($svnr == '' && !in_array($person->staatsbuergerschaft, explode(";", BEWERBERTOOL_SOZIALVERSICHERUNGSNUMMER_ANZEIGEN))?'style="display: none;"':'') ?>>
 			<label for="svnr" class="col-sm-3 control-label"><?php echo $p->t('bewerbung/svnr').' '.$p->t('bewerbung/fallsVorhanden') ?></label>
 			<div class="col-sm-9">
 				<input type="text" name="svnr" id="svnr"  <?php echo $disabled; ?> value="<?php echo $svnr ?>" class="form-control">
 			</div>
 		</div>
+		<?php endif; ?>
 		<div class="form-group">
 			<label for="geschlecht" class="col-sm-3 control-label"><?php echo $p->t('global/geschlecht') ?></label>
 			<div class="col-sm-9">
@@ -179,7 +193,7 @@ if(!isset($person_id))
 			</div>
 		</div>
 		<?php if(isset($prestudent->result[0])): ?>
-        <div class="form-group">
+		<div class="form-group">
 			<label for="aufmerksamdurch" class="col-sm-3 control-label"><?php echo $p->t('bewerbung/aufmerksamdurch') ?></label>
 			<div class="col-sm-9">
 				<select name="aufmerksamdurch" id="aufmerksamdurch"  <?php echo $disabled; ?> class="form-control">
@@ -187,6 +201,13 @@ if(!isset($person_id))
 					<?php
 					$aufmerksamdurch = new aufmerksamdurch();
 					$aufmerksamdurch->getAll();
+					
+					//Sortiert aufmerksamdurch je nach Sprache alphabetisch nach bezeichnung_mehrsprachig
+					function sortAufmerksamdurch($a, $b)
+					{
+						return strcmp(strtolower($a->bezeichnung[getSprache()]), strtolower($b->bezeichnung[getSprache()]));
+					}
+					usort($aufmerksamdurch->result, "sortAufmerksamdurch");
 
 					$selected = '';
 
@@ -203,6 +224,12 @@ if(!isset($person_id))
 						</option>
 					<?php endif; endforeach; ?>
 				</select>
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-3 control-label"></label>
+			<div class="col-sm-9">
+			* <?php echo $p->t('bewerbung/pflichtfelder') ?>
 			</div>
 		</div>
         <?php endif; ?>
@@ -278,14 +305,33 @@ if(!isset($person_id))
 		<?php
 		endif;
 		?>
-		<button class="btn-nav btn btn-default" type="button" data-jump-tab="<?php echo $tabs[array_search('daten', $tabs)-1] ?>">
+		<button class="btn-nav btn btn-default" type="submit" name="btn_person" data-jump-tab="<?php echo $tabs[array_search('daten', $tabs)-1] ?>" onclick="this.form.action='<?php echo $_SERVER['PHP_SELF'] ?>?active=<?php echo $tabs[array_search('daten', $tabs)-1] ?>'">
 			<?php echo $p->t('global/zurueck') ?>
 		</button>
 		<button class="btn btn-success" type="submit"  <?php echo $disabled; ?> name="btn_person">
 			<?php echo $p->t('global/speichern') ?>
 		</button>
-		<button class="btn-nav btn btn-default" type="button" data-jump-tab="<?php echo $tabs[array_search('daten', $tabs)+1] ?>">
+		<button class="btn-nav btn btn-default" type="submit" name="btn_person" data-jump-tab="<?php echo $tabs[array_search('daten', $tabs)+1] ?>" onclick="this.form.action='<?php echo $_SERVER['PHP_SELF'] ?>?active=<?php echo $tabs[array_search('daten', $tabs)+1] ?>'">
 			<?php echo $p->t('bewerbung/weiter') ?>
 		</button><br/><br/>
 	</form>
+	<script type="text/javascript">
+		<?php
+		if(defined('BEWERBERTOOL_SOZIALVERSICHERUNGSNUMMER_ANZEIGEN') && is_string(BEWERBERTOOL_SOZIALVERSICHERUNGSNUMMER_ANZEIGEN)):
+		?>
+		$(function() {
+			$('#staatsbuergerschaft').change(function() {
+				var arrayFromPHP = <?php echo json_encode(explode(";", BEWERBERTOOL_SOZIALVERSICHERUNGSNUMMER_ANZEIGEN)) ?>;
+				if(jQuery.inArray($('#staatsbuergerschaft').val(), arrayFromPHP) > -1 ) {
+					$('#input_svnr').show();
+				}
+				else {
+					$('#input_svnr').hide();
+				}
+			});
+		});
+		<?php
+		endif;
+		?>
+	</script>
 </div>

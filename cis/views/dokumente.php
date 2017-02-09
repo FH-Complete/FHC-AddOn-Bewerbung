@@ -37,6 +37,13 @@ if(!isset($person_id))
 
 	$dokumente_person = new dokument();
 	$dokumente_person->getAllDokumenteForPerson($person_id, true);
+	
+	//Sortiert die Dokumente je nach Sprache alphabetisch nach bezeichnung_mehrsprachig
+	function sortDocuments($a, $b)
+	{
+		return strcmp(strtolower($a->bezeichnung_mehrsprachig[getSprache()]), strtolower($b->bezeichnung_mehrsprachig[getSprache()]));
+	}
+	usort($dokumente_person->result, "sortDocuments");
 
 	$studiensemester = new studiensemester();
 	$studiensemester->getStudiensemesterOnlinebewerbung();
@@ -63,7 +70,7 @@ if(!isset($person_id))
 			$akte = new akte;
 			$akte->getAkten($person_id, $dok->dokument_kurzbz);
 
-			$qry = "SELECT DISTINCT studiengang_kz,typ||kurzbz AS kuerzel FROM public.tbl_dokumentstudiengang
+			$qry = "SELECT DISTINCT studiengang_kz,typ||kurzbz AS kuerzel, bezeichnung, english FROM public.tbl_dokumentstudiengang
 				JOIN public.tbl_prestudent USING (studiengang_kz)
 				JOIN public.tbl_prestudentstatus USING (prestudent_id)
 				JOIN public.tbl_studiengang USING (studiengang_kz)
@@ -74,6 +81,9 @@ if(!isset($person_id))
  				ORDER BY kuerzel";
 
 			$ben = "";
+			$ben_bezeichnung = array();
+			$ben_bezeichnung['German'] = '';
+			$ben_bezeichnung['English'] = '';
 			$ben_kz = array();
 			$detailstring = '';
 			if($result = $db->db_query($qry))
@@ -87,6 +97,8 @@ if(!isset($person_id))
 					$stg->load($row->studiengang_kz);
 
 					$ben .= $stg->kuerzel;
+					$ben_bezeichnung['German'][] .= $stg->bezeichnung;
+					$ben_bezeichnung['English'][] .= $stg->english;
 					$ben_kz[] .= $row->studiengang_kz;
 				}
 			}
@@ -154,9 +166,19 @@ if(!isset($person_id))
 										<input type='submit' value='OK' name='submit_nachgereicht' class='btn btn-default'>
 									</span><input type='hidden' name='dok_kurzbz' value='".$dok->dokument_kurzbz."'>
 								<input type='hidden' name='akte_id' value='".$akte_id."'></form>";
-						$aktion = '	<button type="button" title="'.$p->t('bewerbung/dokumentHerunterladen').'" class="btn btn-default" href="'.APP_ROOT.'cms/dms.php?id='.$akte->result[0]->dms_id.'"  onclick="FensterOeffnen(\''.APP_ROOT.'cms/dms.php?id='.$akte->result[0]->dms_id.'&akte_id='.$akte_id.'\'); return false;">
-  										<span class="glyphicon glyphicon glyphicon-download-alt" aria-hidden="true" title="'.$p->t('bewerbung/dokumentHerunterladen').'"></span>
-									</button>';
+						//Beim Lichtbild wird aus cis/public/bild.php geladen und nicht aus dem DMS
+						if($akte->result[0]->dokument_kurzbz=='Lichtbil')
+						{
+							$aktion = '	<button type="button" title="'.$p->t('bewerbung/dokumentHerunterladen').'" class="btn btn-default" href="'.APP_ROOT.'cis/public/bild.php?src=person&person_id='.$person_id.'"  onclick="FensterOeffnen(\''.APP_ROOT.'cis/public/bild.php?src=person&person_id='.$person_id.'\'); return false;">
+	  										<span class="glyphicon glyphicon glyphicon-download-alt" aria-hidden="true" title="'.$p->t('bewerbung/dokumentHerunterladen').'"></span>
+										</button>';
+						}
+						else
+						{
+							$aktion = '	<button type="button" title="'.$p->t('bewerbung/dokumentHerunterladen').'" class="btn btn-default" href="'.APP_ROOT.'cms/dms.php?id='.$akte->result[0]->dms_id.'"  onclick="FensterOeffnen(\''.APP_ROOT.'cms/dms.php?id='.$akte->result[0]->dms_id.'&akte_id='.$akte_id.'\'); return false;">
+	  										<span class="glyphicon glyphicon glyphicon-download-alt" aria-hidden="true" title="'.$p->t('bewerbung/dokumentHerunterladen').'"></span>
+										</button>';
+						}
 					}
 					else
 					{
@@ -174,10 +196,19 @@ if(!isset($person_id))
 						$aktion = '	<button type="button" title="'.$p->t('global/löschen').'" class="btn btn-default" onclick="location.href=\''.$_SERVER['PHP_SELF'].'?method=delete&akte_id='.$akte_id.'&active=dokumente\'; return false;">
   										<span class="glyphicon glyphicon-remove" aria-hidden="true" title="'.$p->t('global/löschen').'"></span>
 									</button>';
-						$aktion .= '	<button type="button" title="'.$p->t('bewerbung/dokumentHerunterladen').'" class="btn btn-default" href="'.APP_ROOT.'cms/dms.php?id='.$akte->result[0]->dms_id.'"  onclick="FensterOeffnen(\''.APP_ROOT.'cms/dms.php?id='.$akte->result[0]->dms_id.'&akte_id='.$akte_id.'\'); return false;">
+						//Beim Lichtbild wird aus cis/public/bild.php geladen und nicht aus dem DMS
+						if($akte->result[0]->dokument_kurzbz=='Lichtbil')
+						{
+							$aktion .= '	<button type="button" title="'.$p->t('bewerbung/dokumentHerunterladen').'" class="btn btn-default" href="'.APP_ROOT.'cis/public/bild.php?src=person&person_id='.$person_id.'"  onclick="FensterOeffnen(\''.APP_ROOT.'cis/public/bild.php?src=person&person_id='.$person_id.'\'); return false;">
+	  										<span class="glyphicon glyphicon glyphicon-download-alt" aria-hidden="true" title="'.$p->t('bewerbung/dokumentHerunterladen').'"></span>
+										</button>';
+						}
+						else
+						{
+							$aktion .= '	<button type="button" title="'.$p->t('bewerbung/dokumentHerunterladen').'" class="btn btn-default" href="'.APP_ROOT.'cms/dms.php?id='.$akte->result[0]->dms_id.'"  onclick="FensterOeffnen(\''.APP_ROOT.'cms/dms.php?id='.$akte->result[0]->dms_id.'&akte_id='.$akte_id.'\'); return false;">
   										<span class="glyphicon glyphicon glyphicon-download-alt" aria-hidden="true" title="'.$p->t('bewerbung/dokumentHerunterladen').'"></span>
 									</button>';
-
+						}
 					}
 				}
 			}
@@ -202,9 +233,18 @@ if(!isset($person_id))
 			{
 				// Dokument fehlt noch
 				$status = ' - ';
-				$aktion = '	<button title="'.$p->t('bewerbung/upload').'" type="button" class="btn btn-default" href="dms_akteupload.php?person_id='.$person_id.'&dokumenttyp='.$dok->dokument_kurzbz.'" onclick="FensterOeffnen(\'dms_akteupload.php?person_id='.$person_id.'&dokumenttyp='.$dok->dokument_kurzbz.'\'); return false;">
-  								<span class="glyphicon glyphicon-upload" aria-hidden="true" title="'.$p->t('bewerbung/upload').'"></span>
-							</button>';
+				if ($dok->dokument_kurzbz == 'Lichtbil')
+				{
+					$aktion = '	<button title="'.$p->t('bewerbung/upload').'" type="button" class="btn btn-default" href="bildupload.php?person_id='.$person_id.'" onclick="FensterOeffnen(\'bildupload.php?person_id='.$person_id.'&dokumenttyp='.$dok->dokument_kurzbz.'\', 600, 700); return false;">
+	  								<span class="glyphicon glyphicon-upload" aria-hidden="true" title="'.$p->t('bewerbung/upload').'"></span>
+								</button>';
+				}
+				else 
+				{
+					$aktion = '	<button title="'.$p->t('bewerbung/upload').'" type="button" class="btn btn-default" href="dms_akteupload.php?person_id='.$person_id.'&dokumenttyp='.$dok->dokument_kurzbz.'" onclick="FensterOeffnen(\'dms_akteupload.php?person_id='.$person_id.'&dokumenttyp='.$dok->dokument_kurzbz.'\'); return false;">
+	  								<span class="glyphicon glyphicon-upload" aria-hidden="true" title="'.$p->t('bewerbung/upload').'"></span>
+								</button>';
+				}
 
 				if(!defined('BEWERBERTOOL_DOKUMENTE_NACHREICHEN') || BEWERBERTOOL_DOKUMENTE_NACHREICHEN==true)
 				{
@@ -242,7 +282,14 @@ if(!isset($person_id))
 				<td style="vertical-align: middle" class="<?php echo $style ?>"><?php echo $status ?></td>
 				<td style="vertical-align: middle" nowrap class="<?php echo $style ?>"><?php echo $aktion ?></td>
 				<td style="vertical-align: middle" class="<?php echo $style ?>"><?php echo $div ?></td>
-				<td style="vertical-align: middle" class="<?php echo $style ?>"><?php echo $ben ?></td>
+				<td style="vertical-align: middle" class="<?php echo $style ?>"><?php 	if (CAMPUS_NAME!='FH Technikum Wien')
+																							echo $ben ;
+																						else 
+																						{
+																							foreach ($ben_bezeichnung[getSprache()] as $value)
+																								echo '- '.$value.'<br/>';
+																						}
+																						?></td>
 			</tr>
 		<?php endforeach; ?>
 			</tbody>

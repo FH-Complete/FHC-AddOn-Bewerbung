@@ -18,6 +18,7 @@
  * Authors: Martin Tatzber <tatzberm@technikum-wien.at>, 
  */
 require_once('../../../config/cis.config.inc.php');
+require_once('../bewerbung.config.inc.php');
 
 session_cache_limiter('none'); //muss gesetzt werden sonst funktioniert der Download mit IE8 nicht
 session_start();

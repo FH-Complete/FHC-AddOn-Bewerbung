@@ -95,9 +95,11 @@ function checkPerson()
 	return true;
 }
 
-function FensterOeffnen(adresse)
+function FensterOeffnen(adresse, width, height)
 {
-	MeinFenster = window.open(adresse, "Info", "width=700,height=200");
+	width = (typeof width !== 'undefined') ?  width : 700;
+	height = (typeof height !== 'undefined') ?  height : 200;
+	MeinFenster = window.open(adresse, "Info", "width="+width+",height="+height+", resizable=yes, scrollbars=yes, titlebar=yes");
 	MeinFenster.focus();
 }
 

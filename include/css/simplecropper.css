@@ -1,0 +1,324 @@
+/* CSS for Jcrop and Simplecropper */
+
+
+/* jquery.Jcrop.css v0.9.12 - MIT License */
+/*
+	The outer-most container in a typical Jcrop instance
+	If you are having difficulty with formatting related to styles
+	on a parent element, place any fixes here or in a like selector
+
+	You can also style this element if you want to add a border, etc
+	A better method for styling can be seen below with .jcrop-light
+	(Add a class to the holder and style elements for that extended class)
+*/
+.jcrop-holder
+{
+	direction: ltr;
+	text-align: left;
+}
+/* Selection Border */
+.jcrop-vline,
+.jcrop-hline
+{
+	background: #ffffff url("../../images/Jcrop.gif");
+	font-size: 0;
+	position: absolute;
+}
+.jcrop-vline
+{
+	height: 100%;
+	width: 1px !important;
+}
+.jcrop-vline.right
+{
+	right: 0;
+}
+.jcrop-hline
+{
+	height: 1px !important;
+	width: 100%;
+}
+.jcrop-hline.bottom
+{
+	bottom: 0;
+}
+/* Invisible click targets */
+.jcrop-tracker
+{
+	height: 100%;
+	width: 100%;
+	/* "turn off" link highlight */
+	-webkit-tap-highlight-color: transparent;
+	/* disable callout, image save panel */
+	-webkit-touch-callout: none;
+	/* disable cut copy paste */
+	-webkit-user-select: none;
+}
+/* Selection Handles */
+.jcrop-handle
+{
+	background-color: #333333;
+	border: 1px #eeeeee solid;
+	width: 10%;
+	height: 8%;
+	font-size: 1px;
+}
+.jcrop-handle.ord-n
+{
+	left: 50%;
+	margin-left: -4px;
+	margin-top: -4px;
+	top: 0;
+}
+.jcrop-handle.ord-s
+{
+	bottom: 0;
+	left: 50%;
+	margin-bottom: -4px;
+	margin-left: -4px;
+}
+.jcrop-handle.ord-e
+{
+	margin-right: -4px;
+	margin-top: -4px;
+	right: 0;
+	top: 50%;
+}
+.jcrop-handle.ord-w
+{
+	left: 0;
+	margin-left: -4px;
+	margin-top: -4px;
+	top: 50%;
+}
+.jcrop-handle.ord-nw
+{
+	left: 0;
+	margin-left: -4px;
+	margin-top: -4px;
+	top: 0;
+}
+.jcrop-handle.ord-ne
+{
+	margin-right: -4px;
+	margin-top: -4px;
+	right: 0;
+	top: 0;
+}
+.jcrop-handle.ord-se
+{
+	bottom: 0;
+	margin-bottom: -4px;
+	margin-right: -4px;
+	right: 0;
+}
+.jcrop-handle.ord-sw
+{
+	bottom: 0;
+	left: 0;
+	margin-bottom: -4px;
+	margin-left: -4px;
+}
+/* Dragbars */
+.jcrop-dragbar.ord-n,
+.jcrop-dragbar.ord-s
+{
+	height: 7px;
+	width: 100%;
+}
+.jcrop-dragbar.ord-e,
+.jcrop-dragbar.ord-w
+{
+	height: 100%;
+	width: 7px;
+}
+.jcrop-dragbar.ord-n
+{
+	margin-top: -4px;
+}
+.jcrop-dragbar.ord-s
+{
+	bottom: 0;
+	margin-bottom: -4px;
+}
+.jcrop-dragbar.ord-e
+{
+	margin-right: -4px;
+	right: 0;
+}
+.jcrop-dragbar.ord-w
+{
+	margin-left: -4px;
+}
+/* The "jcrop-light" class/extension */
+.jcrop-light .jcrop-vline,
+.jcrop-light .jcrop-hline
+{
+	background: #ffffff;
+	filter: alpha(opacity=70) !important;
+	opacity: .70!important;
+}
+.jcrop-light .jcrop-handle
+{
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	background-color: #000000;
+	border-color: #ffffff;
+	border-radius: 3px;
+}
+/* The "jcrop-dark" class/extension */
+.jcrop-dark .jcrop-vline,
+.jcrop-dark .jcrop-hline
+{
+	background: #000000;
+	filter: alpha(opacity=70) !important;
+	opacity: 0.7 !important;
+}
+.jcrop-dark .jcrop-handle
+{
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	background-color: #ffffff;
+	border-color: #000000;
+	border-radius: 3px;
+}
+/* Simple macro to turn off the antlines */
+.solid-line .jcrop-vline,
+.solid-line .jcrop-hline 
+{
+	background: #ffffff;
+}
+/* Fix for twitter bootstrap et al. */
+.jcrop-holder img,
+img.jcrop-preview 
+{
+	max-width: none;
+}
+.clear
+{
+	font-size: 0px;
+	line-height: 0px;
+	overflow: hidden;
+	width: 0px;
+	height: 0px;
+	clear: both;
+}
+
+/* CSS for Simplecropper */
+.simple-cropper-images
+{
+	margin: 0 auto 20px;
+}
+
+.text
+{
+	font-family: arial;
+	font-size: 14px;
+	color: #4e4e4e;
+	margin-bottom: 20px;
+}
+
+.code
+{
+	font-family: arial;
+	font-size: 14px;
+	color: #4e4e4e;
+	margin-bottom: 20px;
+	background-color: #f1f1f1;
+	padding: 10px;
+}
+#fileInput
+{
+	width:0;
+	height:0;
+	overflow:hidden;
+}
+
+#modal
+{
+	z-index: 10;
+	position: fixed;
+	top: 0px;
+	left: 0px;
+	width: 100%;
+	height: 100%;
+	background-color: #5F5F5F;
+	opacity: 0.7;
+	display: none;
+}
+
+#preview
+{
+	z-index: 11;
+	position: fixed;
+	top: 0px;
+	left: 0px;
+	display: none;
+	border: 4px solid #A5A2A2;
+	border-radius: 4px;
+	float: left;
+	font-size: 0px;
+	line-height: 0px;
+}
+
+.buttons
+{
+	width: 36px;
+	position: fixed;
+	/*bottom:0px;
+	right: -64px;*/
+	bottom: 20px;
+	right: 40px;
+	z-index: 12;
+	display: none;
+}
+
+.buttons .ok
+{
+	border: 4px solid #F5F5F5;
+	border-radius: 4px;
+	width: 60px;
+	height: 60px;
+	line-height: 0px;
+	font-size: 0px;
+	background-image: url("../../include/images/ok.png");
+	background-size: 80%;
+	background-repeat: no-repeat;
+	background-position: center;
+}
+.buttons .ok:hover
+{
+	background-image: url("../../include/images/ok.png");
+	background-size: 90%;
+	background-repeat: no-repeat;
+	background-position: center;
+	background-color: green;
+	-webkit-transition: background-color 0.25s ease-in-out, background-size 0.25s ease-in-out; /* Safari */
+	transition: background-color 0.25s ease-in-out, background-size 0.25s ease-in-out;
+}
+
+ .buttons .cancel
+{
+	margin-bottom: 20px;
+	border: 4px solid #F5F5F5;
+	border-radius: 4px;
+	width: 60px;
+	height: 60px;
+	line-height: 0px;
+	font-size: 0px;
+	background-image: url("../../include/images/cancel.png");
+	background-size: 80%;
+	background-repeat: no-repeat;
+	background-position: center;
+}
+
+.buttons .cancel:hover
+{
+	background-image: url("../../include/images/cancel.png");
+	background-size: 90%;
+	background-repeat: no-repeat;
+	background-position: center;
+	background-color: red;
+	-webkit-transition: background-color 0.25s ease-in-out, background-size 0.25s ease-in-out; /* Safari */
+	transition: background-color 0.25s ease-in-out, background-size 0.25s ease-in-out;
+}

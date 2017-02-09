@@ -97,7 +97,9 @@ function BewerbungPersonAddStudiengang($studiengang_kz, $anmerkung, $person, $st
 		$prestudent->zgvmanation = $zgvmanation;
 		$prestudent->aufmerksamdurch_kurzbz = 'k.A.';
 		$prestudent->insertamum = date('Y-m-d H:i:s');
+		$prestudent->insertvon = 'online';
 		$prestudent->updateamum = date('Y-m-d H:i:s');
+		$prestudent->updatevon = 'online';
 		$prestudent->reihungstestangetreten = false;
 		$prestudent->new = true;
 
@@ -109,6 +111,10 @@ function BewerbungPersonAddStudiengang($studiengang_kz, $anmerkung, $person, $st
 		$prestudent_id=$prestudent->prestudent_id;
 	}
 
+	// Richtigen Studienplan ermitteln
+	$studienplan = new studienplan();
+	$studienplan->getStudienplaeneFromSem($studiengang_kz, $studiensemester_kurzbz, '1', $orgform_kurzbz);
+	$studienplan_id = $studienplan->result[0]->studienplan_id;
 	// Interessenten Status anlegen
 	$prestudent_status = new prestudent();
 	$prestudent_status->load($prestudent_id);
@@ -117,23 +123,25 @@ function BewerbungPersonAddStudiengang($studiengang_kz, $anmerkung, $person, $st
 	$prestudent_status->ausbildungssemester = '1';
 	$prestudent_status->datum = date("Y-m-d H:i:s");
 	$prestudent_status->insertamum = date("Y-m-d H:i:s");
-	$prestudent_status->insertvon = '';
+	$prestudent_status->insertvon = 'online';
 	$prestudent_status->updateamum = date("Y-m-d H:i:s");
-	$prestudent_status->updatevon = '';
+	$prestudent_status->updatevon = 'online';
 	$prestudent_status->new = true;
 	$prestudent_status->anmerkung_status = $anmerkung;
 	$prestudent_status->orgform_kurzbz = $orgform_kurzbz;
+	$prestudent_status->studienplan_id = $studienplan_id;
 
 	if(!$prestudent_status->save_rolle())
 	{
 		return $prestudent_status->errormsg;
 	}
 	
+	/* Durch das Einrichten des Cronjobs sollte sich das erledigt haben
 	if(CAMPUS_NAME=='FH Technikum Wien')
 	{
 		if(!sendAddStudiengang($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz))
 			return 'Senden der Mail fehlgeschlagen';
-	}
+	}*/
 	
 	return true;
 }
@@ -146,7 +154,7 @@ function BewerbungPersonAddStudiengang($studiengang_kz, $anmerkung, $person, $st
  */
 function check_load_bewerbungen($mailadresse,$studiensemester_kurzbz=null)
 {
-	$mailadresse = trim($mailadresse);
+	$mailadresse = strtolower(trim($mailadresse));
 	$db = new basis_db();
 	
 	$qry = "SELECT DISTINCT tbl_person.person_id,tbl_person.zugangscode,tbl_person.insertamum
@@ -158,9 +166,9 @@ function check_load_bewerbungen($mailadresse,$studiensemester_kurzbz=null)
 							JOIN public.tbl_prestudentstatus USING (prestudent_id) ";
 			$qry .= "
 				WHERE kontakttyp='email' 
-				AND (	kontakt=".$db->db_add_param($mailadresse, FHC_STRING)." 
-						OR alias||'@technikum-wien.at'=".$db->db_add_param($mailadresse, FHC_STRING)."
-			 			OR uid||'@technikum-wien.at'=".$db->db_add_param($mailadresse, FHC_STRING).")";
+				AND (	LOWER(kontakt)=".$db->db_add_param($mailadresse, FHC_STRING)." 
+						OR LOWER(alias||'@".DOMAIN."')=".$db->db_add_param($mailadresse, FHC_STRING)."
+			 			OR LOWER(uid||'@".DOMAIN."')=".$db->db_add_param($mailadresse, FHC_STRING).")";
 				if ($studiensemester_kurzbz!='')
 					$qry .= " AND studiensemester_kurzbz=".$db->db_add_param($studiensemester_kurzbz, FHC_STRING);
 				
@@ -253,8 +261,8 @@ function check_person_statusbestaetigt($person_id,$status_kurzbz,$studiensemeste
 		{
 			if($db->db_num_rows($result)>0)
 				return true;
-				else
-					return false;
+			else
+				return false;
 		}
 		else
 		{
@@ -267,8 +275,8 @@ function check_person_statusbestaetigt($person_id,$status_kurzbz,$studiensemeste
  * Holt die aktiven Studienplaene. Optional $studiengang_kz eines bestimmten Studiengangs, optional $studiensemester_kurzbz eines bestimmten Studiensemesters
  * optional $ausbildungssemester eines bestimmten Ausbildungssemesters, optional $orgform_kurzbz einer bestimmten Orgform
  * @param integer $studiengang_kz optional
- * @param string $studiensemester_kurzbz optional
- * @param integer $ausbildungssemester optional
+ * @param array $studiensemester_kurzbz Array von Studiensemestern, in deren Gueltigkeit die Studienplaene liegen
+ * @param string $ausbildungssemester Kommaseparierter String mit Ausbildungssemestern, in deren Gueltigkeit die Studienplaene liegen
  * @param string $orgform_kurzbz optional
  */
 function getStudienplaeneForOnlinebewerbung($studiengang_kz=null, $studiensemester_kurzbz=null, $ausbildungssemester=null, $orgform_kurzbz=null)
@@ -285,8 +293,8 @@ function getStudienplaeneForOnlinebewerbung($studiengang_kz=null, $studiensemest
 				FROM
 					lehre.tbl_studienplan
 					JOIN lehre.tbl_studienordnung USING(studienordnung_id)
-					JOIN lehre.tbl_studienordnung_semester USING(studienordnung_id)
-			    WHERE
+					JOIN lehre.tbl_studienplan_semester USING(studienplan_id)
+				WHERE
 					tbl_studienplan.aktiv";
 
 	if($studiengang_kz!='')
@@ -295,11 +303,12 @@ function getStudienplaeneForOnlinebewerbung($studiengang_kz=null, $studiensemest
 	}
 	if($studiensemester_kurzbz!='')
 	{
-		$qry.=" AND tbl_studienordnung_semester.studiensemester_kurzbz = ".$db->db_add_param($studiensemester_kurzbz);
+		$qry.=" AND tbl_studienplan_semester.studiensemester_kurzbz IN (".$db->implode4SQL($studiensemester_kurzbz).")";
 	}
 	if($ausbildungssemester!='')
 	{
-		$qry.=" AND tbl_studienordnung_semester.semester=".$db->db_add_param($ausbildungssemester);
+		$ausbildungssemester = explode(',', $ausbildungssemester);
+		$qry.=" AND tbl_studienplan_semester.semester IN (".$db->implode4SQL($ausbildungssemester).")";
 	}	
 	if($orgform_kurzbz!='')
 	{
@@ -346,8 +355,8 @@ function getStudienplaeneForOnlinebewerbung($studiengang_kz=null, $studiensemest
 /**
  * Holt die vorkommenden Orgform/Sprache Kombinationen aus den aktiven Studienplänen
  * @param integer $studiengang_kz optional
- * @param array $studiensemester_kurzbz optional Array aus Studiensemestern, dessen Studienordnungen geholt werden sollen
- * @param integer $ausbildungssemester optional
+ * @param array $studiensemester_kurzbz Array von Studiensemestern, in deren Gueltigkeit die Studienplaene liegen
+ * @param string $ausbildungssemester Kommaseparierter String mit Ausbildungssemestern, in deren Gueltigkeit die Studienplaene liegen
  * @param string $orgform_kurzbz optional
  */
 function getOrgformSpracheForOnlinebewerbung($studiengang_kz=null, $studiensemester_kurzbz=null, $ausbildungssemester=null, $orgform_kurzbz=null)
@@ -358,7 +367,7 @@ function getOrgformSpracheForOnlinebewerbung($studiengang_kz=null, $studiensemes
 			    FROM
 				    lehre.tbl_studienplan
 				    JOIN lehre.tbl_studienordnung USING(studienordnung_id)
-				    JOIN lehre.tbl_studienordnung_semester USING(studienordnung_id)
+				    JOIN lehre.tbl_studienplan_semester USING(studienplan_id)
 			    WHERE
 				    tbl_studienplan.orgform_kurzbz IS NOT NULL
 				AND
@@ -371,11 +380,12 @@ function getOrgformSpracheForOnlinebewerbung($studiengang_kz=null, $studiensemes
 	if($studiensemester_kurzbz!='')
 	{
 		$studiensemester_kurzbz = $db->db_implode4SQL($studiensemester_kurzbz);
-		$qry.=" AND tbl_studienordnung_semester.studiensemester_kurzbz IN (".$studiensemester_kurzbz.")";
+		$qry.=" AND tbl_studienplan_semester.studiensemester_kurzbz IN (".$studiensemester_kurzbz.")";
 	}
 	if($ausbildungssemester!='')
 	{
-		$qry.=" AND tbl_studienordnung_semester.semester=".$db->db_add_param($ausbildungssemester);
+		$ausbildungssemester = explode(',', $ausbildungssemester);
+		$qry.=" AND tbl_studienplan_semester.semester IN (".$db->implode4SQL($ausbildungssemester).")";
 	}
 	if($orgform_kurzbz!='')
 	{
@@ -392,6 +402,47 @@ function getOrgformSpracheForOnlinebewerbung($studiengang_kz=null, $studiensemes
 			$obj->orgform_kurzbz = $row->orgform_kurzbz;
 			$obj->sprache = $row->sprache;
 				
+			$obj->new=true;
+
+			$db->result[] = $obj;
+		}
+		return $db->result;
+	}
+	else
+		return false;
+}
+/**
+ * Laedt alle Gemeinden zu einer PLZ
+ * @param integer $plz PLZ
+ * @return Objekt mit den Gemeinden, sonst false 
+ */
+function BewerbungGetGemeinden($plz)
+{
+	$db = new basis_db();
+	$qry = "SELECT DISTINCT
+					plz, name, ortschaftskennziffer, ortschaftsname, bulacode, bulabez,
+					(
+						SELECT count(ort) FROM public.tbl_adresse WHERE gemeinde=a.name AND plz=a.plz::varchar AND TRIM(ort)=a.ortschaftsname LIMIT 1
+					) AS anzahl
+				FROM
+					bis.tbl_gemeinde a
+				WHERE
+					plz = ".$db->db_add_param($plz, FHC_INTEGER)."
+				 ORDER BY anzahl DESC";
+			
+	if($result = $db->db_query($qry))
+	{
+		$db->result='';
+		while($row = $db->db_fetch_object($result))
+		{
+			$obj = new stdClass();
+			$obj->plz = $row->plz;
+			$obj->gemeindename = $row->name;
+			$obj->ortschaftskennziffer = $row->ortschaftskennziffer;
+			$obj->ortschaftsname = $row->ortschaftsname;
+			$obj->bulacode = $row->bulacode;
+			$obj->bulabez = $row->bulabez;
+
 			$obj->new=true;
 
 			$db->result[] = $obj;

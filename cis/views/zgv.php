@@ -172,13 +172,13 @@ elseif($save_error_zgv===true)
 				<?php endif; ?>
 			</fieldset>
 		<?php endforeach ?>
-		<button class="btn-nav btn btn-default" type="button" data-jump-tab="<?php echo $tabs[array_search('zgv', $tabs)-1] ?>">
+		<button class="btn-nav btn btn-default" type="submit" name="btn_zgv" data-jump-tab="<?php echo $tabs[array_search('zgv', $tabs)-1] ?>" onclick="this.form.action='<?php echo $_SERVER['PHP_SELF'] ?>?active=<?php echo $tabs[array_search('zgv', $tabs)-1] ?>'">
 			<?php echo $p->t('global/zurueck') ?>
 		</button>
 		<button class="btn btn-success" type="submit" name="btn_zgv">
 			<?php echo $p->t('global/speichern') ?>
 		</button>
-		<button class="btn-nav btn btn-default" type="button" data-jump-tab="<?php echo $tabs[array_search('zgv', $tabs)+1] ?>">
+		<button class="btn-nav btn btn-default" type="submit" name="btn_zgv" data-jump-tab="<?php echo $tabs[array_search('zgv', $tabs)+1] ?>" onclick="this.form.action='<?php echo $_SERVER['PHP_SELF'] ?>?active=<?php echo $tabs[array_search('zgv', $tabs)+1] ?>'">
 			<?php echo $p->t('bewerbung/weiter'); ?>
 		</button><br/><br/>
 	</form>

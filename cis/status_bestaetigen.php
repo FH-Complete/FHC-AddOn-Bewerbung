@@ -20,6 +20,7 @@
 
 require_once('../../../config/cis.config.inc.php');
 require_once('../../../config/global.config.inc.php');
+require_once('../bewerbung.config.inc.php');
 require_once('../../../include/benutzerberechtigung.class.php');
 require_once('../../../include/prestudent.class.php');
 require_once('../../../include/person.class.php');

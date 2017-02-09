@@ -35,6 +35,7 @@ require_once('../../../include/datum.class.php');
 require_once('../../../include/sprache.class.php');
 require_once('../../../include/benutzer.class.php');
 require_once('../include/functions.inc.php');
+require_once('../bewerbung.config.inc.php');
 
 require_once '../../../include/securimage/securimage.php';
 
@@ -209,6 +210,12 @@ elseif($username && $password)
 				{
 					$std_semester = null;
 				}
+				
+				$studiengaengeBaMa = array(); // Nur Bachelor oder Master Studiengaenge				
+				$studiengaengeBaMa = array_filter($studiengaenge, function ($v)
+				{
+					return $v > 0 && $v < 10000;
+				});
 
 				if($geb_datum)
 				{
@@ -216,44 +223,44 @@ elseif($username && $password)
 				}
 
 				$submit = filter_input(INPUT_POST, 'submit_btn');
+				$resend_code = filter_input(INPUT_GET, 'ReSendCode');
 
-				// Pruefen, ob schon eine Bewerbung fuer diese Mailadresse existiert->Wenn ja, Code nochmal dorthin schicken
-				$return = check_load_bewerbungen($email);
-				if($return)
+				if(isset($submit) || isset($resend_code))
 				{
-					//Wenn es noch keinen Zugangscode für die Person gibt, generiere einen
-					if($return->zugangscode=='')
+					// Pruefen, ob schon eine Bewerbung fuer diese Mailadresse existiert->Wenn ja, Code nochmal dorthin schicken
+					$return = check_load_bewerbungen($email);
+					if($return)
 					{
-						$person = new person($return->person_id);
-
-						$zugangscode = substr(md5(openssl_random_pseudo_bytes(20)), 0, 10);
-
-						$person->zugangscode = $zugangscode;
-						$person->updateamum = date('Y-m-d H:i:s');
-						$person->updatevon = 'online';
-						$person->new = false;
-
-						if(!$person->save())
+						//Wenn es noch keinen Zugangscode für die Person gibt, generiere einen
+						if($return->zugangscode=='')
 						{
-							die($p->t('global/fehlerBeimSpeichernDerDaten'));
+							$person = new person($return->person_id);
+					
+							$zugangscode = substr(md5(openssl_random_pseudo_bytes(20)), 0, 10);
+					
+							$person->zugangscode = $zugangscode;
+							$person->updateamum = date('Y-m-d H:i:s');
+							$person->updatevon = 'online';
+							$person->new = false;
+					
+							if(!$person->save())
+							{
+								die($p->t('global/fehlerBeimSpeichernDerDaten'));
+							}
 						}
-					}
-					$resend_code = filter_input(INPUT_GET, 'ReSendCode');
-					if (isset($resend_code))
-					{
-						$zugangscode = $return->zugangscode;
-						echo '<p class="alert alert-success">'.resendMail($zugangscode, $email).'</p>';
-						exit();
+						if (isset($resend_code))
+						{
+							$zugangscode = $return->zugangscode;
+							echo '<p class="alert alert-success">'.resendMail($zugangscode, $email).'</p>';
+							exit();
+						}
+						else
+							$message = '<p class="alert alert-danger" id="danger-alert">'.$p->t('bewerbung/mailadresseBereitsGenutzt',array($email)).'</p>
+							<button type="submit" class="btn btn-primary" value="Ja" onclick="document.RegistrationLoginForm.action=\''.basename(__FILE__).'?method=registration&ReSendCode\'; document.getElementById(\'RegistrationLoginForm\').submit();">'.$p->t('bewerbung/codeZuschicken').'</button>
+							<button type="submit" class="btn btn-primary" value="Nein" onclick="document.RegistrationLoginForm.email.value=\'\'; document.getElementById(\'RegistrationLoginForm\').submit();">'.$p->t('global/abbrechen').'</button>';
+					
 					}
 					else
-						$message = '<p class="alert alert-danger" id="danger-alert">'.$p->t('bewerbung/mailadresseBereitsGenutzt',array($email)).'</p>
-								<button type="submit" class="btn btn-primary" value="Ja" onclick="document.RegistrationLoginForm.action=\''.basename(__FILE__).'?method=registration&ReSendCode\'; document.getElementById(\'RegistrationLoginForm\').submit();">'.$p->t('bewerbung/codeZuschicken').'</button>
-								<button type="submit" class="btn btn-primary" value="Nein" onclick="document.RegistrationLoginForm.email.value=\'\'; document.getElementById(\'RegistrationLoginForm\').submit();">'.$p->t('global/abbrechen').'</button>';
-
-				}
-				else
-				{
-					if(isset($submit))
 					{
 						$securimage = new Securimage();
 						// Sicherheitscode wurde falsch eingegeben
@@ -264,6 +271,10 @@ elseif($username && $password)
 						elseif (BEWERBERTOOL_STUDIENAUSWAHL_ANZEIGEN && count($studiengaenge)==0)
 						{
 							$message = '<p class="bg-danger padding-10">'.$p->t('bewerbung/bitteStudienrichtungWaehlen').'</p>';
+						}
+						elseif (BEWERBERTOOL_STUDIENAUSWAHL_ANZEIGEN && defined('BEWERBERTOOL_MAX_STUDIENGAENGE') && count($studiengaengeBaMa) > BEWERBERTOOL_MAX_STUDIENGAENGE)
+						{
+							$message = '<p class="bg-danger padding-10">'.$p->t('bewerbung/sieKoennenMaximalXStudiengaengeWaehlen').'</p>';
 						}
 						else
 						{
@@ -295,6 +306,7 @@ elseif($username && $password)
 							$kontakt->person_id = $person->person_id;
 							$kontakt->kontakttyp = 'email';
 							$kontakt->kontakt = $email;
+							$kontakt->zustellung = true;
 							$kontakt->insertamum = date('Y-m-d H:i:s');
 							$kontakt->insertvon = 'online';
 							$kontakt->updateamum = date('Y-m-d H:i:s');
@@ -328,6 +340,10 @@ elseif($username && $password)
 										die($p->t('global/fehlerBeimSpeichernDerDaten'));
 									}
 
+									// Richtigen Studienplan ermitteln
+									$studienplan = new studienplan();
+									$studienplan->getStudienplaeneFromSem($studiengaenge[$i], $std_semester, '1', $orgform[$studiengaenge[$i]]);
+									$studienplan_id = $studienplan->result[0]->studienplan_id;
 									// Interessenten Status anlegen
 									$prestudent_status = new prestudent();
 									$prestudent_status->load($prestudent->prestudent_id);
@@ -342,6 +358,7 @@ elseif($username && $password)
 									$prestudent_status->new = true;
 									$prestudent_status->anmerkung_status = $anmerkungen[$studiengaenge[$i]];
 									$prestudent_status->orgform_kurzbz = $orgform[$studiengaenge[$i]];
+									$prestudent_status->studienplan_id = $studienplan_id;
 
 									if(!$prestudent_status->save_rolle())
 									{
@@ -495,13 +512,16 @@ elseif($username && $password)
 								<?php
 								$stsem = new studiensemester();
 								$stsem->getStudiensemesterOnlinebewerbung();
+								$studiensemester_array = array();
 
 								foreach($stsem->studiensemester as $row): ?>
 									<option value="<?php echo $row->studiensemester_kurzbz ?>"
 										<?php echo $std_semester == $row->studiensemester_kurzbz ? 'selected' : '' ?>>
 										<?php echo $row->bezeichnung.' ('.$p->t('bewerbung/ab').' '.$datum->formatDatum($stsem->convert_html_chars($row->start),'d.m.Y').')' ?>
 									</option>
-								<?php endforeach; ?>
+								<?php 
+								$studiensemester_array[] = $row->studiensemester_kurzbz;
+								endforeach; ?>
 							</select>
 						</div>
 					</div>
@@ -526,6 +546,7 @@ elseif($username && $password)
 							//In der Stg-Auswahl verwendete Typen
 							$typen = array();
 							$anzStg = count($studiengaenge);
+
 							for($i = 0; $i<$anzStg; $i++)
 							{
 								$stgtypen = new studiengang();
@@ -535,9 +556,10 @@ elseif($username && $password)
 
 							$lasttyp = '';
 							$last_lgtyp = '';
+
 							foreach($stg->result as $result)
 							{
-								if($lasttyp!=$result->typ)
+								if($lasttyp != $result->typ)
 								{
 									if($lasttyp!='')
 										echo '</div>';
@@ -548,15 +570,25 @@ elseif($username && $password)
 										$collapse = 'collapse';
 									echo '<a href="#'.$stgtyp->studiengang_typ_arr[$result->typ].'" data-toggle="collapse"><h4>'.$stgtyp->studiengang_typ_arr[$result->typ].'  <small><span class="glyphicon glyphicon-collapse-down"></span></small></h4></a>';
 									echo '<div id="'.$stgtyp->studiengang_typ_arr[$result->typ].'" class="'.$collapse.'">';
+									if ($result->typ!='l')
+										echo '<p name="checkboxInfoDiv"></p>';
 									$lasttyp=$result->typ;
 								}
 								if($last_lgtyp!=$result->bezeichnung && $result->bezeichnung != '')
 								{
 										echo '<p style="padding-top: 20px;"><b>'.$result->bezeichnung.'</b></p>';
-									$last_lgtyp=$result->bezeichnung;
+									$last_lgtyp = $result->bezeichnung;
 								}
 
 								$checked = '';
+								$disabled = '';
+								
+								// Checkboxen deaktivieren, wenn BEWERBERTOOL_MAX_STUDIENGAENGE gesetzt ist und mehr als oder genau BEWERBERTOOL_MAX_STUDIENGAENGE uebergeben werden.
+								if(defined('BEWERBERTOOL_MAX_STUDIENGAENGE') && BEWERBERTOOL_MAX_STUDIENGAENGE != '')
+								{
+									if (count($studiengaengeBaMa) >= BEWERBERTOOL_MAX_STUDIENGAENGE && $result->typ!='l')
+										$disabled = 'disabled';
+								}
 
 								if($sprache!='German' && $result->studiengangbezeichnung_englisch!='')
 									$stg_bezeichnung = $result->studiengangbezeichnung_englisch;
@@ -566,13 +598,13 @@ elseif($username && $password)
 								$orgform_stg = $stg->getOrgForm($result->studiengang_kz);
 
 								$sprache_lv = $stg->getSprache($result->studiengang_kz);
-								$studienplan = getStudienplaeneForOnlinebewerbung($result->studiengang_kz, '', '',''); //@todo: studiensemester und ausbildungssemester dynamisch
+								$studienplan = getStudienplaeneForOnlinebewerbung($result->studiengang_kz, $studiensemester_array, '1', ''); //@todo: studiensemester und ausbildungssemester dynamisch
 								$orgformen_sprachen = array();
 								if($studienplan!='')
 								{
 									foreach ($studienplan as $row)
 									{
-										if (CAMPUS_NAME=='FH Technikum Wien' && $result->studiengang_kz==334) //@todo: Pfuschloesung bis zum neuen Tool, damit MIT nicht mehr angezeigt wird
+										if (CAMPUS_NAME=='FH Technikum Wien' && $result->studiengang_kz==334 && $stg_bezeichnung == 'Intelligent Transport Systems') //@todo: Pfuschloesung bis zum neuen Tool, damit MIT nicht mehr angezeigt wird
 											continue;
 										else
 											$orgformen_sprachen[] = $row->orgform_kurzbz.'_'.$row->sprache;
@@ -589,21 +621,30 @@ elseif($username && $password)
 								elseif ($result->typ!='l' && !isset($lgtyparr[$result->lgartcode]))
 									$stg_bezeichnung .= ' | <i>'.$p->t('bewerbung/orgform/'.$orgform_stg[0]).' - '.$p->t('bewerbung/'.$sprache_lv[0]).'</i>';
 
+								if (CAMPUS_NAME=='FH Technikum Wien' && $result->studiengang_kz==334 && $result->studiengangbezeichnung != 'Intelligent Transport Systems') //@todo: Pfuschloesung bis zum neuen Tool, damit MIT nicht mehr angezeigt wird
+									$stg_bezeichnung .= ' | <i>'.$p->t('bewerbung/orgform/'.$orgform_stg[0]).' - '.$p->t('bewerbung/'.$sprache_lv[0]).'</i>';
+								
 								if (CAMPUS_NAME=='FH Technikum Wien' && $result->studiengang_kz==334) //@todo: Pfuschloesung bis zum neuen Tool, damit kein Modal bei MSC angezeigt wird
 									$modal = false;
 
 								if(in_array($result->studiengang_kz, $studiengaenge) || $result->studiengang_kz == $stg_auswahl)
 								{
 									$checked = 'checked';
+									$disabled = '';
 								}
-								if (CAMPUS_NAME=='FH Technikum Wien' && $result->studiengang_kz==334) //@todo: Pfuschloesung bis zum neuen Tool, damit MIT nicht mehr angezeigt wird
+								if ($result->typ!='l')
+									$class = 'checkbox_stg';
+								else 
+									$class = 'checkbox_lg';
+								
+								if (CAMPUS_NAME=='FH Technikum Wien' && $result->studiengang_kz==334 && $result->studiengangbezeichnung == 'Intelligent Transport Systems') //@todo: Pfuschloesung bis zum neuen Tool, damit MIT nicht mehr angezeigt wird
 									continue;
 								else
 								{
 									echo '
 									<div class="checkbox">
 										<label data-toggle="collapse" data-target="#prio-dropown'.$result->studiengang_kz.'">
-											<input type="checkbox" name="studiengaenge[]" value="'.$result->studiengang_kz.'" '.$checked.'
+											<input class="'.$class.'" type="checkbox" name="studiengaenge[]" value="'.$result->studiengang_kz.'" '.$checked.' '.$disabled.'
 													data-modal="'.$modal.'"
 													data-modal-sprache="'.implode(',', $sprache_lv).'"
 													data-modal-orgform="'.implode(',', $orgform_stg).'"
@@ -644,14 +685,14 @@ elseif($username && $password)
 												</div>
 											</div>';
 
-											$studiensemester = new studiensemester();
-											$studiensemester->getPlusMinus(10,1);
+											//$studiensemester = new studiensemester();
+											//$studiensemester->getPlusMinus(10,1);
 
-											$studiensemester_kurzbz=array();
-											foreach($studiensemester->studiensemester AS $row)
-												$studiensemester_kurzbz[] .= $row->studiensemester_kurzbz;
+											//$studiensemester_kurzbz=array();
+											//foreach($studiensemester->studiensemester AS $row)
+												//$studiensemester_kurzbz[] .= $row->studiensemester_kurzbz;
 
-											$orgform_sprache = getOrgformSpracheForOnlinebewerbung($result->studiengang_kz,$studiensemester_kurzbz,'');
+											$orgform_sprache = getOrgformSpracheForOnlinebewerbung($result->studiengang_kz, $studiensemester_array,'1');
 
 											echo '<div class="row" id="topprio'.$result->studiengang_kz.'">
 												<div class="col-sm-6 priogroup">';
@@ -1210,6 +1251,25 @@ elseif($username && $password)
 					changeSprache(sprache);
 				});
 
+				<?php if (defined('BEWERBERTOOL_MAX_STUDIENGAENGE') && BEWERBERTOOL_MAX_STUDIENGAENGE != ''): ?>
+					//Disabled die Checkboxen, wenn mehr als 3 Studiengaenge gewaehlt werden
+					$("input[type=checkbox][class=checkbox_stg]").click(function()
+					{
+						var bol = $("input[type=checkbox][class=checkbox_stg]:checked").length >= <?php echo BEWERBERTOOL_MAX_STUDIENGAENGE; ?>;
+						$("input[type=checkbox][class=checkbox_stg]").not(":checked").attr("disabled",bol);
+						if ($("input[type=checkbox][class=checkbox_stg]:checked").length >= <?php echo BEWERBERTOOL_MAX_STUDIENGAENGE; ?>)
+						{
+							$("p[name=checkboxInfoDiv]").html("<?php echo $p->t('bewerbung/sieKoennenMaximalXStudiengaengeWaehlen',  array(BEWERBERTOOL_MAX_STUDIENGAENGE)) ?>");
+							$("p[name=checkboxInfoDiv]").addClass("alert alert-warning");
+						}
+						else
+						{
+							$("p[name=checkboxInfoDiv]").html("");
+							$("p[name=checkboxInfoDiv]").removeClass();
+						}
+					});
+				<?php endif; ?>
+
 				<?php if(BEWERBERTOOL_STUDIENAUSWAHL_ANZEIGEN): ?>
 
 				/*$('#liste-studiengaenge input').on('change', function()
@@ -1228,6 +1288,15 @@ elseif($username && $password)
 
 					$('#liste-studiengaenge input[value="' + stgkz + '"]').prop('checked', false);
 					$('#badge' + stgkz).html('');
+				});
+
+				var limit = 3;
+				$('stg_checkboxes').on('change', function(evt) 
+				{
+					if($("input[type=checkbox]:checked").length >= limit) 
+					{
+						this.checked = false;
+					}
 				});
 
 				$('#prio-dropdown button.ok-prio').on('click', function() {
@@ -1376,12 +1445,14 @@ function sendMail($zugangscode, $email, $person_id=null)
 	$text = $p->t('bewerbung/mailtext',array($vorname, $nachname, $zugangscode, $anrede));
 	$mail->setHTMLContent($text);
 	if(!$mail->send())
-		$msg= '<span class="error">'.$p->t('bewerbung/fehlerBeimSenden').'</span><br /><a href='.$_SERVER['PHP_SELF'].'?method=registration>'.$p->t('bewerbung/zurueckZurAnmeldung').'</a>';
+		$msg = '<span class="error">'.$p->t('bewerbung/fehlerBeimSenden').'</span><br /><a href='.$_SERVER['PHP_SELF'].'?method=registration>'.$p->t('bewerbung/zurueckZurAnmeldung').'</a>';
 	else
-		$msg= $p->t('bewerbung/emailgesendetan', array($email))."<br><br><a href=".$_SERVER['PHP_SELF'].">".$p->t('bewerbung/zurueckZurAnmeldung')."</a>";
+		$msg = $p->t('bewerbung/emailgesendetan', array($email))."<br><br><a href=".$_SERVER['PHP_SELF'].">".$p->t('bewerbung/zurueckZurAnmeldung')."</a>";
 
+	if(defined('MAIL_DEBUG') && MAIL_DEBUG!='')
+		$msg .= "<br><br>Zugangscode: ".$zugangscode;
 
-
+	/* Durch das Einrichten des Cronjobs sollte sich das erledigt haben
 	// sende Nachricht an Assistenz. Derzeit nur fuer FHTW, weil akut so wenig Bewerbungen eingehen
 	if(CAMPUS_NAME=='FH Technikum Wien')
 	{
@@ -1434,7 +1505,7 @@ function sendMail($zugangscode, $email, $person_id=null)
 			$mail->setHTMLContent($mailcontent);
 			$mail->send();
 		}
-	}
+	}*/
 	return $msg;
 }
 function resendMail($zugangscode, $email, $person_id=null)
