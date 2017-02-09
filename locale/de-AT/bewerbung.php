@@ -51,6 +51,7 @@ $this->phrasen['bewerbung/orgform/PT']='Part time';
 $this->phrasen['bewerbung/orgform/ZGS']='Zielgruppenspezifisch';
 $this->phrasen['bewerbung/German']='Deutsch';
 $this->phrasen['bewerbung/English']='Englisch';
+$this->phrasen['bewerbung/Italian']='Italienisch';
 $this->phrasen['bewerbung/topprio']='Oberste Priorität';
 $this->phrasen['bewerbung/alternative']='Alternative';
 $this->phrasen['bewerbung/priowaehlen']='Primäre und alternative Variante auswählen';
