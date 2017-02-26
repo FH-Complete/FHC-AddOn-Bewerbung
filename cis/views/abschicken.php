@@ -78,10 +78,10 @@ echo '	</div><form method="POST" action="'.$_SERVER['PHP_SELF'].'?active=abschic
 //echo '<p>'.$p->t('bewerbung/erklaerungBewerbungAbschicken').'</p>';
 
 $disabled = 'disabled';
-if($status_person==true && $status_kontakt==true && $status_zahlungen==true && $status_reihungstest==true && $status_zgv_bak==true && $status_dokumente==true)
+if($status_person==true && $status_kontakt==true && $status_zahlungen==true && $status_reihungstest==true && $status_zgv_bak==true && $status_dokumente==true && $status_ausbildung == true)
 	$disabled = '';
 
-if(CAMPUS_NAME=='FH Technikum Wien' && $status_person==true && $status_kontakt==true && $status_zahlungen==true && $status_reihungstest==true && $status_zgv_bak==true && $status_dokumente==false)	
+if(CAMPUS_NAME=='FH Technikum Wien' && $status_person==true && $status_kontakt==true && $status_zahlungen==true && $status_reihungstest==true && $status_zgv_bak==true && $status_dokumente==false)
 	$disabled = '';
 
 $prestudent_help= new prestudent();
