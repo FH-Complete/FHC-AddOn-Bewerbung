@@ -34,6 +34,7 @@ require_once('../../../include/studiensemester.class.php');
 require_once('../../../include/datum.class.php');
 require_once('../../../include/sprache.class.php');
 require_once('../../../include/benutzer.class.php');
+require_once('../../../include/konto.class.php');
 require_once('../include/functions.inc.php');
 require_once('../bewerbung.config.inc.php');
 
@@ -210,8 +211,8 @@ elseif($username && $password)
 				{
 					$std_semester = null;
 				}
-				
-				$studiengaengeBaMa = array(); // Nur Bachelor oder Master Studiengaenge				
+
+				$studiengaengeBaMa = array(); // Nur Bachelor oder Master Studiengaenge
 				$studiengaengeBaMa = array_filter($studiengaenge, function ($v)
 				{
 					return $v > 0 && $v < 10000;
@@ -235,14 +236,14 @@ elseif($username && $password)
 						if($return->zugangscode=='')
 						{
 							$person = new person($return->person_id);
-					
+
 							$zugangscode = substr(md5(openssl_random_pseudo_bytes(20)), 0, 10);
-					
+
 							$person->zugangscode = $zugangscode;
 							$person->updateamum = date('Y-m-d H:i:s');
 							$person->updatevon = 'online';
 							$person->new = false;
-					
+
 							if(!$person->save())
 							{
 								die($p->t('global/fehlerBeimSpeichernDerDaten'));
@@ -258,7 +259,7 @@ elseif($username && $password)
 							$message = '<p class="alert alert-danger" id="danger-alert">'.$p->t('bewerbung/mailadresseBereitsGenutzt',array($email)).'</p>
 							<button type="submit" class="btn btn-primary" value="Ja" onclick="document.RegistrationLoginForm.action=\''.basename(__FILE__).'?method=registration&ReSendCode\'; document.getElementById(\'RegistrationLoginForm\').submit();">'.$p->t('bewerbung/codeZuschicken').'</button>
 							<button type="submit" class="btn btn-primary" value="Nein" onclick="document.RegistrationLoginForm.email.value=\'\'; document.getElementById(\'RegistrationLoginForm\').submit();">'.$p->t('global/abbrechen').'</button>';
-					
+
 					}
 					else
 					{
@@ -363,6 +364,24 @@ elseif($username && $password)
 									if(!$prestudent_status->save_rolle())
 									{
 										die($p->t('global/fehlerBeimSpeichernDerDaten'));
+									}
+									if (defined('BEWERBERTOOL_KONTOBELASTUNG_BUCHUNGSTYP') && BEWERBERTOOL_KONTOBELASTUNG_BUCHUNGSTYP != '')
+									{
+											//TODO: Betrag aus dem Buchungstyp rausholen
+											$konto = new konto();
+											$konto->person_id = $person->person_id;
+											$konto->studiengang_kz = $studiengaenge[$i];
+											$konto->studiensemester_kurzbz = $std_semester;
+											$konto->betrag = -650;
+											$konto->buchungsdatum = date('Y-m-d');
+											$konto->buchungstext = BEWERBERTOOL_KONTOBELASTUNG_BUCHUNGSTYP;
+											$konto->buchungstyp_kurzbz = BEWERBERTOOL_KONTOBELASTUNG_BUCHUNGSTYP;
+											$konto->mahnspanne = 30;
+
+											if (!$konto->save(true))
+											{
+													die($p->t('global/fehlerBeimSpeichernDerDaten'));
+											}
 									}
 								}
 							}
@@ -519,7 +538,7 @@ elseif($username && $password)
 										<?php echo $std_semester == $row->studiensemester_kurzbz ? 'selected' : '' ?>>
 										<?php echo $row->bezeichnung.' ('.$p->t('bewerbung/ab').' '.$datum->formatDatum($stsem->convert_html_chars($row->start),'d.m.Y').')' ?>
 									</option>
-								<?php 
+								<?php
 								$studiensemester_array[] = $row->studiensemester_kurzbz;
 								endforeach; ?>
 							</select>
@@ -582,7 +601,7 @@ elseif($username && $password)
 
 								$checked = '';
 								$disabled = '';
-								
+
 								// Checkboxen deaktivieren, wenn BEWERBERTOOL_MAX_STUDIENGAENGE gesetzt ist und mehr als oder genau BEWERBERTOOL_MAX_STUDIENGAENGE uebergeben werden.
 								if(defined('BEWERBERTOOL_MAX_STUDIENGAENGE') && BEWERBERTOOL_MAX_STUDIENGAENGE != '')
 								{
@@ -623,7 +642,7 @@ elseif($username && $password)
 
 								if (CAMPUS_NAME=='FH Technikum Wien' && $result->studiengang_kz==334 && $result->studiengangbezeichnung != 'Intelligent Transport Systems') //@todo: Pfuschloesung bis zum neuen Tool, damit MIT nicht mehr angezeigt wird
 									$stg_bezeichnung .= ' | <i>'.$p->t('bewerbung/orgform/'.$orgform_stg[0]).' - '.$p->t('bewerbung/'.$sprache_lv[0]).'</i>';
-								
+
 								if (CAMPUS_NAME=='FH Technikum Wien' && $result->studiengang_kz==334) //@todo: Pfuschloesung bis zum neuen Tool, damit kein Modal bei MSC angezeigt wird
 									$modal = false;
 
@@ -634,9 +653,9 @@ elseif($username && $password)
 								}
 								if ($result->typ!='l')
 									$class = 'checkbox_stg';
-								else 
+								else
 									$class = 'checkbox_lg';
-								
+
 								if (CAMPUS_NAME=='FH Technikum Wien' && $result->studiengang_kz==334 && $result->studiengangbezeichnung == 'Intelligent Transport Systems') //@todo: Pfuschloesung bis zum neuen Tool, damit MIT nicht mehr angezeigt wird
 									continue;
 								else
@@ -1291,9 +1310,9 @@ elseif($username && $password)
 				});
 
 				var limit = 3;
-				$('stg_checkboxes').on('change', function(evt) 
+				$('stg_checkboxes').on('change', function(evt)
 				{
-					if($("input[type=checkbox]:checked").length >= limit) 
+					if($("input[type=checkbox]:checked").length >= limit)
 					{
 						this.checked = false;
 					}
