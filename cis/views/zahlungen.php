@@ -115,6 +115,9 @@ if(!isset($person_id))
 	<?php endif; ?>
 	<?php if(defined('BEWERBERTOOL_PAYMENT_ANZEIGEN') && BEWERBERTOOL_PAYMENT_ANZEIGEN==true && $status_zahlungen==false): ?>
 		<p>
+			<?php echo $p->t('bewerbung/paymentInfoText') ?>
+		</p>
+		<p>
 			<a href="../../payment/cis/mpay24/pay.php" target="_self">Zur Onlinebezahlung</a>
 		</p>
 
