@@ -215,4 +215,5 @@ $this->phrasen['bewerbung/dannHiermitAccountEinloggen']='Esegua qui il login con
 $this->phrasen['bewerbung/dannHierEinloggen']='Esegua qui il login';
 $this->phrasen['bewerbung/dokumentHerunterladen']='Scaricare documento';
 $this->phrasen['bewerbung/footerText']='';
+$this->phrasen['bewerbung/pflichtfelder']='Campo obbligatorio';
 ?>

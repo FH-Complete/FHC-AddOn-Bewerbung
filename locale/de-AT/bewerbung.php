@@ -222,7 +222,7 @@ $this->phrasen['bewerbung/plzMussGueltigSein']='Postleitzahl muss eine gültige 
 $this->phrasen['bewerbung/plzUnbekannt']='Postleitzahl unbekannt';
 // Ausbildung
 $this->phrasen['bewerbung/menuAusbildung']='Ausbildung';
-$this->phrasen['bewerbung/ausbildung']='Ausbildung zu Ihrer ZGV';
+$this->phrasen['bewerbung/ausbildung']='Ausbildung zu Ihrer Zugangsvoraussetzung';
 $this->phrasen['bewerbung/ausbildungSchule']='Name der Schule';
 $this->phrasen['bewerbung/ausbildungSchuleAdresse']='Adresse der Schule';
 ?>
