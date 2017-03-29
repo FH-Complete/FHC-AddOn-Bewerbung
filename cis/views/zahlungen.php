@@ -1,5 +1,5 @@
 <?php
-/* 
+/*
  * Copyright (C) 2015 fhcomplete.org
  *
  * This program is free software: you can redistribute it and/or modify
@@ -113,6 +113,15 @@ if(!isset($person_id))
 	<?php else: ?>
 		<p><?php echo $p->t('tools/keineZahlungenVorhanden') ?></p>
 	<?php endif; ?>
+	<?php if(defined('BEWERBERTOOL_PAYMENT_ANZEIGEN') && BEWERBERTOOL_PAYMENT_ANZEIGEN==true && $status_zahlungen==false): ?>
+		<p>
+			<?php echo $p->t('bewerbung/paymentInfoText') ?>
+		</p>
+		<p>
+			<a href="../../payment/cis/mpay24/pay.php" target="_self">Zur Onlinebezahlung</a>
+		</p>
+
+	<?php endif;?>
 	<button class="btn-nav btn btn-default" type="button" data-jump-tab="<?php echo $tabs[array_search('zahlungen', $tabs)-1] ?>">
 		<?php echo $p->t('global/zurueck') ?>
 	</button>
@@ -120,4 +129,3 @@ if(!isset($person_id))
 		<?php echo $p->t('bewerbung/weiter'); ?>
 	</button><br/><br/>
 </div>
-
