@@ -1376,6 +1376,10 @@ function sendBewerbung($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz)
 	// send mail to Interessent
 	if(defined('BEWERBERTOOL_ERFOLGREICHBEWORBENMAIL') && BEWERBERTOOL_ERFOLGREICHBEWORBENMAIL==true)
 	{
+		$kontakt = new kontakt();
+		$kontakt->load_persKontakttyp($person->person_id, 'email');
+		$mailadresse = isset($kontakt->result[0]->kontakt)?$kontakt->result[0]->kontakt:'';
+		
 		$mail_bewerber = new mail($mailadresse, 'no-reply', 'Bewerbung erfolgreich abgeschickt', 'Bitte sehen Sie sich die Nachricht in HTML Sicht an, um den Inhalt vollständig darzustellen.');
 		$email_bewerber = $p->t('bewerbung/erfolgreichBeworbenMail');
 		$mail_bewerber->setHTMLContent($email_bewerber);
