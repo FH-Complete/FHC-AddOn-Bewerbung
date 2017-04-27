@@ -53,6 +53,7 @@ $this->phrasen['bewerbung/orgform/DL']='Fernstudium';
 $this->phrasen['bewerbung/orgform/DDP']='Double Degree Program';
 $this->phrasen['bewerbung/orgform/PT']='Part time';
 $this->phrasen['bewerbung/orgform/ZGS']='Zielgruppenspezifisch';
+$this->phrasen['bewerbung/orgform/DUA']='Dual';
 $this->phrasen['bewerbung/German']='Deutsch';
 $this->phrasen['bewerbung/English']='Englisch';
 $this->phrasen['bewerbung/Italian']='Italienisch';

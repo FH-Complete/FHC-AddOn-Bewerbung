@@ -20,18 +20,9 @@
 
 require_once('../../../config/global.config.inc.php');
 require_once('../../../config/cis.config.inc.php');
-require_once('../../../include/phrasen.class.php');
-require_once('../../../include/person.class.php');
 require_once('../../../include/studiengang.class.php');
-require_once('../../../include/datum.class.php');
 require_once('../../../include/mail.class.php');
-require_once('../../../include/prestudent.class.php');
-require_once('../../../include/preinteressent.class.php');
 require_once('../../../include/kontakt.class.php');
-require_once('../../../include/studiensemester.class.php');
-require_once('../../../include/datum.class.php');
-require_once('../../../include/sprache.class.php');
-require_once('../../../include/benutzer.class.php');
 require_once('../include/functions.inc.php');
 require_once('../bewerbung.config.inc.php');
 
@@ -66,9 +57,35 @@ ORDER BY studiengang_kz, studiensemester_kurzbz, orgform_kurzbz, nachname, vorna
 $db = new basis_db();
 $studiengaenge = array();
 $stg_kz = '';
+$orgform = '';
 $mailcontent = '';
 $studiensemester = '';
 $mail_alle = '';
+
+$write_log = true;
+$logfile = 'log/neu_registriert/'.date('Y_m').'_log.html';
+$logcontent = '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+				<h2 style="text-align: center">'.date('Y-m-d').'</h2><hr>';
+
+// Prueft, ob das Logverzeichnis existiert.
+// Wenn nicht, wird versucht, eines anzulegen.
+// Falls dies fehl schlaegt, wird kein Logfile erstellt.
+
+if(!is_dir('log/neu_registriert/'))
+{
+	if (mkdir('/log',0777,true))
+	{
+		if(!is_dir('log/neu_registriert/'))
+		{
+			if (mkdir('/log/neu_registriert',0777,true))
+				$write_log = true;
+			else 
+				$write_log = false;
+		}
+	}
+	else 
+		$write_log = false;
+}
 
 $empf_array = array();
 if(defined('BEWERBERTOOL_BEWERBUNG_EMPFAENGER'))
@@ -103,7 +120,7 @@ if($result = $db->db_query($qry))
 		$anzahl = $db->db_num_rows($result);
 		while($row = $db->db_fetch_object($result))
 		{
-			if ($stg_kz != '' && $stg_kz != $row->studiengang_kz)
+			if (($stg_kz != '' && $stg_kz != $row->studiengang_kz) || ($orgform != '' && $orgform != $row->orgform_kurzbz))
 			{
 				$mailcontent .= '</tbody></table>';
 				$mailcontent .= '<a href="mailto:?BCC='.$mail_alle.'">Mail an alle</a>';
@@ -121,15 +138,36 @@ if($result = $db->db_query($qry))
 					$empfaenger = $empf_array[$stg_kz];
 				else
 					$empfaenger = $studiengang->email;
+
+				//Pfuschloesung fur BIF Dual
+				if (CAMPUS_NAME=='FH Technikum Wien' && $stg_kz == 257 && $orgform == 'DUA')
+					$empfaenger = 'info.bid@technikum-wien.at';
 				
-				$mail = new mail($empfaenger, 'no-reply', 'Neu registriert '.$bezeichnung, 'Bitte sehen Sie sich die Nachricht in HTML Sicht an, um den Inhalt vollständig darzustellen.');
+				$mail = new mail($empfaenger, 'no-reply', 'Neu registriert '.$bezeichnung.' '.$orgform, 'Bitte sehen Sie sich die Nachricht in HTML Sicht an, um den Inhalt vollständig darzustellen.');
+				$mail->setBCCRecievers('kindlm@technikum-wien.at');
 				$mail->setHTMLContent($mailcontent);
 				$mail->send();
+				
+				if ($write_log)
+				{
+					$logcontent .= '<h3>Studiengang: '.$stg_kz.'</h3>';
+					$logcontent .= 'Empfänger: '.$empfaenger.'<br>';
+					$logcontent .= 'Betreff: Neu registriert '.$bezeichnung.' '.$orgform.'<br><br>';
+					$logcontent .= $mailcontent;
+					$logcontent .= '<hr>';
+					
+					// Schreibt den Inhalt in die Datei
+					// unter Verwendung des Flags FILE_APPEND, um den Inhalt an das Ende der Datei anzufügen
+					// und das Flag LOCK_EX, um ein Schreiben in die selbe Datei zur gleichen Zeit zu verhindern
+					file_put_contents($logfile, $logcontent, FILE_APPEND | LOCK_EX);
+					
+					$logcontent = '';
+				}
 	
 				$mailcontent = $mailtext;
 				$mail_alle = '';
 			}
-			
+
 			if ($row->studiensemester_kurzbz != '' && $studiensemester != $row->studiensemester_kurzbz)
 			{
 				if ($studiensemester != '')
@@ -138,10 +176,9 @@ if($result = $db->db_query($qry))
 					$mailcontent .= '<a href="mailto:?BCC='.$mail_alle.'">Mail an alle</a>';
 					$mail_alle = '';
 				}
-				
-				$mailcontent .= '<h3>'.$row->studiensemester_kurzbz.'</h3>';
+
+				$mailcontent .= '<h3>'.$row->studiensemester_kurzbz.' '.$row->orgform_kurzbz.'</h3>';
 				$mailcontent .= '<table class="table1"><thead><tr>
-								<th>Orgform</th>
 								<th>Studienplan</th>
 								<th>Anrede</th>
 								<th>Nachname</th>
@@ -152,11 +189,10 @@ if($result = $db->db_query($qry))
 				$studiensemester = $row->studiensemester_kurzbz;
 			}
 			$kontakt = new kontakt();
-			$kontakt->load_persKontakttyp($row->person_id, 'email');
+			$kontakt->load_persKontakttyp($row->person_id, 'email', 'updateamum DESC, insertamum DESC NULLS LAST');
 			$mailadresse = isset($kontakt->result[0]->kontakt)?$kontakt->result[0]->kontakt:'';
 			
 			$mailcontent .= '<tr>';
-			$mailcontent .= '<td>'.$row->orgform_kurzbz.'</td>';
 			$mailcontent .= '<td>'.$row->studienplan.'</td>';
 			$mailcontent .= '<td>'.($row->geschlecht=='m'?'Herr ':'Frau ').'</td>';
 			$mailcontent .= '<td>'.$row->nachname.'</td>';
@@ -168,6 +204,7 @@ if($result = $db->db_query($qry))
 			$mail_alle .= $mailadresse.';';
 	
 			$stg_kz = $row->studiengang_kz;
+			$orgform = $row->orgform_kurzbz;
 		}
 		$mailcontent .= '</tbody></table>';
 		$mailcontent .= '<a href="mailto:?BCC='.$mail_alle.'">Mail an alle</a>';
@@ -184,10 +221,31 @@ if($result = $db->db_query($qry))
 			$empfaenger = $empf_array[$stg_kz];
 		else
 			$empfaenger = $studiengang->email;
+		
+		//Pfuschloesung fur BIF Dual
+		if (CAMPUS_NAME=='FH Technikum Wien' && $stg_kz == 257 && $orgform == 'DUA')
+			$empfaenger = 'info.bid@technikum-wien.at';
 
-		$mail = new mail($empfaenger, 'no-reply', 'Neu registriert '.$bezeichnung, 'Bitte sehen Sie sich die Nachricht in HTML Sicht an, um den Inhalt vollständig darzustellen.');
+		$mail = new mail($empfaenger, 'no-reply', 'Neu registriert '.$bezeichnung.' '.$orgform, 'Bitte sehen Sie sich die Nachricht in HTML Sicht an, um den Inhalt vollständig darzustellen.');
+		$mail->setBCCRecievers('kindlm@technikum-wien.at');
 		$mail->setHTMLContent($mailcontent);
 		$mail->send();
+		
+		if ($write_log)
+		{
+			$logcontent .= '<h3>Studiengang: '.$stg_kz.'</h3>';
+			$logcontent .= 'Empfänger: '.$empfaenger.'<br>';
+			$logcontent .= 'Betreff: Neu registriert '.$bezeichnung.' '.$orgform.'<br><br>';
+			$logcontent .= $mailcontent;
+			$logcontent .= '<hr>';
+				
+			// Schreibt den Inhalt in die Datei
+			// unter Verwendung des Flags FILE_APPEND, um den Inhalt an das Ende der Datei anzufügen
+			// und das Flag LOCK_EX, um ein Schreiben in die selbe Datei zur gleichen Zeit zu verhindern
+			file_put_contents($logfile, $logcontent, FILE_APPEND | LOCK_EX);
+				
+			$logcontent = '';
+		}
 	}
 }
 else 

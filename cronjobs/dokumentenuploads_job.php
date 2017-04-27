@@ -20,28 +20,46 @@
 
 require_once('../../../config/global.config.inc.php');
 require_once('../../../config/cis.config.inc.php');
-require_once('../../../include/phrasen.class.php');
-require_once('../../../include/person.class.php');
 require_once('../../../include/studiengang.class.php');
-require_once('../../../include/datum.class.php');
 require_once('../../../include/mail.class.php');
-require_once('../../../include/prestudent.class.php');
-require_once('../../../include/preinteressent.class.php');
 require_once('../../../include/kontakt.class.php');
 require_once('../../../include/studiensemester.class.php');
-require_once('../../../include/datum.class.php');
-require_once('../../../include/sprache.class.php');
-require_once('../../../include/benutzer.class.php');
 require_once('../include/functions.inc.php');
 require_once('../bewerbung.config.inc.php');
 
 $db = new basis_db();
 $studiengaenge = array();
 $stg_kz = '';
+$orgform = '';
 $mailcontent = '';
 $person = '';
 $dokument = '';
 $zeile = '';
+
+$write_log = true;
+$logfile = 'log/dokumentenuploads/'.date('Y_m').'_log.html';
+$logcontent = '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+				<h2 style="text-align: center">'.date('Y-m-d').'</h2><hr>';
+
+// Prueft, ob das Logverzeichnis existiert.
+// Wenn nicht, wird versucht, eines anzulegen.
+// Falls dies fehl schlaegt, wird kein Logfile erstellt.
+
+if(!is_dir('log/dokumentenuploads/'))
+{
+	if (mkdir('/log',0777,true))
+	{
+		if(!is_dir('log/dokumentenuploads/'))
+		{
+			if (mkdir('/log/dokumentenuploads',0777,true))
+				$write_log = true;
+			else
+				$write_log = false;
+		}
+	}
+	else
+		$write_log = false;
+}
 
 $studiensemester = new studiensemester();
 $studiensemester->getPlusMinus(10, 2);
@@ -57,6 +75,7 @@ if(defined('BEWERBERTOOL_BEWERBUNG_EMPFAENGER'))
 $qry = "
 SELECT DISTINCT
 	studiengang_kz,
+	tbl_prestudentstatus.orgform_kurzbz,
 	person_id,
 	tbl_prestudent.insertamum,
 	vorname,
@@ -66,6 +85,7 @@ SELECT DISTINCT
 	dokument_kurzbz,
 	tbl_dokument.bezeichnung AS dokumentbezeichnung,
 	tbl_akte.bezeichnung AS dateiname,
+	tbl_akte.titel,
 	dms_id,
 	nachgereicht,
 	tbl_akte.anmerkung
@@ -84,8 +104,8 @@ WHERE
 AND (tbl_akte.insertamum >= (SELECT (CURRENT_DATE -1||' '||'03:00:00')::timestamp))
 AND tbl_prestudentstatus.bestaetigtam IS NOT NULL
 AND studiensemester_kurzbz IN (".$db->implode4SQL($studiensemester_arr).")
-AND (SELECT get_rolle_prestudent(tbl_prestudent.prestudent_id, NULL)) != 'Abgewiesener'
-ORDER BY studiengang_kz, nachname, vorname, person_id";
+AND (SELECT get_rolle_prestudent(tbl_prestudent.prestudent_id, NULL)) NOT IN ('Abgewiesener', 'Abbrecher')
+ORDER BY studiengang_kz, orgform_kurzbz, nachname, vorname, person_id";
 //echo $qry;exit;
 $mailtext = '
 		<style type="text/css">
@@ -153,8 +173,8 @@ if($result = $db->db_query($qry))
 				$dokument = '';
 				$zeile = '';
 			}
-			
-			if ($stg_kz != '' && $stg_kz != $row->studiengang_kz)
+
+			if (($stg_kz != '' && $stg_kz != $row->studiengang_kz) || ($orgform != '' && $orgform != $row->orgform_kurzbz))
 			{
 				$mailcontent .= $zeile;
 				$dokumentenliste = '';
@@ -176,26 +196,61 @@ if($result = $db->db_query($qry))
 					$empfaenger = $empf_array[$stg_kz];
 				else
 					$empfaenger = $studiengang->email;
-	
-				$mail = new mail($empfaenger, 'no-reply', 'Neue Dokumentenuploads '.$bezeichnung, 'Bitte sehen Sie sich die Nachricht in HTML Sicht an, um den Inhalt vollständig darzustellen.');
+				
+				//Pfuschloesung fur BIF Dual
+				if (CAMPUS_NAME=='FH Technikum Wien' && $stg_kz == 257 && $orgform == 'DUA')
+					$empfaenger = 'info.bid@technikum-wien.at';
+
+				$mail = new mail($empfaenger, 'no-reply', 'Neue Dokumentenuploads '.$bezeichnung.' '.$orgform, 'Bitte sehen Sie sich die Nachricht in HTML Sicht an, um den Inhalt vollständig darzustellen.');
+				$mail->setBCCRecievers('kindlm@technikum-wien.at');
 				$mail->setHTMLContent($mailcontent);
 				$mail->send();
+				
+				if ($write_log)
+				{
+					$logcontent .= '<h3>Studiengang: '.$stg_kz.'</h3>';
+					$logcontent .= 'Empfänger: '.$empfaenger.'<br>';
+					$logcontent .= 'Betreff: Neue Dokumentenuploads '.$bezeichnung.' '.$orgform.'<br><br>';
+					$logcontent .= $mailcontent;
+					$logcontent .= '<hr>';
+						
+					// Schreibt den Inhalt in die Datei
+					// unter Verwendung des Flags FILE_APPEND, um den Inhalt an das Ende der Datei anzufügen
+					// und das Flag LOCK_EX, um ein Schreiben in die selbe Datei zur gleichen Zeit zu verhindern
+					file_put_contents($logfile, $logcontent, FILE_APPEND | LOCK_EX);
+						
+					$logcontent = '';
+				}
 	
 				$mailcontent = $mailtext;
 			}
+			
+			$dateiname = '';
+			if ($row->dateiname == '')
+			{
+				if ($row->titel != '')
+					$dateiname = $row->titel;
+			}
+			else 
+				$dateiname = $row->dateiname;
 			
 			if ($dokument != $row->dokument_kurzbz)
 			{
 				if ($db->db_parse_bool($row->nachgereicht) == true)
 					$dokumentenliste .= $row->dokumentbezeichnung.' (Wird nachgereicht: '.$row->anmerkung.')<br>';
-				else 
-					$dokumentenliste .= '<a href="'.APP_ROOT.'cms/dms.php?id='.$row->dms_id.'">'.$row->dokumentbezeichnung.' ['.$row->dateiname.']</a><br>';
+				else
+				{
+					if ($row->dokument_kurzbz == 'Lichtbil')
+						$dokumentenliste .= '<a href="'.APP_ROOT.'cis/public/bild.php?src=person&person_id='.$row->person_id.'">'.$row->dokumentbezeichnung.' ['.$dateiname.']</a><br>';
+					else 
+						$dokumentenliste .= '<a href="'.APP_ROOT.'cms/dms.php?id='.$row->dms_id.'">'.$row->dokumentbezeichnung.' ['.$dateiname.']</a><br>';
+				}
 				
 				$dokument = $row->dokument_kurzbz;
 			}
 			
 			$kontakt = new kontakt();
-			$kontakt->load_persKontakttyp($row->person_id, 'email');
+			$kontakt->load_persKontakttyp($row->person_id, 'email', 'updateamum DESC, insertamum DESC NULLS LAST');
 			$mailadresse = isset($kontakt->result[0]->kontakt)?$kontakt->result[0]->kontakt:'';
 			
 			$zeile = '<tr class="hover">';
@@ -212,6 +267,7 @@ if($result = $db->db_query($qry))
 	
 			$person = $row->person_id;
 			$stg_kz = $row->studiengang_kz;
+			$orgform = $row->orgform_kurzbz;
 		}
 		$mailcontent .= $zeile;
 		$mailcontent .= '</tbody></table>';
@@ -229,9 +285,30 @@ if($result = $db->db_query($qry))
 		else
 			$empfaenger = $studiengang->email;
 
-		$mail = new mail($empfaenger, 'no-reply', 'Neue Dokumentenuploads '.$bezeichnung, 'Bitte sehen Sie sich die Nachricht in HTML Sicht an, um den Inhalt vollständig darzustellen.');
+		//Pfuschloesung fur BIF Dual
+		if (CAMPUS_NAME=='FH Technikum Wien' && $stg_kz == 257 && $orgform == 'DUA')
+			$empfaenger = 'info.bid@technikum-wien.at';
+
+		$mail = new mail($empfaenger, 'no-reply', 'Neue Dokumentenuploads '.$bezeichnung.' '.$orgform, 'Bitte sehen Sie sich die Nachricht in HTML Sicht an, um den Inhalt vollständig darzustellen.');
+		$mail->setBCCRecievers('kindlm@technikum-wien.at');
 		$mail->setHTMLContent($mailcontent);
 		$mail->send();
+		
+		if ($write_log)
+		{
+			$logcontent .= '<h3>Studiengang: '.$stg_kz.'</h3>';
+			$logcontent .= 'Empfänger: '.$empfaenger.'<br>';
+			$logcontent .= 'Betreff: Neue Dokumentenuploads '.$bezeichnung.' '.$orgform.'<br><br>';
+			$logcontent .= $mailcontent;
+			$logcontent .= '<hr>';
+		
+			// Schreibt den Inhalt in die Datei
+			// unter Verwendung des Flags FILE_APPEND, um den Inhalt an das Ende der Datei anzufügen
+			// und das Flag LOCK_EX, um ein Schreiben in die selbe Datei zur gleichen Zeit zu verhindern
+			file_put_contents($logfile, $logcontent, FILE_APPEND | LOCK_EX);
+		
+			$logcontent = '';
+		}
 	}
 }
 else
