@@ -8,10 +8,10 @@ $this->phrasen['bewerbung/registrierenOderZugangscode']='<a href="'.$_SERVER['PH
 $this->phrasen['bewerbung/einleitungstext']='Bitte füllen Sie das Formular aus, wählen Sie Ihren bevorzugten Studiengang und klicken Sie auf "Abschicken". <br>
 		Danach erhalten Sie eine E-Mail mit Zugangscode an die angegebene Adresse.
 		Mit dem Zugangscode können Sie sich jederzeit einloggen, Ihre Daten vervollständigen, Studienrichtungen hinzufügen und sich unverbindlich bewerben.<br><br>
-		Falls Sie Interesse an mehreren Studiengängen haben, können Sie bis zu 
-		'.(defined('BEWERBERTOOL_MAX_STUDIENGAENGE') && BEWERBERTOOL_MAX_STUDIENGAENGE != ''?BEWERBERTOOL_MAX_STUDIENGAENGE:'').' 
-		Studienrichtungen anklicken. <br>Wenn Sie mehr Informationen benötigen, 
-		steht Ihnen unsere <a href=\'https://www.technikum-wien.at/studieninformationen/studienberatung-kontaktieren/\' target=\'_blank\'>Studienberatung</a> 
+		Falls Sie Interesse an mehreren Studiengängen haben, können Sie bis zu
+		'.(defined('BEWERBERTOOL_MAX_STUDIENGAENGE') && BEWERBERTOOL_MAX_STUDIENGAENGE != ''?BEWERBERTOOL_MAX_STUDIENGAENGE:'').'
+		Studienrichtungen anklicken. <br>Wenn Sie mehr Informationen benötigen,
+		steht Ihnen unsere <a href=\'https://www.technikum-wien.at/studieninformationen/studienberatung-kontaktieren/\' target=\'_blank\'>Studienberatung</a>
 		gerne persönlich, telefonisch oder per E-Mail zur Verfügung.';
 $this->phrasen['bewerbung/login']='Login';
 $this->phrasen['bewerbung/zugangscode']='Zugangscode';
@@ -221,4 +221,12 @@ $this->phrasen['bewerbung/pflichtfelder']='Pflichtfelder';
 $this->phrasen['bewerbung/bitteGueltigeOesterreichischePlzEingeben']='Bitte geben Sie eine gültige österreichische Postleitzahl ein';
 $this->phrasen['bewerbung/plzMussGueltigSein']='Postleitzahl muss eine gültige Nummer sein';
 $this->phrasen['bewerbung/plzUnbekannt']='Postleitzahl unbekannt';
+// Ausbildung
+$this->phrasen['bewerbung/menuAusbildung']='Ausbildung';
+$this->phrasen['bewerbung/ausbildung']='Ausbildung zu Ihrer Zugangsvoraussetzung';
+$this->phrasen['bewerbung/ausbildungSchule']='Name der Schule';
+$this->phrasen['bewerbung/ausbildungSchuleAdresse']='Adresse der Schule';
+$this->phrasen['bewerbung/paymentInfoText']='';
+
+$this->phrasen['bewerbung/erfolgreichBeworbenMail']='Sie haben sich erfolgreich beworben. Die zuständige Assistenz wird sich in den nächsten Tagen bei Ihnen melden.';
 ?>

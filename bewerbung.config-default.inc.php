@@ -32,4 +32,7 @@ define('BEWERBERTOOL_SOZIALVERSICHERUNGSNUMMER_ANZEIGEN', true);
 
 define('BEWERBERTOOL_DATEN_TITEL_ANZEIGEN', false);
 
+// Sendet eine Bestätigungsmail an den Interessenten wenn die Bewerbung abgeschickt wird: html-content bewerbung/erfolgreichBeworbenMail
+define('BEWERBERTOOL_ERFOLGREICHBEWORBENMAIL', false);
+
 ?>

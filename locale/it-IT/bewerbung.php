@@ -215,4 +215,6 @@ $this->phrasen['bewerbung/dannHiermitAccountEinloggen']='Esegua qui il login con
 $this->phrasen['bewerbung/dannHierEinloggen']='Esegua qui il login';
 $this->phrasen['bewerbung/dokumentHerunterladen']='Scaricare documento';
 $this->phrasen['bewerbung/footerText']='';
+$this->phrasen['bewerbung/pflichtfelder']='Campo obbligatorio';
+$this->phrasen['bewerbung/erfolgreichBeworbenMail']='Ha inviato con successo. La segreteria la contatterà nei prossimi giorni.';
 ?>

@@ -63,7 +63,7 @@ $studiensemester_array = array();
 				$anzahl_studiengaenge = array();
 				$stsem_bewerbung = array();
 				$studiengaengeBaMa = array(); // Nur Bachelor oder Master Studiengaenge
-				
+
 				$stsem = new studiensemester();
 				$stsem->getStudiensemesterOnlinebewerbung();
 				foreach ($stsem->studiensemester as $row)
@@ -128,9 +128,11 @@ $studiensemester_array = array();
 			</table>
 		</div>
 	<br>
+	<?php if (BEWERBERTOOL_MAX_STUDIENGAENGE > 1 || BEWERBERTOOL_MAX_STUDIENGAENGE == ''): ?>
 	<button class="btn-nav btn btn-success" type="button" data-toggle="modal" data-target="#liste-studiengaenge">
 		<?php echo $p->t('bewerbung/studiengangHinzufuegen'); ?>
 	</button>
+	<?php endif; ?>
 	<button class="btn-nav btn btn-default" type="button" data-jump-tab="<?php echo $tabs[array_search('allgemein', $tabs)+1] ?>">
 		<?php echo $p->t('bewerbung/weiter'); ?>
 	</button>
@@ -164,9 +166,17 @@ $studiensemester_array = array();
 						foreach($stsem->studiensemester as $row)
 						{
 							echo '<option value="'.$row->studiensemester_kurzbz.'">'.$stsem->convert_html_chars($row->bezeichnung).' ('.$p->t('bewerbung/ab').' '.$datum->formatDatum($stsem->convert_html_chars($row->start),'d.m.Y').')</option>';
-							
 							$studiensemester_array[] = $row->studiensemester_kurzbz;
-							
+
+							if (defined('BEWERBERTOOL_MAX_STUDIENGAENGE') && BEWERBERTOOL_MAX_STUDIENGAENGE != '')
+							{
+								if ($anzahl_studiengaenge[$row->studiensemester_kurzbz] >= BEWERBERTOOL_MAX_STUDIENGAENGE)
+									echo '<option value="" disabled="disabled" title="'.strip_tags($p->t('bewerbung/sieKoennenMaximalXStudiengaengeWaehlen', array(BEWERBERTOOL_MAX_STUDIENGAENGE))).'">-- '.$stsem->convert_html_chars($row->bezeichnung).' ('.$p->t('bewerbung/ab').' '.$datum->formatDatum($stsem->convert_html_chars($row->start),'d.m.Y').') --</option>';
+								else
+									echo '<option value="'.$row->studiensemester_kurzbz.'">'.$stsem->convert_html_chars($row->bezeichnung).' ('.$p->t('bewerbung/ab').' '.$datum->formatDatum($stsem->convert_html_chars($row->start),'d.m.Y').')</option>';
+							}
+							else
+								echo '<option value="'.$row->studiensemester_kurzbz.'">'.$stsem->convert_html_chars($row->bezeichnung).' ('.$p->t('bewerbung/ab').' '.$datum->formatDatum($stsem->convert_html_chars($row->start),'d.m.Y').')</option>';
 						}
 						?>
 					</select>
@@ -200,7 +210,7 @@ $studiensemester_array = array();
 
 					$typ = new studiengang();
 					$typ->getStudiengangTyp($result->typ);
-					
+
 					$orgform_stg = $stg->getOrgForm($result->studiengang_kz);
 					$sprache_lv = $stg->getSprache($result->studiengang_kz);
 
@@ -248,7 +258,7 @@ $studiensemester_array = array();
 
 					if (CAMPUS_NAME=='FH Technikum Wien' && $result->studiengang_kz==334 && $result->studiengangbezeichnung != 'Intelligent Transport Systems') //@todo: Pfuschloesung bis zum neuen Tool, damit MIT nicht mehr angezeigt wird
 						$stg_bezeichnung .= ' | <i>'.$p->t('bewerbung/orgform/'.$orgform_stg[0]).' - '.$p->t('bewerbung/'.$sprache_lv[0]).'</i>';
-					
+
 					if (CAMPUS_NAME=='FH Technikum Wien' && $result->studiengang_kz==334) //@todo: Pfuschloesung bis zum neuen Tool, damit kein Modal bei MSC angezeigt wird
 						$modal = false;
 

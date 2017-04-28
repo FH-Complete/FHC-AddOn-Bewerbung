@@ -64,7 +64,7 @@ $this->phrasen['bewerbung/geplanteStudienrichtung']='Planned field of study';
 $this->phrasen['bewerbung/menuAllgemein']='General';
 $this->phrasen['bewerbung/loginmitAccount']='Login with account';
 $this->phrasen['bewerbung/allgemeineErklaerung']='We are pleased that you are applying for one or more of our programs.<br><br>
-	You can only apply for 3 degree programs online. If you are interested in further degree programs or if you need counseling please contact our 
+	You can only apply for 3 degree programs online. If you are interested in further degree programs or if you need counseling please contact our
 		<a href=\'https://www.technikum-wien.at/en/student-guide/admission-counselors/\' target=\'_blank\'>Admission counselors</a>.<br><br>
                                                     Please fill out the form in full and then send it off. If all the values are entered correctly, under "Finish" you can send your application to the administrative assistant responsible.';// Mittelteil nur grob uebersetzt
 $this->phrasen['bewerbung/erklaerungStudierende']='We are pleased that you are applying for one or more of our programs.<br><br>
@@ -215,4 +215,5 @@ $this->phrasen['bewerbung/pflichtfelder']='Required';
 $this->phrasen['bewerbung/bitteGueltigeOesterreichischePlzEingeben']='Please enter a valid Austrian postcode';//nur grob uebersetzt
 $this->phrasen['bewerbung/plzMussGueltigSein']='Postcode must be a valid number';//nur grob uebersetzt
 $this->phrasen['bewerbung/plzUnbekannt']='Postcode unknown';//nur grob uebersetzt
+$this->phrasen['bewerbung/erfolgreichBeworbenMail']='You have applied successfully. The administrative assistant responsible will contact you in the course of the next 10 working days.';
 ?>
