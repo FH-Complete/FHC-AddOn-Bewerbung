@@ -345,32 +345,33 @@ if(isset($_POST['submitbild']))
 				}
 			}
 		}
-		//Wenn nach dem Abschicken einer Bewerbung ein Dokument hochgeladen wird, wird ein Infomail verschickt
-		
-		$abgeschickt = array();
-		$prestudent= new prestudent();
-		$prestudent->getPrestudenten($person_id);
 
-		// Beim verschicken der Infomail wird auch das vorvorige Studiensemester hinzugefügt, damit auch Infomails für Studiensemester verschickt werden, für die man sich nicht mehr bewerben aber noch Dokumente hochladen kann. 
-		if (isset($stsem_array[0]))
-			array_unshift($stsem_array, $studiensemester->jump($stsem_array[0],-2));
-
-		foreach($prestudent->result as $prest)
+		if (!defined('BEWERBERTOOL_SEND_UPLOAD_EMPFAENGER') || BEWERBERTOOL_SEND_UPLOAD_EMPFAENGER)
 		{
-			$prestudent2 = new prestudent();
-			$prestudent2->getPrestudentRolle($prest->prestudent_id,'Interessent');
-			foreach($prestudent2->result AS $row)
+			//Wenn nach dem Abschicken einer Bewerbung ein Dokument hochgeladen wird, wird ein Infomail verschickt
+			$prestudent= new prestudent();
+			$prestudent->getPrestudenten($person_id);
+	
+			// Beim verschicken der Infomail wird auch das vorvorige Studiensemester hinzugefügt, damit auch Infomails für Studiensemester verschickt werden, für die man sich nicht mehr bewerben aber noch Dokumente hochladen kann. 
+			if (isset($stsem_array[0]))
+				array_unshift($stsem_array, $studiensemester->jump($stsem_array[0],-2));
+	
+			foreach($prestudent->result as $prest)
 			{
-				if(in_array($row->studiensemester_kurzbz, $stsem_array))
+				$prestudent2 = new prestudent();
+				$prestudent2->getPrestudentRolle($prest->prestudent_id,'Interessent');
+				foreach($prestudent2->result AS $row)
 				{
-					if($row->bestaetigtam!='' && in_array($prest->studiengang_kz, $benoetigt))
+					if(in_array($row->studiensemester_kurzbz, $stsem_array))
 					{
-						sendDokumentupload($prest->studiengang_kz,$dokument->dokument_kurzbz,$row->orgform_kurzbz,$row->studiensemester_kurzbz,$row->prestudent_id,$dms_id);
+						if($row->bestaetigtam!='' && in_array($prest->studiengang_kz, $benoetigt))
+						{
+							sendDokumentupload($prest->studiengang_kz,$dokument->dokument_kurzbz,$row->orgform_kurzbz,$row->studiensemester_kurzbz,$row->prestudent_id,$dms_id);
+						}
 					}
 				}
 			}
-		}
-				
+		}				
 		echo "<script>
 				var loc = window.opener.location;
 				window.opener.location = 'bewerbung.php?active=dokumente';

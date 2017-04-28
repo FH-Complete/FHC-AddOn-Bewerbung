@@ -26,6 +26,7 @@ if(!isset($person_id))
 {
 	die($p->t('bewerbung/ungueltigerZugriff'));
 }
+$studiensemester_array = array();
 ?>
 
 <div role="tabpanel" class="tab-pane" id="allgemein">
@@ -61,6 +62,7 @@ if(!isset($person_id))
 				$bereits_angemeldet = array();
 				$anzahl_studiengaenge = array();
 				$stsem_bewerbung = array();
+				$studiengaengeBaMa = array(); // Nur Bachelor oder Master Studiengaenge
 				
 				$stsem = new studiensemester();
 				$stsem->getStudiensemesterOnlinebewerbung();
@@ -73,8 +75,8 @@ if(!isset($person_id))
 						die($p->t('global/fehlerBeimLadenDesDatensatzes'));
 
 					$prestudent_status = new prestudent();
-					$prestatus_help= ($prestudent_status->getLastStatus($row->prestudent_id))?$prestudent_status->status_mehrsprachig[$sprache]:$p->t('bewerbung/keinStatus');
-					$bewerberstatus =($prestudent_status->bestaetigtam != '' || $prestudent_status->bestaetigtvon != '')?$p->t('bewerbung/bestaetigt'):$p->t('bewerbung/nichtBestaetigt');
+					$prestatus_help = ($prestudent_status->getLastStatus($row->prestudent_id))?$prestudent_status->status_mehrsprachig[$sprache]:$p->t('bewerbung/keinStatus');
+					$bewerberstatus = ($prestudent_status->bestaetigtam != '' || $prestudent_status->bestaetigtvon != '')?$p->t('bewerbung/bestaetigt'):$p->t('bewerbung/nichtBestaetigt');
 
 					//$bereits_angemeldet[]= $stg->studiengang_kz;
 					$bereits_angemeldet[$prestudent_status->studiensemester_kurzbz][]= $stg->studiengang_kz;
@@ -85,7 +87,11 @@ if(!isset($person_id))
 					{
 						if (!array_key_exists($prestudent_status->studiensemester_kurzbz, $anzahl_studiengaenge))
 							$anzahl_studiengaenge[$prestudent_status->studiensemester_kurzbz] = 0;
+						
 						$anzahl_studiengaenge[$prestudent_status->studiensemester_kurzbz] ++;
+						
+						if ($row->studiengang_kz > 0 && $row->studiengang_kz < 10000)
+							$studiengaengeBaMa[] = $row->studiengang_kz;
 					}
 
 					if($sprache!='German' && $stg->english!='')
@@ -118,7 +124,7 @@ if(!isset($person_id))
 						<td><?php echo $datum->formatDatum($prestudent_status->datum, 'd.m.Y') ?></td>
 						<td><?php echo $bewerberstatus ?></td>
 					</tr>
-				<?php endforeach; ?>
+				<?php endforeach;?>
 			</table>
 		</div>
 	<br>
@@ -157,22 +163,17 @@ if(!isset($person_id))
 						<?php
 						foreach($stsem->studiensemester as $row)
 						{
-							if (defined('BEWERBERTOOL_MAX_STUDIENGAENGE') && BEWERBERTOOL_MAX_STUDIENGAENGE != '')
-							{
-								if ($anzahl_studiengaenge[$row->studiensemester_kurzbz] >= BEWERBERTOOL_MAX_STUDIENGAENGE)
-									echo '<option value="" disabled="disabled" title="'.strip_tags($p->t('bewerbung/sieKoennenMaximalXStudiengaengeWaehlen', array(BEWERBERTOOL_MAX_STUDIENGAENGE))).'">-- '.$stsem->convert_html_chars($row->bezeichnung).' ('.$p->t('bewerbung/ab').' '.$datum->formatDatum($stsem->convert_html_chars($row->start),'d.m.Y').') --</option>';
-								else 
-									echo '<option value="'.$row->studiensemester_kurzbz.'">'.$stsem->convert_html_chars($row->bezeichnung).' ('.$p->t('bewerbung/ab').' '.$datum->formatDatum($stsem->convert_html_chars($row->start),'d.m.Y').')</option>';
-							}
-							else
-								echo '<option value="'.$row->studiensemester_kurzbz.'">'.$stsem->convert_html_chars($row->bezeichnung).' ('.$p->t('bewerbung/ab').' '.$datum->formatDatum($stsem->convert_html_chars($row->start),'d.m.Y').')</option>';
+							echo '<option value="'.$row->studiensemester_kurzbz.'">'.$stsem->convert_html_chars($row->bezeichnung).' ('.$p->t('bewerbung/ab').' '.$datum->formatDatum($stsem->convert_html_chars($row->start),'d.m.Y').')</option>';
+							
+							$studiensemester_array[] = $row->studiensemester_kurzbz;
+							
 						}
 						?>
 					</select>
 				</div>
 			</div>
 			<div id="form-group-stg" class="form-group">
-				<?php
+				<?php 
 				$orgeinheit = new organisationseinheit();
 				$standorte = $orgeinheit->getAllStandorte();
 				$optionsStg = null;
@@ -210,7 +211,7 @@ if(!isset($person_id))
 
 					$orgform = $stg->getOrgForm($result->studiengang_kz);
 					$stgSprache = $stg->getSprache($result->studiengang_kz);
-					$studienplan = getStudienplaeneForOnlinebewerbung($result->studiengang_kz, '', '', ''); //@todo: studiensemester und ausbildungssemester dynamisch
+					$studienplan = getStudienplaeneForOnlinebewerbung($result->studiengang_kz, $studiensemester_array, '1', ''); //@todo: studiensemester und ausbildungssemester dynamisch
 
 					$studiensemester = new studiensemester();
 					$studiensemester->getPlusMinus(10,1);
@@ -219,7 +220,7 @@ if(!isset($person_id))
 					foreach($studiensemester->studiensemester AS $row)
 						$studiensemester_kurzbz[] .= $row->studiensemester_kurzbz;
 
-					$orgform_sprache = getOrgformSpracheForOnlinebewerbung($result->studiengang_kz,$studiensemester_kurzbz,'');
+					$orgform_sprache = getOrgformSpracheForOnlinebewerbung($result->studiengang_kz,$studiensemester_kurzbz,'1');
 
 					$orgformen_sprachen = array();
 					if($studienplan!='')
@@ -261,23 +262,32 @@ if(!isset($person_id))
 						continue;
 					else
 					{
+						if (defined('BEWERBERTOOL_MAX_STUDIENGAENGE') 
+								&& BEWERBERTOOL_MAX_STUDIENGAENGE != '' 
+								&& count($studiengaengeBaMa) >= BEWERBERTOOL_MAX_STUDIENGAENGE
+								&& $result->studiengang_kz > 0
+								&& $result->studiengang_kz < 10000)
+							$disabled = 'disabled="diabled"';
+						else
+							$disabled = '';
+							
 						$radioBtn .= '
-							<div class="radio">
-								<label>
-									<input type="radio" name="studiengaenge[]" value="'.$result->studiengang_kz.'"
-										data-modal="'.$modal.'"
-										data-modal-sprache="'.implode(',', $stgSprache).'"
-										data-modal-orgform="'.implode(',', $orgform).'"
-										data-modal-orgformsprache="'.implode(',', $orgformen_sprachen).'">
-									'.$stg_bezeichnung;
-									/*if($result->typ=='l' && isset($lgtyparr[$result->lgartcode]))
-									{
-										$radioBtn .= ' ('.$lgtyparr[$result->lgartcode].')';
-									}*/
-									$radioBtn .= '<input type="hidden" id="anmerkung'.$result->studiengang_kz.'">
-								</label>
-							</div>
-							';
+						<div class="radio">
+							<label>
+								<input '.$disabled.' type="radio" name="studiengaenge[]" value="'.$result->studiengang_kz.'"
+									data-modal="'.$modal.'"
+									data-modal-sprache="'.implode(',', $stgSprache).'"
+									data-modal-orgform="'.implode(',', $orgform).'"
+									data-modal-orgformsprache="'.implode(',', $orgformen_sprachen).'">
+								'.$stg_bezeichnung;
+						/*if($result->typ=='l' && isset($lgtyparr[$result->lgartcode]))
+						 {
+						 $radioBtn .= ' ('.$lgtyparr[$result->lgartcode].')';
+						 }*/
+						$radioBtn .= '<input type="hidden" id="anmerkung'.$result->studiengang_kz.'">
+							</label>
+						</div>
+						';
 					}
 
 					if($result->organisationseinheittyp_kurzbz == "Studiengang")
@@ -373,7 +383,9 @@ if(!isset($person_id))
 				<?php else: ?>
 
 				<div id="auswahlStg">
-					<?php
+				<?php if (defined('BEWERBERTOOL_MAX_STUDIENGAENGE') && BEWERBERTOOL_MAX_STUDIENGAENGE != '' && count($studiengaengeBaMa) >= BEWERBERTOOL_MAX_STUDIENGAENGE)
+						echo '<p class="alert alert-warning">'.strip_tags($p->t('bewerbung/sieKoennenMaximalXStudiengaengeWaehlen', array(BEWERBERTOOL_MAX_STUDIENGAENGE))).'</p>';
+
 					if(!empty($optionsStg))
 						echo $optionsStg;
 					else
@@ -406,6 +418,7 @@ if(!isset($person_id))
 				var item = $('#liste-studiengaenge input:checked');
 				var stgkz = item.val();
 				var stsem = $('#studiensemester_kurzbz').val();
+				var orgform = item.attr('data-modal-orgform');
 
 				if (undefined == stgkz || stgkz == '')
 				{
@@ -435,7 +448,7 @@ if(!isset($person_id))
 				}
 				else
 				{
-					saveStudiengang(stgkz, '', stsem);
+					saveStudiengang(stgkz, '', stsem, orgform);
 					$('#liste-studiengaenge').modal('hide');
 				}
 			});
@@ -489,9 +502,9 @@ if(!isset($person_id))
 				}
 			});
 
-			$('#studiensemester_kurzbz').change(function() {
-				$("#form-group-stg").load(document.URL +  ' #form-group-stg')
-			});
+			/*$('#studiensemester_kurzbz').change(function() {
+				$("#form-group-stg").load(document.URL +  ' #form-group-stg');
+			});*/
 
 		});
 		function saveStudiengang(stgkz, anm, stsem, orgform)

@@ -266,7 +266,7 @@ if(isset($_GET['rt_id']))
 $save_error_abschicken='';
 if(isset($_POST['btn_bewerbung_abschicken']))
 {
-   // Mail an zuständige Assistenz schicken
+	// Mail an zuständige Assistenz schicken
 	$pr_id = isset($_POST['prestudent_id']) ? $_POST['prestudent_id'] : '';
 	$sendmail = false; //Damit das Mail beim Seitenreload nicht nochmal geschickt wird
 
@@ -493,6 +493,8 @@ if(isset($_POST['btn_kontakt']) && !$eingabegesperrt)
 			$kontakt->zustellung = true;
 			$kontakt->kontakttyp = 'email';
 			$kontakt->kontakt = trim($_POST['email']);
+			$kontakt->insertamum = date('Y-m-d H:i:s');
+			$kontakt->insertvon = 'online';
 			$kontakt->new = true;
 	
 			if(!$kontakt->save())
@@ -530,6 +532,8 @@ if(isset($_POST['btn_kontakt']) && !$eingabegesperrt)
 				$kontakt_t->zustellung = true;
 				$kontakt_t->kontakttyp = 'telefon';
 				$kontakt_t->kontakt = $telefonnummer;
+				$kontakt_t->updateamum = date('Y-m-d H:i:s');
+				$kontakt_t->updatevon = 'online';
 				$kontakt_t->new = false;
 	
 				if(!$kontakt_t->save())
@@ -552,6 +556,8 @@ if(isset($_POST['btn_kontakt']) && !$eingabegesperrt)
 				$kontakt_t->zustellung = true;
 				$kontakt_t->kontakttyp = 'telefon';
 				$kontakt_t->kontakt = $telefonnummer;
+				$kontakt_t->insertamum = date('Y-m-d H:i:s');
+				$kontakt_t->insertvon = 'online';
 				$kontakt_t->new = true;
 				
 				if(!$kontakt_t->save())
@@ -575,7 +581,9 @@ if(isset($_POST['btn_kontakt']) && !$eingabegesperrt)
 			if(count($adresse->result)>0)
 			{
 				// Wenn die Nation Oesterreich ist, wird die Gemeinde aus der DB ermittelt
-				if (isset($_POST['nation']) && $_POST['nation'] == 'A')
+				if (isset($_POST['nation']) && $_POST['nation'] == 'A' 
+					&& isset($_POST['ort']) && $_POST['ort'] != '' 
+					&& isset($_POST['plz']) && $_POST['plz'] != '' )
 				{
 					$gemeinde_obj = new gemeinde();
 					$gemeinde_obj->getGemeinde($_POST['ort'], '', $_POST['plz']);
@@ -1318,8 +1326,13 @@ function sendBewerbung($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz)
 		$empfaenger = $empf_array[$prestudent->studiengang_kz];
 	else
 		$empfaenger = $studiengang->email;
+	
+	//Pfuschloesung fur BIF Dual
+	if (CAMPUS_NAME=='FH Technikum Wien' && $prestudent->studiengang_kz == 257 && $orgform_kurzbz == 'DUA')
+		$empfaenger = 'info.bid@technikum-wien.at';
+
 	//$email.= $empfaenger;
-	$mail = new mail($empfaenger, 'no-reply', $p->t('bewerbung/bewerbung').' '.$person->vorname.' '.$person->nachname, 'Bitte sehen Sie sich die Nachricht in HTML Sicht an, um den Link vollständig darzustellen.');
+	$mail = new mail($empfaenger, 'no-reply', $p->t('bewerbung/bewerbung').' '.$person->vorname.' '.$person->nachname.($orgform_kurzbz!=''?' ('.$orgform_kurzbz.')':''), 'Bitte sehen Sie sich die Nachricht in HTML Sicht an, um den Link vollständig darzustellen.');
 	$mail->setHTMLContent($email);
 	if(!$mail->send())
 		return false;

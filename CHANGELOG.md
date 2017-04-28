@@ -1,5 +1,36 @@
 # Change Log
 
+## [2.0.2]
+
+### Added
+- Beim Registrationsformular wird nun auch die OE-Kurzbz übergeben bei einem refresh übergeben und vorausgefüllt
+
+### Fixed
+- Der richtige Studienplan wird ermittelt und beim Prestudentstatus gespeichert
+- Insert- und Updatedatum bei den Kontakten wird gesetzt
+- BugFix beim nachträglichen hinzufügen von Bewerbungen bei eingestelltem BEWERBERTOOL_MAX_STUDIENGAENGE
+- Wenn mehrere Kontakte des gleichen Typs vorhanden sind, wird nun der aktuellste geladen
+
+### Changed
+- 
+
+### Updateinfo
+- Konstante "BEWERBERTOOL_SEND_UPLOAD_EMPFAENGER" hinzugefügt
+
+## [2.0.1]
+
+### Added
+- Neue Konstante "BEWERBERTOOL_SEND_UPLOAD_EMPFAENGER" definiert, ob beim nachträglichen Upload von Dokumenten ein Mail versand werden soll
+
+### Fixed
+- 
+
+### Changed
+- 
+
+### Updateinfo
+- Konstante "BEWERBERTOOL_SEND_UPLOAD_EMPFAENGER" hinzugefügt
+
 ## [2.0]
 
 ### Added
@@ -22,7 +53,7 @@ Wenn dann eine gültige PLZ eingegeben wird, befüllt sich das DropDown mit pass
 - Beim registrieren wird die Mailadresse mit zustellung = true gespeichert
 - Die "Weiter"- und "Zurück"-Buttons speichern nun auch gleichzeitig das Formular.
 - Dokumente werden alphabetisch sortiert.
-- Die Eintäge in "Aufmerksamdurch" werden nun alphabetisch sortiert.
+- Die Einträge in "Aufmerksamdurch" werden nun alphabetisch sortiert.
 - Die Mailadresse kann nach dem registrieren nicht mehr verändert werden.
 
 ### Updateinfo

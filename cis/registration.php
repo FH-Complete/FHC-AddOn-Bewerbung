@@ -193,6 +193,8 @@ elseif($username && $password)
 				$email = filter_input(INPUT_POST, 'email');
 				$anmerkungen = filter_input(INPUT_POST, 'anmerkung', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY);
 				$orgform = filter_input(INPUT_POST, 'orgform', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY);
+				$orgform_alt = filter_input(INPUT_POST, 'orgform_alt', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY);
+				$orgform_kurzbz = filter_input(INPUT_GET, 'orgform_kurzbz');
 
 				if(BEWERBERTOOL_STUDIENAUSWAHL_ANZEIGEN)
 				{
@@ -343,7 +345,17 @@ elseif($username && $password)
 									// Richtigen Studienplan ermitteln
 									$studienplan = new studienplan();
 									$studienplan->getStudienplaeneFromSem($studiengaenge[$i], $std_semester, '1', $orgform[$studiengaenge[$i]]);
-									$studienplan_id = $studienplan->result[0]->studienplan_id;
+									if (!isset($studienplan->result[0]))
+										$studienplan->getStudienplaeneFromSem($studiengaenge[$i], $std_semester, '', $orgform[$studiengaenge[$i]]);
+									if (!isset($studienplan->result[0]))
+										$studienplan->getStudienplaeneFromSem($studiengaenge[$i], '', '', $orgform[$studiengaenge[$i]]);
+									if (!isset($studienplan->result[0]))
+										$studienplan->getStudienplaeneFromSem($studiengaenge[$i]);
+							
+									if (isset($studienplan->result[0]))
+										$studienplan_id = $studienplan->result[0]->studienplan_id;
+									else
+										$studienplan_id = '';
 									// Interessenten Status anlegen
 									$prestudent_status = new prestudent();
 									$prestudent_status->load($prestudent->prestudent_id);
@@ -470,7 +482,7 @@ elseif($username && $password)
 							<?php echo $p->t('global/geburtsdatum') ?>
 						</label>
 						<div class="col-sm-4">
-							<input type="datetime" name="geb_datum" id="geburtsdatum"
+							<input type="date" name="geb_datum" id="geburtsdatum"
 								   value="<?php echo isset($geb_datum) ? date('d.m.Y', strtotime($geb_datum)) : '' ?>"
 								   class="form-control" placeholder="<?php echo $p->t('bewerbung/datumFormat') ?>">
 						</div>
@@ -657,10 +669,17 @@ elseif($username && $password)
 										echo ' <span style="color: orange">('.$p->t('bewerbung/vorbehaltlichAkkreditierung').')</span>';
 									}
 
+									if (!isset($anmerkungen[$result->studiengang_kz]) && in_array($result->studiengang_kz, $studiengaenge) && $orgform_kurzbz != '')
+										$anmerkungen[$result->studiengang_kz] = 'Prio: '.$orgform_kurzbz;
+									
+									if (!isset($orgform[$result->studiengang_kz]) && in_array($result->studiengang_kz, $studiengaenge) && $orgform_kurzbz != '')
+										$orgform[$result->studiengang_kz] = substr($orgform_kurzbz, 0, strpos($orgform_kurzbz, '_'));
+										
 									echo '
-											<span class="badge" id="badge'.$result->studiengang_kz.'">'.$anmerkungen[$result->studiengang_kz].'</span>
-											<input type="hidden" id="anmerkung'.$result->studiengang_kz.'" name="anmerkung['.$result->studiengang_kz.']" value="'.$anmerkungen[$result->studiengang_kz].'">
-											<input type="hidden" id="orgform'.$result->studiengang_kz.'" name="orgform['.$result->studiengang_kz.']" value="'.$orgform[$result->studiengang_kz].'">
+											<span class="badge" id="badge'.$result->studiengang_kz.'">'.(isset($anmerkungen[$result->studiengang_kz])?$anmerkungen[$result->studiengang_kz]:'').'</span>
+											<input type="hidden" id="anmerkung'.$result->studiengang_kz.'" name="anmerkung['.$result->studiengang_kz.']" value="'.(isset($anmerkungen[$result->studiengang_kz])?$anmerkungen[$result->studiengang_kz]:'').'">
+											<input type="hidden" id="orgform'.$result->studiengang_kz.'" name="orgform['.$result->studiengang_kz.']" value="'.(isset($orgform[$result->studiengang_kz])?$orgform[$result->studiengang_kz]:'').'">
+											<input type="hidden" id="orgform_alt'.$result->studiengang_kz.'" name="orgform_alt['.$result->studiengang_kz.']" value="'.$orgform_alt[$result->studiengang_kz].'">
 										</label>
 									</div>
 									';
@@ -700,9 +719,20 @@ elseif($username && $password)
 												{
 													foreach($orgform_sprache as $row)
 													{
+														$checked_orgform = '';
+														if (
+																((in_array($result->studiengang_kz, $studiengaenge) || $result->studiengang_kz == $stg_auswahl)
+																		&& $orgform[$result->studiengang_kz] == $row->orgform_kurzbz)
+																||
+																((in_array($result->studiengang_kz, $studiengaenge) && $orgform_kurzbz == $row->orgform_kurzbz.'_'.$row->sprache))
+															)
+														{
+															$checked_orgform = 'checked="checked"';
+														}
+														
 														echo '<div class="radio" onchange="changePrio('.$result->studiengang_kz.')">
 															<label>
-																<input type="radio" name="topprioOrgform'.$result->studiengang_kz.'" value="'.$row->orgform_kurzbz.'_'.$row->sprache.'">
+																<input type="radio" name="topprioOrgform'.$result->studiengang_kz.'" value="'.$row->orgform_kurzbz.'_'.$row->sprache.'" '.$checked_orgform.'>
 																'.$p->t('bewerbung/orgform/'.$row->orgform_kurzbz).' - '.$p->t('bewerbung/'.$row->sprache).'
 															</label>
 														</div>';
@@ -729,9 +759,14 @@ elseif($username && $password)
 															</div>';
 													foreach($orgform_sprache as $row)
 													{
+														$checked_orgform_alternativ = '';
+														if ((in_array($result->studiengang_kz, $studiengaenge) || $result->studiengang_kz == $stg_auswahl) && $orgform_alt[$result->studiengang_kz] == $row->orgform_kurzbz)
+														{
+															$checked_orgform_alternativ = 'checked="checked"';
+														}
 														echo '<div class="radio" onchange="changePrio('.$result->studiengang_kz.')">
 																<label>
-																	<input type="radio" name="alternativeOrgform'.$result->studiengang_kz.'" value="'.$row->orgform_kurzbz.'_'.$row->sprache.'">
+																	<input type="radio" name="alternativeOrgform'.$result->studiengang_kz.'" value="'.$row->orgform_kurzbz.'_'.$row->sprache.'" '.$checked_orgform_alternativ.'>
 																	'.$p->t('bewerbung/orgform/'.$row->orgform_kurzbz).' - '.$p->t('bewerbung/'.$row->sprache).'
 																</label>
 															</div>';
@@ -786,6 +821,7 @@ elseif($username && $password)
 				$email = filter_input(INPUT_POST, 'email');
 				$return = check_load_bewerbungen($email);
 				$resend_code = filter_input(INPUT_POST, 'resend_code');
+				$orgform_kurzbz = filter_input(INPUT_GET, 'orgform_kurzbz');
 				if($email!='')
 				{
 					if ($return)
@@ -910,17 +946,17 @@ elseif($username && $password)
 							  </div>
 							  <div class="panel-body text-center">
 							  	<br>
-							    <a class="btn btn-primary btn-lg" href="<?php echo basename(__FILE__) ?>?method=registration&stg_kz=<?php echo filter_input(INPUT_GET, 'stg_kz') ?>" role="button"><?php echo $p->t('bewerbung/hierUnverbindlichAnmelden') ?></a>
+							    <a class="btn btn-primary btn-lg" href="<?php echo basename(__FILE__) ?>?method=registration&stg_kz=<?php echo filter_input(INPUT_GET, 'stg_kz') ?>&orgform_kurzbz=<?php echo filter_input(INPUT_GET, 'orgform_kurzbz') ?>" role="button"><?php echo $p->t('bewerbung/hierUnverbindlichAnmelden') ?></a>
 							    <br><br>
 							  </div>
 							</div>
 							<div class="panel panel-info">
-							  <div class="panel-heading text-center">
-							    <h3 class="panel-title"><?php echo $p->t('bewerbung/habenSieBereitsEinenZugangscode') ?></h3>
-							  </div>
-							  <div class="panel-body text-center">
-							  	<p><?php echo $p->t('bewerbung/dannHierEinloggen') ?></p>
-							    <div class="form-group">
+								<div class="panel-heading text-center">
+									<h3 class="panel-title"><?php echo $p->t('bewerbung/habenSieBereitsEinenZugangscode') ?></h3>
+								</div>
+								<div class="panel-body text-center">
+									<p><?php echo $p->t('bewerbung/dannHierEinloggen') ?></p>
+								<div class="form-group">
 									<div class="input-group col-sm-6 col-sm-offset-3">
 										<p class="text-center"><input class="form-control" type="text" placeholder="<?php echo $p->t('bewerbung/zugangscode') ?>" name="userid" autofocus="autofocus" value="<?php echo $code ?>"></p>
 										<span class="input-group-btn">
@@ -938,11 +974,11 @@ elseif($username && $password)
 							  </div>
 							</div>
 							<div class="panel panel-info">
-							  <div class="panel-heading text-center">
-							    <h3 class="panel-title"><?php echo $p->t('bewerbung/studierenOderArbeitenSieBereits') ?></h3>
-							  </div>
-							  <div class="panel-body text-center">
-							  	<p class="text-center"><?php echo $p->t('bewerbung/dannHiermitAccountEinloggen') ?></p>
+								<div class="panel-heading text-center">
+									<h3 class="panel-title"><?php echo $p->t('bewerbung/studierenOderArbeitenSieBereits') ?></h3>
+								</div>
+								<div class="panel-body text-center">
+									<p class="text-center"><?php echo $p->t('bewerbung/dannHiermitAccountEinloggen') ?></p>
 								<div class="form-group">
 									<label for="username" class="col-sm-3 control-label">
 										<?php echo $p->t('global/username') ?>
@@ -1033,7 +1069,7 @@ elseif($username && $password)
 			{
 				var method = '<?php echo $db->convert_html_chars($method);?>';
 
-				window.location.href = "registration.php?sprache=" + sprache + "&method=" + method + "&stg_kz=<?php echo filter_input(INPUT_GET, 'stg_kz') ?>";
+				window.location.href = "registration.php?sprache=" + sprache + "&method=" + method + "&stg_kz=<?php echo filter_input(INPUT_GET, 'stg_kz') ?>&orgform_kurzbz=<?php echo filter_input(INPUT_GET, 'orgform_kurzbz') ?>";
 			}
 
 			function checkRegistration()
@@ -1156,16 +1192,31 @@ elseif($username && $password)
 
 				return orgform;
 			}
+			function getAltOrgform(stgkz)
+			{
+				var orgform_alt = '';
+				orgform_alt = $('#alternative'+stgkz+' input[name="alternativeOrgform'+stgkz+'"]:checked').val();
+
+				if(orgform_alt == undefined)
+					orgform_alt = '';
+
+				if(orgform_alt!='')
+					orgform_alt = orgform_alt.split('_')[0];
+
+				return orgform_alt;
+			}
 			function changePrio(stgkz)
 			{
 				var anm, orgform;
 
 				anm = checkPrios(stgkz);
 				orgform = getPrioOrgform(stgkz);
+				orgform_alt = getAltOrgform(stgkz);
 
 				$('#anmerkung' + stgkz).val(anm);
 				$('#badge' + stgkz).html(anm);
 				$('#orgform' + stgkz).val(orgform);
+				$('#orgform_alt' + stgkz).val(orgform_alt);
 
 			};
 			function submitPrio(stg_kz)
@@ -1192,56 +1243,7 @@ elseif($username && $password)
 						}
 					}
 				}
-				//alert(sOut);
-				/*var anm;
-
-				anm = $('#liste-studiengaenge input').prop('checked');
-				alert (anm);*/
-				/*
-				anm = checkPrios(0);
-				orgform = getPrioOrgform(stg_kz);
-				alert(orgform);
-				if(orgform == '')
-				{
-					$('#liste-studiengaenge input[value="' + stgkz + '"]').prop('checked', false);
-					$('#badge' + stgkz).html('');*/
-						//alert('<?php echo $p->t('bewerbung/orgformMussGewaehltWerden') ?>');
-					/*return false;
-				}
-				else
-				{
-					$('#orgform' + stgkz).val(orgform);
-					$('#anmerkung' + stgkz).val(anm);
-					$('#badge' + stgkz).html(anm);
-				}*/
 			};
-			/*function cancelPrio(stgkz)
-			{
-				$('#liste-studiengaenge input[value="' + stgkz + '"]').prop('checked', false);
-				$('#badge' + stgkz).html('');
-			};
-
-			function submitPrio(stg_kz)
-			{
-				var anm;
-
-				anm = checkPrios(0);
-				orgform = getPrioOrgform(stg_kz);
-				alert(orgform);
-				if(orgform == '')
-				{
-					//$('#liste-studiengaenge input[value="' + stgkz + '"]').prop('checked', false);
-					$('#badge' + stgkz).html('');*/
-					//alert('<?php echo $p->t('bewerbung/orgformMussGewaehltWerden') ?>');
-					/*return false;
-				}
-				else
-				{
-					$('#orgform' + stgkz).val(orgform);
-					$('#anmerkung' + stgkz).val(anm);
-					$('#badge' + stgkz).html(anm);
-				}
-			};*/
 
 			$(function() {
 
@@ -1269,148 +1271,7 @@ elseif($username && $password)
 						}
 					});
 				<?php endif; ?>
-
-				<?php if(BEWERBERTOOL_STUDIENAUSWAHL_ANZEIGEN): ?>
-
-				/*$('#liste-studiengaenge input').on('change', function()
-				{
-					var stgkz = $(this).val();
-
-					if($(this).prop('checked')===false)
-					{
-						$('#badge' + stgkz).html('');
-					}
-				});
-
-				$('#prio-dropdown button.cancel-prio').on('click', function() {
-
-					var stgkz = $('#prio-dropdown').data('stgkz');
-
-					$('#liste-studiengaenge input[value="' + stgkz + '"]').prop('checked', false);
-					$('#badge' + stgkz).html('');
-				});
-
-				var limit = 3;
-				$('stg_checkboxes').on('change', function(evt) 
-				{
-					if($("input[type=checkbox]:checked").length >= limit) 
-					{
-						this.checked = false;
-					}
-				});
-
-				$('#prio-dropdown button.ok-prio').on('click', function() {
-
-					var stgkz = $('#prio-dropdown').data('stgkz'),
-						anm;
-
-					anm = checkPrios(0);
-					orgform = getPrioOrgform();
-					alert(orgform);
-					if(orgform == '')
-					{
-						//$('#liste-studiengaenge input[value="' + stgkz + '"]').prop('checked', false);
-						$('#badge' + stgkz).html('');*/
-						//alert('<?php echo $p->t('bewerbung/orgformMussGewaehltWerden') ?>');
-						/*return false;
-					}
-					else
-					{
-						$('#orgform' + stgkz).val(orgform);
-						$('#anmerkung' + stgkz).val(anm);
-						$('#badge' + stgkz).html(anm);
-					}
-				});
-
-				/*$('#prio-dropdown input').on('change', function()
-				{
-					var stgkz = $('#prio-dropdown').data('stgkz'),
-						anm;
-					alert(stgkz);
-					anm = checkPrios();
-
-					$('#anmerkung' + stgkz).val(anm);
-					$('#badge' + stgkz).html(anm);
-				});*/
-				<?php endif; ?>
 			});
-
-			/*$(function() {
-
-				$('#sprache-dropdown a').on('click', function() {
-
-					var sprache = $(this).attr('data-sprache');
-					changeSprache(sprache);
-				});*/
-
-				<?php if(BEWERBERTOOL_STUDIENAUSWAHL_ANZEIGEN): ?>
-
-				/*$('#liste-studiengaenge input').on('change', function() {
-
-					var stgkz = $(this).val(),
-						modal = $(this).attr('data-modal'),
-						modal_orgform = $(this).attr('data-modal-orgform').split(','),
-						modal_sprache = $(this).attr('data-modal-sprache').split(','),
-						modal_orgformsprache = $(this).attr('data-modal-orgformsprache').split(',');
-					$('#prio-dialog').data({stgkz: stgkz});
-
-					if($(this).prop('checked') && modal) {
-
-						$('#prio-dialog input[value="keine"]').prop('checked', true);
-						prioAvailable(modal_orgformsprache);
-						checkPrios(0);
-
-						$('#prio-dialog').modal('show');
-
-					} else {
-
-						$('#badge' + stgkz).html('');
-					}
-				});
-
-				$('#prio-dialog button.cancel-prio').on('click', function() {
-
-					var stgkz = $('#prio-dialog').data('stgkz');
-
-					$('#liste-studiengaenge input[value="' + stgkz + '"]').prop('checked', false);
-					$('#badge' + stgkz).html('');
-				});
-
-				$('#prio-dialog button.ok-prio').on('click', function() {
-
-					var stgkz = $('#prio-dialog').data('stgkz'),
-						anm;
-
-					anm = checkPrios(0);
-					orgform = getPrioOrgform();
-
-					if(orgform == '')
-					{
-						//$('#liste-studiengaenge input[value="' + stgkz + '"]').prop('checked', false);
-						$('#badge' + stgkz).html('');*/
-						//alert('<?php echo $p->t('bewerbung/orgformMussGewaehltWerden') ?>');
-						/*return false;
-					}
-					else
-					{
-						$('#orgform' + stgkz).val(orgform);
-						$('#anmerkung' + stgkz).val(anm);
-						$('#badge' + stgkz).html(anm);
-					}
-				});
-
-				$('#prio-dialog input').on('change', function() {
-
-					var stgkz = $('#prio-dialog').data('stgkz'),
-						anm;
-
-					anm = checkPrios(200);
-
-					$('#anmerkung' + stgkz).val(anm);
-					$('#badge' + stgkz).html(anm);
-				});
-				<?php endif; ?>
-			});*/
 
 			window.setTimeout(function() {
 				$("#success-alert").fadeTo(500, 0).slideUp(500, function(){
@@ -1451,61 +1312,7 @@ function sendMail($zugangscode, $email, $person_id=null)
 
 	if(defined('MAIL_DEBUG') && MAIL_DEBUG!='')
 		$msg .= "<br><br>Zugangscode: ".$zugangscode;
-
-	/* Durch das Einrichten des Cronjobs sollte sich das erledigt haben
-	// sende Nachricht an Assistenz. Derzeit nur fuer FHTW, weil akut so wenig Bewerbungen eingehen
-	if(CAMPUS_NAME=='FH Technikum Wien')
-	{
-		$p = new phrasen(DEFAULT_LANGUAGE); //Mail an Assistenz wird in der DEAFULT-Sprache verschickt
-
-		//Array fuer Mailempfaenger. Vorruebergehende Loesung. Kindlm am 28.10.2015
-		$empf_array = array();
-		if(defined('BEWERBERTOOL_BEWERBUNG_EMPFAENGER'))
-			$empf_array = unserialize(BEWERBERTOOL_BEWERBUNG_EMPFAENGER);
-
-		$anzStg = count($studiengaenge);
-		//Fuer jeden Studiengang ein Mail verschicken
-		for($i = 0; $i<$anzStg; $i++)
-		{
-			$studiengang = new studiengang();
-			if(!$studiengang->load($studiengaenge[$i]))
-				die($p->t('global/fehlerBeimLadenDesDatensatzes'));
-
-			$typ = new studiengang();
-			$typ->getStudiengangTyp($studiengang->typ);
-
-			$prestudent =  new prestudent();
-			$prestudent->getPrestudenten($person_id);
-
-			$orgform_kurzbz = $orgform[$studiengaenge[$i]];
-
-			$mailcontent = 'Es hat sich '.($geschlecht=='m'?'ein Bewerber':'eine Bewerberin').' am System registriert<br>';
-			$mailcontent.= '<br><table style="font-size:small"><tbody>';
-			$mailcontent.= '<tr><td><b>'.$p->t('global/studiengang').'</b></td><td>'.$typ->bezeichnung.' '.$studiengang->bezeichnung.($orgform_kurzbz!=''?' ('.$orgform_kurzbz.')':'').'</td></tr>';
-			$mailcontent.= '<tr><td><b>'.$p->t('global/studiensemester').'</b></td><td>'.$std_semester.'</td></tr>';
-			$mailcontent.= '<tr><td><b>'.$p->t('global/geschlecht').'</b></td><td>'.($geschlecht=='m'?$p->t('bewerbung/maennlich'):$p->t('bewerbung/weiblich')).'</td></tr>';
-			$mailcontent.= '<tr><td><b>'.$p->t('global/vorname').'</b></td><td>'.$vorname.'</td></tr>';
-			$mailcontent.= '<tr><td><b>'.$p->t('global/nachname').'</b></td><td>'.$nachname.'</td></tr>';
-			$mailcontent.= '<tr><td><b>'.$p->t('global/geburtsdatum').'</b></td><td>'.date('d.m.Y', strtotime($geb_datum)).'</td></tr>';
-			$mailcontent.= '<tr><td><b>'.$p->t('global/emailAdresse').'</b></td><td>'.$email.'</td></tr>';
-			$mailcontent.= '</tbody></table>';
-			$mailcontent.= '<br>';
-			$mailcontent.= $p->t('bewerbung/emailBodyEnde');
-
-			$mailcontent = wordwrap($mailcontent,70); //Bricht den Code um, da es sonst zu Anzeigefehlern im Mail kommen kann
-
-			if(defined('BEWERBERTOOL_MAILEMPFANG') && BEWERBERTOOL_MAILEMPFANG!='')
-				$empfaenger = BEWERBERTOOL_MAILEMPFANG;
-			elseif(isset($empf_array[$studiengaenge[$i]]))
-				$empfaenger = $empf_array[$studiengaenge[$i]];
-			else
-				$empfaenger = $studiengang->email;
-			//$mailcontent.= '<br><br>Empfänger: '.$empfaenger.'<br><br>';
-			$mail = new mail($empfaenger, 'no-reply', ($geschlecht=='m'?'Neuer Bewerber ':'Neue Bewerberin ').$vorname.' '.$nachname.' registriert', 'Bitte sehen Sie sich die Nachricht in HTML Sicht an, um den Inhalt vollständig darzustellen.');
-			$mail->setHTMLContent($mailcontent);
-			$mail->send();
-		}
-	}*/
+	
 	return $msg;
 }
 function resendMail($zugangscode, $email, $person_id=null)

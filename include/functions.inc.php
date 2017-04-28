@@ -112,9 +112,21 @@ function BewerbungPersonAddStudiengang($studiengang_kz, $anmerkung, $person, $st
 	}
 
 	// Richtigen Studienplan ermitteln
+	// Wenn kein passender Studienplan gefunden wird, wird es weiter mit weniger Optionen probiert,
+	// bis ein passender gefunden wurde. Wird gar kein Studienplan gefunden, wird er NULL gesetzt.
 	$studienplan = new studienplan();
 	$studienplan->getStudienplaeneFromSem($studiengang_kz, $studiensemester_kurzbz, '1', $orgform_kurzbz);
-	$studienplan_id = $studienplan->result[0]->studienplan_id;
+	if (!isset($studienplan->result[0]))
+		$studienplan->getStudienplaeneFromSem($studiengang_kz, $studiensemester_kurzbz, '', $orgform_kurzbz);
+	if (!isset($studienplan->result[0]))
+		$studienplan->getStudienplaeneFromSem($studiengang_kz, '', '', $orgform_kurzbz);
+	if (!isset($studienplan->result[0]))
+		$studienplan->getStudienplaeneFromSem($studiengang_kz);
+	
+	if (isset($studienplan->result[0]))
+		$studienplan_id = $studienplan->result[0]->studienplan_id;
+	else 
+		$studienplan_id = '';
 	// Interessenten Status anlegen
 	$prestudent_status = new prestudent();
 	$prestudent_status->load($prestudent_id);

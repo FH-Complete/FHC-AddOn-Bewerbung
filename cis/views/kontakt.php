@@ -45,11 +45,11 @@ elseif($save_error_kontakt===true)
 	$nation->getAll($ohnesperre=true);
 
 	$kontakt = new kontakt();
-	$kontakt->load_persKontakttyp($person->person_id, 'email');
+	$kontakt->load_persKontakttyp($person->person_id, 'email', 'updateamum DESC');
 	$email = isset($kontakt->result[0]->kontakt)?$kontakt->result[0]->kontakt:'';
 
 	$kontakt_t = new kontakt();
-	$kontakt_t->load_persKontakttyp($person->person_id, 'telefon');
+	$kontakt_t->load_persKontakttyp($person->person_id, 'telefon', 'updateamum DESC');
 	$telefon = isset($kontakt_t->result[0]->kontakt)?$kontakt_t->result[0]->kontakt:'';
 	//Wenn Telefonnumer leer, alternativ Mobilnummer abfragen
 	if($telefon=='')
