@@ -221,6 +221,7 @@ $studiensemester_array = array();
 
 					$orgform = $stg->getOrgForm($result->studiengang_kz);
 					$stgSprache = $stg->getSprache($result->studiengang_kz);
+
 					$studienplan = getStudienplaeneForOnlinebewerbung($result->studiengang_kz, $studiensemester_array, '1', ''); //@todo: studiensemester und ausbildungssemester dynamisch
 
 					$studiensemester = new studiensemester();
@@ -237,7 +238,9 @@ $studiensemester_array = array();
 					{
 						foreach ($studienplan as $row)
 						{
-							if (CAMPUS_NAME=='FH Technikum Wien' && $result->studiengang_kz==334 && $result->studiengangbezeichnung == 'Intelligent Transport Systems') //@todo: Pfuschloesung bis zum neuen Tool, damit MIT nicht mehr angezeigt wird
+							if (CAMPUS_NAME=='FH Technikum Wien' && $result->studiengang_kz == 334 && $result->studiengangbezeichnung == 'Intelligent Transport Systems') //@todo: Pfuschloesung bis zum neuen Tool, damit MIT nicht mehr angezeigt wird
+								continue;
+							elseif (CAMPUS_NAME=='FH Technikum Wien' && $result->studiengang_kz == 302 && $row->orgform_kurzbz == 'DL' && $row->sprache == 'English') //@todo: Pfuschloesung, damit MWI-DL nicht mehr angezeigt wird, obwohl der Studienplan gueltig ist
 								continue;
 							else
 								$orgformen_sprachen[] = $row->orgform_kurzbz.'_'.$row->sprache;

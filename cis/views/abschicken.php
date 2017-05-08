@@ -47,13 +47,15 @@ echo '<p>'.$p->t('bewerbung/erklaerungBewerbungAbschicken').'</p>
 
 $notiz = new notiz;
 $notiz->getBewerbungstoolNotizen($person_id);
+$count_notizen = 0;
 if(count($notiz->result))
 {
 	foreach($notiz->result as $note)
 	{
 		if($note->insertvon == 'online_notiz')
 		{
-				echo '	<div class="col-sm-3">
+			$count_notizen ++;
+			echo '	<div class="col-sm-3">
 						<b>'.$p->t('bewerbung/notizVom').' '.date('j.n.y H:i', strtotime($note->insertamum)).'</b>
 					</div>
 					<div class="col-sm-9">
@@ -61,19 +63,24 @@ if(count($notiz->result))
 					</div><br>';
 		}
 	}
-
 }
 if(!defined('BEWERBERTOOL_ABSCHICKEN_ANMERKUNG') || BEWERBERTOOL_ABSCHICKEN_ANMERKUNG)
 {
-echo '	</div><form method="POST" action="'.$_SERVER['PHP_SELF'].'?active=abschicken">
-			<div class="form-group">
-			  <label for="anmerkung">'.$p->t('bewerbung/anmerkung').'</label>
-			  <textarea class="form-control" name="anmerkung" rows="4" maxlength="1024" id="anmerkung" style="width:80%" placeholder="'.$p->t('bewerbung/anmerkungPlaceholder').'" onInput="zeichenCountdown(\'anmerkung\',1024)"></textarea>
-			</div>
-			<button class="btn btn-default" type="submit" name="btn_notiz">
-				'.$p->t('global/speichern').'
-			</button>  <span style="color: grey; display: inline-block; width: 30px;" id="countdown_anmerkung">1024</span>
-		</form><br>';
+	if($count_notizen == 0)
+	{
+		echo '	</div><form method="POST" action="'.$_SERVER['PHP_SELF'].'?active=abschicken">
+				<div class="form-group">
+					<label for="anmerkung">'.$p->t('bewerbung/anmerkung').'</label>
+					<textarea class="form-control" name="anmerkung" rows="4" maxlength="1024" id="anmerkung" style="width:80%" placeholder="'.$p->t('bewerbung/anmerkungPlaceholder').'" onInput="zeichenCountdown(\'anmerkung\',1024)"></textarea>
+				</div>
+				<button class="btn btn-default" type="submit" name="btn_notiz">
+					'.$p->t('global/speichern').'
+				</button>
+				<span style="color: grey; display: inline-block; width: 30px;" id="countdown_anmerkung"></span>
+			</form><br>';
+	}
+	else
+		echo '	</div><br>';
 }
 //echo '<p>'.$p->t('bewerbung/erklaerungBewerbungAbschicken').'</p>';
 

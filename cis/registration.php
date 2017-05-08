@@ -501,7 +501,7 @@ elseif($username && $password)
 							<?php echo $p->t('global/geburtsdatum') ?>
 						</label>
 						<div class="col-sm-4">
-							<input type="date" name="geb_datum" id="geburtsdatum"
+							<input type="text" name="geb_datum" id="geburtsdatum"
 								   value="<?php echo isset($geb_datum) ? date('d.m.Y', strtotime($geb_datum)) : '' ?>"
 								   class="form-control" placeholder="<?php echo $p->t('bewerbung/datumFormat') ?>">
 						</div>
@@ -635,7 +635,9 @@ elseif($username && $password)
 								{
 									foreach ($studienplan as $row)
 									{
-										if (CAMPUS_NAME=='FH Technikum Wien' && $result->studiengang_kz==334 && $stg_bezeichnung == 'Intelligent Transport Systems') //@todo: Pfuschloesung bis zum neuen Tool, damit MIT nicht mehr angezeigt wird
+										if (CAMPUS_NAME=='FH Technikum Wien' && $result->studiengang_kz == 334 && $stg_bezeichnung == 'Intelligent Transport Systems') //@todo: Pfuschloesung bis zum neuen Tool, damit MIT nicht mehr angezeigt wird
+											continue;
+										elseif (CAMPUS_NAME=='FH Technikum Wien' && $result->studiengang_kz == 302 && $row->orgform_kurzbz == 'DL' && $row->sprache == 'English') //@todo: Pfuschloesung, damit MWI-DL nicht mehr angezeigt wird, obwohl der Studienplan gueltig ist
 											continue;
 										else
 											$orgformen_sprachen[] = $row->orgform_kurzbz.'_'.$row->sprache;
@@ -652,10 +654,16 @@ elseif($username && $password)
 								elseif ($result->typ!='l' && !isset($lgtyparr[$result->lgartcode]))
 									$stg_bezeichnung .= ' | <i>'.$p->t('bewerbung/orgform/'.$orgform_stg[0]).' - '.$p->t('bewerbung/'.$sprache_lv[0]).'</i>';
 
-								if (CAMPUS_NAME=='FH Technikum Wien' && $result->studiengang_kz==334 && $result->studiengangbezeichnung != 'Intelligent Transport Systems') //@todo: Pfuschloesung bis zum neuen Tool, damit MIT nicht mehr angezeigt wird
+								if (CAMPUS_NAME=='FH Technikum Wien' && $result->studiengang_kz == 334 && $result->studiengangbezeichnung != 'Intelligent Transport Systems') //@todo: Pfuschloesung bis zum neuen Tool, damit MIT nicht mehr angezeigt wird
 									$stg_bezeichnung .= ' | <i>'.$p->t('bewerbung/orgform/'.$orgform_stg[0]).' - '.$p->t('bewerbung/'.$sprache_lv[0]).'</i>';
+								
+								if (CAMPUS_NAME=='FH Technikum Wien' && $result->studiengang_kz == 302 && $orgform_stg[0] == 'BB') //@todo: Pfuschloesung, damit MWI-DL nicht mehr angezeigt wird, obwohl der Studienplan gueltig ist
+									$stg_bezeichnung .= ' | <i>'.$p->t('bewerbung/orgform/'.$orgform_stg[0]).' - '.$p->t('bewerbung/German').'</i>';
 
-								if (CAMPUS_NAME=='FH Technikum Wien' && $result->studiengang_kz==334) //@todo: Pfuschloesung bis zum neuen Tool, damit kein Modal bei MSC angezeigt wird
+								if (CAMPUS_NAME=='FH Technikum Wien' && $result->studiengang_kz == 334) //@todo: Pfuschloesung bis zum neuen Tool, damit kein Modal bei MSC angezeigt wird
+									$modal = false;
+								
+								if (CAMPUS_NAME=='FH Technikum Wien' && $result->studiengang_kz == 302) //@todo: Pfuschloesung, damit MWI-DL nicht mehr angezeigt wird, obwohl der Studienplan gueltig ist
 									$modal = false;
 
 								if(in_array($result->studiengang_kz, $studiengaenge) || $result->studiengang_kz == $stg_auswahl)
@@ -668,7 +676,7 @@ elseif($username && $password)
 								else
 									$class = 'checkbox_lg';
 
-								if (CAMPUS_NAME=='FH Technikum Wien' && $result->studiengang_kz==334 && $result->studiengangbezeichnung == 'Intelligent Transport Systems') //@todo: Pfuschloesung bis zum neuen Tool, damit MIT nicht mehr angezeigt wird
+								if (CAMPUS_NAME=='FH Technikum Wien' && $result->studiengang_kz == 334 && $result->studiengangbezeichnung == 'Intelligent Transport Systems') //@todo: Pfuschloesung bis zum neuen Tool, damit MIT nicht mehr angezeigt wird
 									continue;
 								else
 								{
@@ -693,6 +701,9 @@ elseif($username && $password)
 									
 									if (!isset($orgform[$result->studiengang_kz]) && in_array($result->studiengang_kz, $studiengaenge) && $orgform_kurzbz != '')
 										$orgform[$result->studiengang_kz] = substr($orgform_kurzbz, 0, strpos($orgform_kurzbz, '_'));
+									
+									if(!isset($orgform[$result->studiengang_kz]) && count($orgform_stg) == 1)
+										$orgform[$result->studiengang_kz] = $orgform_stg[0];
 										
 									echo '
 											<span class="badge" id="badge'.$result->studiengang_kz.'">'.(isset($anmerkungen[$result->studiengang_kz])?$anmerkungen[$result->studiengang_kz]:'').'</span>
@@ -752,8 +763,14 @@ elseif($username && $password)
 														echo '<div class="radio" onchange="changePrio('.$result->studiengang_kz.')">
 															<label>
 																<input type="radio" name="topprioOrgform'.$result->studiengang_kz.'" value="'.$row->orgform_kurzbz.'_'.$row->sprache.'" '.$checked_orgform.'>
-																'.$p->t('bewerbung/orgform/'.$row->orgform_kurzbz).' - '.$p->t('bewerbung/'.$row->sprache).'
-															</label>
+																'.$p->t('bewerbung/orgform/'.$row->orgform_kurzbz).' - '.$p->t('bewerbung/'.$row->sprache);
+																
+																if (CAMPUS_NAME=='FH Technikum Wien' && $result->studiengang_kz=='257' && $row->orgform_kurzbz == 'DUA') //@todo: Pfuschloesung bis zur Akkreditierung von BIF Dual
+																{
+																	//echo ' ('.$lgtyparr[$result->lgartcode].')';
+																	echo ' <span style="color: orange">('.$p->t('bewerbung/vorbehaltlichAkkreditierung').')</span>';
+																}
+														echo '</label>
 														</div>';
 													}
 												}
@@ -786,8 +803,14 @@ elseif($username && $password)
 														echo '<div class="radio" onchange="changePrio('.$result->studiengang_kz.')">
 																<label>
 																	<input type="radio" name="alternativeOrgform'.$result->studiengang_kz.'" value="'.$row->orgform_kurzbz.'_'.$row->sprache.'" '.$checked_orgform_alternativ.'>
-																	'.$p->t('bewerbung/orgform/'.$row->orgform_kurzbz).' - '.$p->t('bewerbung/'.$row->sprache).'
-																</label>
+																	'.$p->t('bewerbung/orgform/'.$row->orgform_kurzbz).' - '.$p->t('bewerbung/'.$row->sprache);
+																
+																	if (CAMPUS_NAME=='FH Technikum Wien' && $result->studiengang_kz=='257' && $row->orgform_kurzbz == 'DUA') //@todo: Pfuschloesung bis zur Akkreditierung von BIF Dual
+																	{
+																		//echo ' ('.$lgtyparr[$result->lgartcode].')';
+																		echo ' <span style="color: orange">('.$p->t('bewerbung/vorbehaltlichAkkreditierung').')</span>';
+																	}
+														echo '</label>
 															</div>';
 													}
 												}
@@ -1171,7 +1194,7 @@ elseif($username && $password)
 			function validateEmail(email)
 			{
 				//var email = document.ResendCodeForm.email.value;
-				var re = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
+				var re = /^([\w-+]+(?:\.[\w-+]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
 				if(re.test(email)===false)
 				{
 					alert("<?php echo $p->t('bewerbung/bitteEmailAngeben')?>");
