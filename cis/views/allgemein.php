@@ -115,6 +115,10 @@ $studiensemester_array = array();
 
 					$orgform = new organisationsform();
 					$orgform->load($prestudent_status->orgform_kurzbz);
+					
+					// Pfuschloesung, damit bei BIF Dual die Mail an info.bid geht
+					if (CAMPUS_NAME == 'FH Technikum Wien' && $stg->studiengang_kz == 257 && $orgform->orgform_kurzbz == 'DUA')
+						$empfaenger = 'info.bid@technikum-wien.at';
 					?>
 
 					<tr>
@@ -260,7 +264,7 @@ $studiensemester_array = array();
 						$stg_bezeichnung .= ' | <i>'.$p->t('bewerbung/orgform/'.$orgform_stg[0]).' - '.$p->t('bewerbung/'.$sprache_lv[0]).'</i>';
 
 					if (CAMPUS_NAME=='FH Technikum Wien' && $result->studiengang_kz==334 && $result->studiengangbezeichnung != 'Intelligent Transport Systems') //@todo: Pfuschloesung bis zum neuen Tool, damit MIT nicht mehr angezeigt wird
-						$stg_bezeichnung .= ' | <i>'.$p->t('bewerbung/orgform/'.$orgform_stg[0]).' - '.$p->t('bewerbung/'.$sprache_lv[0]).'</i>';
+						$stg_bezeichnung .= ' | <i>'.$p->t('bewerbung/orgform/'.$orgform_stg[0]).' - '.$p->t('bewerbung/German').'</i>';
 
 					if (CAMPUS_NAME=='FH Technikum Wien' && $result->studiengang_kz==334) //@todo: Pfuschloesung bis zum neuen Tool, damit kein Modal bei MSC angezeigt wird
 						$modal = false;

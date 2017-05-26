@@ -655,7 +655,7 @@ elseif($username && $password)
 									$stg_bezeichnung .= ' | <i>'.$p->t('bewerbung/orgform/'.$orgform_stg[0]).' - '.$p->t('bewerbung/'.$sprache_lv[0]).'</i>';
 
 								if (CAMPUS_NAME=='FH Technikum Wien' && $result->studiengang_kz == 334 && $result->studiengangbezeichnung != 'Intelligent Transport Systems') //@todo: Pfuschloesung bis zum neuen Tool, damit MIT nicht mehr angezeigt wird
-									$stg_bezeichnung .= ' | <i>'.$p->t('bewerbung/orgform/'.$orgform_stg[0]).' - '.$p->t('bewerbung/'.$sprache_lv[0]).'</i>';
+									$stg_bezeichnung .= ' | <i>'.$p->t('bewerbung/orgform/'.$orgform_stg[0]).' - '.$p->t('bewerbung/German').'</i>';
 								
 								if (CAMPUS_NAME=='FH Technikum Wien' && $result->studiengang_kz == 302 && $orgform_stg[0] == 'BB') //@todo: Pfuschloesung, damit MWI-DL nicht mehr angezeigt wird, obwohl der Studienplan gueltig ist
 									$stg_bezeichnung .= ' | <i>'.$p->t('bewerbung/orgform/'.$orgform_stg[0]).' - '.$p->t('bewerbung/German').'</i>';
@@ -749,10 +749,13 @@ elseif($username && $password)
 												{
 													foreach($orgform_sprache as $row)
 													{
+														if (CAMPUS_NAME=='FH Technikum Wien' && $result->studiengang_kz == 256 && $row->orgform_kurzbz == 'DL') //@todo: Pfuschloesung, damit BWI-DL nicht mehr angezeigt wird, obwohl der Studienplan gueltig ist
+															continue;
+
 														$checked_orgform = '';
 														if (
 																((in_array($result->studiengang_kz, $studiengaenge) || $result->studiengang_kz == $stg_auswahl)
-																		&& $orgform[$result->studiengang_kz] == $row->orgform_kurzbz)
+																		&& isset($orgform[$result->studiengang_kz]) && $orgform[$result->studiengang_kz] == $row->orgform_kurzbz)
 																||
 																((in_array($result->studiengang_kz, $studiengaenge) && $orgform_kurzbz == $row->orgform_kurzbz.'_'.$row->sprache))
 															)
@@ -795,6 +798,9 @@ elseif($username && $password)
 															</div>';
 													foreach($orgform_sprache as $row)
 													{
+														if (CAMPUS_NAME=='FH Technikum Wien' && $result->studiengang_kz == 256 && $row->orgform_kurzbz == 'DL') //@todo: Pfuschloesung, damit BWI-DL nicht mehr angezeigt wird, obwohl der Studienplan gueltig ist
+															continue;
+
 														$checked_orgform_alternativ = '';
 														if ((in_array($result->studiengang_kz, $studiengaenge) || $result->studiengang_kz == $stg_auswahl) && $orgform_alt[$result->studiengang_kz] == $row->orgform_kurzbz)
 														{
