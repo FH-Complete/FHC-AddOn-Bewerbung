@@ -61,6 +61,7 @@ require_once('../../../include/organisationsform.class.php');
 require_once('../include/functions.inc.php');
 require_once('../../../include/aufmerksamdurch.class.php');
 require_once('../../../include/bisberufstaetigkeit.class.php');
+require_once('../../../include/bewerbungstermin.class.php');
 
 if(isset($_GET['logout']))
 {
@@ -269,6 +270,7 @@ if(isset($_POST['btn_bewerbung_abschicken']))
 	// Mail an zuständige Assistenz schicken
 	$pr_id = isset($_POST['prestudent_id']) ? $_POST['prestudent_id'] : '';
 	$sendmail = false; //Damit das Mail beim Seitenreload nicht nochmal geschickt wird
+	$bewerbungsfrist_abgelaufen = false;
 
 	if($pr_id != '')
 	{
@@ -282,53 +284,73 @@ if(isset($_POST['btn_bewerbung_abschicken']))
 		// check ob es status schon gibt
 		if($prestudent_status->load_rolle($pr_id, 'Interessent', $alterstatus->studiensemester_kurzbz, '1'))
 		{
-			/*$prestudent_status->status_kurzbz = 'Bewerber';
-			$prestudent_status->studiensemester_kurzbz = $alterstatus->studiensemester_kurzbz;
-			$prestudent_status->ausbildungssemester = '1';
-			$prestudent_status->datum = date('Y-m-d H:i:s');
-			$prestudent_status->insertamum = date('Y-m-d H:i:s');
-			$prestudent_status->insertvon = '';
-			$prestudent_status->updateamum = date('Y-m-d H:i:s');
-			$prestudent_status->updatevon = '';
-			$prestudent_status->studienplan_id = $alterstatus->studienplan_id;
-			$prestudent_status->new = true;
-			*/
-			if (CAMPUS_NAME!='FH Technikum Wien')
-				$prestudent_status->bestaetigtam = date('Y-m-d H:i:s');
-
-			if($prestudent_status->bewerbung_abgeschicktamum=='')
+			// Check, ob Bewerbungsfrist abgelaufen ist
+			$bewerbungsfristen = new bewerbungstermin();
+			$bewerbungsfristen->getBewerbungstermine($prestudent_status->studiengang_kz, $prestudent_status->studiensemester_kurzbz, 'insertamum DESC', $prestudent_status->studienplan_id);
+				
+			if (isset($bewerbungsfristen->result[0]))
 			{
-				$prestudent_status->bewerbung_abgeschicktamum = date('Y-m-d H:i:s');
-				$sendmail=true;
+				$bewerbungsfristen = $bewerbungsfristen->result[0];
+				// Wenn Nachfrist gesetzt und das Nachfrist-Datum befuellt ist, gilt die Nachfrist
+				// sonst das Endedatum, wenn eines gesetzt ist
+				if ($bewerbungsfristen->nachfrist == true && $bewerbungsfristen->nachfrist_ende != '')
+				{
+					// Zeit bis Fristablauf zaehlen
+					if (((strtotime($bewerbungsfristen->nachfrist_ende) - time())/86400) <= 0)
+						$bewerbungsfrist_abgelaufen = true;
+				}
+				elseif ($bewerbungsfristen->ende != '')
+				{
+					// Zeit bis Fristablauf zaehlen
+					if (((strtotime($bewerbungsfristen->ende) - time())/86400) <= 0)
+						$bewerbungsfrist_abgelaufen = true;
+				}
+			}
+			if($bewerbungsfrist_abgelaufen == false)
+			{
+				// An der FHTW wird das bestaetigungsdatum NICHT gesetzt
+				if (CAMPUS_NAME != 'FH Technikum Wien')
+					$prestudent_status->bestaetigtam = date('Y-m-d H:i:s');
+	
+				if($prestudent_status->bewerbung_abgeschicktamum == '')
+				{
+					$prestudent_status->bewerbung_abgeschicktamum = date('Y-m-d H:i:s');
+					$sendmail = true;
+				}
+				else
+					$sendmail = false;
+	
+				$prestudent_status->new = false;
+				$prestudent_status->updateamum = date('Y-m-d H:i:s');
+				$prestudent_status->updatevon = 'online';
+	
+				if(!$prestudent_status->save_rolle())
+					die($p->t('global/fehlerBeimSpeichernDerDaten'));
 			}
 			else
-				$sendmail=false;
-
-			$prestudent_status->new = false;
-			$prestudent_status->updateamum = date('Y-m-d H:i:s');
-			$prestudent_status->updatevon = 'online';
-
-			if(!$prestudent_status->save_rolle())
-				die($p->t('global/fehlerBeimSpeichernDerDaten'));
+			{
+				$message = $p->t('bewerbung/messageBewerbungsfristAbgelaufen');
+				$save_error_abschicken = true;
+			}
 		}
 
 		$prestudent = new prestudent();
 		$prestudent->load($pr_id);
 		$studiengang = new studiengang();
 		$studiengang->load($prestudent->studiengang_kz);
-		if($sendmail==true)
+		if($sendmail == true && $bewerbungsfrist_abgelaufen == false)
 		{
 			if(sendBewerbung($pr_id,$prestudent_status->studiensemester_kurzbz,$prestudent_status->orgform_kurzbz))
 			{
 				$message = $p->t('bewerbung/erfolgreichBeworben',array($studiengang->bezeichnung_arr[$sprache]));
 				//echo '<script type="text/javascript">alert("'.$p->t('bewerbung/erfolgreichBeworben',array($studiengang->bezeichnung_arr[$sprache])).'");</script>';
 				//echo '<script type="text/javascript">window.location="'.$_SERVER['PHP_SELF'].'?active=abschicken";</script>';
-				$save_error_abschicken=false;
+				$save_error_abschicken = false;
 			}
 			else
 			{
 				echo '<script type="text/javascript">alert("'.$p->t('bewerbung/fehlerBeimVersendenDerBewerbung').'");</script>';
-				$save_error_abschicken==true;
+				$save_error_abschicken = true;
 			}
 		}
 	}

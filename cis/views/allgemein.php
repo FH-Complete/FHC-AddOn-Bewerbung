@@ -57,6 +57,7 @@ $studiensemester_array = array();
 					<th><?php echo $p->t('bewerbung/status'); ?></th>
 					<th><?php echo $p->t('global/datum'); ?></th>
 					<th><?php echo $p->t('bewerbung/bewerbungsstatus'); ?></th>
+					<th><?php echo $p->t('bewerbung/bewerbungsfrist'); ?></th>
 				</tr>
 				<?php
 				$bereits_angemeldet = array();
@@ -116,6 +117,40 @@ $studiensemester_array = array();
 					$orgform = new organisationsform();
 					$orgform->load($prestudent_status->orgform_kurzbz);
 					
+					// Bewerbungsfristen laden
+					$bewerbungsfrist = '';
+					$tage_bis_fristablauf = '';
+					$class = '';
+					$bewerbungsfristen = new bewerbungstermin();
+					$bewerbungsfristen->getBewerbungstermine($row->studiengang_kz, $prestudent_status->studiensemester_kurzbz, 'insertamum DESC', $prestudent_status->studienplan_id);
+					
+					if (isset($bewerbungsfristen->result[0]))
+					{
+						$bewerbungsfristen = $bewerbungsfristen->result[0];
+						// Wenn Nachfrist gesetzt und das Nachfrist-Datum befuellt ist, gilt die Nachfrist
+						// sonst das Endedatum, wenn eines gesetzt ist
+						if ($bewerbungsfristen->nachfrist == true && $bewerbungsfristen->nachfrist_ende != '')
+						{
+							$bewerbungsfrist = $datum->formatDatum($bewerbungsfristen->nachfrist_ende, 'd.m.Y');
+							$tage_bis_fristablauf = ((strtotime($bewerbungsfristen->nachfrist_ende) - time())/86400);
+						}
+						elseif ($bewerbungsfristen->ende != '')
+						{
+							$bewerbungsfrist = $datum->formatDatum($bewerbungsfristen->ende, 'd.m.Y');
+							$tage_bis_fristablauf = ((strtotime($bewerbungsfristen->ende) - time())/86400);
+						}
+						else 
+							$bewerbungsfrist = 'Keine Bewerbungfrist gesetzt';
+	
+						// Wenn die Frist in weniger als 7 Tagen ablaeuft oder vorbei ist, hervorheben
+						if ($tage_bis_fristablauf <= 7)
+							$class = 'class="alert-warning"';
+						if ($tage_bis_fristablauf <= 0)
+							$class = 'class="alert-danger"';
+					}
+					else 
+						$bewerbungsfrist = 'Keine Bewerbungfrist gesetzt';
+
 					// Pfuschloesung, damit bei BIF Dual die Mail an info.bid geht
 					if (CAMPUS_NAME == 'FH Technikum Wien' && $stg->studiengang_kz == 257 && $orgform->orgform_kurzbz == 'DUA')
 						$empfaenger = 'info.bid@technikum-wien.at';
@@ -127,6 +162,7 @@ $studiensemester_array = array();
 						<td><?php echo $prestatus_help.' ('.$prestudent_status->studiensemester_kurzbz.')' ?></td>
 						<td><?php echo $datum->formatDatum($prestudent_status->datum, 'd.m.Y') ?></td>
 						<td><?php echo $bewerberstatus ?></td>
+						<td <?php echo $class; ?>><?php echo $bewerbungsfrist ?></td>
 					</tr>
 				<?php endforeach;?>
 			</table>

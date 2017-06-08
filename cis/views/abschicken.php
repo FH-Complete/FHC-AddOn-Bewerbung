@@ -16,6 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * Authors: Robert Hofer <robert.hofer@technikum-wien.at>
+ * 			Manfred Kindl <manfred.kindl@technikum-wien.at>
  */
 
 if(!isset($person_id))
@@ -117,8 +118,57 @@ foreach($prestudent_help->result as $prest)
 
 	foreach($prestudent_help2->result AS $row)
 	{
+		// Bewerbungsfristen laden
+		$disabled_bewerbung = '';
+		$bewerbungsfrist = '';
+		$tage_bis_fristablauf = '';
+		$class = '';
+		$button_class = 'btn-primary';
+		$bewerbungsfristen = new bewerbungstermin();
+		$bewerbungsfristen->getBewerbungstermine($prest->studiengang_kz, $row->studiensemester_kurzbz, 'insertamum DESC', $row->studienplan_id);
+			
+		if (isset($bewerbungsfristen->result[0]))
+		{
+			$bewerbungsfristen = $bewerbungsfristen->result[0];
+			// Wenn Nachfrist gesetzt und das Nachfrist-Datum befuellt ist, gilt die Nachfrist
+			// sonst das Endedatum, wenn eines gesetzt ist
+			if ($bewerbungsfristen->nachfrist == true && $bewerbungsfristen->nachfrist_ende != '')
+			{
+				$bewerbungsfrist = '<br>'.$p->t('bewerbung/bewerbungsfrist').' '.$datum->formatDatum($bewerbungsfristen->nachfrist_ende, 'd.m.Y');
+				$tage_bis_fristablauf = ((strtotime($bewerbungsfristen->nachfrist_ende) - time())/86400);
+			}
+			elseif ($bewerbungsfristen->ende != '')
+			{
+				$bewerbungsfrist = '<br>'.$p->t('bewerbung/bewerbungsfrist').' '.$datum->formatDatum($bewerbungsfristen->ende, 'd.m.Y');
+				$tage_bis_fristablauf = ((strtotime($bewerbungsfristen->ende) - time())/86400);
+			}
+			
+			// Wenn die Frist in weniger als 7 Tagen ablaeuft, hervorheben
+			if ($tage_bis_fristablauf <= 7)
+			{
+				$class = 'class="alert-warning"';
+			}
+			if ($tage_bis_fristablauf <= 0)
+			{
+				$class = 'class="alert-danger"';
+				$button_class = 'btn-default';
+			}
+			
+			// Wenn die Frist abgelaufen ist, Button deaktivieren
+			if ($tage_bis_fristablauf != '' && $tage_bis_fristablauf <= 0)
+				$disabled_bewerbung = 'disabled';
+		}
+
 		if ($stg->typ=='m' && $status_zgv_mas==false)
 			$disabled = 'disabled';
+		
+		$buttontext = $p->t('bewerbung/buttonBewerbungAbschicken').' ('.$stg->kurzbzlang.' '.$row->studiensemester_kurzbz.')';
+		
+		if ($disabled_bewerbung == 'disabled')
+			$buttontext = $p->t('bewerbung/bewerbungsfristAbgelaufen');
+		elseif ($disabled == 'disabled')
+			$buttontext = $p->t('bewerbung/buttonBewerbungUnvollstaendig');
+		
 		if(in_array($row->studiensemester_kurzbz, $stsem_array)) //Fuer Studiensemester ohne Onlinebewerbung kann sich nicht mehr beworben werden @todo: Dies soll zukuenftig je Studiengang abgespeichert werden koennen
 		{
 			if($row->bewerbung_abgeschicktamum!='')
@@ -128,7 +178,12 @@ foreach($prestudent_help->result as $prest)
 				<div class="row">
 					<div class="col-md-6 col-sm-8 col-xs-10">
 							<div class="form-group">
-								<label for="'.$stg->kurzbzlang.'">'.$p->t('bewerbung/bewerbungAbschickenFuer').' '.$typ->bezeichnung.' '.$stg_bezeichnung.' ('.$row->studiensemester_kurzbz.')</label>
+								<label for="'.$stg->kurzbzlang.'">
+										'.$p->t('bewerbung/bewerbungAbschickenFuer').' 
+										'.$typ->bezeichnung.' 
+										'.$stg_bezeichnung.' ('.$row->studiensemester_kurzbz.') 
+										<span '.$class.'>'.$bewerbungsfrist.'</span>
+								</label>
 								<button class="btn btn-default form-control" disabled type="button">'.$p->t('bewerbung/BewerbungBereitsVerschickt').'</button>
 							</div>
 					</div>
@@ -144,8 +199,16 @@ foreach($prestudent_help->result as $prest)
 					<div class="col-md-6 col-sm-8 col-xs-10">
 						<form method="POST"  action="'.$_SERVER['PHP_SELF'].'?active=abschicken">
 							<div class="form-group">
-								<label for="'.$stg->kurzbzlang.'">'.$p->t('bewerbung/bewerbungAbschickenFuer').' '.$typ->bezeichnung.' '.$stg_bezeichnung.($orgform->bezeichnung!=''?' '.$orgform->bezeichnung:'').' ('.$row->studiensemester_kurzbz.')</label>
-								<button id="'.$stg->kurzbzlang.'" class="btn btn-primary form-control" '.$disabled.' type="submit" name="btn_bewerbung_abschicken">'.($disabled!=''?$p->t('bewerbung/buttonBewerbungUnvollstaendig'):$p->t('bewerbung/buttonBewerbungAbschicken').' ('.$stg->kurzbzlang.' '.$row->studiensemester_kurzbz.')').'</button>
+								<label for="'.$stg->kurzbzlang.'">
+										'.$p->t('bewerbung/bewerbungAbschickenFuer').' 
+										'.$typ->bezeichnung.' 
+										'.$stg_bezeichnung.($orgform->bezeichnung!=''?' '.$orgform->bezeichnung:'').' 
+										('.$row->studiensemester_kurzbz.') 
+										<span '.$class.'>'.$bewerbungsfrist.'</span>
+								</label>
+								<button id="'.$stg->kurzbzlang.'" class="btn '.$button_class.' form-control" '.$disabled.' '.$disabled_bewerbung.' type="submit" name="btn_bewerbung_abschicken">
+										'.$buttontext.' 
+								</button>
 								<input type="hidden" name="prestudent_id" value="'.$prest->prestudent_id.'">
 							</div>
 						</form>

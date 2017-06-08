@@ -216,4 +216,7 @@ $this->phrasen['bewerbung/bitteGueltigeOesterreichischePlzEingeben']='Please ent
 $this->phrasen['bewerbung/plzMussGueltigSein']='Postcode must be a valid number';//nur grob uebersetzt
 $this->phrasen['bewerbung/plzUnbekannt']='Postcode unknown';//nur grob uebersetzt
 $this->phrasen['bewerbung/erfolgreichBeworbenMail']='You have applied successfully. The administrative assistant responsible will contact you in the course of the next 10 working days.';
+$this->phrasen['bewerbung/bewerbungsfrist']='Application deadline';
+$this->phrasen['bewerbung/bewerbungsfristAbgelaufen']='Application deadline expired';
+$this->phrasen['bewerbung/messageBewerbungsfristAbgelaufen']='The application deadline for this degree program has expired. Your application has not been sent.';
 ?>
