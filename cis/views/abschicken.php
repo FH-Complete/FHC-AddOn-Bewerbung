@@ -120,8 +120,9 @@ foreach($prestudent_help->result as $prest)
 	{
 		// Bewerbungsfristen laden
 		$disabled_bewerbung = '';
-		$bewerbungsfrist = '';
+		$bewerbungsfrist = '<span style="font-weight: normal"><br>'.$p->t('bewerbung/bewerbungszeitraum').': '.$p->t('bewerbung/unbegrenzt').'</span>';
 		$tage_bis_fristablauf = '';
+		$tage_bis_bewerbungsbeginn = '';
 		$class = '';
 		$button_class = 'btn-primary';
 		$bewerbungsfristen = new bewerbungstermin();
@@ -130,32 +131,56 @@ foreach($prestudent_help->result as $prest)
 		if (isset($bewerbungsfristen->result[0]))
 		{
 			$bewerbungsfristen = $bewerbungsfristen->result[0];
+			$bewerbungsbeginn = '';
+			if ($bewerbungsfristen->beginn != '')
+				$bewerbungsbeginn = $datum->formatDatum($bewerbungsfristen->beginn, 'd.m.Y');
+			else
+				$bewerbungsbeginn = $p->t('bewerbung/unbegrenzt');
+			
+			$tage_bis_bewerbungsbeginn = ((time() - strtotime($bewerbungsfristen->beginn))/86400);
 			// Wenn Nachfrist gesetzt und das Nachfrist-Datum befuellt ist, gilt die Nachfrist
 			// sonst das Endedatum, wenn eines gesetzt ist
 			if ($bewerbungsfristen->nachfrist == true && $bewerbungsfristen->nachfrist_ende != '')
 			{
-				$bewerbungsfrist = '<br>'.$p->t('bewerbung/bewerbungsfrist').' '.$datum->formatDatum($bewerbungsfristen->nachfrist_ende, 'd.m.Y');
 				$tage_bis_fristablauf = ((strtotime($bewerbungsfristen->nachfrist_ende) - time())/86400);
+				// Wenn die Frist in weniger als 7 Tagen ablaeuft, hervorheben
+				if ($tage_bis_fristablauf <= 7)
+				{
+					$class = 'class="bg-warning text-warning"';
+				}
+				if ($tage_bis_fristablauf <= 0)
+				{
+					$class = 'class="bg-danger text-danger"';
+					$button_class = 'btn-default';
+				}
+				$bewerbungsfrist = '<span style="font-weight: normal"><br>'.$p->t('bewerbung/bewerbungszeitraum').': '.$bewerbungsbeginn.' - <span '.$class.'>'.$datum->formatDatum($bewerbungsfristen->nachfrist_ende, 'd.m.Y').'</span></span>';
 			}
 			elseif ($bewerbungsfristen->ende != '')
 			{
-				$bewerbungsfrist = '<br>'.$p->t('bewerbung/bewerbungsfrist').' '.$datum->formatDatum($bewerbungsfristen->ende, 'd.m.Y');
 				$tage_bis_fristablauf = ((strtotime($bewerbungsfristen->ende) - time())/86400);
+				// Wenn die Frist in weniger als 7 Tagen ablaeuft, hervorheben
+				if ($tage_bis_fristablauf <= 7)
+				{
+					$class = 'class="bg-warning text-warning"';
+				}
+				if ($tage_bis_fristablauf <= 0)
+				{
+					$class = 'class="bg-danger text-danger"';
+					$button_class = 'btn-default';
+				}
+				$bewerbungsfrist = '<span style="font-weight: normal"><br>'.$p->t('bewerbung/bewerbungszeitraum').': '.$bewerbungsbeginn.' - <span '.$class.'>'.$datum->formatDatum($bewerbungsfristen->ende, 'd.m.Y').'</span></span>';
 			}
-			
-			// Wenn die Frist in weniger als 7 Tagen ablaeuft, hervorheben
-			if ($tage_bis_fristablauf <= 7)
+			elseif ($bewerbungsfristen->beginn != '')
 			{
-				$class = 'class="alert-warning"';
+				$bewerbungsfrist = '<span style="font-weight: normal"><br>'.$p->t('bewerbung/bewerbungszeitraum').': '.$bewerbungsbeginn.' - '.$p->t('bewerbung/unbegrenzt').'</span>';
 			}
-			if ($tage_bis_fristablauf <= 0)
+			else
 			{
-				$class = 'class="alert-danger"';
-				$button_class = 'btn-default';
+				$bewerbungsfrist = '<span style="font-weight: normal"><br>'.$p->t('bewerbung/unbegrenzt').'</span>';
 			}
 			
 			// Wenn die Frist abgelaufen ist, Button deaktivieren
-			if ($tage_bis_fristablauf != '' && $tage_bis_fristablauf <= 0)
+			if (($tage_bis_fristablauf != '' && $tage_bis_fristablauf <= 0) || ($tage_bis_bewerbungsbeginn != '' && $tage_bis_bewerbungsbeginn <= 0))
 				$disabled_bewerbung = 'disabled';
 		}
 
@@ -164,7 +189,9 @@ foreach($prestudent_help->result as $prest)
 		
 		$buttontext = $p->t('bewerbung/buttonBewerbungAbschicken').' ('.$stg->kurzbzlang.' '.$row->studiensemester_kurzbz.')';
 		
-		if ($disabled_bewerbung == 'disabled')
+		if ($tage_bis_bewerbungsbeginn != '' && $tage_bis_bewerbungsbeginn <= 0)
+			$buttontext = $p->t('bewerbung/bewerbungszeitraumStartetAm', array($bewerbungsbeginn));
+		elseif ($tage_bis_fristablauf != '' && $tage_bis_fristablauf <= 0)
 			$buttontext = $p->t('bewerbung/bewerbungsfristAbgelaufen');
 		elseif ($disabled == 'disabled')
 			$buttontext = $p->t('bewerbung/buttonBewerbungUnvollstaendig');
@@ -182,7 +209,7 @@ foreach($prestudent_help->result as $prest)
 										'.$p->t('bewerbung/bewerbungAbschickenFuer').' 
 										'.$typ->bezeichnung.' 
 										'.$stg_bezeichnung.' ('.$row->studiensemester_kurzbz.') 
-										<span '.$class.'>'.$bewerbungsfrist.'</span>
+										'.$bewerbungsfrist.'
 								</label>
 								<button class="btn btn-default form-control" disabled type="button">'.$p->t('bewerbung/BewerbungBereitsVerschickt').'</button>
 							</div>
@@ -204,7 +231,7 @@ foreach($prestudent_help->result as $prest)
 										'.$typ->bezeichnung.' 
 										'.$stg_bezeichnung.($orgform->bezeichnung!=''?' '.$orgform->bezeichnung:'').' 
 										('.$row->studiensemester_kurzbz.') 
-										<span '.$class.'>'.$bewerbungsfrist.'</span>
+										'.$bewerbungsfrist.'
 								</label>
 								<button id="'.$stg->kurzbzlang.'" class="btn '.$button_class.' form-control" '.$disabled.' '.$disabled_bewerbung.' type="submit" name="btn_bewerbung_abschicken">
 										'.$buttontext.' 

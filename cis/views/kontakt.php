@@ -124,19 +124,19 @@ elseif($save_error_kontakt===true)
 			<div class="form-group <?php echo ($strasse==''?'has-error':'') ?>">
 				<label for="strasse" class="col-sm-2 control-label"><?php echo $p->t('global/strasse') ?>*</label>
 				<div class="col-sm-10">
-					<input type="text" name="strasse" id="strasse" value="<?php echo $strasse ?>" <?php echo $disabled ?> class="form-control">
+					<input type="text" name="strasse" id="strasse" maxlength="256" value="<?php echo $strasse ?>" <?php echo $disabled ?> class="form-control">
 				</div>
 			</div>
 			<div class="form-group <?php echo ($plz==''?'has-error':'') ?>">
 				<label for="plz" class="col-sm-2 control-label"><?php echo $p->t('global/plz') ?>*</label>
 				<div class="col-sm-10">
-					<input type="text" name="plz" id="plz" value="<?php echo $plz ?>" <?php echo $disabled ?> class="form-control">
+					<input type="text" name="plz" id="plz" maxlength="16" value="<?php echo $plz ?>" <?php echo $disabled ?> class="form-control">
 				</div>
 			</div>
 			<div class="form-group <?php echo ($ort==''?'has-error':'') ?>">
 				<label for="ort" class="col-sm-2 control-label"><?php echo $p->t('global/ort') ?>*</label>
 				<div class="col-sm-10">
-					<input type="text" name="ort" id="ort_input" value="<?php echo $ort ?>" <?php echo $disabled.' '.($ort==''?'disabled="disabled"':'') ?> class="form-control">
+					<input type="text" name="ort" id="ort_input" maxlength="256" value="<?php echo $ort ?>" <?php echo $disabled.' '.($ort==''?'disabled="disabled"':'') ?> class="form-control">
 					<select id="ort_dropdown" name="ort" class="form-control" <?php echo $disabled.' '.($ort==''?'':'') ?>></select>
 					<input type="hidden" name="gemeinde" id="gemeinde_input" value="<?php echo $gemeinde ?>" class="form-control">
 				</div>

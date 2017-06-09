@@ -270,7 +270,7 @@ if(isset($_POST['btn_bewerbung_abschicken']))
 	// Mail an zuständige Assistenz schicken
 	$pr_id = isset($_POST['prestudent_id']) ? $_POST['prestudent_id'] : '';
 	$sendmail = false; //Damit das Mail beim Seitenreload nicht nochmal geschickt wird
-	$bewerbungsfrist_abgelaufen = false;
+	$bewerbungszeitraum_gueltig = true;
 
 	if($pr_id != '')
 	{
@@ -284,7 +284,7 @@ if(isset($_POST['btn_bewerbung_abschicken']))
 		// check ob es status schon gibt
 		if($prestudent_status->load_rolle($pr_id, 'Interessent', $alterstatus->studiensemester_kurzbz, '1'))
 		{
-			// Check, ob Bewerbungsfrist abgelaufen ist
+			// Check, ob Bewerbungsfrist schon begonnen hat, bzw abgelaufen ist
 			$bewerbungsfristen = new bewerbungstermin();
 			$bewerbungsfristen->getBewerbungstermine($prestudent_status->studiengang_kz, $prestudent_status->studiensemester_kurzbz, 'insertamum DESC', $prestudent_status->studienplan_id);
 				
@@ -296,17 +296,23 @@ if(isset($_POST['btn_bewerbung_abschicken']))
 				if ($bewerbungsfristen->nachfrist == true && $bewerbungsfristen->nachfrist_ende != '')
 				{
 					// Zeit bis Fristablauf zaehlen
-					if (((strtotime($bewerbungsfristen->nachfrist_ende) - time())/86400) <= 0)
-						$bewerbungsfrist_abgelaufen = true;
+					if (((strtotime($bewerbungsfristen->nachfrist_ende) - time())/86400) <= 0 || ((time() - strtotime($bewerbungsfristen->beginn))/86400) <= 0)
+						$bewerbungszeitraum_gueltig = false;
 				}
 				elseif ($bewerbungsfristen->ende != '')
 				{
 					// Zeit bis Fristablauf zaehlen
-					if (((strtotime($bewerbungsfristen->ende) - time())/86400) <= 0)
-						$bewerbungsfrist_abgelaufen = true;
+					if (((strtotime($bewerbungsfristen->ende) - time())/86400) <= 0 || ((time() - strtotime($bewerbungsfristen->beginn))/86400) <= 0)
+						$bewerbungszeitraum_gueltig = false;
+				}
+				elseif ($bewerbungsfristen->beginn != '')
+				{
+					// Zeit bis Fristablauf zaehlen
+					if (((time() - strtotime($bewerbungsfristen->beginn))/86400) <= 0)
+						$bewerbungszeitraum_gueltig = false;
 				}
 			}
-			if($bewerbungsfrist_abgelaufen == false)
+			if($bewerbungszeitraum_gueltig == true)
 			{
 				// An der FHTW wird das bestaetigungsdatum NICHT gesetzt
 				if (CAMPUS_NAME != 'FH Technikum Wien')
@@ -329,7 +335,7 @@ if(isset($_POST['btn_bewerbung_abschicken']))
 			}
 			else
 			{
-				$message = $p->t('bewerbung/messageBewerbungsfristAbgelaufen');
+				$message = $p->t('bewerbung/bewerbungAusserhalbZeitraum');
 				$save_error_abschicken = true;
 			}
 		}
@@ -338,7 +344,7 @@ if(isset($_POST['btn_bewerbung_abschicken']))
 		$prestudent->load($pr_id);
 		$studiengang = new studiengang();
 		$studiengang->load($prestudent->studiengang_kz);
-		if($sendmail == true && $bewerbungsfrist_abgelaufen == false)
+		if($sendmail == true && $bewerbungszeitraum_gueltig == true)
 		{
 			if(sendBewerbung($pr_id,$prestudent_status->studiensemester_kurzbz,$prestudent_status->orgform_kurzbz))
 			{
@@ -572,7 +578,7 @@ if(isset($_POST['btn_kontakt']) && !$eingabegesperrt)
 				// löschen
 				$kontakt_t->delete($kontakt_id);
 			}
-			else
+			elseif ($telefonnummer != '')
 			{
 				$kontakt_t->person_id = $person->person_id;
 				$kontakt_t->kontakt_id = $kontakt_id;
@@ -591,6 +597,11 @@ if(isset($_POST['btn_kontakt']) && !$eingabegesperrt)
 				else
 					$save_error_kontakt=false;
 			}
+			else 
+			{
+				$message = 'Invalid phone number';
+				$save_error_kontakt=true;
+			}
 		}
 		else
 		{
@@ -598,26 +609,35 @@ if(isset($_POST['btn_kontakt']) && !$eingabegesperrt)
 			{
 				// Telefonnummer validieren
 				$telefonnummer = preg_replace("/[^0-9+]/", '', $_POST['telefonnummer']);
-				// neuen Kontakt anlegen
-				$kontakt_t->person_id = $person->person_id;
-				$kontakt_t->zustellung = true;
-				$kontakt_t->kontakttyp = 'telefon';
-				$kontakt_t->kontakt = $telefonnummer;
-				$kontakt_t->insertamum = date('Y-m-d H:i:s');
-				$kontakt_t->insertvon = 'online';
-				$kontakt_t->new = true;
-
-				if(!$kontakt_t->save())
+				
+				// Wenn nache preg_replace Daten uebrig bleiben, neuen Kontakt anlegen
+				if ($telefonnummer != '')
 				{
-					$message = $kontakt_t->errormsg;
-					$save_error_kontakt=true;
+					$kontakt_t->person_id = $person->person_id;
+					$kontakt_t->zustellung = true;
+					$kontakt_t->kontakttyp = 'telefon';
+					$kontakt_t->kontakt = $telefonnummer;
+					$kontakt_t->insertamum = date('Y-m-d H:i:s');
+					$kontakt_t->insertvon = 'online';
+					$kontakt_t->new = true;
+	
+					if(!$kontakt_t->save())
+					{
+						$message = $kontakt_t->errormsg;
+						$save_error_kontakt=true;
+					}
+					else
+						$save_error_kontakt=false;
 				}
 				else
-					$save_error_kontakt=false;
+				{
+					$message = 'Invalid phone number';
+					$save_error_kontakt=true;
+				}
 			}
 		}
 	}
-	if($save_error_kontakt===false)
+	//if($save_error_kontakt===false)
 	{
 		// Adresse Speichern
 		if((isset($_POST['strasse']) && $_POST['strasse'] !='') || (isset($_POST['plz']) && $_POST['plz'] !='') || (isset($_POST['ort']) && $_POST['ort'] !=''))

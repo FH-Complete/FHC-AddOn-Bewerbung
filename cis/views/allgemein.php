@@ -57,7 +57,7 @@ $studiensemester_array = array();
 					<th><?php echo $p->t('bewerbung/status'); ?></th>
 					<th><?php echo $p->t('global/datum'); ?></th>
 					<th><?php echo $p->t('bewerbung/bewerbungsstatus'); ?></th>
-					<th><?php echo $p->t('bewerbung/bewerbungsfrist'); ?></th>
+					<th><?php echo $p->t('bewerbung/bewerbungszeitraum'); ?></th>
 				</tr>
 				<?php
 				$bereits_angemeldet = array();
@@ -118,7 +118,8 @@ $studiensemester_array = array();
 					$orgform->load($prestudent_status->orgform_kurzbz);
 					
 					// Bewerbungsfristen laden
-					$bewerbungsfrist = '';
+					$bewerbungszeitraum = '';
+					
 					$tage_bis_fristablauf = '';
 					$class = '';
 					$bewerbungsfristen = new bewerbungstermin();
@@ -127,29 +128,44 @@ $studiensemester_array = array();
 					if (isset($bewerbungsfristen->result[0]))
 					{
 						$bewerbungsfristen = $bewerbungsfristen->result[0];
+						$bewerbungsbeginn = '';
+						if ($bewerbungsfristen->beginn != '')
+							$bewerbungsbeginn = $datum->formatDatum($bewerbungsfristen->beginn, 'd.m.Y');
+						else
+							$bewerbungsbeginn = $p->t('bewerbung/unbegrenzt');
 						// Wenn Nachfrist gesetzt und das Nachfrist-Datum befuellt ist, gilt die Nachfrist
 						// sonst das Endedatum, wenn eines gesetzt ist
 						if ($bewerbungsfristen->nachfrist == true && $bewerbungsfristen->nachfrist_ende != '')
 						{
-							$bewerbungsfrist = $datum->formatDatum($bewerbungsfristen->nachfrist_ende, 'd.m.Y');
 							$tage_bis_fristablauf = ((strtotime($bewerbungsfristen->nachfrist_ende) - time())/86400);
+							// Wenn die Frist in weniger als 7 Tagen ablaeuft oder vorbei ist, hervorheben
+							if ($tage_bis_fristablauf <= 7)
+								$class = 'class="alert-warning"';
+							if ($tage_bis_fristablauf <= 0)
+								$class = 'class="alert-danger"';
+							
+							$bewerbungszeitraum = $bewerbungsbeginn.' - <span '.$class.'>'.$datum->formatDatum($bewerbungsfristen->nachfrist_ende, 'd.m.Y').'</span>';
 						}
 						elseif ($bewerbungsfristen->ende != '')
 						{
-							$bewerbungsfrist = $datum->formatDatum($bewerbungsfristen->ende, 'd.m.Y');
 							$tage_bis_fristablauf = ((strtotime($bewerbungsfristen->ende) - time())/86400);
+							// Wenn die Frist in weniger als 7 Tagen ablaeuft oder vorbei ist, hervorheben
+							if ($tage_bis_fristablauf <= 7)
+								$class = 'class="alert-warning"';
+							if ($tage_bis_fristablauf <= 0)
+								$class = 'class="alert-danger"';
+							
+							$bewerbungszeitraum = $bewerbungsbeginn.' - <span '.$class.'>'.$datum->formatDatum($bewerbungsfristen->ende, 'd.m.Y').'</span>';
+						}
+						elseif ($bewerbungsfristen->beginn != '')
+						{
+							$bewerbungszeitraum = $bewerbungsbeginn.' - '.$p->t('bewerbung/unbegrenzt');
 						}
 						else 
-							$bewerbungsfrist = 'Keine Bewerbungfrist gesetzt';
-	
-						// Wenn die Frist in weniger als 7 Tagen ablaeuft oder vorbei ist, hervorheben
-						if ($tage_bis_fristablauf <= 7)
-							$class = 'class="alert-warning"';
-						if ($tage_bis_fristablauf <= 0)
-							$class = 'class="alert-danger"';
+							$bewerbungszeitraum = $p->t('bewerbung/unbegrenzt');
 					}
 					else 
-						$bewerbungsfrist = 'Keine Bewerbungfrist gesetzt';
+						$bewerbungszeitraum = $p->t('bewerbung/unbegrenzt');
 
 					// Pfuschloesung, damit bei BIF Dual die Mail an info.bid geht
 					if (CAMPUS_NAME == 'FH Technikum Wien' && $stg->studiengang_kz == 257 && $orgform->orgform_kurzbz == 'DUA')
@@ -157,12 +173,20 @@ $studiensemester_array = array();
 					?>
 
 					<tr>
-						<td><?php echo $typ->bezeichnung.' '.$stg_bezeichnung.($orgform->bezeichnung!=''?' ('.$orgform->bezeichnung.')':'') ?></td>
+						<td><?php 
+							echo $typ->bezeichnung.' '.$stg_bezeichnung.($orgform->bezeichnung!=''?' ('.$orgform->bezeichnung.')':'');
+							if ($tage_bis_fristablauf !='' && $tage_bis_fristablauf <= 0)
+								echo '<br><div style="display: table-cell" class="label label-danger"><span class="glyphicon glyphicon-warning-sign"></span>&nbsp;&nbsp;'.$p->t('bewerbung/bewerbungsfristAbgelaufen').'</div>';
+							elseif ($tage_bis_fristablauf !='' && $tage_bis_fristablauf <= 7 && $tage_bis_fristablauf >= 1)
+								echo '<br><div style="display: table-cell" class="label label-warning"><span class="glyphicon glyphicon-warning-sign"></span>&nbsp;&nbsp;'.$p->t('bewerbung/bewerbungsfristEndetInXTagen', array(floor($tage_bis_fristablauf))).'</div>';
+							elseif ($tage_bis_fristablauf !='' && $tage_bis_fristablauf <= 1)
+								echo '<br><div style="display: table-cell" class="label label-warning"><span class="glyphicon glyphicon-warning-sign"></span>&nbsp;&nbsp;'.$p->t('bewerbung/bewerbungsfristEndetHeute').'</div>';
+							?></td>
 						<td><a href="mailto:<?php echo $empfaenger ?>"><span class="glyphicon glyphicon-envelope"></span></a></td>
 						<td><?php echo $prestatus_help.' ('.$prestudent_status->studiensemester_kurzbz.')' ?></td>
 						<td><?php echo $datum->formatDatum($prestudent_status->datum, 'd.m.Y') ?></td>
 						<td><?php echo $bewerberstatus ?></td>
-						<td <?php echo $class; ?>><?php echo $bewerbungsfrist ?></td>
+						<td><?php echo $bewerbungszeitraum ?></td>
 					</tr>
 				<?php endforeach;?>
 			</table>
@@ -205,7 +229,6 @@ $studiensemester_array = array();
 						<?php
 						foreach($stsem->studiensemester as $row)
 						{
-							echo '<option value="'.$row->studiensemester_kurzbz.'">'.$stsem->convert_html_chars($row->bezeichnung).' ('.$p->t('bewerbung/ab').' '.$datum->formatDatum($stsem->convert_html_chars($row->start),'d.m.Y').')</option>';
 							$studiensemester_array[] = $row->studiensemester_kurzbz;
 
 							if (defined('BEWERBERTOOL_MAX_STUDIENGAENGE') && BEWERBERTOOL_MAX_STUDIENGAENGE != '')

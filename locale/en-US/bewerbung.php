@@ -217,6 +217,11 @@ $this->phrasen['bewerbung/plzMussGueltigSein']='Postcode must be a valid number'
 $this->phrasen['bewerbung/plzUnbekannt']='Postcode unknown';//nur grob uebersetzt
 $this->phrasen['bewerbung/erfolgreichBeworbenMail']='You have applied successfully. The administrative assistant responsible will contact you in the course of the next 10 working days.';
 $this->phrasen['bewerbung/bewerbungsfrist']='Application deadline';
+$this->phrasen['bewerbung/bewerbungszeitraum']='Application period';
 $this->phrasen['bewerbung/bewerbungsfristAbgelaufen']='Application deadline expired';
-$this->phrasen['bewerbung/messageBewerbungsfristAbgelaufen']='The application deadline for this degree program has expired. Your application has not been sent.';
+$this->phrasen['bewerbung/bewerbungAusserhalbZeitraum']='Your application for this degree program is out of period. Your application has not been sent.';
+$this->phrasen['bewerbung/unbegrenzt']='Unlimited';
+$this->phrasen['bewerbung/bewerbungszeitraumStartetAm']='Application period starts %s';
+$this->phrasen['bewerbung/bewerbungsfristEndetInXTagen']='Application period ends in %s days';
+$this->phrasen['bewerbung/bewerbungsfristEndetHeute']='Application period ends today';
 ?>

@@ -230,6 +230,11 @@ $this->phrasen['bewerbung/paymentInfoText']='';
 
 $this->phrasen['bewerbung/erfolgreichBeworbenMail']='Sie haben sich erfolgreich beworben. Die zuständige Assistenz wird sich in den nächsten Tagen bei Ihnen melden.';
 $this->phrasen['bewerbung/bewerbungsfrist']='Bewerbungsfrist';
+$this->phrasen['bewerbung/bewerbungszeitraum']='Bewerbungszeitraum';
 $this->phrasen['bewerbung/bewerbungsfristAbgelaufen']='Bewerbungsfrist abgelaufen';
-$this->phrasen['bewerbung/messageBewerbungsfristAbgelaufen']='Die Bewerbungsfrist für diesen Studiengang ist bereits abgelaufen. Ihre Bewerbung wurde nicht verschickt.';
+$this->phrasen['bewerbung/bewerbungAusserhalbZeitraum']='Ihre Bewerbung liegt außerhalb des Bewerbungszeitraums. Ihre Bewerbung wurde nicht verschickt.';
+$this->phrasen['bewerbung/unbegrenzt']='Unbegrenzt';
+$this->phrasen['bewerbung/bewerbungszeitraumStartetAm']='Bewerbungszeitraum startet am %s';
+$this->phrasen['bewerbung/bewerbungsfristEndetInXTagen']='Bewerbungsfrist endet in %s Tagen';
+$this->phrasen['bewerbung/bewerbungsfristEndetHeute']='Bewerbungsfrist endet heute';
 ?>
