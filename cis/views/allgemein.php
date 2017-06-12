@@ -77,7 +77,14 @@ $studiensemester_array = array();
 
 					$prestudent_status = new prestudent();
 					$prestatus_help = ($prestudent_status->getLastStatus($row->prestudent_id))?$prestudent_status->status_mehrsprachig[$sprache]:$p->t('bewerbung/keinStatus');
-					$bewerberstatus = ($prestudent_status->bestaetigtam != '' || $prestudent_status->bestaetigtvon != '')?$p->t('bewerbung/bestaetigt'):$p->t('bewerbung/nichtBestaetigt');
+					
+					// Bewerbungsstatus nicht abgeschickt
+					if ($prestudent_status->bewerbung_abgeschicktamum == '')
+						$bewerberstatus = $p->t('bewerbung/nichtAbgeschickt');
+					if ($prestudent_status->bewerbung_abgeschicktamum != '')
+						$bewerberstatus = $p->t('bewerbung/nichtBestaetigt');
+					if ($prestudent_status->bestaetigtam != '' || $prestudent_status->bestaetigtvon != '')
+						$bewerberstatus = $p->t('bewerbung/bestaetigt');
 
 					//$bereits_angemeldet[]= $stg->studiengang_kz;
 					$bereits_angemeldet[$prestudent_status->studiensemester_kurzbz][]= $stg->studiengang_kz;
@@ -175,12 +182,16 @@ $studiensemester_array = array();
 					<tr>
 						<td><?php 
 							echo $typ->bezeichnung.' '.$stg_bezeichnung.($orgform->bezeichnung!=''?' ('.$orgform->bezeichnung.')':'');
-							if ($tage_bis_fristablauf !='' && $tage_bis_fristablauf <= 0)
-								echo '<br><div style="display: table-cell" class="label label-danger"><span class="glyphicon glyphicon-warning-sign"></span>&nbsp;&nbsp;'.$p->t('bewerbung/bewerbungsfristAbgelaufen').'</div>';
-							elseif ($tage_bis_fristablauf !='' && $tage_bis_fristablauf <= 7 && $tage_bis_fristablauf >= 1)
-								echo '<br><div style="display: table-cell" class="label label-warning"><span class="glyphicon glyphicon-warning-sign"></span>&nbsp;&nbsp;'.$p->t('bewerbung/bewerbungsfristEndetInXTagen', array(floor($tage_bis_fristablauf))).'</div>';
-							elseif ($tage_bis_fristablauf !='' && $tage_bis_fristablauf <= 1)
-								echo '<br><div style="display: table-cell" class="label label-warning"><span class="glyphicon glyphicon-warning-sign"></span>&nbsp;&nbsp;'.$p->t('bewerbung/bewerbungsfristEndetHeute').'</div>';
+							//Hinweis zum Fristablauf nur anzeigen, wenn die Bewerbung noch nicht abgeschickt wurde
+							if ($prestudent_status->bewerbung_abgeschicktamum == '')
+							{
+								if ($tage_bis_fristablauf !='' && $tage_bis_fristablauf <= 0)
+									echo '<br><div style="display: table-cell" class="label label-danger"><span class="glyphicon glyphicon-warning-sign"></span>&nbsp;&nbsp;'.$p->t('bewerbung/bewerbungsfristAbgelaufen').'</div>';
+								elseif ($tage_bis_fristablauf !='' && $tage_bis_fristablauf <= 7 && $tage_bis_fristablauf >= 1)
+									echo '<br><div style="display: table-cell" class="label label-warning"><span class="glyphicon glyphicon-warning-sign"></span>&nbsp;&nbsp;'.$p->t('bewerbung/bewerbungsfristEndetInXTagen', array(floor($tage_bis_fristablauf))).'</div>';
+								elseif ($tage_bis_fristablauf !='' && $tage_bis_fristablauf <= 1)
+									echo '<br><div style="display: table-cell" class="label label-warning"><span class="glyphicon glyphicon-warning-sign"></span>&nbsp;&nbsp;'.$p->t('bewerbung/bewerbungsfristEndetHeute').'</div>';
+							}
 							?></td>
 						<td><a href="mailto:<?php echo $empfaenger ?>"><span class="glyphicon glyphicon-envelope"></span></a></td>
 						<td><?php echo $prestatus_help.' ('.$prestudent_status->studiensemester_kurzbz.')' ?></td>
