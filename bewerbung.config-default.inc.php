@@ -35,4 +35,9 @@ define('BEWERBERTOOL_DATEN_TITEL_ANZEIGEN', false);
 // Sendet eine Bestätigungsmail an den Interessenten wenn die Bewerbung abgeschickt wird: html-content bewerbung/erfolgreichBeworbenMail
 define('BEWERBERTOOL_ERFOLGREICHBEWORBENMAIL', false);
 
+// Zeigt einen weiteren Karteireiter für die Eingabe einer abweichenden Rechnungsadresse an
+// Rechnungstelefonnummer: Kontakttyp: re_telefon
+// RechnungsEmail: Kontakttyp: re_email
+define('BEWERBERTOOL_RECHNUNGSKONTAKT_ANZEIGEN', false);
+
 ?>

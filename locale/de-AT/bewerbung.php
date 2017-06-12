@@ -238,4 +238,9 @@ $this->phrasen['bewerbung/unbegrenzt']='Unbegrenzt';
 $this->phrasen['bewerbung/bewerbungszeitraumStartetAm']='Bewerbungszeitraum startet am %s';
 $this->phrasen['bewerbung/bewerbungsfristEndetInXTagen']='Bewerbungsfrist endet in %s Tagen';
 $this->phrasen['bewerbung/bewerbungsfristEndetHeute']='Bewerbungsfrist endet heute';
+// Rechnungskontakt
+$this->phrasen['bewerbung/menuRechnungsKontaktinformationen']='Rechnungsdaten';
+$this->phrasen['bewerbung/rechnungsadresseInfoText']='Geben Sie hier bitte eine etwaige von Ihrer Heimatadresse abweichende Rechnungsadresse an (bitte vollständig ausfüllen)';
+$this->phrasen['bewerbung/rechnungsKontakt']='Rechnungskontakt';
+$this->phrasen['bewerbung/rechnungsAdresse']='Rechnungsadresse';
 ?>
