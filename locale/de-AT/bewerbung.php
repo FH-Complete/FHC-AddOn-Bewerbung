@@ -243,4 +243,8 @@ $this->phrasen['bewerbung/menuRechnungsKontaktinformationen']='Rechnungsdaten';
 $this->phrasen['bewerbung/rechnungsadresseInfoText']='Geben Sie hier bitte eine etwaige von Ihrer Heimatadresse abweichende Rechnungsadresse an (bitte vollständig ausfüllen)';
 $this->phrasen['bewerbung/rechnungsKontakt']='Rechnungskontakt';
 $this->phrasen['bewerbung/rechnungsAdresse']='Rechnungsadresse';
+$this->phrasen['bewerbung/re_anrede']='Anrede';
+$this->phrasen['bewerbung/re_titel']='Titel';
+$this->phrasen['bewerbung/re_vorname']='Vorname';
+$this->phrasen['bewerbung/re_nachname']='Nachname';
 ?>

@@ -871,6 +871,14 @@ if(isset($_POST['btn_rechnungskontakt']))
 			$adresse = new adresse();
 			$adresse->load_rechnungsadresse($person->person_id);
 			$gemeinde = '';
+			if((isset($_POST['re_vorname']) && $_POST['re_vorname'] !='') || (isset($_POST['re_nachname']) && $_POST['re_nachname'] !='') || (isset($_POST['re_titel']) && $_POST['re_titel'] !=''))
+			{
+				$name = $_POST['re_anrede'].'|'.$_POST['re_titel'].'|'.$_POST['re_vorname'].'|'.$_POST['re_nachname'];
+			}
+			else
+			{
+				$name = '';
+			}
 			if(count($adresse->result)>0)
 			{
 				// Wenn die Nation Oesterreich ist, wird die Gemeinde aus der DB ermittelt
@@ -894,6 +902,7 @@ if(isset($_POST['btn_rechnungskontakt']))
 				$adresse_help->nation = isset($_POST['re_nation'])?$_POST['re_nation']:'';
 				$adresse_help->updateamum = date('Y-m-d H:i:s');
 				$adresse_help->updatevon = 'online';
+				$adresse_help->name = $name;
 				$adresse_help->new = false;
 				if(!$adresse_help->save())
 				{
@@ -920,6 +929,7 @@ if(isset($_POST['btn_rechnungskontakt']))
 				$adresse->zustelladresse = false;
 				$adresse->heimatadresse = false;
 				$adresse->rechnungsadresse = true;
+				$adresse->name = $name;
 				$adresse->new = true;
 				if(!$adresse->save())
 				{

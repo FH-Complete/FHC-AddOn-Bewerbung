@@ -231,4 +231,9 @@ $this->phrasen['bewerbung/menuRechnungsKontaktinformationen']='Billing Data';
 $this->phrasen['bewerbung/rechnungsadresseInfoText']='Please enter your Billing Data if different from Home Address';
 $this->phrasen['bewerbung/rechnungsKontakt']='Billing Contact';
 $this->phrasen['bewerbung/rechnungsAdresse']='Billing Address';
+$this->phrasen['bewerbung/re_anrede']='Anrede';
+$this->phrasen['bewerbung/re_titel']='Titel';
+$this->phrasen['bewerbung/re_vorname']='Surname';
+$this->phrasen['bewerbung/re_nachname']='Name';
+
 ?>

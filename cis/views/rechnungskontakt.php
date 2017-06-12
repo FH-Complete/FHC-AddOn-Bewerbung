@@ -63,6 +63,12 @@ elseif($save_error_kontakt===true)
 	$ort = isset($adresse->result[0]->ort)?$adresse->result[0]->ort:'';
 	$gemeinde = isset($adresse->result[0]->gemeinde)?$adresse->result[0]->gemeinde:'';
 	$adr_nation = isset($adresse->result[0]->nation)?$adresse->result[0]->nation:'';
+	$name = isset($adresse->result[0]->name)?$adresse->result[0]->name:'|||';
+	$name_arr = explode('|', $name);
+	$re_anrede = $name_arr[0];
+	$re_titel = $name_arr[1];
+	$re_vorname = $name_arr[2];
+	$re_nachname = $name_arr[3];
 
 	$disabled='';
 	/*
@@ -95,6 +101,37 @@ elseif($save_error_kontakt===true)
 
 		<fieldset>
 			<legend><?php echo $p->t('bewerbung/rechnungsAdresse') ?></legend>
+			<div class="form-group">
+				<label for="re_anrede" class="col-sm-2 control-label"><?php echo $p->t('bewerbung/re_anrede') ?></label>
+				<div class="col-sm-10">
+					<select name="re_anrede">
+						<option value="">--</option>
+						<?php $selected = ($re_anrede == 'Frau')?' selected':''; ?>
+						<option value="Frau"<?php echo $selected; ?>>Frau</option>
+						<?php $selected = ($re_anrede == 'Herr')?' selected':''; ?>
+					  	<option value="Herr"<?php echo $selected; ?>>Herr</option>
+					</select>
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="re_titel" class="col-sm-2 control-label"><?php echo $p->t('bewerbung/re_titel') ?></label>
+				<div class="col-sm-10">
+					<input type="text" name="re_titel" id="re_titel" value="<?php echo $re_titel; ?>">
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="re_vorname" class="col-sm-2 control-label"><?php echo $p->t('bewerbung/re_vorname') ?></label>
+				<div class="col-sm-10">
+					<input type="text" name="re_vorname" id="re_vorname" value="<?php echo $re_vorname; ?>">
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="re_namename" class="col-sm-2 control-label"><?php echo $p->t('bewerbung/re_nachname') ?></label>
+				<div class="col-sm-10">
+					<input type="text" name="re_nachname" id="re_nachname" value="<?php echo $re_nachname; ?>">
+				</div>
+			</div>
+
 			<div class="form-group">
 				<label for="nation" class="col-sm-2 control-label"><?php echo $p->t('bewerbung/nation') ?></label>
 				<div class="col-sm-10">
