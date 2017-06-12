@@ -224,4 +224,10 @@ $this->phrasen['bewerbung/unbegrenzt']='Unlimited';
 $this->phrasen['bewerbung/bewerbungszeitraumStartetAm']='Application period starts %s';
 $this->phrasen['bewerbung/bewerbungsfristEndetInXTagen']='Application period ends in %s days';
 $this->phrasen['bewerbung/bewerbungsfristEndetHeute']='Application period ends today';
+
+// Rechnungskontakt
+$this->phrasen['bewerbung/menuRechnungsKontaktinformationen']='Billing Data';
+$this->phrasen['bewerbung/rechnungsadresseInfoText']='Please enter your Billing Data if different from Home Address';
+$this->phrasen['bewerbung/rechnungsKontakt']='Billing Contact';
+$this->phrasen['bewerbung/rechnungsAdresse']='Billing Address';
 ?>

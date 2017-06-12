@@ -287,7 +287,7 @@ if(isset($_POST['btn_bewerbung_abschicken']))
 			// Check, ob Bewerbungsfrist schon begonnen hat, bzw abgelaufen ist
 			$bewerbungsfristen = new bewerbungstermin();
 			$bewerbungsfristen->getBewerbungstermine($prestudent_status->studiengang_kz, $prestudent_status->studiensemester_kurzbz, 'insertamum DESC', $prestudent_status->studienplan_id);
-				
+
 			if (isset($bewerbungsfristen->result[0]))
 			{
 				$bewerbungsfristen = $bewerbungsfristen->result[0];
@@ -317,7 +317,7 @@ if(isset($_POST['btn_bewerbung_abschicken']))
 				// An der FHTW wird das bestaetigungsdatum NICHT gesetzt
 				if (CAMPUS_NAME != 'FH Technikum Wien')
 					$prestudent_status->bestaetigtam = date('Y-m-d H:i:s');
-	
+
 				if($prestudent_status->bewerbung_abgeschicktamum == '')
 				{
 					$prestudent_status->bewerbung_abgeschicktamum = date('Y-m-d H:i:s');
@@ -325,11 +325,11 @@ if(isset($_POST['btn_bewerbung_abschicken']))
 				}
 				else
 					$sendmail = false;
-	
+
 				$prestudent_status->new = false;
 				$prestudent_status->updateamum = date('Y-m-d H:i:s');
 				$prestudent_status->updatevon = 'online';
-	
+
 				if(!$prestudent_status->save_rolle())
 					die($p->t('global/fehlerBeimSpeichernDerDaten'));
 			}
@@ -597,7 +597,7 @@ if(isset($_POST['btn_kontakt']) && !$eingabegesperrt)
 				else
 					$save_error_kontakt=false;
 			}
-			else 
+			else
 			{
 				$message = 'Invalid phone number';
 				$save_error_kontakt=true;
@@ -609,7 +609,7 @@ if(isset($_POST['btn_kontakt']) && !$eingabegesperrt)
 			{
 				// Telefonnummer validieren
 				$telefonnummer = preg_replace("/[^0-9+]/", '', $_POST['telefonnummer']);
-				
+
 				// Wenn nache preg_replace Daten uebrig bleiben, neuen Kontakt anlegen
 				if ($telefonnummer != '')
 				{
@@ -620,7 +620,7 @@ if(isset($_POST['btn_kontakt']) && !$eingabegesperrt)
 					$kontakt_t->insertamum = date('Y-m-d H:i:s');
 					$kontakt_t->insertvon = 'online';
 					$kontakt_t->new = true;
-	
+
 					if(!$kontakt_t->save())
 					{
 						$message = $kontakt_t->errormsg;
@@ -648,8 +648,8 @@ if(isset($_POST['btn_kontakt']) && !$eingabegesperrt)
 			if(count($adresse->result)>0)
 			{
 				// Wenn die Nation Oesterreich ist, wird die Gemeinde aus der DB ermittelt
-				if (isset($_POST['nation']) && $_POST['nation'] == 'A' 
-					&& isset($_POST['ort']) && $_POST['ort'] != '' 
+				if (isset($_POST['nation']) && $_POST['nation'] == 'A'
+					&& isset($_POST['ort']) && $_POST['ort'] != ''
 					&& isset($_POST['plz']) && $_POST['plz'] != '' )
 				{
 					$gemeinde_obj = new gemeinde();
@@ -705,6 +705,236 @@ if(isset($_POST['btn_kontakt']) && !$eingabegesperrt)
 		}
 	}
 }
+
+$save_error_rechnungskontakt='';
+// Rechnjungsdaten speichern
+if(isset($_POST['btn_rechnungskontakt']))
+{
+	$save_error_rechnungskontakt=false;
+	if($save_error_rechnungskontakt===false)
+	{
+		$kontakt_t = new kontakt();
+		$kontakt_t->load_persKontakttyp($person->person_id, 're_telefon');
+
+		// gibt es schon kontakte von user
+		if(count($kontakt_t->result)>0)
+		{
+			// Es gibt bereits eine Telefonnummer
+			$kontakt_id = $kontakt_t->result[0]->kontakt_id;
+
+			// Telefonnummer validieren
+			$telefonnummer = preg_replace("/[^0-9+]/", '', $_POST['re_telefonnummer']);
+			if($_POST['re_telefonnummer'] == '')
+			{
+				// löschen
+				$kontakt_t->delete($kontakt_id);
+			}
+			elseif ($telefonnummer != '')
+			{
+				$kontakt_t->person_id = $person->person_id;
+				$kontakt_t->kontakt_id = $kontakt_id;
+				$kontakt_t->zustellung = false;
+				$kontakt_t->kontakttyp = 're_telefon';
+				$kontakt_t->kontakt = $telefonnummer;
+				$kontakt_t->updateamum = date('Y-m-d H:i:s');
+				$kontakt_t->updatevon = 'online';
+				$kontakt_t->new = false;
+
+				if(!$kontakt_t->save())
+				{
+					$message = $kontakt_t->errormsg;
+					$save_error_rechnungskontakt=true;
+				}
+				else
+					$save_error_rechnungskontakt=false;
+			}
+			else
+			{
+				$message = 'Invalid phone number';
+				$save_error_rechnungskontakt=true;
+			}
+		}
+		else
+		{
+			if($_POST['re_telefonnummer']!='')
+			{
+				// Telefonnummer validieren
+				$telefonnummer = preg_replace("/[^0-9+]/", '', $_POST['re_telefonnummer']);
+
+				// Wenn nache preg_replace Daten uebrig bleiben, neuen Kontakt anlegen
+				if ($telefonnummer != '')
+				{
+					$kontakt_t->person_id = $person->person_id;
+					$kontakt_t->zustellung = false;
+					$kontakt_t->kontakttyp = 're_telefon';
+					$kontakt_t->kontakt = $telefonnummer;
+					$kontakt_t->insertamum = date('Y-m-d H:i:s');
+					$kontakt_t->insertvon = 'online';
+					$kontakt_t->new = true;
+
+					if(!$kontakt_t->save())
+					{
+						$message = $kontakt_t->errormsg;
+						$save_error_rechnungskontakt=true;
+					}
+					else
+						$save_error_rechnungskontakt=false;
+				}
+				else
+				{
+					$message = 'Invalid phone number';
+					$save_error_rechnungskontakt=true;
+				}
+			}
+		}
+	}
+	if($save_error_rechnungskontakt===false)
+	{
+		$kontakt_t = new kontakt();
+		$kontakt_t->load_persKontakttyp($person->person_id, 're_email');
+
+		// gibt es schon kontakte von user
+		if(count($kontakt_t->result)>0)
+		{
+			// Es gibt bereits eine Telefonnummer
+			$kontakt_id = $kontakt_t->result[0]->kontakt_id;
+			$email = $_POST['re_email'];
+			if($email == '')
+			{
+				// löschen
+				$kontakt_t->delete($kontakt_id);
+			}
+			elseif ($email != '')
+			{
+				$kontakt_t->person_id = $person->person_id;
+				$kontakt_t->kontakt_id = $kontakt_id;
+				$kontakt_t->zustellung = false;
+				$kontakt_t->kontakttyp = 're_email';
+				$kontakt_t->kontakt = $email;
+				$kontakt_t->updateamum = date('Y-m-d H:i:s');
+				$kontakt_t->updatevon = 'online';
+				$kontakt_t->new = false;
+
+				if(!$kontakt_t->save())
+				{
+					$message = $kontakt_t->errormsg;
+					$save_error_rechnungskontakt=true;
+				}
+				else
+					$save_error_rechnungskontakt=false;
+			}
+			else
+			{
+				$message = 'Invalid Email';
+				$save_error_rechnungskontakt=true;
+			}
+		}
+		else
+		{
+			if($_POST['re_email']!='')
+			{
+				// Telefonnummer validieren
+				$email = $_POST['re_email'];
+
+				// Wenn nache preg_replace Daten uebrig bleiben, neuen Kontakt anlegen
+				if ($email != '')
+				{
+					$kontakt_t->person_id = $person->person_id;
+					$kontakt_t->zustellung = false;
+					$kontakt_t->kontakttyp = 're_email';
+					$kontakt_t->kontakt = $email;
+					$kontakt_t->insertamum = date('Y-m-d H:i:s');
+					$kontakt_t->insertvon = 'online';
+					$kontakt_t->new = true;
+
+					if(!$kontakt_t->save())
+					{
+						$message = $kontakt_t->errormsg;
+						$save_error_rechnungskontakt=true;
+					}
+					else
+						$save_error_rechnungskontakt=false;
+				}
+				else
+				{
+					$message = 'Invalid Email';
+					$save_error_rechnungskontakt=true;
+				}
+			}
+		}
+	}
+	//if($save_error_kontakt===false)
+	{
+		// Adresse Speichern
+		if((isset($_POST['re_strasse']) && $_POST['re_strasse'] !='') || (isset($_POST['re_plz']) && $_POST['re_plz'] !='') || (isset($_POST['re_ort']) && $_POST['re_ort'] !=''))
+		{
+			$adresse = new adresse();
+			$adresse->load_rechnungsadresse($person->person_id);
+			$gemeinde = '';
+			if(count($adresse->result)>0)
+			{
+				// Wenn die Nation Oesterreich ist, wird die Gemeinde aus der DB ermittelt
+				if (isset($_POST['re_nation']) && $_POST['re_nation'] == 'A'
+					&& isset($_POST['re_ort']) && $_POST['re_ort'] != ''
+					&& isset($_POST['re_plz']) && $_POST['re_plz'] != '' )
+				{
+					$gemeinde_obj = new gemeinde();
+					$gemeinde_obj->getGemeinde($_POST['re_ort'], '', $_POST['re_plz']);
+					$gemeinde = $gemeinde_obj->result[0]->name;
+				}
+				// gibt es schon eine adresse, wird die erste adresse genommen und upgedatet
+				$adresse_help = new adresse();
+				$adresse_help->load($adresse->result[0]->adresse_id);
+
+				// gibt schon eine Adresse
+				$adresse_help->strasse = isset($_POST['re_strasse'])?trim($_POST['re_strasse']):'';
+				$adresse_help->plz = isset($_POST['re_plz'])?trim($_POST['re_plz']):'';
+				$adresse_help->ort = isset($_POST['re_ort'])?trim($_POST['re_ort']):'';
+				$adresse_help->gemeinde = $gemeinde;
+				$adresse_help->nation = isset($_POST['re_nation'])?$_POST['re_nation']:'';
+				$adresse_help->updateamum = date('Y-m-d H:i:s');
+				$adresse_help->updatevon = 'online';
+				$adresse_help->new = false;
+				if(!$adresse_help->save())
+				{
+					$message = $adresse_help->errormsg;
+					$save_error_rechnungskontakt=true;
+				}
+				else
+					$save_error_rechnungskontakt=false;
+			}
+			else
+			{
+				// adresse neu anlegen
+				$adresse->typ = 'r';
+				$adresse->strasse = $_POST['re_strasse'];
+				$adresse->plz = $_POST['re_plz'];
+				$adresse->ort = $_POST['re_ort'];
+				$adresse->gemeinde = $_POST['re_gemeinde'];
+				$adresse->nation = $_POST['re_nation'];
+				$adresse->insertamum = date('Y-m-d H:i:s');
+				$adresse->insertvon = 'online';
+				$adresse->updateamum = date('Y-m-d H:i:s');
+				$adresse->updatevon = 'online';
+				$adresse->person_id = $person->person_id;
+				$adresse->zustelladresse = false;
+				$adresse->heimatadresse = false;
+				$adresse->rechnungsadresse = true;
+				$adresse->new = true;
+				if(!$adresse->save())
+				{
+					$message = $adresse->errormsg;
+					$save_error_rechnungskontakt=true;
+				}
+				else
+					$save_error_rechnungskontakt=false;
+			}
+		}
+	}
+}
+
+
+
 $save_error_zgv='';
 if(isset($_POST['btn_zgv']))
 {
@@ -1231,6 +1461,16 @@ else
 						<?php endif; ?>
 
 						<?php
+						if(defined('BEWERBERTOOL_RECHNUNGSKONTAKT_ANZEIGEN') && BEWERBERTOOL_RECHNUNGSKONTAKT_ANZEIGEN):
+						?>
+						<li>
+							<a href="#rechnungskontakt" aria-controls="rechnungskontakt" role="tab" data-toggle="tab">
+								<?php echo $p->t('bewerbung/menuRechnungsKontaktinformationen') ?> <br> &nbsp;
+							</a>
+						</li>
+						<?php endif; ?>
+
+						<?php
 						if(!defined('BEWERBERTOOL_REIHUNGSTEST_ANZEIGEN') || BEWERBERTOOL_REIHUNGSTEST_ANZEIGEN):
 						?>
 						<li>
@@ -1277,6 +1517,8 @@ else
 					$tabs[]='zgv';
 				if(!defined('BEWERBERTOOL_ZAHLUNGEN_ANZEIGEN') || BEWERBERTOOL_ZAHLUNGEN_ANZEIGEN)
 					$tabs[]='zahlungen';
+				if(defined('BEWERBERTOOL_RECHNUNGSKONTAKT_ANZEIGEN') && BEWERBERTOOL_RECHNUNGSKONTAKT_ANZEIGEN)
+					$tabs[]='rechnungskontakt';
 				if(!defined('BEWERBERTOOL_REIHUNGSTEST_ANZEIGEN') || BEWERBERTOOL_REIHUNGSTEST_ANZEIGEN)
 					$tabs[]='aufnahme';
 
@@ -1419,7 +1661,7 @@ function sendBewerbung($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz)
 		$empfaenger = $empf_array[$prestudent->studiengang_kz];
 	else
 		$empfaenger = $studiengang->email;
-	
+
 	//Pfuschloesung fur BIF Dual
 	if (CAMPUS_NAME=='FH Technikum Wien' && $prestudent->studiengang_kz == 257 && $orgform_kurzbz == 'DUA')
 		$empfaenger = 'info.bid@technikum-wien.at';
@@ -1434,7 +1676,7 @@ function sendBewerbung($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz)
 		$kontakt = new kontakt();
 		$kontakt->load_persKontakttyp($person->person_id, 'email');
 		$mailadresse = isset($kontakt->result[0]->kontakt)?$kontakt->result[0]->kontakt:'';
-		
+
 		$mail_bewerber = new mail($mailadresse, 'no-reply', 'Bewerbung erfolgreich abgeschickt', 'Bitte sehen Sie sich die Nachricht in HTML Sicht an, um den Inhalt vollständig darzustellen.');
 		$email_bewerber = $p->t('bewerbung/erfolgreichBeworbenMail');
 		$mail_bewerber->setHTMLContent($email_bewerber);
