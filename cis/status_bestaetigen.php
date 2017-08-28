@@ -64,7 +64,7 @@ if(!$rechte->isBerechtigt('assistenz',$oe))
 $color = '';
 $buttontext = '';
 $bestaetigen = 'true';
-	
+
 echo'
 	<!DOCTYPE HTML>
 	<html>
@@ -80,27 +80,28 @@ echo'
 <body class="bewerbung">
 <h2 style="text-align: center;">Status bestätigen</h2>
 <div class="container">';
-	
+
 if(isset($_GET['bestaetigen']) && $_GET['bestaetigen']=='true')
-{	
+{
 	// check ob es status schon gibt
 	if($prest->load_rolle($prestudent_id, 'Interessent', $studiensemester_kurzbz, '1'))
 	{
 		if($prest->bestaetigtam=='')
 		{
 			$prest->bestaetigtam = date('Y-m-d H:i:s');
+			$prest->bestaetigtvon = $user;
 			$prest->new = false;
 			$prest->updateamum = date('Y-m-d H:i:s');
 			$prest->updatevon = $user;
-				
+
 			if(!$prest->save_rolle())
 				die($p->t('global/fehlerBeimSpeichernDerDaten'));
 			else
 				echo '<div class="alert alert-success">Status von Prestudent '.$prestudent_id.' <b>'.$person->vorname.' '.$person->nachname.'</b> erfolgreich bestätigt</div>';
 		}
-		else 
+		else
 			echo '<div class="alert alert-warning">Status von Prestudent '.$prestudent_id.' <b>'.$person->vorname.' '.$person->nachname.'</b> wurde bereits am '.$datum->formatDatum($prest->bestaetigtam, 'd.m.Y').' von User <i>'.$prest->updatevon.'</i> bestätigt</div>';
-		
+
 		$color = '#ec971f';
 		$buttontext = 'Statusbestätigung aufheben';
 		$bestaetigen = 'false';
@@ -114,6 +115,7 @@ elseif(isset($_GET['bestaetigen']) && $_GET['bestaetigen']=='false')
 		if($prest->bestaetigtam!='')
 		{
 			$prest->bestaetigtam = '';
+			$prest->bestaetigtvon = '';
 			$prest->new = false;
 			$prest->updateamum = date('Y-m-d H:i:s');
 			$prest->updatevon = $user;
@@ -125,7 +127,7 @@ elseif(isset($_GET['bestaetigen']) && $_GET['bestaetigen']=='false')
 		}
 		else
 			echo '<div class="alert alert-warning">Statusbestätigung von Prestudent '.$prestudent_id.' <b>'.$person->vorname.' '.$person->nachname.'</b> ist noch nicht gesetzt</div>';
-		
+
 		$color = '#5cb85c';
 		$buttontext = 'Status bestätigen';
 		$bestaetigen = 'true';
