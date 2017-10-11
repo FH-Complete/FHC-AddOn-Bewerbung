@@ -73,9 +73,11 @@ echo'
 	<meta http-equiv="X-UA-Compatible" content="chrome=1">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>Status bestätigen</title>
-	<link href="../../../submodules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" type="text/css">
-	<script src="../../../include/js/jquery.min.1.11.1.js"></script>
-	<script src="../../../submodules/bootstrap/dist/js/bootstrap.min.js"></script>
+
+	<link rel="stylesheet" type="text/css" href="../../../vendor/components/bootstrap/css/bootstrap.min.css">
+
+	<script type="text/javascript" src="../../../vendor/jquery/jqueryV1/jquery-1.12.4.min.js"></script>
+	<script type="text/javascript" src="../../../vendor/components/bootstrap/js/bootstrap.min.js"></script>
 </head>
 <body class="bewerbung">
 <h2 style="text-align: center;">Status bestätigen</h2>

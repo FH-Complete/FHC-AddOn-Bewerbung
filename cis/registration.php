@@ -138,7 +138,7 @@ elseif($username && $password)
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 		<meta name="robots" content="noindex">
-		<link href="../../../submodules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+		<link rel="stylesheet" type="text/css" href="../../../vendor/components/bootstrap/css/bootstrap.min.css">
 		<link href="../include/css/registration.css" rel="stylesheet" type="text/css">
 	</head>
 	<body class="main">
@@ -352,7 +352,7 @@ elseif($username && $password)
 										$studienplan->getStudienplaeneFromSem($studiengaenge[$i], '', '', $orgform[$studiengaenge[$i]]);
 									if (!isset($studienplan->result[0]))
 										$studienplan->getStudienplaeneFromSem($studiengaenge[$i]);
-							
+
 									if (isset($studienplan->result[0]))
 										$studienplan_id = $studienplan->result[0]->studienplan_id;
 									else
@@ -656,13 +656,13 @@ elseif($username && $password)
 
 								if (CAMPUS_NAME=='FH Technikum Wien' && $result->studiengang_kz == 334 && $result->studiengangbezeichnung != 'Intelligent Transport Systems') //@todo: Pfuschloesung bis zum neuen Tool, damit MIT nicht mehr angezeigt wird
 									$stg_bezeichnung .= ' | <i>'.$p->t('bewerbung/orgform/'.$orgform_stg[0]).' - '.$p->t('bewerbung/German').'</i>';
-								
+
 								if (CAMPUS_NAME=='FH Technikum Wien' && $result->studiengang_kz == 302 && $orgform_stg[0] == 'BB') //@todo: Pfuschloesung, damit MWI-DL nicht mehr angezeigt wird, obwohl der Studienplan gueltig ist
 									$stg_bezeichnung .= ' | <i>'.$p->t('bewerbung/orgform/'.$orgform_stg[0]).' - '.$p->t('bewerbung/German').'</i>';
 
 								if (CAMPUS_NAME=='FH Technikum Wien' && $result->studiengang_kz == 334) //@todo: Pfuschloesung bis zum neuen Tool, damit kein Modal bei MSC angezeigt wird
 									$modal = false;
-								
+
 								if (CAMPUS_NAME=='FH Technikum Wien' && $result->studiengang_kz == 302) //@todo: Pfuschloesung, damit MWI-DL nicht mehr angezeigt wird, obwohl der Studienplan gueltig ist
 									$modal = false;
 
@@ -698,13 +698,13 @@ elseif($username && $password)
 
 									if (!isset($anmerkungen[$result->studiengang_kz]) && in_array($result->studiengang_kz, $studiengaenge) && $orgform_kurzbz != '')
 										$anmerkungen[$result->studiengang_kz] = 'Prio: '.$orgform_kurzbz;
-									
+
 									if (!isset($orgform[$result->studiengang_kz]) && in_array($result->studiengang_kz, $studiengaenge) && $orgform_kurzbz != '')
 										$orgform[$result->studiengang_kz] = substr($orgform_kurzbz, 0, strpos($orgform_kurzbz, '_'));
-									
+
 									if(!isset($orgform[$result->studiengang_kz]) && count($orgform_stg) == 1)
 										$orgform[$result->studiengang_kz] = $orgform_stg[0];
-										
+
 									echo '
 											<span class="badge" id="badge'.$result->studiengang_kz.'">'.(isset($anmerkungen[$result->studiengang_kz])?$anmerkungen[$result->studiengang_kz]:'').'</span>
 											<input type="hidden" id="anmerkung'.$result->studiengang_kz.'" name="anmerkung['.$result->studiengang_kz.']" value="'.(isset($anmerkungen[$result->studiengang_kz])?$anmerkungen[$result->studiengang_kz]:'').'">
@@ -762,12 +762,12 @@ elseif($username && $password)
 														{
 															$checked_orgform = 'checked="checked"';
 														}
-														
+
 														echo '<div class="radio" onchange="changePrio('.$result->studiengang_kz.')">
 															<label>
 																<input type="radio" name="topprioOrgform'.$result->studiengang_kz.'" value="'.$row->orgform_kurzbz.'_'.$row->sprache.'" '.$checked_orgform.'>
 																'.$p->t('bewerbung/orgform/'.$row->orgform_kurzbz).' - '.$p->t('bewerbung/'.$row->sprache);
-																
+
 																if (CAMPUS_NAME=='FH Technikum Wien' && $result->studiengang_kz=='257' && $row->orgform_kurzbz == 'DUA') //@todo: Pfuschloesung bis zur Akkreditierung von BIF Dual
 																{
 																	//echo ' ('.$lgtyparr[$result->lgartcode].')';
@@ -810,7 +810,7 @@ elseif($username && $password)
 																<label>
 																	<input type="radio" name="alternativeOrgform'.$result->studiengang_kz.'" value="'.$row->orgform_kurzbz.'_'.$row->sprache.'" '.$checked_orgform_alternativ.'>
 																	'.$p->t('bewerbung/orgform/'.$row->orgform_kurzbz).' - '.$p->t('bewerbung/'.$row->sprache);
-																
+
 																	if (CAMPUS_NAME=='FH Technikum Wien' && $result->studiengang_kz=='257' && $row->orgform_kurzbz == 'DUA') //@todo: Pfuschloesung bis zur Akkreditierung von BIF Dual
 																	{
 																		//echo ' ('.$lgtyparr[$result->lgartcode].')';
@@ -1109,8 +1109,8 @@ elseif($username && $password)
 		//if(BEWERBERTOOL_STUDIENAUSWAHL_ANZEIGEN)
 			//require('views/modal_sprache_orgform.php');
 		?>
-		<script src="../../../include/js/jquery.min.1.11.1.js"></script>
-		<script src="../../../submodules/bootstrap/dist/js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="../../../vendor/jquery/jqueryV1/jquery-1.12.4.min.js"></script>
+		<script type="text/javascript" src="../../../vendor/components/bootstrap/js/bootstrap.min.js"></script>
 		<script type="text/javascript">
 
 			function changeSprache(sprache)
@@ -1360,7 +1360,7 @@ function sendMail($zugangscode, $email, $person_id=null)
 
 	if(defined('MAIL_DEBUG') && MAIL_DEBUG!='')
 		$msg .= "<br><br>Zugangscode: ".$zugangscode;
-	
+
 	return $msg;
 }
 function resendMail($zugangscode, $email, $person_id=null)

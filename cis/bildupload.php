@@ -46,15 +46,22 @@ echo '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www
 <html>
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
 	<link href="../../../skin/style.css.php" rel="stylesheet" type="text/css">
-	<link rel="stylesheet" type="text/css" href="../../../skin/jquery-ui.css">
-	<link rel="stylesheet" type="text/css" href="../include/css/simplecropper.css">
-	<link href="../../../submodules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" type="text/css">
-	<script type="text/javascript" src="../../../include/js/jquery.js"></script>
-	<script type="text/javascript" src="../../../include/js/jquery.min.1.11.1.js"></script>
-	<script type="text/javascript" src="../../../include/js/jquery.Jcrop.js"></script>
-	<script type="text/javascript" src="../include/js/jquery.SimpleCropper.js"></script>
-	<script src="../../../submodules/bootstrap/dist/js/bootstrap.min.js"></script>
+
+	<link rel="stylesheet" type="text/css" href="../../../vendor/components/jqueryui/themes/base/jquery-ui.min.css">
+	<link rel="stylesheet" type="text/css" href="../../../vendor/tomazdragar/SimpleCropper/css/jquery.Jcrop.css">
+	<link rel="stylesheet" type="text/css" href="../../../vendor/components/bootstrap/css/bootstrap.min.css">
+
+	<script type="text/javascript" src="../../../vendor/jquery/jqueryV1/jquery-1.12.4.min.js"></script>
+	<script type="text/javascript" src="../../../vendor/christianbach/tablesorter/jquery.tablesorter.min.js"></script>
+	<script type="text/javascript" src="../../../vendor/components/jqueryui/jquery-ui.min.js"></script>
+	<script type="text/javascript" src="../../../include/js/jquery.ui.datepicker.translation.js"></script>
+	<script type="text/javascript" src="../../../vendor/jquery/sizzle/sizzle.js"></script>
+	<script type="text/javascript" src="../../../vendor/tapmodo/Jcrop/js/Jcrop.min.js"></script>
+	<script type="text/javascript" src="../../../vendor/tomazdragar/SimpleCropper/scripts/jquery.SimpleCropper.js"></script>
+	<script type="text/javascript" src="../../../vendor/components/bootstrap/js/bootstrap.min.js"></script>
+
 	<title>'.$p->t('profil/Bildupload').'</title>
 	<script>
 	// Reloaded die Parent-Seite
@@ -64,9 +71,9 @@ echo '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www
 		window.opener.location = "bewerbung.php?active=dokumente";
 		window.close();
 	}
-	
+
 	$("document").ready(function() {
-	
+
 		$("#saveimgbutton").click(function() {
 			//src und person_id von hidden input feldern
 			var img = document.getElementById("croppingdiv").getElementsByTagName("img")[0];
@@ -74,10 +81,10 @@ echo '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www
 			var src = (img.src).replace(/^data:.*,/,""); //Entfernt den data-string (data:image/png;base64,) vom Beginn des Codes damit nur der reine base64 Code zurueckgegeben wird
 			var person_id = document.getElementById("person_id");
 			var person_idValue = person_id.getAttribute("value");
-	
+
 			//in crop.php wird das bild verarbeitet und abgespeichert
 			$.post("crop.php", {src:src, person_idValue:person_idValue, orig_src:orig_img, img_name:img_name, img_type:img_type}, function() {});
-	
+
 			setTimeout(reloadParent, 1000);
 		});
 	});
@@ -124,11 +131,11 @@ function resize($filename, $width, $height)
 {
 		$ext = explode('.',$_FILES['bild']['name']);
 		$ext = strtolower($ext[count($ext)-1]);
-	
+
 		// Hoehe und Breite neu berechnen
 		list($width_orig, $height_orig) = getimagesize($filename);
-	
-		if ($width && ($width_orig < $height_orig)) 
+
+		if ($width && ($width_orig < $height_orig))
 		{
 		   $width = ($height / $height_orig) * $width_orig;
 		}
@@ -136,19 +143,19 @@ function resize($filename, $width, $height)
 		{
 		   $height = ($width / $width_orig) * $height_orig;
 		}
-		
-		$image_p = imagecreatetruecolor($width, $height);                       
-				
+
+		$image_p = imagecreatetruecolor($width, $height);
+
 		$image = imagecreatefromjpeg($filename);
-		
+
 		//Bild nur verkleinern aber nicht vergroessern
 		if($width_orig>$width || $height_orig>$height)
 			imagecopyresampled($image_p, $image, 0, 0, 0, 0, $width, $height, $width_orig, $height_orig);
-		else 
+		else
 			$image_p = $image;
-			
+
 		imagejpeg($image_p, $filename, 80);
-			
+
 		@imagedestroy($image_p);
 		@imagedestroy($image);
 }
