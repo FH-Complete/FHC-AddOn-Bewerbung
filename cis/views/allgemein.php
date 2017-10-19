@@ -244,7 +244,7 @@ $studiensemester_array = array();
 
 							if (defined('BEWERBERTOOL_MAX_STUDIENGAENGE') && BEWERBERTOOL_MAX_STUDIENGAENGE != '')
 							{
-								if ($anzahl_studiengaenge[$row->studiensemester_kurzbz] >= BEWERBERTOOL_MAX_STUDIENGAENGE)
+								if (isset($anzahl_studiengaenge[$row->studiensemester_kurzbz]) && $anzahl_studiengaenge[$row->studiensemester_kurzbz] >= BEWERBERTOOL_MAX_STUDIENGAENGE)
 									echo '<option value="" disabled="disabled" title="'.strip_tags($p->t('bewerbung/sieKoennenMaximalXStudiengaengeWaehlen', array(BEWERBERTOOL_MAX_STUDIENGAENGE))).'">-- '.$stsem->convert_html_chars($row->bezeichnung).' ('.$p->t('bewerbung/ab').' '.$datum->formatDatum($stsem->convert_html_chars($row->start),'d.m.Y').') --</option>';
 								else
 									echo '<option value="'.$row->studiensemester_kurzbz.'">'.$stsem->convert_html_chars($row->bezeichnung).' ('.$p->t('bewerbung/ab').' '.$datum->formatDatum($stsem->convert_html_chars($row->start),'d.m.Y').')</option>';
@@ -264,7 +264,7 @@ $studiensemester_array = array();
 				$optionsLehrg = null;
 				$options = array();
 				$stg = new studiengang();
-				$stg->getAllForBewerbung('typ, tbl_lgartcode.bezeichnung ASC, studiengangbezeichnung');
+				$stg->getAllForBewerbung('typ, tbl_lgartcode.bezeichnung ASC');
 
 				$stghlp = new studiengang();
 				$stghlp->getLehrgangstyp();
@@ -275,12 +275,15 @@ $studiensemester_array = array();
 				$last_lgtyp = '';
 				foreach($stg->result as $result)
 				{
+					$stg_bezeichnung = '';
 					$typ = new studiengang();
 					$typ->getStudiengangTyp($result->typ);
-					if($sprache!='German' && $result->studiengangbezeichnung_englisch!='')
-						$stg_bezeichnung = $typ->bezeichnung.' '.$result->studiengangbezeichnung_englisch;
+					
+					$bezeichnung_studiengang = new studiengang($result->studiengang_kz);
+					if($sprache != 'German' && $bezeichnung_studiengang->english != '')
+						$stg_bezeichnung = $bezeichnung_studiengang->english;
 					else
-						$stg_bezeichnung =  $typ->bezeichnung.' '.$result->studiengangbezeichnung;
+						$stg_bezeichnung = $bezeichnung_studiengang->bezeichnung;
 
 					$typ = new studiengang();
 					$typ->getStudiengangTyp($result->typ);
@@ -312,11 +315,11 @@ $studiensemester_array = array();
 					{
 						foreach ($studienplan as $row)
 						{
-							if (CAMPUS_NAME=='FH Technikum Wien' && $result->studiengang_kz == 334 && $result->studiengangbezeichnung == 'Intelligent Transport Systems') //@todo: Pfuschloesung bis zum neuen Tool, damit MIT nicht mehr angezeigt wird
+							/*if (CAMPUS_NAME=='FH Technikum Wien' && $result->studiengang_kz == 334 && $result->studiengangbezeichnung == 'Intelligent Transport Systems') //@todo: Pfuschloesung bis zum neuen Tool, damit MIT nicht mehr angezeigt wird
 								continue;
 							elseif (CAMPUS_NAME=='FH Technikum Wien' && $result->studiengang_kz == 302 && $row->orgform_kurzbz == 'DL' && $row->sprache == 'English') //@todo: Pfuschloesung, damit MWI-DL nicht mehr angezeigt wird, obwohl der Studienplan gueltig ist
 								continue;
-							else
+							else*/
 								$orgformen_sprachen[] = $row->orgform_kurzbz.'_'.$row->sprache;
 						}
 					}
@@ -327,14 +330,14 @@ $studiensemester_array = array();
 					if(count($orgform) !== 1 || count($stgSprache) !== 1)
 					{
 						$modal = true;
-						if ($result->typ!='l' && !isset($lgtyparr[$result->lgartcode]) && $result->studiengang_kz!=334 && $result->studiengangbezeichnung != 'Intelligent Transport Systems')
-							$stg_bezeichnung .= ' | <i>'.$p->t('bewerbung/auswahlmöglichkeitenImNaechstenSchritt').'</i>';
+						/*if ($result->typ!='l' && !isset($lgtyparr[$result->lgartcode]) && $result->studiengang_kz!=334 && $result->studiengangbezeichnung != 'Intelligent Transport Systems')
+							$stg_bezeichnung .= ' | <i>'.$p->t('bewerbung/auswahlmöglichkeitenImNaechstenSchritt').'</i>';*/
 					}
 					elseif ($result->typ!='l' && !isset($lgtyparr[$result->lgartcode]))
 						$stg_bezeichnung .= ' | <i>'.$p->t('bewerbung/orgform/'.$orgform_stg[0]).' - '.$p->t('bewerbung/'.$sprache_lv[0]).'</i>';
 
-					if (CAMPUS_NAME=='FH Technikum Wien' && $result->studiengang_kz==334 && $result->studiengangbezeichnung != 'Intelligent Transport Systems') //@todo: Pfuschloesung bis zum neuen Tool, damit MIT nicht mehr angezeigt wird
-						$stg_bezeichnung .= ' | <i>'.$p->t('bewerbung/orgform/'.$orgform_stg[0]).' - '.$p->t('bewerbung/German').'</i>';
+					/*if (CAMPUS_NAME=='FH Technikum Wien' && $result->studiengang_kz==334 && $result->studiengangbezeichnung != 'Intelligent Transport Systems') //@todo: Pfuschloesung bis zum neuen Tool, damit MIT nicht mehr angezeigt wird
+						$stg_bezeichnung .= ' | <i>'.$p->t('bewerbung/orgform/'.$orgform_stg[0]).' - '.$p->t('bewerbung/German').'</i>';*/
 
 					if (CAMPUS_NAME=='FH Technikum Wien' && $result->studiengang_kz==334) //@todo: Pfuschloesung bis zum neuen Tool, damit kein Modal bei MSC angezeigt wird
 						$modal = false;
@@ -345,9 +348,9 @@ $studiensemester_array = array();
 						$radioBtn .= '<p style="padding-top: 20px;"><b>'.$result->bezeichnung.'</b></p>';
 						$last_lgtyp = $result->bezeichnung;
 					}
-					if (CAMPUS_NAME=='FH Technikum Wien' && $result->studiengang_kz==334 && $result->studiengangbezeichnung == 'Intelligent Transport Systems') //@todo: Pfuschloesung bis zum neuen Tool, damit MIT nicht mehr angezeigt wird
+					/*if (CAMPUS_NAME=='FH Technikum Wien' && $result->studiengang_kz==334 && $result->studiengangbezeichnung == 'Intelligent Transport Systems') //@todo: Pfuschloesung bis zum neuen Tool, damit MIT nicht mehr angezeigt wird
 						continue;
-					else
+					else*/
 					{
 						if (defined('BEWERBERTOOL_MAX_STUDIENGAENGE') 
 								&& BEWERBERTOOL_MAX_STUDIENGAENGE != '' 

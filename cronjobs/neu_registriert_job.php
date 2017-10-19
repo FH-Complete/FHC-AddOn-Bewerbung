@@ -193,7 +193,7 @@ if($result = $db->db_query($qry))
 			$mailadresse = isset($kontakt->result[0]->kontakt)?$kontakt->result[0]->kontakt:'';
 			
 			$mailcontent .= '<tr>';
-			$mailcontent .= '<td>'.$row->studienplan.'</td>';
+			$mailcontent .= '<td>'.($row->studienplan != ''?$row->studienplan:'<span style="color: red">Es konnte kein passender Studienplan ermittelt werden</span>').'</td>';
 			$mailcontent .= '<td>'.($row->geschlecht=='m'?'Herr ':'Frau ').'</td>';
 			$mailcontent .= '<td>'.$row->nachname.'</td>';
 			$mailcontent .= '<td>'.$row->vorname.'</td>';

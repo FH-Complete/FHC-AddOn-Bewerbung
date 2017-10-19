@@ -216,6 +216,8 @@ $this->phrasen['bewerbung/pflichtfelder']='Required';
 $this->phrasen['bewerbung/bitteGueltigeOesterreichischePlzEingeben']='Please enter a valid Austrian postcode';//nur grob uebersetzt
 $this->phrasen['bewerbung/plzMussGueltigSein']='Postcode must be a valid number';//nur grob uebersetzt
 $this->phrasen['bewerbung/plzUnbekannt']='Postcode unknown';//nur grob uebersetzt
+$this->phrasen['bewerbung/bewerbungDerzeitNichtMoeglich']='Application currently not possible. Please contact the <a href="mailto:%s">Degree Program</a>';
+$this->phrasen['bewerbung/bewerbungenFuerAb']='Application for %s starting %s';
 $this->phrasen['bewerbung/erfolgreichBeworbenMail']='You have applied successfully. The administrative assistant responsible will contact you in the course of the next 10 working days.';
 $this->phrasen['bewerbung/bewerbungsfrist']='Application deadline';
 $this->phrasen['bewerbung/bewerbungszeitraum']='Application period';
@@ -225,6 +227,7 @@ $this->phrasen['bewerbung/unbegrenzt']='Unlimited';
 $this->phrasen['bewerbung/bewerbungszeitraumStartetAm']='Application period starts %s';
 $this->phrasen['bewerbung/bewerbungsfristEndetInXTagen']='Application period ends in %s days';
 $this->phrasen['bewerbung/bewerbungsfristEndetHeute']='Application period ends today';
+$this->phrasen['bewerbung/bewerbungsfristFuerStudiensemesterXAbgelaufen']='Application deadline for %s has expired';
 
 // Rechnungskontakt
 $this->phrasen['bewerbung/menuRechnungsKontaktinformationen']='Billing Data';

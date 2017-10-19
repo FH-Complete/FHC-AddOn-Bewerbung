@@ -346,7 +346,7 @@ if(isset($_POST['btn_bewerbung_abschicken']))
 		$studiengang->load($prestudent->studiengang_kz);
 		if($sendmail == true && $bewerbungszeitraum_gueltig == true)
 		{
-			if(sendBewerbung($pr_id,$prestudent_status->studiensemester_kurzbz,$prestudent_status->orgform_kurzbz))
+			if(sendBewerbung($pr_id, $prestudent_status->studiensemester_kurzbz, $prestudent_status->orgform_kurzbz, $prestudent_status->studienplan_id))
 			{
 				$message = $p->t('bewerbung/erfolgreichBeworben',array($studiengang->bezeichnung_arr[$sprache]));
 				//echo '<script type="text/javascript">alert("'.$p->t('bewerbung/erfolgreichBeworben',array($studiengang->bezeichnung_arr[$sprache])).'");</script>';
@@ -1315,7 +1315,7 @@ else
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<title><?php echo $p->t('bewerbung/menuBewerbungFuerStudiengang') ?></title>
 		<link href="../../../submodules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" type="text/css">
-		<script src="../../../include/js/jquery.min.1.11.1.js"></script>
+		<script type="text/javascript" src="../../../vendor/jquery/jqueryV1/jquery-1.12.4.min.js"></script>
 		<script src="../../../submodules/bootstrap/dist/js/bootstrap.min.js"></script>
 		<script src="../include/js/bewerbung.js"></script>
 		<script type="text/javascript">
@@ -1537,7 +1537,7 @@ else
 <?php
 
 // sendet eine Email an die Assistenz dass die Bewerbung abgeschlossen ist
-function sendBewerbung($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz)
+function sendBewerbung($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz, $studienplan_id = '')
 {
 	global $person_id;
 	$p = new phrasen(DEFAULT_LANGUAGE);
@@ -1549,6 +1549,14 @@ function sendBewerbung($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz)
 
 	$person = new person();
 	$person->load($person_id);
+	
+	$studienplan_bezeichnung = '';
+	if ($studienplan_id != '')
+	{
+		$studienplan = new studienplan();
+		$studienplan->loadStudienplan($studienplan_id);
+		$studienplan_bezeichnung = $studienplan->bezeichnung;
+	}
 
 	$prestudent = new prestudent();
 	if(!$prestudent->load($prestudent_id))
@@ -1602,6 +1610,10 @@ function sendBewerbung($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz)
 		$email.= '<br><table style="font-size:small"><tbody>';
 		$email.= '<tr><td><b>'.$p->t('global/studiengang').'</b></td><td>'.$typ->bezeichnung.' '.$studiengang->bezeichnung.($orgform_kurzbz!=''?' ('.$orgform_kurzbz.')':'').'</td></tr>';
 		$email.= '<tr><td><b>'.$p->t('global/studiensemester').'</b></td><td>'.$studiensemester_kurzbz.'</td></tr>';
+		if ($studienplan_bezeichnung != '')
+			$email.= '<tr><td><b>'.$p->t('studienplan/studienplan').'</b></td><td>'.$studienplan_bezeichnung.'</td></tr>';
+		else 
+			$email.= '<tr><td><b>'.$p->t('studienplan/studienplan').'</b></td><td><span style="color: red">Es konnte kein passender Studienplan ermittelt werden</span></td></tr>';
 		$email.= '<tr><td><b>'.$p->t('global/geschlecht').'</b></td><td>'.($person->geschlecht=='m'?$p->t('bewerbung/maennlich'):$p->t('bewerbung/weiblich')).'</td></tr>';
 		$email.= '<tr><td><b>'.$p->t('global/titel').'</b></td><td>'.$person->titelpre.'</td></tr>';
 		$email.= '<tr><td><b>'.$p->t('global/postnomen').'</b></td><td>'.$person->titelpost.'</td></tr>';

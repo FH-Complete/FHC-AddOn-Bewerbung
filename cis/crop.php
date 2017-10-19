@@ -39,7 +39,8 @@ $orig_src = $_POST['orig_src'];
 $img_name = $_POST['img_name'];
 $img_type = $_POST['img_type'];
 
-$p=new phrasen($sprache);
+$sprache = getSprache();
+$p = new phrasen($sprache);
 
 function resize($filename, $width, $height)
 {
@@ -267,9 +268,9 @@ if(file_exists($tmpfname))
 			$fs->fotostatus_kurzbz='hochgeladen';
 			$fs->datum = date('Y-m-d');
 			$fs->insertamum = date('Y-m-d H:i:s');
-			$fs->insertvon = $user;
+			$fs->insertvon = 'online';
 			$fs->updateamum = date('Y-m-d H:i:s');
-			$fs->updatevon = $user;
+			$fs->updatevon = 'online';
 			if(!$fs->save(true))
 				echo '<span class="error">Fehler beim Setzen des Bildstatus</span>';
 			else

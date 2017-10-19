@@ -284,12 +284,11 @@ function check_person_statusbestaetigt($person_id,$status_kurzbz,$studiensemeste
 }
 
 /**
- * Holt die aktiven Studienplaene. Optional $studiengang_kz eines bestimmten Studiengangs, optional $studiensemester_kurzbz eines bestimmten Studiensemesters
- * optional $ausbildungssemester eines bestimmten Ausbildungssemesters, optional $orgform_kurzbz einer bestimmten Orgform
- * @param integer $studiengang_kz optional
- * @param array $studiensemester_kurzbz Array von Studiensemestern, in deren Gueltigkeit die Studienplaene liegen
- * @param string $ausbildungssemester Kommaseparierter String mit Ausbildungssemestern, in deren Gueltigkeit die Studienplaene liegen
- * @param string $orgform_kurzbz optional
+ * Holt die aktiven Studienplaene, bei denen das Attribut onlinebewerbung_studienplan TRUE ist.
+ * @param integer $studiengang_kz Optional. Studiengang_kz eines bestimmten Studiengangs.
+ * @param array $studiensemester_kurzbz Optional. Array von Studiensemestern, in deren Gueltigkeit die Studienplaene liegen.
+ * @param string $ausbildungssemester Optional. Kommaseparierter String mit Ausbildungssemestern, in deren Gueltigkeit die Studienplaene liegen.
+ * @param string $orgform_kurzbz Optional. Orgform_kurzbz einer bestimmten Orgform.
  */
 function getStudienplaeneForOnlinebewerbung($studiengang_kz=null, $studiensemester_kurzbz=null, $ausbildungssemester=null, $orgform_kurzbz=null)
 {
@@ -307,7 +306,9 @@ function getStudienplaeneForOnlinebewerbung($studiengang_kz=null, $studiensemest
 					JOIN lehre.tbl_studienordnung USING(studienordnung_id)
 					JOIN lehre.tbl_studienplan_semester USING(studienplan_id)
 				WHERE
-					tbl_studienplan.aktiv";
+					tbl_studienplan.aktiv
+				AND 
+					tbl_studienplan.onlinebewerbung_studienplan=TRUE ";
 
 	if($studiengang_kz!='')
 	{
@@ -365,7 +366,7 @@ function getStudienplaeneForOnlinebewerbung($studiengang_kz=null, $studiensemest
 		return false;
 }
 /**
- * Holt die vorkommenden Orgform/Sprache Kombinationen aus den aktiven Studienplänen
+ * Holt die vorkommenden Orgform/Sprache Kombinationen aus den aktiven Studienplänen, bei denen das Attribut onlinebewerbung_studienplan TRUE ist.
  * @param integer $studiengang_kz optional
  * @param array $studiensemester_kurzbz Array von Studiensemestern, in deren Gueltigkeit die Studienplaene liegen
  * @param string $ausbildungssemester Kommaseparierter String mit Ausbildungssemestern, in deren Gueltigkeit die Studienplaene liegen
@@ -383,7 +384,9 @@ function getOrgformSpracheForOnlinebewerbung($studiengang_kz=null, $studiensemes
 			    WHERE
 				    tbl_studienplan.orgform_kurzbz IS NOT NULL
 				AND
-					tbl_studienplan.aktiv";
+					tbl_studienplan.aktiv
+				AND 
+					tbl_studienplan.onlinebewerbung_studienplan=TRUE ";
 
 	if($studiengang_kz!='')
 	{

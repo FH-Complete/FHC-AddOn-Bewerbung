@@ -31,6 +31,7 @@ require_once('../../../include/prestudent.class.php');
 require_once('../../../include/preinteressent.class.php');
 require_once('../../../include/kontakt.class.php');
 require_once('../../../include/studiensemester.class.php');
+require_once('../../../include/bewerbungstermin.class.php');
 require_once('../../../include/datum.class.php');
 require_once('../../../include/sprache.class.php');
 require_once('../../../include/benutzer.class.php');
@@ -186,6 +187,8 @@ elseif($username && $password)
 			if($method == 'registration'):
 				// Falls Sicherheitscode falsch ist - übergebene Werte speichern und vorausfüllen
 				$date = new datum();
+				$stsem = new studiensemester();
+				$stsem->getStudiensemesterOnlinebewerbung();
 
 				$vorname = filter_input(INPUT_POST, 'vorname');
 				$nachname = filter_input(INPUT_POST, 'nachname');
@@ -193,7 +196,7 @@ elseif($username && $password)
 				$geschlecht = filter_input(INPUT_POST, 'geschlecht');
 				$email = filter_input(INPUT_POST, 'email');
 				$anmerkungen = filter_input(INPUT_POST, 'anmerkung', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY);
-				$orgform = filter_input(INPUT_POST, 'orgform', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY);
+ 				$orgform = filter_input(INPUT_POST, 'orgform', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY);
 				$orgform_alt = filter_input(INPUT_POST, 'orgform_alt', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY);
 				$orgform_kurzbz = filter_input(INPUT_GET, 'orgform_kurzbz');
 
@@ -201,7 +204,13 @@ elseif($username && $password)
 				{
 					$studiengaenge = filter_input(INPUT_POST, 'studiengaenge', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY);
 					$std_semester = filter_input(INPUT_POST, 'studiensemester_kurzbz');
+
+					// Wenn kein Studiensemester uebergeben wird, das Erste aus getStudiensemesterOnlinebewerbung nehmen, wenn vorhanden
+					if ($std_semester == '' && isset($stsem->studiensemester[0]))
+						$std_semester = $stsem->studiensemester[0]->studiensemester_kurzbz;
+
 					$stg_auswahl = filter_input(INPUT_POST, 'stg');
+					
 					if(!is_array($studiengaenge))
 					{
 						$studiengaenge = array();
@@ -211,7 +220,10 @@ elseif($username && $password)
 				}
 				else
 				{
-					$std_semester = null;
+					if (isset($stsem->studiensemester[0]))
+						$std_semester = $stsem->studiensemester[0]->studiensemester_kurzbz;
+					else 
+						$std_semester = null;
 				}
 
 				$studiengaengeBaMa = array(); // Nur Bachelor oder Master Studiengaenge
@@ -346,13 +358,8 @@ elseif($username && $password)
 									// Richtigen Studienplan ermitteln
 									$studienplan = new studienplan();
 									$studienplan->getStudienplaeneFromSem($studiengaenge[$i], $std_semester, '1', $orgform[$studiengaenge[$i]]);
-									if (!isset($studienplan->result[0]))
-										$studienplan->getStudienplaeneFromSem($studiengaenge[$i], $std_semester, '', $orgform[$studiengaenge[$i]]);
-									if (!isset($studienplan->result[0]))
-										$studienplan->getStudienplaeneFromSem($studiengaenge[$i], '', '', $orgform[$studiengaenge[$i]]);
-									if (!isset($studienplan->result[0]))
-										$studienplan->getStudienplaeneFromSem($studiengaenge[$i]);
-							
+
+									// Wenn kein passender Studienplan gefunden wird, wird er NULL gesetzt 
 									if (isset($studienplan->result[0]))
 										$studienplan_id = $studienplan->result[0]->studienplan_id;
 									else
@@ -502,7 +509,7 @@ elseif($username && $password)
 						</label>
 						<div class="col-sm-4">
 							<input type="text" name="geb_datum" id="geburtsdatum"
-								   value="<?php echo isset($geb_datum) ? date('d.m.Y', strtotime($geb_datum)) : '' ?>"
+								   value="<?php echo isset($geb_datum) && $geb_datum != ''? date('d.m.Y', strtotime($geb_datum)) : '' ?>"
 								   class="form-control" placeholder="<?php echo $p->t('bewerbung/datumFormat') ?>">
 						</div>
 					</div>
@@ -538,21 +545,18 @@ elseif($username && $password)
 							<?php echo $p->t('bewerbung/geplanterStudienbeginn') ?>
 						</label>
 						<div class="col-sm-4 dropdown">
-							<select id="studiensemester_kurzbz" name="studiensemester_kurzbz" class="form-control">
-								<option value=""><?php echo $p->t('bewerbung/bitteAuswaehlen') ?></option>
+							<select id="studiensemester_kurzbz" name="studiensemester_kurzbz" class="form-control" onChange="changeStudiensemester()">
+								<!--<option value=""><?php echo $p->t('bewerbung/bitteAuswaehlen') ?></option>-->
 								<?php
-								$stsem = new studiensemester();
-								$stsem->getStudiensemesterOnlinebewerbung();
 								$studiensemester_array = array();
+								$studiensemester_array[] = $std_semester;
 
 								foreach($stsem->studiensemester as $row): ?>
 									<option value="<?php echo $row->studiensemester_kurzbz ?>"
 										<?php echo $std_semester == $row->studiensemester_kurzbz ? 'selected' : '' ?>>
 										<?php echo $row->bezeichnung.' ('.$p->t('bewerbung/ab').' '.$datum->formatDatum($stsem->convert_html_chars($row->start),'d.m.Y').')' ?>
 									</option>
-								<?php
-								$studiensemester_array[] = $row->studiensemester_kurzbz;
-								endforeach; ?>
+								<?php endforeach; ?>
 							</select>
 						</div>
 					</div>
@@ -560,10 +564,10 @@ elseif($username && $password)
 						<label class="col-sm-3 control-label">
 							<?php echo $p->t('bewerbung/studienrichtung') ?>
 						</label>
-						<div class="col-sm-6" id="liste-studiengaenge">
+						<div class="col-sm-7" id="liste-studiengaenge">
 							<?php
 							$stg = new studiengang();
-							$stg->getAllForBewerbung('typ, tbl_lgartcode.bezeichnung ASC, studiengangbezeichnung');
+							$stg->getAllForBewerbung('typ, tbl_lgartcode.bezeichnung ASC');
 
 							$stghlp = new studiengang();
 							$stghlp->getLehrgangstyp();
@@ -593,21 +597,26 @@ elseif($username && $password)
 								if($lasttyp != $result->typ)
 								{
 									if($lasttyp!='')
-										echo '</div>';
+										echo '</div></div></div>';
 
 									if(in_array($result->typ, $typen))
 										$collapse = 'collapse in';
 									else
 										$collapse = 'collapse';
-									echo '<a href="#'.$stgtyp->studiengang_typ_arr[$result->typ].'" data-toggle="collapse"><h4>'.$stgtyp->studiengang_typ_arr[$result->typ].'  <small><span class="glyphicon glyphicon-collapse-down"></span></small></h4></a>';
-									echo '<div id="'.$stgtyp->studiengang_typ_arr[$result->typ].'" class="'.$collapse.'">';
+									echo '<div class="panel-group"><div class="panel panel-default">';
+									echo '<div class="panel-heading">
+											<a href="#'.$stgtyp->studiengang_typ_arr[$result->typ].'" data-toggle="collapse">
+												<h4>'.$stgtyp->studiengang_typ_arr[$result->typ].'  <small><span class="glyphicon glyphicon-collapse-down"></span></small></h4>
+											</a>
+											</div>';
+									echo '<div id="'.$stgtyp->studiengang_typ_arr[$result->typ].'" class="panel-collapse '.$collapse.'">';
 									if ($result->typ!='l')
-										echo '<p name="checkboxInfoDiv"></p>';
+										echo '<div name="checkboxInfoDiv"></div>';
 									$lasttyp=$result->typ;
 								}
 								if($last_lgtyp!=$result->bezeichnung && $result->bezeichnung != '')
 								{
-										echo '<p style="padding-top: 20px;"><b>'.$result->bezeichnung.'</b></p>';
+										echo '<div class="panel-heading"><b>'.$result->bezeichnung.'</b></div>';
 									$last_lgtyp = $result->bezeichnung;
 								}
 
@@ -621,50 +630,96 @@ elseif($username && $password)
 										$disabled = 'disabled';
 								}
 
-								if($sprache!='German' && $result->studiengangbezeichnung_englisch!='')
-									$stg_bezeichnung = $result->studiengangbezeichnung_englisch;
-								else
-									$stg_bezeichnung = $result->studiengangbezeichnung;
+								$studienplan = getStudienplaeneForOnlinebewerbung($result->studiengang_kz, $studiensemester_array, '1', ''); //@todo: ausbildungssemester dynamisch
 
-								$orgform_stg = $stg->getOrgForm($result->studiengang_kz);
-
-								$sprache_lv = $stg->getSprache($result->studiengang_kz);
-								$studienplan = getStudienplaeneForOnlinebewerbung($result->studiengang_kz, $studiensemester_array, '1', ''); //@todo: studiensemester und ausbildungssemester dynamisch
 								$orgformen_sprachen = array();
-								if($studienplan!='')
+								$modal = false;
+								$fristAbgelaufen = false;
+								$class = '';
+								$stg_bezeichnung = '';
+								
+								// @todo: Was machen wir mit den Lehrgängen? Die sollten auch einen gültigen Studienplan haben, haben ihn aber nicht immer.
+								// Angezeigt werden müssen sie auf jeden Fall. Soll der Name dort immer aus dem Studiengang oder auch aus dem Studienplan kommen?
+								// Speichern wir sie auch ohne gültigen Studienplan?
+								if($studienplan != '')
 								{
 									foreach ($studienplan as $row)
 									{
-										if (CAMPUS_NAME=='FH Technikum Wien' && $result->studiengang_kz == 334 && $stg_bezeichnung == 'Intelligent Transport Systems') //@todo: Pfuschloesung bis zum neuen Tool, damit MIT nicht mehr angezeigt wird
-											continue;
-										elseif (CAMPUS_NAME=='FH Technikum Wien' && $result->studiengang_kz == 302 && $row->orgform_kurzbz == 'DL' && $row->sprache == 'English') //@todo: Pfuschloesung, damit MWI-DL nicht mehr angezeigt wird, obwohl der Studienplan gueltig ist
-											continue;
+										$orgformen_sprachen[$row->orgform_kurzbz] = $row->sprache;
+									}
+									if(count($orgformen_sprachen) > 1)
+									{
+										$modal = true;
+										
+										// Wenn mehr als 1 gueltiger Studienplan gefunden wird, Bezeichnung des Studiengangs laden
+										$bezeichnung_studiengang = new studiengang($result->studiengang_kz);
+										if($sprache != 'German' && $bezeichnung_studiengang->english != '')
+											$stg_bezeichnung = $bezeichnung_studiengang->english;
 										else
-											$orgformen_sprachen[] = $row->orgform_kurzbz.'_'.$row->sprache;
+											$stg_bezeichnung = $bezeichnung_studiengang->bezeichnung;
+									}
+									elseif ($result->typ != 'l' && !isset($lgtyparr[$result->lgartcode]))
+									{
+										// Wenn es nur einen gueltigen Studienplan gibt, kommt der Name des Studiengangs aus dem Studienplan
+										if($sprache != 'German' && $studienplan[0]->studiengangbezeichnung_englisch != '')
+											$stg_bezeichnung = $studienplan[0]->studiengangbezeichnung_englisch;
+										else
+											$stg_bezeichnung = $studienplan[0]->studiengangbezeichnung;
+										
+										$stg_bezeichnung .= ' | <i>'.$p->t('bewerbung/orgform/'.$studienplan[0]->orgform_kurzbz).' - '.$p->t('bewerbung/'.$studienplan[0]->sprache).'</i>';
+										
+										// Bewerbungsfristen laden
+										$bewerbungszeitraum = getBewerbungszeitraum($result->studiengang_kz, $std_semester, $studienplan[0]->studienplan_id);
+										$stg_bezeichnung .= ' '.$bewerbungszeitraum['bewerbungszeitraum'];
+										$fristAbgelaufen = $bewerbungszeitraum['frist_abgelaufen'];
+									}
+									else
+									{
+										// Bei Lehrgaengen kommt der Name des Lehrgangs aus der Studiengangsbezeichnung
+										$bezeichnung_studiengang = new studiengang($result->studiengang_kz);
+										if($sprache != 'German' && $bezeichnung_studiengang->english != '')
+											$stg_bezeichnung = $bezeichnung_studiengang->english;
+										else
+											$stg_bezeichnung = $bezeichnung_studiengang->bezeichnung;
 									}
 								}
-								$orgformen_sprachen = array_unique($orgformen_sprachen);
-
-								$modal = false;
-
-								if(count($orgform_stg) > 1 || count($sprache_lv) > 1)
+								elseif ($result->typ != 'l' && !isset($lgtyparr[$result->lgartcode]))
 								{
-									$modal = true;
+									// Wenn kein gueltiger Studienplan gefunden wird, Bezeichnung des Studiengangs laden
+									$bezeichnung_studiengang = new studiengang($result->studiengang_kz);
+									if($sprache != 'German' && $bezeichnung_studiengang->english != '')
+										$stg_bezeichnung = $bezeichnung_studiengang->english;
+									else
+										$stg_bezeichnung = $bezeichnung_studiengang->bezeichnung;
+										
+									// Wenn kein gueltiger Studienplan gefunden wird, ist die Registration nicht moeglich und es wird ein Infotext angezeigt
+									$fristAbgelaufen = true;
+									
+									$empf_array = array();
+									if(defined('BEWERBERTOOL_BEWERBUNG_EMPFAENGER'))
+										$empf_array = unserialize(BEWERBERTOOL_BEWERBUNG_EMPFAENGER);
+										
+									if(defined('BEWERBERTOOL_MAILEMPFANG') && BEWERBERTOOL_MAILEMPFANG!='')
+										$empfaenger = BEWERBERTOOL_MAILEMPFANG;
+									elseif(isset($empf_array[$result->studiengang_kz]))
+										$empfaenger = $empf_array[$result->studiengang_kz];
+									else
+									{
+										$studiengang = new studiengang($result->studiengang_kz);
+										$empfaenger = $studiengang->email;
+									}
+
+									$stg_bezeichnung .= '<br><span style="color:orange"><i>'.$p->t('bewerbung/bewerbungDerzeitNichtMoeglich',array($empfaenger)).'</i></span>';
 								}
-								elseif ($result->typ!='l' && !isset($lgtyparr[$result->lgartcode]))
-									$stg_bezeichnung .= ' | <i>'.$p->t('bewerbung/orgform/'.$orgform_stg[0]).' - '.$p->t('bewerbung/'.$sprache_lv[0]).'</i>';
-
-								if (CAMPUS_NAME=='FH Technikum Wien' && $result->studiengang_kz == 334 && $result->studiengangbezeichnung != 'Intelligent Transport Systems') //@todo: Pfuschloesung bis zum neuen Tool, damit MIT nicht mehr angezeigt wird
-									$stg_bezeichnung .= ' | <i>'.$p->t('bewerbung/orgform/'.$orgform_stg[0]).' - '.$p->t('bewerbung/German').'</i>';
-								
-								if (CAMPUS_NAME=='FH Technikum Wien' && $result->studiengang_kz == 302 && $orgform_stg[0] == 'BB') //@todo: Pfuschloesung, damit MWI-DL nicht mehr angezeigt wird, obwohl der Studienplan gueltig ist
-									$stg_bezeichnung .= ' | <i>'.$p->t('bewerbung/orgform/'.$orgform_stg[0]).' - '.$p->t('bewerbung/German').'</i>';
-
-								if (CAMPUS_NAME=='FH Technikum Wien' && $result->studiengang_kz == 334) //@todo: Pfuschloesung bis zum neuen Tool, damit kein Modal bei MSC angezeigt wird
-									$modal = false;
-								
-								if (CAMPUS_NAME=='FH Technikum Wien' && $result->studiengang_kz == 302) //@todo: Pfuschloesung, damit MWI-DL nicht mehr angezeigt wird, obwohl der Studienplan gueltig ist
-									$modal = false;
+								else
+								{
+									// Wenn kein gueltiger Studienplan gefunden wird und es ein Lehrgang ist, die Bezeichnung des Studiengangs laden
+									$bezeichnung_studiengang = new studiengang($result->studiengang_kz);
+									if($sprache != 'German' && $bezeichnung_studiengang->english != '')
+										$stg_bezeichnung = $bezeichnung_studiengang->english;
+									else
+										$stg_bezeichnung = $bezeichnung_studiengang->bezeichnung;
+								}
 
 								if(in_array($result->studiengang_kz, $studiengaenge) || $result->studiengang_kz == $stg_auswahl)
 								{
@@ -676,44 +731,41 @@ elseif($username && $password)
 								else
 									$class = 'checkbox_lg';
 
-								if (CAMPUS_NAME=='FH Technikum Wien' && $result->studiengang_kz == 334 && $result->studiengangbezeichnung == 'Intelligent Transport Systems') //@todo: Pfuschloesung bis zum neuen Tool, damit MIT nicht mehr angezeigt wird
-									continue;
-								else
+								if (!$fristAbgelaufen)
 								{
-									echo '
+									echo '<div class="panel-body">
 									<div class="checkbox">
 										<label data-toggle="collapse" data-target="#prio-dropown'.$result->studiengang_kz.'">
-											<input class="'.$class.'" type="checkbox" name="studiengaenge[]" value="'.$result->studiengang_kz.'" '.$checked.' '.$disabled.'
-													data-modal="'.$modal.'"
-													data-modal-sprache="'.implode(',', $sprache_lv).'"
-													data-modal-orgform="'.implode(',', $orgform_stg).'"
-													data-modal-orgformsprache="'.implode(',', $orgformen_sprachen).'">
+											<input class="'.$class.'" type="checkbox" name="studiengaenge[]" value="'.$result->studiengang_kz.'" '.$checked.' '.$disabled.'>
 											'.$stg_bezeichnung;
-									//if($result->typ=='l' && isset($lgtyparr[$result->lgartcode]))
-									if (CAMPUS_NAME=='FH Technikum Wien' && $result->studiengang_kz=='804') //@todo: Pfuschloesung bis zur Akkreditierung des Master Maschinenbau
-									{
-										//echo ' ('.$lgtyparr[$result->lgartcode].')';
-										echo ' <span style="color: orange">('.$p->t('bewerbung/vorbehaltlichAkkreditierung').')</span>';
-									}
-
-									if (!isset($anmerkungen[$result->studiengang_kz]) && in_array($result->studiengang_kz, $studiengaenge) && $orgform_kurzbz != '')
-										$anmerkungen[$result->studiengang_kz] = 'Prio: '.$orgform_kurzbz;
-									
-									if (!isset($orgform[$result->studiengang_kz]) && in_array($result->studiengang_kz, $studiengaenge) && $orgform_kurzbz != '')
-										$orgform[$result->studiengang_kz] = substr($orgform_kurzbz, 0, strpos($orgform_kurzbz, '_'));
-									
-									if(!isset($orgform[$result->studiengang_kz]) && count($orgform_stg) == 1)
-										$orgform[$result->studiengang_kz] = $orgform_stg[0];
-										
-									echo '
-											<span class="badge" id="badge'.$result->studiengang_kz.'">'.(isset($anmerkungen[$result->studiengang_kz])?$anmerkungen[$result->studiengang_kz]:'').'</span>
-											<input type="hidden" id="anmerkung'.$result->studiengang_kz.'" name="anmerkung['.$result->studiengang_kz.']" value="'.(isset($anmerkungen[$result->studiengang_kz])?$anmerkungen[$result->studiengang_kz]:'').'">
-											<input type="hidden" id="orgform'.$result->studiengang_kz.'" name="orgform['.$result->studiengang_kz.']" value="'.(isset($orgform[$result->studiengang_kz])?$orgform[$result->studiengang_kz]:'').'">
-											<input type="hidden" id="orgform_alt'.$result->studiengang_kz.'" name="orgform_alt['.$result->studiengang_kz.']" value="'.$orgform_alt[$result->studiengang_kz].'">
-										</label>
-									</div>
-									';
 								}
+								else 
+								{
+									echo '<div class="panel-body">
+									<div class="checkbox disabled">
+										<label class="text-muted" data-toggle="collapse" data-target="#prio-dropown'.$result->studiengang_kz.'">
+											<input class="" type="checkbox" name="" value="" disabled>
+											'.$stg_bezeichnung;
+								}
+
+								if (!isset($anmerkungen[$result->studiengang_kz]) && in_array($result->studiengang_kz, $studiengaenge) && $orgform_kurzbz != '')
+									$anmerkungen[$result->studiengang_kz] = 'Prio: '.$orgform_kurzbz;
+								
+								if (!isset($orgform[$result->studiengang_kz]) && in_array($result->studiengang_kz, $studiengaenge) && $orgform_kurzbz != '')
+									$orgform[$result->studiengang_kz] = substr($orgform_kurzbz, 0, strpos($orgform_kurzbz, '_'));
+								
+								if(!isset($orgform[$result->studiengang_kz]) && count($orgformen_sprachen) == 1)
+									$orgform[$result->studiengang_kz] = key($orgformen_sprachen);
+									
+								echo '
+										<span class="badge" id="badge'.$result->studiengang_kz.'">'.(isset($anmerkungen[$result->studiengang_kz])?$anmerkungen[$result->studiengang_kz]:'').'</span>
+										<input type="hidden" id="anmerkung'.$result->studiengang_kz.'" name="anmerkung['.$result->studiengang_kz.']" value="'.(isset($anmerkungen[$result->studiengang_kz])?$anmerkungen[$result->studiengang_kz]:'').'">
+										<input type="hidden" id="orgform'.$result->studiengang_kz.'" name="orgform['.$result->studiengang_kz.']" value="'.(isset($orgform[$result->studiengang_kz])?$orgform[$result->studiengang_kz]:'').'">
+										<input type="hidden" id="orgform_alt'.$result->studiengang_kz.'" name="orgform_alt['.$result->studiengang_kz.']" value="'.$orgform_alt[$result->studiengang_kz].'">
+									</label>
+								</div></div>
+								';
+
 								if(in_array($result->studiengang_kz, $studiengaenge))
 									$collapse = 'collapse in';
 								else
@@ -734,107 +786,113 @@ elseif($username && $password)
 												</div>
 											</div>';
 
-											//$studiensemester = new studiensemester();
-											//$studiensemester->getPlusMinus(10,1);
+									echo '<div class="row" id="topprio'.$result->studiengang_kz.'">
+										<div class="col-sm-12 priogroup">';
+									if(count($orgformen_sprachen) > 0)
+									{
+										foreach($studienplan as $row)
+										{
+											$fristAbgelaufen = false;
 
-											//$studiensemester_kurzbz=array();
-											//foreach($studiensemester->studiensemester AS $row)
-												//$studiensemester_kurzbz[] .= $row->studiensemester_kurzbz;
+											// Bewerbungsfristen laden
+											$bewerbungszeitraum = '';
+											$bewerbungszeitraum_result = getBewerbungszeitraum($result->studiengang_kz, $std_semester, $row->studienplan_id);
+											$bewerbungszeitraum .= ' '.$bewerbungszeitraum_result['bewerbungszeitraum'];
+											$fristAbgelaufen = $bewerbungszeitraum_result['frist_abgelaufen'];
 
-											$orgform_sprache = getOrgformSpracheForOnlinebewerbung($result->studiengang_kz, $studiensemester_array,'1');
+											$checked_orgform = '';
+											if (
+												((in_array($result->studiengang_kz, $studiengaenge) || $result->studiengang_kz == $stg_auswahl)
+													&& isset($orgform[$result->studiengang_kz]) && $orgform[$result->studiengang_kz] == $row->orgform_kurzbz)
+												||
+												((in_array($result->studiengang_kz, $studiengaenge) && $orgform_kurzbz == $row->orgform_kurzbz.'_'.$row->sprache))
+												)
+											{
+												$checked_orgform = 'checked="checked"';
+											}
+											
+											if (!$fristAbgelaufen)
+											{
+												echo '<div class="radio" onchange="changePrio('.$result->studiengang_kz.')">
+												<label>
+													<input type="radio" name="topprioOrgform'.$result->studiengang_kz.'" value="'.$row->orgform_kurzbz.'_'.$row->sprache.'" '.$checked_orgform.'>
+													'.$p->t('bewerbung/orgform/'.$row->orgform_kurzbz).' - '.$p->t('bewerbung/'.$row->sprache).$bewerbungszeitraum;
+												echo '</label>';
+											}
+											else 
+											{
+												echo '<div class="radio disabled">
+												<label>
+													<input type="radio" name="" value="" disabled>
+													'.$p->t('bewerbung/orgform/'.$row->orgform_kurzbz).' - '.$p->t('bewerbung/'.$row->sprache).$bewerbungszeitraum;
+												echo '</label>';
+											}
+											echo '</div>';
+										}
+									}
+									else
+										echo '<div>
+												'.$p->t('bewerbung/keineOrgformVorhanden').'
+											</div>';
+									echo'</div></div>';
+									echo '<div class="row" id="alternative'.$result->studiengang_kz.'">
+									<div class="col-sm-12">
+										<label data-toggle="collapse" data-target="#alternative-dropown'.$result->studiengang_kz.'"><h5><b>'.$p->t('bewerbung/prioUeberschriftalternative').'</b> <span class="glyphicon glyphicon-collapse-down"></span></h5></label>
+									</div>
+									<div class="col-sm-12 priogroup collapse" id="alternative-dropown'.$result->studiengang_kz.'">';
 
-											echo '<div class="row" id="topprio'.$result->studiengang_kz.'">
-												<div class="col-sm-6 priogroup">';
-												if($orgform_sprache!='')
-												{
-													foreach($orgform_sprache as $row)
-													{
-														if (CAMPUS_NAME=='FH Technikum Wien' && $result->studiengang_kz == 256 && $row->orgform_kurzbz == 'DL') //@todo: Pfuschloesung, damit BWI-DL nicht mehr angezeigt wird, obwohl der Studienplan gueltig ist
-															continue;
-
-														$checked_orgform = '';
-														if (
-																((in_array($result->studiengang_kz, $studiengaenge) || $result->studiengang_kz == $stg_auswahl)
-																		&& isset($orgform[$result->studiengang_kz]) && $orgform[$result->studiengang_kz] == $row->orgform_kurzbz)
-																||
-																((in_array($result->studiengang_kz, $studiengaenge) && $orgform_kurzbz == $row->orgform_kurzbz.'_'.$row->sprache))
-															)
-														{
-															$checked_orgform = 'checked="checked"';
-														}
-														
-														echo '<div class="radio" onchange="changePrio('.$result->studiengang_kz.')">
-															<label>
-																<input type="radio" name="topprioOrgform'.$result->studiengang_kz.'" value="'.$row->orgform_kurzbz.'_'.$row->sprache.'" '.$checked_orgform.'>
-																'.$p->t('bewerbung/orgform/'.$row->orgform_kurzbz).' - '.$p->t('bewerbung/'.$row->sprache);
-																
-																if (CAMPUS_NAME=='FH Technikum Wien' && $result->studiengang_kz=='257' && $row->orgform_kurzbz == 'DUA') //@todo: Pfuschloesung bis zur Akkreditierung von BIF Dual
-																{
-																	//echo ' ('.$lgtyparr[$result->lgartcode].')';
-																	echo ' <span style="color: orange">('.$p->t('bewerbung/vorbehaltlichAkkreditierung').')</span>';
-																}
-														echo '</label>
-														</div>';
-													}
-												}
-												else
-													echo '<div>
-															'.$p->t('bewerbung/keineOrgformVorhanden').'
-														</div>';
-												echo'</div></div>';
-												echo '<div class="row" id="alternative'.$result->studiengang_kz.'">
-												<div class="col-sm-12">
-													<label data-toggle="collapse" data-target="#alternative-dropown'.$result->studiengang_kz.'"><h5><b>'.$p->t('bewerbung/prioUeberschriftalternative').'</b> <span class="glyphicon glyphicon-collapse-down"></span></h5></label>
-												</div>
-												<div class="col-sm-6 priogroup collapse" id="alternative-dropown'.$result->studiengang_kz.'">';
-
-												if($orgform_sprache!='')
-												{
-													echo '	<div class="radio" onchange="changePrio('.$result->studiengang_kz.')">
-																<label>
-																	<input type="radio" name="alternativeOrgform'.$result->studiengang_kz.'" value="keine">
-																	'.$p->t('bewerbung/egal').'
-																</label>
-															</div>';
-													foreach($orgform_sprache as $row)
-													{
-														if (CAMPUS_NAME=='FH Technikum Wien' && $result->studiengang_kz == 256 && $row->orgform_kurzbz == 'DL') //@todo: Pfuschloesung, damit BWI-DL nicht mehr angezeigt wird, obwohl der Studienplan gueltig ist
-															continue;
-
-														$checked_orgform_alternativ = '';
-														if ((in_array($result->studiengang_kz, $studiengaenge) || $result->studiengang_kz == $stg_auswahl) && $orgform_alt[$result->studiengang_kz] == $row->orgform_kurzbz)
-														{
-															$checked_orgform_alternativ = 'checked="checked"';
-														}
-														echo '<div class="radio" onchange="changePrio('.$result->studiengang_kz.')">
-																<label>
-																	<input type="radio" name="alternativeOrgform'.$result->studiengang_kz.'" value="'.$row->orgform_kurzbz.'_'.$row->sprache.'" '.$checked_orgform_alternativ.'>
-																	'.$p->t('bewerbung/orgform/'.$row->orgform_kurzbz).' - '.$p->t('bewerbung/'.$row->sprache);
-																
-																	if (CAMPUS_NAME=='FH Technikum Wien' && $result->studiengang_kz=='257' && $row->orgform_kurzbz == 'DUA') //@todo: Pfuschloesung bis zur Akkreditierung von BIF Dual
-																	{
-																		//echo ' ('.$lgtyparr[$result->lgartcode].')';
-																		echo ' <span style="color: orange">('.$p->t('bewerbung/vorbehaltlichAkkreditierung').')</span>';
-																	}
-														echo '</label>
-															</div>';
-													}
-												}
-												else
-													echo '<div>
-														'.$p->t('bewerbung/keineOrgformVorhanden').'
-													</div>';
-												echo'
-										</div></div></div>';
-										/*echo '
-										<div class="modal-footer">
-											<button class="btn btn-default cancel-prio" onclick="cancelPrio('.$result->studiengang_kz.')">'.$p->t('global/abbrechen').'</button>
-											<button class="btn btn-primary ok-prio" onclick="submitPrio('.$result->studiengang_kz.')">'.$p->t('global/ok').'</button>
-										</div>';*/
-									echo '</div></div></div>';
+									if(count($orgformen_sprachen) > 0)
+									{
+										echo '	<div class="radio" onchange="changePrio('.$result->studiengang_kz.')">
+													<label>
+														<input type="radio" name="alternativeOrgform'.$result->studiengang_kz.'" value="keine">
+														'.$p->t('bewerbung/egal').'
+													</label>
+												</div>';
+										
+										foreach($studienplan as $row)
+										{
+											$fristAbgelaufen = false;
+											
+											// Bewerbungsfristen laden
+											$bewerbungszeitraum = '';
+											$bewerbungszeitraum_result = getBewerbungszeitraum($result->studiengang_kz, $std_semester, $row->studienplan_id);
+											$bewerbungszeitraum .= ' '.$bewerbungszeitraum_result['bewerbungszeitraum'];
+											$fristAbgelaufen = $bewerbungszeitraum_result['frist_abgelaufen'];
+											
+											$checked_orgform_alternativ = '';
+											if ((in_array($result->studiengang_kz, $studiengaenge) || $result->studiengang_kz == $stg_auswahl) && $orgform_alt[$result->studiengang_kz] == $row->orgform_kurzbz)
+											{
+												$checked_orgform_alternativ = 'checked="checked"';
+											}
+											
+											if (!$fristAbgelaufen)
+											{
+												echo '<div class="radio" onchange="changePrio('.$result->studiengang_kz.')">
+												<label>
+													<input type="radio" name="alternativeOrgform'.$result->studiengang_kz.'" value="'.$row->orgform_kurzbz.'_'.$row->sprache.'" '.$checked_orgform_alternativ.'>
+													'.$p->t('bewerbung/orgform/'.$row->orgform_kurzbz).' - '.$p->t('bewerbung/'.$row->sprache).$bewerbungszeitraum;
+												echo '</label>';
+											}
+											else
+											{
+												echo '<div class="radio disabled">
+												<label>
+													<input type="radio" name="" value="" disabled>
+													'.$p->t('bewerbung/orgform/'.$row->orgform_kurzbz).' - '.$p->t('bewerbung/'.$row->sprache).$bewerbungszeitraum;
+												echo '</label>';
+											}
+											echo '</div>';
+										}
+									}
+									else
+										echo '<div>
+											'.$p->t('bewerbung/keineOrgformVorhanden').'
+										</div>';
+									echo'</div></div></div></div></div></div>';
 								}
 							}
-							?></div>
+							?></div></div>
 						</div>
 					</div>
 					<?php endif; ?>
@@ -848,7 +906,7 @@ elseif($username && $password)
 						</div>
 						<div class="col-sm-4">
 							<?php echo $p->t('bewerbung/captcha') ?>
-							<input type="text" name="captcha_code" maxlength="6" id="captcha" class="form-control">
+							<input type="text" name="captcha_code" maxlength="6" id="captcha_code" class="form-control">
 							<input type="hidden" name="zugangscode" value="<?php echo uniqid() ?>">
 						</div>
 					</div>
@@ -1109,7 +1167,7 @@ elseif($username && $password)
 		//if(BEWERBERTOOL_STUDIENAUSWAHL_ANZEIGEN)
 			//require('views/modal_sprache_orgform.php');
 		?>
-		<script src="../../../include/js/jquery.min.1.11.1.js"></script>
+		<script src="../../../vendor/jquery/jqueryV1/jquery-1.12.4.min.js"></script>
 		<script src="../../../submodules/bootstrap/dist/js/bootstrap.min.js"></script>
 		<script type="text/javascript">
 
@@ -1118,6 +1176,13 @@ elseif($username && $password)
 				var method = '<?php echo $db->convert_html_chars($method);?>';
 
 				window.location.href = "registration.php?sprache=" + sprache + "&method=" + method + "&stg_kz=<?php echo filter_input(INPUT_GET, 'stg_kz') ?>&orgform_kurzbz=<?php echo filter_input(INPUT_GET, 'orgform_kurzbz') ?>";
+			}
+
+			function changeStudiensemester()
+			{
+				if (document.RegistrationLoginForm.captcha_code.value != '')
+					document.RegistrationLoginForm.captcha_code.value = '';
+				document.RegistrationLoginForm.submit();
 			}
 
 			function checkRegistration()
@@ -1309,13 +1374,13 @@ elseif($username && $password)
 						$("input[type=checkbox][class=checkbox_stg]").not(":checked").attr("disabled",bol);
 						if ($("input[type=checkbox][class=checkbox_stg]:checked").length >= <?php echo BEWERBERTOOL_MAX_STUDIENGAENGE; ?>)
 						{
-							$("p[name=checkboxInfoDiv]").html("<?php echo $p->t('bewerbung/sieKoennenMaximalXStudiengaengeWaehlen',  array(BEWERBERTOOL_MAX_STUDIENGAENGE)) ?>");
-							$("p[name=checkboxInfoDiv]").addClass("alert alert-warning");
+							$("div[name=checkboxInfoDiv]").html("<?php echo $p->t('bewerbung/sieKoennenMaximalXStudiengaengeWaehlen',  array(BEWERBERTOOL_MAX_STUDIENGAENGE)) ?>");
+							$("div[name=checkboxInfoDiv]").addClass("alert alert-warning");
 						}
 						else
 						{
-							$("p[name=checkboxInfoDiv]").html("");
-							$("p[name=checkboxInfoDiv]").removeClass();
+							$("div[name=checkboxInfoDiv]").html("");
+							$("div[name=checkboxInfoDiv]").removeClass();
 						}
 					});
 				<?php endif; ?>
@@ -1335,7 +1400,7 @@ elseif($username && $password)
 <?php
 function sendMail($zugangscode, $email, $person_id=null)
 {
-	global $p, $vorname, $nachname, $geschlecht, $geb_datum, $studiengaenge, $orgform, $std_semester;
+	global $p, $vorname, $nachname, $geschlecht;
 
 	if($person_id!='')
 	{
@@ -1388,4 +1453,88 @@ function resendMail($zugangscode, $email, $person_id=null)
 		$msg= $p->t('bewerbung/emailgesendetan', array($email))."<br><br><a href=".$_SERVER['PHP_SELF'].">".$p->t('bewerbung/zurueckZurAnmeldung')."</a>";
 
 	return $msg;
+}
+function getBewerbungszeitraum($studiengang_kz, $studiensemester, $studienplan_id)
+{
+	global $p, $datum;
+	$tage_bis_fristablauf = '';
+	$fristAbgelaufen = false;
+	
+	$bewerbungsfristen = new bewerbungstermin();
+	$bewerbungsfristen->getBewerbungstermine($studiengang_kz, $studiensemester, 'insertamum DESC', $studienplan_id);
+	
+	if (isset($bewerbungsfristen->result[0]))
+	{
+		$bewerbungsfristen = $bewerbungsfristen->result[0];
+	
+		// Wenn Nachfrist gesetzt und das Nachfrist-Datum befuellt ist, gilt die Nachfrist
+		// sonst das Endedatum, wenn eines gesetzt ist
+		if ($bewerbungsfristen->nachfrist == true && $bewerbungsfristen->nachfrist_ende != '')
+		{
+			$tage_bis_fristablauf = ((strtotime($bewerbungsfristen->nachfrist_ende) - time())/86400);
+			// Wenn die Frist in weniger als 7 Tagen ablaeuft oder vorbei ist, hervorheben
+			if ($tage_bis_fristablauf > 7)
+			{
+				$bewerbungszeitraum = '| '.$p->t('bewerbung/bewerbungsfrist').': '.$datum->formatDatum($bewerbungsfristen->nachfrist_ende, 'd.m.Y');
+			}
+			if ($tage_bis_fristablauf <= 7)
+			{
+				$bewerbungszeitraum = '| '.$p->t('bewerbung/bewerbungsfrist').': '.$datum->formatDatum($bewerbungsfristen->nachfrist_ende, 'd.m.Y');
+				$bewerbungszeitraum .= '<br/><div class="label label-warning">
+											<span class="glyphicon glyphicon-warning-sign"></span>
+											&nbsp;&nbsp;'.$p->t('bewerbung/bewerbungsfristEndetInXTagen', array(floor($tage_bis_fristablauf))).'</div>';
+			}
+			if ($tage_bis_fristablauf <= 0)
+			{
+				$bewerbungszeitraum = '<br/><div class="label label-danger">
+											<span class="glyphicon glyphicon-warning-sign"></span>
+											&nbsp;&nbsp;'.$p->t('bewerbung/bewerbungsfristFuerStudiensemesterXAbgelaufen', array($studiensemester)).'</div>';
+				$fristAbgelaufen = true;
+			}
+
+			// Wenn es eine Anmerkung zur Bewerbungsfrist gibt, diese auch anzeigen
+			if ($bewerbungsfristen->anmerkung != '')
+				$bewerbungszeitraum .= '<br><div class="panel panel-info"><div class="panel-heading">'.nl2br($bewerbungsfristen->anmerkung).'</div></div>';
+			
+		}
+		elseif ($bewerbungsfristen->ende != '')
+		{
+			$tage_bis_fristablauf = ((strtotime($bewerbungsfristen->ende) - time())/86400);
+			// Wenn die Frist in weniger als 7 Tagen ablaeuft oder vorbei ist, hervorheben
+			if ($tage_bis_fristablauf > 7)
+			{
+				$bewerbungszeitraum = '| '.$p->t('bewerbung/bewerbungsfrist').': '.$datum->formatDatum($bewerbungsfristen->ende, 'd.m.Y');
+			}
+			if ($tage_bis_fristablauf <= 7)
+			{
+				$bewerbungszeitraum = '| '.$p->t('bewerbung/bewerbungsfrist').': '.$datum->formatDatum($bewerbungsfristen->ende, 'd.m.Y');
+				$bewerbungszeitraum .= '<br/><div class="label label-warning">
+											<span class="glyphicon glyphicon-warning-sign"></span>
+											&nbsp;&nbsp;'.$p->t('bewerbung/bewerbungsfristEndetInXTagen', array(floor($tage_bis_fristablauf))).'</div>';
+			}
+			if ($tage_bis_fristablauf <= 0)
+			{
+				$bewerbungszeitraum = '<br/><div class="label label-danger">
+											<span class="glyphicon glyphicon-warning-sign"></span>
+											&nbsp;&nbsp;'.$p->t('bewerbung/bewerbungsfristFuerStudiensemesterXAbgelaufen', array($studiensemester)).'</div>';
+				$fristAbgelaufen = true;
+			}
+			
+			//$bewerbungszeitraum = $bewerbungsbeginn.' - <span '.$class.'>'.$datum->formatDatum($bewerbungsfristen->nachfrist_ende, 'd.m.Y').'</span>';
+			// Wenn es eine Anmerkung zur Bewerbungsfrist gibt, diese auch anzeigen
+			if ($bewerbungsfristen->anmerkung != '')
+				$bewerbungszeitraum .= '<br><div class="panel panel-info"><div class="panel-heading">'.nl2br($bewerbungsfristen->anmerkung).'</div></div>';
+		}
+		// Wenn der Beginn der Bewerbungfrist in der Zukunft liegt
+		if ($bewerbungsfristen->beginn != '' && strtotime($bewerbungsfristen->beginn) > time())
+		{
+			$bewerbungszeitraum = '<br><div class="label label-success">
+										&nbsp;&nbsp;'.$p->t('bewerbung/bewerbungenFuerAb', array($studiensemester, $datum->formatDatum($bewerbungsfristen->beginn, 'd.m.Y'))).'</div>';
+			$fristAbgelaufen = true;
+		}
+	}
+	else
+		$bewerbungszeitraum = '| '.$p->t('bewerbung/bewerbungsfrist').': '.$p->t('bewerbung/unbegrenzt');
+	
+	return array('bewerbungszeitraum' => $bewerbungszeitraum, 'frist_abgelaufen' => $fristAbgelaufen);
 }
