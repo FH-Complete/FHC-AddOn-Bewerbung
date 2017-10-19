@@ -1324,18 +1324,9 @@ else
 		<meta http-equiv="X-UA-Compatible" content="chrome=1">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<title><?php echo $p->t('bewerbung/menuBewerbungFuerStudiengang') ?></title>
-<<<<<<< HEAD
-		<link href="../../../submodules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" type="text/css">
-		<script type="text/javascript" src="../../../vendor/jquery/jqueryV1/jquery-1.12.4.min.js"></script>
-		<script src="../../../submodules/bootstrap/dist/js/bootstrap.min.js"></script>
-=======
-
 		<link rel="stylesheet" type="text/css" href="../../../vendor/components/bootstrap/css/bootstrap.min.css">
-
 		<script type="text/javascript" src="../../../vendor/jquery/jqueryV1/jquery-1.12.4.min.js"></script>
 		<script type="text/javascript" src="../../../vendor/components/bootstrap/js/bootstrap.min.js"></script>
-
->>>>>>> fb26483fd16b047a284b4dc5d37556cb538c42c4
 		<script src="../include/js/bewerbung.js"></script>
 
 		<script type="text/javascript">
