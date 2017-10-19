@@ -74,10 +74,10 @@ echo '<!DOCTYPE HTML>
 		<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 		<title>'.$p->t('bewerbung/fileUpload').'</title>
-		<link href="../../../submodules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" type="text/css">
-		<link href="../../../skin/fhcomplete.css" rel="stylesheet" type="text/css">
-		<script src="../../../include/js/jquery.min.1.11.1.js"></script>
-		<script src="../../../submodules/bootstrap/dist/js/bootstrap.min.js"></script>
+		<link rel="stylesheet" type="text/css" href="../../../vendor/components/bootstrap/css/bootstrap.min.css">
+		<link rel="stylesheet" type="text/css" href="../../../skin/fhcomplete.css">
+		<script type="text/javascript" src="../../../vendor/jquery/jqueryV1/jquery-1.12.4.min.js"></script>
+		<script type="text/javascript" src="../../../vendor/components/bootstrap/js/bootstrap.min.js"></script>
 		<script>
 		function showExtensionInfo()
 		{
@@ -159,7 +159,7 @@ if(isset($_POST['submitbild']))
 				$dms_id='';
 				if($akte->getAkten($_GET['person_id'], $_REQUEST['dokumenttyp']))
 				{
-					//erste Akte @todo: Ist auch so in content/akte.php. Kann irrefuehrende Ergebisse liefern, wenn bereits mehrere Akten des selben Typs vorhanden sind. 
+					//erste Akte @todo: Ist auch so in content/akte.php. Kann irrefuehrende Ergebisse liefern, wenn bereits mehrere Akten des selben Typs vorhanden sind.
 					if(isset($akte->result[0]))
 					{
 						$akte = $akte->result[0];
@@ -167,15 +167,15 @@ if(isset($_POST['submitbild']))
 						{
 							$dms = new dms();
 							$dms->load($akte->dms_id);
-							
+
 							$version=$dms->version+1;
-							$dms_id=$akte->dms_id;							
+							$dms_id=$akte->dms_id;
 						}
 					}
 				}
-				
+
 				$dms = new dms();
-				
+
 				$dms->dms_id=$dms_id;
 				$dms->version=$version;
 				$dms->kategorie_kurzbz=$kategorie_kurzbz;
@@ -268,15 +268,15 @@ if(isset($_POST['submitbild']))
 		{
 			//Fotos auf maximal 827x1063 begrenzen
 			resize($uploadfile, 827, 1063);
-			
+
 			$fp = fopen($uploadfile,'r');
 			//auslesen
 			$content = fread($fp, filesize($uploadfile));
 			fclose($fp);
-			
+
 			$akte->inhalt = base64_encode($content);
 		}
-		
+
 		$akte->mimetype = $_FILES['file']['type'];
 		$akte->erstelltam = date('Y-m-d H:i:s');
 		$akte->gedruckt = false;
@@ -351,11 +351,11 @@ if(isset($_POST['submitbild']))
 			//Wenn nach dem Abschicken einer Bewerbung ein Dokument hochgeladen wird, wird ein Infomail verschickt
 			$prestudent= new prestudent();
 			$prestudent->getPrestudenten($person_id);
-	
-			// Beim verschicken der Infomail wird auch das vorvorige Studiensemester hinzugefügt, damit auch Infomails für Studiensemester verschickt werden, für die man sich nicht mehr bewerben aber noch Dokumente hochladen kann. 
+
+			// Beim verschicken der Infomail wird auch das vorvorige Studiensemester hinzugefügt, damit auch Infomails für Studiensemester verschickt werden, für die man sich nicht mehr bewerben aber noch Dokumente hochladen kann.
 			if (isset($stsem_array[0]))
 				array_unshift($stsem_array, $studiensemester->jump($stsem_array[0],-2));
-	
+
 			foreach($prestudent->result as $prest)
 			{
 				$prestudent2 = new prestudent();
@@ -371,7 +371,7 @@ if(isset($_POST['submitbild']))
 					}
 				}
 			}
-		}				
+		}
 		echo "<script>
 				var loc = window.opener.location;
 				window.opener.location = 'bewerbung.php?active=dokumente';
@@ -407,11 +407,11 @@ if($person_id !='')
 							$selected=($dokumenttyp == $dok->dokument_kurzbz)?'selected':'';
 							if ($dok->dokument_kurzbz == 'Lichtbil')
 								echo '<option '.$selected.' value="'.$dok->dokument_kurzbz.'" onclick="window.location.href=\'bildupload.php?person_id='.$person_id.'&dokumenttyp=Lichtbil\'; window.resizeTo(700, 800);" onselect="window.location.href=\'bildupload.php?person_id='.$person_id.'&dokumenttyp=Lichtbil\'; window.resizeTo(700, 800);">'.$dok->bezeichnung_mehrsprachig[$sprache]."</option>\n";
-							else 
+							else
 								echo '<option '.$selected.' value="'.$dok->dokument_kurzbz.'" >'.$dok->bezeichnung_mehrsprachig[$sprache]."</option>\n";
 						}
 					}
-					else 
+					else
 					{
 						if (!$akzeptiert->akzeptiert($dok->dokument_kurzbz,$person_id))
 						{
@@ -475,12 +475,12 @@ function resize($filename, $width, $height)
 function sendDokumentupload($empfaenger_stgkz,$dokument_kurzbz,$orgform_kurzbz,$studiensemester_kurzbz,$prestudent_id,$dms_id)
 {
 	global $person_id, $p;
-	
+
 	//Array fuer Mailempfaenger. Vorruebergehende Loesung. Kindlm am 28.10.2015
 	$empf_array = array();
 	if(defined('BEWERBERTOOL_UPLOAD_EMPFAENGER'))
 		$empf_array = unserialize(BEWERBERTOOL_UPLOAD_EMPFAENGER);
-	
+
 	$person = new person();
 	$person->load($person_id);
 	$dokumentbezeichnung = '';

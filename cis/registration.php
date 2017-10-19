@@ -140,6 +140,7 @@ elseif($username && $password)
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 		<meta name="robots" content="noindex">
 		<link href="../../../submodules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+		<link rel="stylesheet" type="text/css" href="../../../vendor/components/bootstrap/css/bootstrap.min.css">
 		<link href="../include/css/registration.css" rel="stylesheet" type="text/css">
 	</head>
 	<body class="main">
@@ -1167,8 +1168,8 @@ elseif($username && $password)
 		//if(BEWERBERTOOL_STUDIENAUSWAHL_ANZEIGEN)
 			//require('views/modal_sprache_orgform.php');
 		?>
-		<script src="../../../vendor/jquery/jqueryV1/jquery-1.12.4.min.js"></script>
-		<script src="../../../submodules/bootstrap/dist/js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="../../../vendor/jquery/jqueryV1/jquery-1.12.4.min.js"></script>
++		<script type="text/javascript" src="../../../vendor/components/bootstrap/js/bootstrap.min.js"></script>
 		<script type="text/javascript">
 
 			function changeSprache(sprache)

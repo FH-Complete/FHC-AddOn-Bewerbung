@@ -871,6 +871,14 @@ if(isset($_POST['btn_rechnungskontakt']))
 			$adresse = new adresse();
 			$adresse->load_rechnungsadresse($person->person_id);
 			$gemeinde = '';
+			if((isset($_POST['re_vorname']) && $_POST['re_vorname'] !='') || (isset($_POST['re_nachname']) && $_POST['re_nachname'] !='') || (isset($_POST['re_titel']) && $_POST['re_titel'] !=''))
+			{
+				$name = $_POST['re_anrede'].'|'.$_POST['re_titel'].'|'.$_POST['re_vorname'].'|'.$_POST['re_nachname'];
+			}
+			else
+			{
+				$name = '';
+			}
 			if(count($adresse->result)>0)
 			{
 				// Wenn die Nation Oesterreich ist, wird die Gemeinde aus der DB ermittelt
@@ -894,6 +902,7 @@ if(isset($_POST['btn_rechnungskontakt']))
 				$adresse_help->nation = isset($_POST['re_nation'])?$_POST['re_nation']:'';
 				$adresse_help->updateamum = date('Y-m-d H:i:s');
 				$adresse_help->updatevon = 'online';
+				$adresse_help->name = $name;
 				$adresse_help->new = false;
 				if(!$adresse_help->save())
 				{
@@ -920,6 +929,7 @@ if(isset($_POST['btn_rechnungskontakt']))
 				$adresse->zustelladresse = false;
 				$adresse->heimatadresse = false;
 				$adresse->rechnungsadresse = true;
+				$adresse->name = $name;
 				$adresse->new = true;
 				if(!$adresse->save())
 				{
@@ -1314,10 +1324,20 @@ else
 		<meta http-equiv="X-UA-Compatible" content="chrome=1">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<title><?php echo $p->t('bewerbung/menuBewerbungFuerStudiengang') ?></title>
+<<<<<<< HEAD
 		<link href="../../../submodules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" type="text/css">
 		<script type="text/javascript" src="../../../vendor/jquery/jqueryV1/jquery-1.12.4.min.js"></script>
 		<script src="../../../submodules/bootstrap/dist/js/bootstrap.min.js"></script>
+=======
+
+		<link rel="stylesheet" type="text/css" href="../../../vendor/components/bootstrap/css/bootstrap.min.css">
+
+		<script type="text/javascript" src="../../../vendor/jquery/jqueryV1/jquery-1.12.4.min.js"></script>
+		<script type="text/javascript" src="../../../vendor/components/bootstrap/js/bootstrap.min.js"></script>
+
+>>>>>>> fb26483fd16b047a284b4dc5d37556cb538c42c4
 		<script src="../include/js/bewerbung.js"></script>
+
 		<script type="text/javascript">
 			var activeTab = <?php echo json_encode($active) ?>,
 				basename = <?php echo json_encode(basename(__FILE__)) ?>;
