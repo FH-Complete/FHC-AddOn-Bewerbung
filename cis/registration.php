@@ -568,16 +568,13 @@ elseif($username && $password)
 						<div class="col-sm-7" id="liste-studiengaenge">
 							<?php
 							$stg = new studiengang();
-							$stg->getAllForBewerbung('typ, tbl_lgartcode.bezeichnung ASC');
+							$stg->getAllForOnlinebewerbung();
 
 							$stghlp = new studiengang();
 							$stghlp->getLehrgangstyp();
 							$lgtyparr=array();
 							foreach($stghlp->result as $row)
 								$lgtyparr[$row->lgartcode]=$row->bezeichnung;
-
-							$stgtyp = new studiengang();
-							$stgtyp->getAllTypes();
 
 							//In der Stg-Auswahl verwendete Typen
 							$typen = array();
@@ -592,12 +589,13 @@ elseif($username && $password)
 
 							$lasttyp = '';
 							$last_lgtyp = '';
+							$bewerbungszeitraum = '';
 
 							foreach($stg->result as $result)
 							{
 								if($lasttyp != $result->typ)
 								{
-									if($lasttyp!='')
+									if($lasttyp != '')
 										echo '</div></div></div>';
 
 									if(in_array($result->typ, $typen))
@@ -606,19 +604,19 @@ elseif($username && $password)
 										$collapse = 'collapse';
 									echo '<div class="panel-group"><div class="panel panel-default">';
 									echo '<div class="panel-heading">
-											<a href="#'.$stgtyp->studiengang_typ_arr[$result->typ].'" data-toggle="collapse">
-												<h4>'.$stgtyp->studiengang_typ_arr[$result->typ].'  <small><span class="glyphicon glyphicon-collapse-down"></span></small></h4>
+											<a href="#'.$result->typ_bezeichnung.'" data-toggle="collapse">
+												<h4>'.$result->typ_bezeichnung.'  <small><span class="glyphicon glyphicon-collapse-down"></span></small></h4>
 											</a>
 											</div>';
-									echo '<div id="'.$stgtyp->studiengang_typ_arr[$result->typ].'" class="panel-collapse '.$collapse.'">';
+									echo '<div id="'.$result->typ_bezeichnung.'" class="panel-collapse '.$collapse.'">';
 									if ($result->typ!='l')
 										echo '<div name="checkboxInfoDiv"></div>';
-									$lasttyp=$result->typ;
+									$lasttyp = $result->typ;
 								}
-								if($last_lgtyp!=$result->bezeichnung && $result->bezeichnung != '')
+								if($last_lgtyp != $result->lehrgangsart && $result->lehrgangsart != '')
 								{
-										echo '<div class="panel-heading"><b>'.$result->bezeichnung.'</b></div>';
-									$last_lgtyp = $result->bezeichnung;
+									echo '<div class="panel-heading"><b>'.$result->lehrgangsart.'</b></div>';
+									$last_lgtyp = $result->lehrgangsart;
 								}
 
 								$checked = '';
@@ -775,7 +773,8 @@ elseif($username && $password)
 								if($modal)
 								{
 									echo'
-										<div id="prio-dropown'.$result->studiengang_kz.'" class="'.$collapse.'"><div class="modal-dialog" style="margin: 10px 0 10px 20px;" data-stgkz="'.$result->studiengang_kz.'">
+										<div id="prio-dropown'.$result->studiengang_kz.'" class="'.$collapse.'">
+										<div class="modal-dialog" style="margin: 10px 0 10px 20px;" data-stgkz="'.$result->studiengang_kz.'">
 										<div class="modal-content" style="box-shadow: none;">
 										<div class="modal-header">
 											<h4 class="modal-title">'.$p->t('bewerbung/orgformWaehlen').'</h4>
@@ -975,38 +974,6 @@ elseif($username && $password)
 								<?php echo $p->t('bewerbung/welcome') ?>
 							</h1>
 							<p class="text-center"><?php echo $p->t('bewerbung/codeZuschickenAnleitung') ?></p><br>
-
-							<!--
-							<div class="form-group text-center">
-								<label for="email" class="col-sm-3 col-sm-offset-2 control-label">
-									<?php echo $p->t('global/emailAdresse') ?>
-								</label>
-								<div class="col-sm-5">
-									<input type="email" maxlength="128" name="email" id="email" value="<?php echo $email ?>" class="form-control">
-								</div>
-							</div>
-							<div class="form-group">
-								<div class="col-sm-4 col-sm-offset-4 text-center">
-									<input type="submit" name="resend_code" value="<?php echo $p->t('bewerbung/codeZuschicken') ?>" onclick="return validateEmail(document.ResendCodeForm.email.value)" class="btn btn-primary">
-								</div>
-							</div>
-
-
-
-							<div class="input-group col-sm-4 col-sm-offset-4">
-								<label for="email" class="col-sm-3 col-sm-offset-2 control-label">
-									<?php echo $p->t('global/emailAdresse') ?>
-								</label>
-
-								<input type="email" maxlength="128" name="email" id="email" value="<?php echo $email ?>" class="form-control" autofocus="autofocus">
-								<span class="input-group-btn">
-									<button class="btn btn-primary" type="submit" name="resend_code" onclick="return validateEmail(document.ResendCodeForm.email.value)">
-										<?php echo $p->t('bewerbung/codeZuschicken') ?>
-									</button>
-								</span>
-							</div>
-							-->
-
 							<div class="form-group">
 								<label for="email" class="col-sm-4 control-label">
 									<?php echo $p->t('global/emailAdresse') ?>
@@ -1022,9 +989,6 @@ elseif($username && $password)
 									</div>
 								</div>
 							</div>
-
-
-
 							<br><br><br><br><br><br><br>
 							<br><br><br><br><br><br><br>
 							<br><br><br><br><br><br><br>
@@ -1113,43 +1077,6 @@ elseif($username && $password)
 							</div>
 							<br><br><br><br><br><br>
 							<div style="text-align:center; color:gray;"><center><?php echo $p->t('bewerbung/footerText')?></center></div>
-
-							<!--
-							<div class="form-group">
-								<div class="input-group">
-									<input class="form-control" type="text" placeholder="<?php echo $p->t('bewerbung/zugangscode') ?>" name="userid" autofocus="autofocus">
-									<span class="input-group-btn">
-										<button class="btn btn-primary" type="submit" name="submit_btn">
-											<?php echo $p->t('bewerbung/login') ?>
-										</button>
-									</span>
-								</div>
-							</div>
-							<!--<p class="text-center"><?php echo $p->t('bewerbung/loginmitAccount') ?></p>-->
-							<!--<p class="text-center">oder</p>
-							<div class="form-group">
-								<label for="username" class="col-sm-3 control-label">
-									<?php echo $p->t('global/username') ?>
-								</label>
-								<div class="col-sm-8">
-									<input class="form-control" type="text" placeholder="<?php echo $p->t('global/username') ?>" name="username">
-								</div>
-							</div>
-							<div class="form-group">
-								<label for="password" class="col-sm-3 control-label">
-									<?php echo $p->t('global/passwort') ?>
-								</label>
-								<div class="col-sm-8">
-									<input class="form-control" type="password" placeholder="<?php echo $p->t('global/passwort') ?>" name="password">
-								</div>
-							</div>
-							<div class="form-group">
-								<span class="col-sm-4 col-sm-offset-3">
-									<button class="btn btn-primary" type="submit" name="submit_btn">
-										<?php echo $p->t('bewerbung/login') ?>
-									</button>
-								</span>
-							</div>-->
 							<br><br><br><br><br><br><br>
 							<br><br><br><br><br><br><br>
 							<br><br><br><br><br><br><br>
@@ -1454,88 +1381,4 @@ function resendMail($zugangscode, $email, $person_id=null)
 		$msg= $p->t('bewerbung/emailgesendetan', array($email))."<br><br><a href=".$_SERVER['PHP_SELF'].">".$p->t('bewerbung/zurueckZurAnmeldung')."</a>";
 
 	return $msg;
-}
-function getBewerbungszeitraum($studiengang_kz, $studiensemester, $studienplan_id)
-{
-	global $p, $datum;
-	$tage_bis_fristablauf = '';
-	$fristAbgelaufen = false;
-	
-	$bewerbungsfristen = new bewerbungstermin();
-	$bewerbungsfristen->getBewerbungstermine($studiengang_kz, $studiensemester, 'insertamum DESC', $studienplan_id);
-	
-	if (isset($bewerbungsfristen->result[0]))
-	{
-		$bewerbungsfristen = $bewerbungsfristen->result[0];
-	
-		// Wenn Nachfrist gesetzt und das Nachfrist-Datum befuellt ist, gilt die Nachfrist
-		// sonst das Endedatum, wenn eines gesetzt ist
-		if ($bewerbungsfristen->nachfrist == true && $bewerbungsfristen->nachfrist_ende != '')
-		{
-			$tage_bis_fristablauf = ((strtotime($bewerbungsfristen->nachfrist_ende) - time())/86400);
-			// Wenn die Frist in weniger als 7 Tagen ablaeuft oder vorbei ist, hervorheben
-			if ($tage_bis_fristablauf > 7)
-			{
-				$bewerbungszeitraum = '| '.$p->t('bewerbung/bewerbungsfrist').': '.$datum->formatDatum($bewerbungsfristen->nachfrist_ende, 'd.m.Y');
-			}
-			if ($tage_bis_fristablauf <= 7)
-			{
-				$bewerbungszeitraum = '| '.$p->t('bewerbung/bewerbungsfrist').': '.$datum->formatDatum($bewerbungsfristen->nachfrist_ende, 'd.m.Y');
-				$bewerbungszeitraum .= '<br/><div class="label label-warning">
-											<span class="glyphicon glyphicon-warning-sign"></span>
-											&nbsp;&nbsp;'.$p->t('bewerbung/bewerbungsfristEndetInXTagen', array(floor($tage_bis_fristablauf))).'</div>';
-			}
-			if ($tage_bis_fristablauf <= 0)
-			{
-				$bewerbungszeitraum = '<br/><div class="label label-danger">
-											<span class="glyphicon glyphicon-warning-sign"></span>
-											&nbsp;&nbsp;'.$p->t('bewerbung/bewerbungsfristFuerStudiensemesterXAbgelaufen', array($studiensemester)).'</div>';
-				$fristAbgelaufen = true;
-			}
-
-			// Wenn es eine Anmerkung zur Bewerbungsfrist gibt, diese auch anzeigen
-			if ($bewerbungsfristen->anmerkung != '')
-				$bewerbungszeitraum .= '<br><div class="panel panel-info"><div class="panel-heading">'.nl2br($bewerbungsfristen->anmerkung).'</div></div>';
-			
-		}
-		elseif ($bewerbungsfristen->ende != '')
-		{
-			$tage_bis_fristablauf = ((strtotime($bewerbungsfristen->ende) - time())/86400);
-			// Wenn die Frist in weniger als 7 Tagen ablaeuft oder vorbei ist, hervorheben
-			if ($tage_bis_fristablauf > 7)
-			{
-				$bewerbungszeitraum = '| '.$p->t('bewerbung/bewerbungsfrist').': '.$datum->formatDatum($bewerbungsfristen->ende, 'd.m.Y');
-			}
-			if ($tage_bis_fristablauf <= 7)
-			{
-				$bewerbungszeitraum = '| '.$p->t('bewerbung/bewerbungsfrist').': '.$datum->formatDatum($bewerbungsfristen->ende, 'd.m.Y');
-				$bewerbungszeitraum .= '<br/><div class="label label-warning">
-											<span class="glyphicon glyphicon-warning-sign"></span>
-											&nbsp;&nbsp;'.$p->t('bewerbung/bewerbungsfristEndetInXTagen', array(floor($tage_bis_fristablauf))).'</div>';
-			}
-			if ($tage_bis_fristablauf <= 0)
-			{
-				$bewerbungszeitraum = '<br/><div class="label label-danger">
-											<span class="glyphicon glyphicon-warning-sign"></span>
-											&nbsp;&nbsp;'.$p->t('bewerbung/bewerbungsfristFuerStudiensemesterXAbgelaufen', array($studiensemester)).'</div>';
-				$fristAbgelaufen = true;
-			}
-			
-			//$bewerbungszeitraum = $bewerbungsbeginn.' - <span '.$class.'>'.$datum->formatDatum($bewerbungsfristen->nachfrist_ende, 'd.m.Y').'</span>';
-			// Wenn es eine Anmerkung zur Bewerbungsfrist gibt, diese auch anzeigen
-			if ($bewerbungsfristen->anmerkung != '')
-				$bewerbungszeitraum .= '<br><div class="panel panel-info"><div class="panel-heading">'.nl2br($bewerbungsfristen->anmerkung).'</div></div>';
-		}
-		// Wenn der Beginn der Bewerbungfrist in der Zukunft liegt
-		if ($bewerbungsfristen->beginn != '' && strtotime($bewerbungsfristen->beginn) > time())
-		{
-			$bewerbungszeitraum = '<br><div class="label label-success">
-										&nbsp;&nbsp;'.$p->t('bewerbung/bewerbungenFuerAb', array($studiensemester, $datum->formatDatum($bewerbungsfristen->beginn, 'd.m.Y'))).'</div>';
-			$fristAbgelaufen = true;
-		}
-	}
-	else
-		$bewerbungszeitraum = '| '.$p->t('bewerbung/bewerbungsfrist').': '.$p->t('bewerbung/unbegrenzt');
-	
-	return array('bewerbungszeitraum' => $bewerbungszeitraum, 'frist_abgelaufen' => $fristAbgelaufen);
 }
