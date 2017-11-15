@@ -21,13 +21,13 @@ require_once('../../../include/student.class.php');
 require_once('../../../include/studienplan.class.php');
 
 // Fuegt einen Studiengang zu einem Bewerber hinzu
-function BewerbungPersonAddStudiengang($studiengang_kz, $anmerkung, $person, $studiensemester_kurzbz, $orgform_kurzbz)
+function BewerbungPersonAddStudiengang($studiengang_kz, $anmerkung, $person, $studiensemester_kurzbz, $orgform_kurzbz, $sprache)
 {
 	//PreStudent_id des aktuellsten PreStudenten (hoechste ID) ermitteln und Interessentenstatus zu diesem hinzufuegen,
 	//sonst nach irgendeiner prestudent_id suchen, um dessen ZGV uebernehmen zu koennen.
 	$student = new student();
 	$std = $student->load_person($person->person_id, $studiengang_kz);
-	$prestudent_id=0;
+	$prestudent_id = 0;
 	$zgv_code = '';
 	$zgvort = '';
 	$zgvdatum = '';
@@ -41,16 +41,16 @@ function BewerbungPersonAddStudiengang($studiengang_kz, $anmerkung, $person, $st
 	$pre->getPrestudenten($person->person_id); //Alle Prestudenten der Person laden
 	foreach ($pre->result AS $row)
 	{
-		//Wenn Person schon Prestudent in dem Studiengang war, hoechste prestudent_id ermittel (die nicht jene des Studenten-Datensatzes war) und bei diesem spaeter einen neuen Status hinzufuegen
-		if($row->studiengang_kz==$studiengang_kz && $row->prestudent_id > $prestudent_id && $row->prestudent_id!=$student->prestudent_id)
-			$prestudent_id=$row->prestudent_id;
+		//Wenn Person schon Prestudent in dem Studiengang war, hoechste prestudent_id ermitteln (die nicht jene des Studenten-Datensatzes war) und bei diesem spaeter einen neuen Status hinzufuegen
+		if($row->studiengang_kz == $studiengang_kz && $row->prestudent_id > $prestudent_id && $row->prestudent_id != $student->prestudent_id)
+			$prestudent_id = $row->prestudent_id;
 	}
 	//Wenn die Person noch kein Student in diesem Studiengang war, nach irgendeiner prestudent_id suchen, um dessen ZGV uebernehmen zu koennen
-	if($prestudent_id==0)
+	if($prestudent_id == 0 && isset($pre->result[0]))
 	{
 		if ($pre->result[0]->prestudent_id!='')
 		{
-			$prestudent_help=$pre->result[0]->prestudent_id;
+			$prestudent_help = $pre->result[0]->prestudent_id;
 		
 			$prestudent_zgv = new prestudent();
 			$prestudent_zgv->load($prestudent_help);
@@ -67,7 +67,7 @@ function BewerbungPersonAddStudiengang($studiengang_kz, $anmerkung, $person, $st
 		
 	}
 	
-	if($prestudent_id==0) //Wenn kein PreStudent-Datensatz gefunden wurde, neuen Prestudenten anlegen
+	if($prestudent_id == 0) //Wenn kein PreStudent-Datensatz gefunden wurde, neuen Prestudenten anlegen
 	{
 		if($std) //Wenn Person schon Student war, ZGV-Daten von dort holen
 		{	
@@ -112,21 +112,15 @@ function BewerbungPersonAddStudiengang($studiengang_kz, $anmerkung, $person, $st
 	}
 
 	// Richtigen Studienplan ermitteln
-	// Wenn kein passender Studienplan gefunden wird, wird es weiter mit weniger Optionen probiert,
-	// bis ein passender gefunden wurde. Wird gar kein Studienplan gefunden, wird er NULL gesetzt.
 	$studienplan = new studienplan();
-	$studienplan->getStudienplaeneFromSem($studiengang_kz, $studiensemester_kurzbz, '1', $orgform_kurzbz);
-	if (!isset($studienplan->result[0]))
-		$studienplan->getStudienplaeneFromSem($studiengang_kz, $studiensemester_kurzbz, '', $orgform_kurzbz);
-	if (!isset($studienplan->result[0]))
-		$studienplan->getStudienplaeneFromSem($studiengang_kz, '', '', $orgform_kurzbz);
-	if (!isset($studienplan->result[0]))
-		$studienplan->getStudienplaeneFromSem($studiengang_kz);
-	
+	$studienplan->getStudienplaeneFromSem($studiengang_kz, $studiensemester_kurzbz, '1', $orgform_kurzbz, $sprache);
+
+	// Wenn kein passender Studienplan gefunden wird, wird er NULL gesetzt
 	if (isset($studienplan->result[0]))
 		$studienplan_id = $studienplan->result[0]->studienplan_id;
-	else 
+	else
 		$studienplan_id = '';
+
 	// Interessenten Status anlegen
 	$prestudent_status = new prestudent();
 	$prestudent_status->load($prestudent_id);
@@ -467,4 +461,88 @@ function BewerbungGetGemeinden($plz)
 	else
 		return false;
 }
-?>
+
+function getBewerbungszeitraum($studiengang_kz, $studiensemester, $studienplan_id)
+{
+	global $p, $datum;
+	$tage_bis_fristablauf = '';
+	$fristAbgelaufen = false;
+	$bewerbungszeitraum = '';
+	
+	$bewerbungsfristen = new bewerbungstermin();
+	$bewerbungsfristen->getBewerbungstermine($studiengang_kz, $studiensemester, 'insertamum DESC', $studienplan_id);
+	
+	if (isset($bewerbungsfristen->result[0]))
+	{
+		$bewerbungsfristen = $bewerbungsfristen->result[0];
+		
+		// Wenn Nachfrist gesetzt und das Nachfrist-Datum befuellt ist, gilt die Nachfrist
+		// sonst das Endedatum, wenn eines gesetzt ist
+		if ($bewerbungsfristen->nachfrist == true && $bewerbungsfristen->nachfrist_ende != '')
+		{
+			$tage_bis_fristablauf = ((strtotime($bewerbungsfristen->nachfrist_ende) - time())/86400);
+			// Wenn die Frist in weniger als 7 Tagen ablaeuft oder vorbei ist, hervorheben
+			if ($tage_bis_fristablauf > 7)
+			{
+				$bewerbungszeitraum = '| '.$p->t('bewerbung/bewerbungsfrist').': '.$datum->formatDatum($bewerbungsfristen->nachfrist_ende, 'd.m.Y');
+			}
+			if ($tage_bis_fristablauf <= 7)
+			{
+				$bewerbungszeitraum = '| '.$p->t('bewerbung/bewerbungsfrist').': '.$datum->formatDatum($bewerbungsfristen->nachfrist_ende, 'd.m.Y');
+				$bewerbungszeitraum .= '<br/><div class="label label-warning">
+											<span class="glyphicon glyphicon-warning-sign"></span>
+											&nbsp;&nbsp;'.$p->t('bewerbung/bewerbungsfristEndetInXTagen', array(floor($tage_bis_fristablauf))).'</div>';
+			}
+			if ($tage_bis_fristablauf <= 0)
+			{
+				$bewerbungszeitraum = '<br/><div class="label label-danger">
+											<span class="glyphicon glyphicon-warning-sign"></span>
+											&nbsp;&nbsp;'.$p->t('bewerbung/bewerbungsfristFuerStudiensemesterXAbgelaufen', array($studiensemester)).'</div>';
+				$fristAbgelaufen = true;
+			}
+			
+			// Wenn es eine Anmerkung zur Bewerbungsfrist gibt, diese auch anzeigen
+			if ($bewerbungsfristen->anmerkung != '')
+				$bewerbungszeitraum .= '<br><div class="panel panel-info"><div class="panel-heading">'.nl2br($bewerbungsfristen->anmerkung).'</div></div>';
+				
+		}
+		elseif ($bewerbungsfristen->ende != '')
+		{
+			$tage_bis_fristablauf = ((strtotime($bewerbungsfristen->ende) - time())/86400);
+			// Wenn die Frist in weniger als 7 Tagen ablaeuft oder vorbei ist, hervorheben
+			if ($tage_bis_fristablauf > 7)
+			{
+				$bewerbungszeitraum = '| '.$p->t('bewerbung/bewerbungsfrist').': '.$datum->formatDatum($bewerbungsfristen->ende, 'd.m.Y');
+			}
+			if ($tage_bis_fristablauf <= 7)
+			{
+				$bewerbungszeitraum = '| '.$p->t('bewerbung/bewerbungsfrist').': '.$datum->formatDatum($bewerbungsfristen->ende, 'd.m.Y');
+				$bewerbungszeitraum .= '<br/><div class="label label-warning">
+											<span class="glyphicon glyphicon-warning-sign"></span>
+											&nbsp;&nbsp;'.$p->t('bewerbung/bewerbungsfristEndetInXTagen', array(floor($tage_bis_fristablauf))).'</div>';
+			}
+			if ($tage_bis_fristablauf <= 0)
+			{
+				$bewerbungszeitraum = '<br/><div class="label label-danger">
+											<span class="glyphicon glyphicon-warning-sign"></span>
+											&nbsp;&nbsp;'.$p->t('bewerbung/bewerbungsfristFuerStudiensemesterXAbgelaufen', array($studiensemester)).'</div>';
+				$fristAbgelaufen = true;
+			}
+			// Wenn es eine Anmerkung zur Bewerbungsfrist gibt, diese auch anzeigen
+			if ($bewerbungsfristen->anmerkung != '')
+				$bewerbungszeitraum .= '<br><div class="panel panel-info"><div class="panel-heading">'.nl2br($bewerbungsfristen->anmerkung).'</div></div>';
+		}
+		// Wenn der Beginn der Bewerbungfrist in der Zukunft liegt
+		if ($bewerbungsfristen->beginn != '' && strtotime($bewerbungsfristen->beginn) > time())
+		{
+			$bewerbungszeitraum = '<br><div class="label label-success">
+										&nbsp;&nbsp;'.$p->t('bewerbung/bewerbungenFuerAb', array($studiensemester, $datum->formatDatum($bewerbungsfristen->beginn, 'd.m.Y'))).'</div>';
+			$fristAbgelaufen = true;
+		}
+	}
+	else
+		$bewerbungszeitraum = '';
+		
+		return array('bewerbungszeitraum' => $bewerbungszeitraum, 'frist_abgelaufen' => $fristAbgelaufen);
+}
+

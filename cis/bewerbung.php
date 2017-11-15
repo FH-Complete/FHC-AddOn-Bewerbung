@@ -1068,7 +1068,14 @@ $addStudiengang = filter_input(INPUT_POST, 'addStudiengang', FILTER_VALIDATE_BOO
 
 if($addStudiengang)
 {
-	$return = BewerbungPersonAddStudiengang($_POST['stgkz'], $_POST['anm'], $person, $_POST['studiensemester'], (isset($_POST['orgform'])?$_POST['orgform']:''));
+	$return = BewerbungPersonAddStudiengang(
+		$_POST['stgkz'], 
+		$_POST['anm'], 
+		$person, 
+		$_POST['studiensemester'], 
+		(isset($_POST['orgform'])?$_POST['orgform']:''), 
+		(isset($_POST['sprache'])?$_POST['sprache']:'')
+		);
 	if($return===true)
 		echo json_encode(array('status'=>'ok'));
 	else

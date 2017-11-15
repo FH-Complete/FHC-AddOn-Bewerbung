@@ -127,7 +127,7 @@ foreach($prestudent_help->result as $prest)
 		$button_class = 'btn-primary';
 		$bewerbungsfristen = new bewerbungstermin();
 		$bewerbungsfristen->getBewerbungstermine($prest->studiengang_kz, $row->studiensemester_kurzbz, 'insertamum DESC', $row->studienplan_id);
-			
+
 		if (isset($bewerbungsfristen->result[0]))
 		{
 			$bewerbungsfristen = $bewerbungsfristen->result[0];
