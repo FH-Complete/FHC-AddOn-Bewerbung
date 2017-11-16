@@ -21,7 +21,7 @@
 $addon_name = 'Bewerbung';
 
 // Versionsnummer des Addons
-$addon_version = '2.0';
+$addon_version = '2.1';
 
 // FH-Complete Min-Version
 $fhcomplete_target_version = '3.2';

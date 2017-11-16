@@ -1,5 +1,26 @@
 # Change Log
 
+## [2.1]
+
+### Added
+- Bewerbungsfristen werden bei Registration und hinzufügen von Studiengängen angezeigt und berücksichtigt
+- Auswahl der Studiengänge bei Registration berücksichtigt Attribut "onlinebewerbung" beim Studienplan
+
+### Fixed
+- 
+
+### Changed
+- Es gibt nun kein eigenes Auswahl-Modal mehr für verschiedene Orgformen. Diese werden wie in der Registration als aufklappende Optionen angezeigt
+- Die Auswahl der Studiengänge ist abhängig von ausgewähltem Studiensemester (je nach eingestellter Gültigkeit des Studienplans)
+- GUI-Änderung bei der Auflistung der Studiengänge um die Zugehörigkeit der Fristen besser hervor zu heben
+
+### Updateinfo
+- Die Gültigkeit der Studienpläne muss richtig gesetzt sein
+- Wenn Bewerbungsfristen eingetragen sind, werden diese Berücksichtigt
+- Das Attribut "Onlinebewerbung" beim **STUDIENPLAN** muss gesetzt sein, wenn er im Tool aufscheinen soll
+- Das Attribut "Onlinebewerbung" beim **Studiengang** hat weiterhin Gültigkeit und bestimmt, ob der Studiengang überhaupt aufscheint
+  Der Name des angezeigten Studiengangs kommt aus dem Studienplan mitt Fallback auf den Namen des Studiengangs
+
 ## [2.0.2]
 
 ### Added
