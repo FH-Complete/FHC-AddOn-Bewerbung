@@ -98,14 +98,18 @@ function checkPerson()
 function FensterOeffnen(adresse, width, height)
 {
 	width = (typeof width !== 'undefined') ?  width : 700;
-	height = (typeof height !== 'undefined') ?  height : 200;
+	height = (typeof height !== 'undefined') ?  height : 400;
 	MeinFenster = window.open(adresse, "Info", "width="+width+",height="+height+", resizable=yes, scrollbars=yes, titlebar=yes");
 	MeinFenster.focus();
 }
 
 function toggleDiv(div)
 {
-	$('#'+div).toggle();
+	var colspan = document.getElementById('document_table').rows[0].cells.length;
+	$('#nachgereicht_'+div).toggle();
+	$('#row_'+div).find('td').toggle();
+	$('#anmerkung_row_'+div).toggle();
+	$('#anmerkung_row_'+div).attr('colspan',colspan);
 }
 
 $(function() {

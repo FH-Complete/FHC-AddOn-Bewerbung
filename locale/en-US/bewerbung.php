@@ -40,6 +40,7 @@ $this->phrasen['bewerbung/captcha']='Please enter the characters shown in the pi
 $this->phrasen['bewerbung/andereGrafik']='Reload picture';
 $this->phrasen['bewerbung/datumFormat']='dd.mm.yyyy';
 $this->phrasen['bewerbung/datumUngueltig']='Date is invalid or out of range. Please enter a valid date in the format dd.mm.yyyy.';
+$this->phrasen['bewerbung/datumsformatUngueltig']='Date is invalid. Please enter a valid date in the format dd.mm.yyyy.';
 $this->phrasen['bewerbung/egal']='no preference';
 $this->phrasen['bewerbung/orgform']='Organizational structure';
 $this->phrasen['bewerbung/orgform/BB']='Part time';
@@ -108,7 +109,7 @@ $this->phrasen['bewerbung/dokumentErforderlich']='Required document';
 $this->phrasen['bewerbung/dokumentOffen']='Document not yet submitted (open)';
 $this->phrasen['bewerbung/dokumentNichtUeberprueft']='Document has been submitted but not yet examined';
 $this->phrasen['bewerbung/dokumentWirdNachgereicht']='Document will be submitted later';
-$this->phrasen['bewerbung/dokumentWurdeUeberprueft']='Document has already been examined';
+$this->phrasen['bewerbung/dokumentWurdeUeberprueft']='Document has been examined';
 $this->phrasen['bewerbung/dokumentHerunterladen']='Download document';
 $this->phrasen['bewerbung/abgegeben']='Submitted';
 $this->phrasen['bewerbung/upload']='Upload';
@@ -216,6 +217,25 @@ $this->phrasen['bewerbung/pflichtfelder']='Required';
 $this->phrasen['bewerbung/bitteGueltigeOesterreichischePlzEingeben']='Please enter a valid Austrian postcode';//nur grob uebersetzt
 $this->phrasen['bewerbung/plzMussGueltigSein']='Postcode must be a valid number';//nur grob uebersetzt
 $this->phrasen['bewerbung/plzUnbekannt']='Postcode unknown';//nur grob uebersetzt
+$this->phrasen['bewerbung/dateien']='Files(s)';
+$this->phrasen['bewerbung/dokumentWirdGeprueft']='Document in examination';
+$this->phrasen['bewerbung/dokumentUeberprueft']='Document examined';
+$this->phrasen['bewerbung/keineDateiAusgewaehlt']='No file selected or found';
+$this->phrasen['bewerbung/placeholderAnmerkungNachgereicht']='Please tell us when you expect to be able to upload the document and the Name of the school';//nur grob uebersetzt
+$this->phrasen['bewerbung/bitteAusstellungsnationAuswaehlen']='-- Please select the ausstellungsnation --';//nur grob uebersetzt
+$this->phrasen['bewerbung/sitzungAbgelaufen']='Seesion expired. Please log in again.';
+$this->phrasen['bewerbung/placeholderOrtNachgereicht']='Name of school (e.g.: TGM Wien)';//nur grob uebersetzt
+$this->phrasen['bewerbung/wirdNachgreichtAm']='Submitted on';//nur grob uebersetzt
+$this->phrasen['bewerbung/ausstellendeInstitution']='School';//nur grob uebersetzt
+$this->phrasen['bewerbung/dokumenteVollstaendig']='All required documents have been uploaded';//nur grob uebersetzt
+
+// Ausbildung
+$this->phrasen['bewerbung/menuAusbildung']='Ausbildung';
+$this->phrasen['bewerbung/ausbildung']='Ausbildung zu Ihrer Zugangsvoraussetzung';
+$this->phrasen['bewerbung/ausbildungSchule']='Name der Schule';
+$this->phrasen['bewerbung/ausbildungSchuleAdresse']='Adresse der Schule';
+$this->phrasen['bewerbung/paymentInfoText']='';
+
 $this->phrasen['bewerbung/bewerbungDerzeitNichtMoeglich']='Application currently not possible. Please contact the <a href="mailto:%s">Degree Program</a>';
 $this->phrasen['bewerbung/bewerbungenFuerAb']='Application for %s starting %s';
 $this->phrasen['bewerbung/erfolgreichBeworbenMail']='You have applied successfully. The administrative assistant responsible will contact you in the course of the next 10 working days.';
@@ -223,7 +243,7 @@ $this->phrasen['bewerbung/bewerbungsfrist']='Application deadline';
 $this->phrasen['bewerbung/bewerbungszeitraum']='Application period';
 $this->phrasen['bewerbung/bewerbungsfristAbgelaufen']='Application deadline expired';
 $this->phrasen['bewerbung/bewerbungAusserhalbZeitraum']='Your application for this degree program is out of period. Your application has not been sent.';
-$this->phrasen['bewerbung/unbegrenzt']='undefined';
+$this->phrasen['bewerbung/unbegrenzt']='open';
 $this->phrasen['bewerbung/bewerbungszeitraumStartetAm']='Application period starts %s';
 $this->phrasen['bewerbung/bewerbungsfristEndetInXTagen']='Application period ends in %s days';
 $this->phrasen['bewerbung/bewerbungsfristEndetHeute']='Application period ends today';
@@ -238,5 +258,4 @@ $this->phrasen['bewerbung/re_anrede']='Salutation';
 $this->phrasen['bewerbung/re_titel']='Titel';
 $this->phrasen['bewerbung/re_vorname']='Surname';
 $this->phrasen['bewerbung/re_nachname']='Name';
-
 ?>

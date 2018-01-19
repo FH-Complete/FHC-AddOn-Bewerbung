@@ -86,11 +86,23 @@ if(!defined('BEWERBERTOOL_ABSCHICKEN_ANMERKUNG') || BEWERBERTOOL_ABSCHICKEN_ANME
 //echo '<p>'.$p->t('bewerbung/erklaerungBewerbungAbschicken').'</p>';
 
 $disabled = 'disabled';
-if($status_person==true && $status_kontakt==true && $status_zahlungen==true && $status_reihungstest==true && $status_zgv_bak==true && $status_dokumente==true && $status_ausbildung == true)
-	$disabled = '';
+if(	$status_person == true && 
+	$status_kontakt == true && 
+	$status_zahlungen == true && 
+	$status_reihungstest == true && 
+	$status_zgv_bak == true && 
+	$status_dokumente == true && 
+	$status_ausbildung == true)
+		$disabled = '';
 
-if(CAMPUS_NAME=='FH Technikum Wien' && $status_person==true && $status_kontakt==true && $status_zahlungen==true && $status_reihungstest==true && $status_zgv_bak==true && $status_dokumente==false)
-	$disabled = '';
+/*if(CAMPUS_NAME == 'FH Technikum Wien' && 
+	$status_person == true && 
+	$status_kontakt == true && 
+	$status_zahlungen == true && 
+	$status_reihungstest == true && 
+	$status_zgv_bak == true && 
+	$status_dokumente == false)
+		$disabled = '';*/
 
 $prestudent_help= new prestudent();
 $prestudent_help->getPrestudenten($person->person_id);
@@ -184,7 +196,7 @@ foreach($prestudent_help->result as $prest)
 				$disabled_bewerbung = 'disabled';
 		}
 
-		if ($stg->typ=='m' && $status_zgv_mas==false)
+		if ($stg->typ == 'm' && $status_zgv_mas == false)
 			$disabled = 'disabled';
 		
 		$buttontext = $p->t('bewerbung/buttonBewerbungAbschicken').' ('.$stg->kurzbzlang.' '.$row->studiensemester_kurzbz.')';

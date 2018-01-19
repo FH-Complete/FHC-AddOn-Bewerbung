@@ -44,6 +44,7 @@ $this->phrasen['bewerbung/captcha']='Geben Sie bitte hier die Zeichen aus der Gr
 $this->phrasen['bewerbung/andereGrafik']='Andere Grafik';
 $this->phrasen['bewerbung/datumFormat']='tt.mm.jjjj';
 $this->phrasen['bewerbung/datumUngueltig']='Das Datumsformat ist ungültig oder liegt außerhalb des gültigen Bereichs. Bitte geben Sie ein gültiges Datum im Format tt.mm.jjjj ein.';
+$this->phrasen['bewerbung/datumsformatUngueltig']='Das Datumsformat ist ungültig. Bitte geben Sie ein gültiges Datum im Format tt.mm.jjjj ein.';
 $this->phrasen['bewerbung/egal']='gleichgültig';
 $this->phrasen['bewerbung/orgform']='Organisationsform';
 $this->phrasen['bewerbung/orgform/BB']='Berufsbegleitend';
@@ -222,6 +223,17 @@ $this->phrasen['bewerbung/pflichtfelder']='Pflichtfelder';
 $this->phrasen['bewerbung/bitteGueltigeOesterreichischePlzEingeben']='Bitte geben Sie eine gültige österreichische Postleitzahl ein';
 $this->phrasen['bewerbung/plzMussGueltigSein']='Postleitzahl muss eine gültige Nummer sein';
 $this->phrasen['bewerbung/plzUnbekannt']='Postleitzahl unbekannt';
+$this->phrasen['bewerbung/dateien']='Datei(en)';
+$this->phrasen['bewerbung/dokumentWirdGeprueft']='Dokument wird überprüft';
+$this->phrasen['bewerbung/dokumentUeberprueft']='Dokument überprüft';
+$this->phrasen['bewerbung/keineDateiAusgewaehlt']='Keine Datei zum Hochladen ausgewählt oder gefunden';
+$this->phrasen['bewerbung/placeholderAnmerkungNachgereicht']='Bitte geben Sie an, bis wann Sie das Dokument voraussichtlich nachreichen können und welche Institution das Dokument ausstellen wird';
+$this->phrasen['bewerbung/bitteAusstellungsnationAuswaehlen']='-- Bitte wählen Sie, in welchem Land das Dokument ausgestellt wurde --';
+$this->phrasen['bewerbung/sitzungAbgelaufen']='Die Sitzung ist abgelaufen. Bitte loggen Sie sich erneut ein';
+$this->phrasen['bewerbung/placeholderOrtNachgereicht']='Institution des Ausstellers (zB: TGM Wien)';
+$this->phrasen['bewerbung/wirdNachgreichtAm']='Wird nachgereicht am';
+$this->phrasen['bewerbung/ausstellendeInstitution']='Ausstellende Institution';
+$this->phrasen['bewerbung/dokumenteVollstaendig']='Alle erforderlichen Dokumente wurden hochgeladen';
 
 // Ausbildung
 $this->phrasen['bewerbung/menuAusbildung']='Ausbildung';
@@ -235,13 +247,14 @@ $this->phrasen['bewerbung/bewerbungsfrist']='Bewerbungsfrist';
 $this->phrasen['bewerbung/bewerbungszeitraum']='Bewerbungszeitraum';
 $this->phrasen['bewerbung/bewerbungsfristAbgelaufen']='Bewerbungsfrist abgelaufen';
 $this->phrasen['bewerbung/bewerbungAusserhalbZeitraum']='Ihre Bewerbung liegt außerhalb des Bewerbungszeitraums. Ihre Bewerbung wurde nicht verschickt.';
-$this->phrasen['bewerbung/unbegrenzt']='undefiniert';
+$this->phrasen['bewerbung/unbegrenzt']='offen';
 $this->phrasen['bewerbung/bewerbungszeitraumStartetAm']='Bewerbungszeitraum startet am %s';
 $this->phrasen['bewerbung/bewerbungsfristEndetInXTagen']='Bewerbungsfrist endet in %s Tagen';
 $this->phrasen['bewerbung/bewerbungsfristEndetHeute']='Bewerbungsfrist endet heute';
 $this->phrasen['bewerbung/bewerbungsfristFuerStudiensemesterXAbgelaufen']='Bewerbungsfrist für das %s ist abgelaufen';
 $this->phrasen['bewerbung/bewerbungDerzeitNichtMoeglich']='Bewerbung derzeit nicht möglich. Wenden Sie sich bitte direkt an den <a href="mailto:%s">Studiengang</a>';
 $this->phrasen['bewerbung/bewerbungenFuerAb']='Bewerbungen fürs %s ab %s';
+
 // Rechnungskontakt
 $this->phrasen['bewerbung/menuRechnungsKontaktinformationen']='Rechnungsdaten';
 $this->phrasen['bewerbung/rechnungsadresseInfoText']='Geben Sie hier bitte eine etwaige von Ihrer Heimatadresse abweichende Rechnungsadresse an (bitte vollständig ausfüllen)';

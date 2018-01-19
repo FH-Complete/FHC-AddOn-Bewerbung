@@ -37,12 +37,17 @@ require_once('../../../include/sprache.class.php');
 require_once('../../../include/benutzer.class.php');
 require_once('../../../include/konto.class.php');
 require_once('../include/functions.inc.php');
+require_once('../../../include/functions.inc.php');
 require_once('../bewerbung.config.inc.php');
+require_once ('../../../include/personlog.class.php');
 
 require_once '../../../include/securimage/securimage.php';
 
+session_cache_limiter('none'); //muss gesetzt werden sonst funktioniert der Download mit IE8 nicht
 session_start();
+
 $lang = filter_input(INPUT_GET, 'lang');
+$log = new personlog();
 
 if(isset($lang))
 {
@@ -74,6 +79,21 @@ $username = trim(filter_input(INPUT_POST, 'username'));
 $password = trim(filter_input(INPUT_POST, 'password'));
 $code = trim(filter_input(INPUT_GET, 'code'));
 
+// Erstellen eines Array mit allen Studiengängen
+$studiengaenge_obj = new studiengang();
+$studiengaenge_obj->getAll();
+$studiengaenge_arr = array();
+
+foreach ($studiengaenge_obj->result as $row)
+{
+	$studiengaenge_arr[$row->studiengang_kz]['kurzbz'] = $row->kurzbz;
+	$studiengaenge_arr[$row->studiengang_kz]['bezeichnung'] = $row->bezeichnung;
+	$studiengaenge_arr[$row->studiengang_kz]['english'] = $row->english;
+	$studiengaenge_arr[$row->studiengang_kz]['typ'] = $row->typ;
+	$studiengaenge_arr[$row->studiengang_kz]['orgform_kurzbz'] = $row->orgform_kurzbz;
+	$studiengaenge_arr[$row->studiengang_kz]['oe_kurzbz'] = $row->oe_kurzbz;
+}
+
 // Login gestartet
 if ($userid)
 {
@@ -86,6 +106,15 @@ if ($userid)
 	{
 		$_SESSION['bewerbung/user'] = $userid;
 		$_SESSION['bewerbung/personId'] = $person_id;
+		
+		$log->log(	$person_id,
+					'Action',
+					array('name'=>'Login with code','success'=>true,'message'=>'Login with access code'),
+					'bewerbung',
+					'bewerbung',
+					null,
+					'online'
+				);
 
 		header('Location: bewerbung.php');
 		exit;
@@ -110,6 +139,15 @@ elseif($username && $password)
 			{
 				$_SESSION['bewerbung/user'] = $userid;
 				$_SESSION['bewerbung/personId'] = $person_id;
+				
+				$log->log($person_id,
+					'Action',
+					array('name'=>'Login with user','success'=>true,'message'=>'Login with username and password'),
+					'bewerbung',
+					'bewerbung',
+					null,
+					'online'
+				);
 
 				header('Location: bewerbung.php');
 				exit;
@@ -244,11 +282,11 @@ elseif($username && $password)
 				if(isset($submit) || isset($resend_code))
 				{
 					// Pruefen, ob schon eine Bewerbung fuer diese Mailadresse existiert->Wenn ja, Code nochmal dorthin schicken
-					$return = check_load_bewerbungen($email);
+					$return = check_load_bewerbungen(trim($email));
 					if($return)
 					{
 						//Wenn es noch keinen Zugangscode für die Person gibt, generiere einen
-						if($return->zugangscode=='')
+						if($return->zugangscode == '')
 						{
 							$person = new person($return->person_id);
 
@@ -263,17 +301,49 @@ elseif($username && $password)
 							{
 								die($p->t('global/fehlerBeimSpeichernDerDaten'));
 							}
+							else 
+							{
+								// Logeintrag schreiben
+								$log->log($return->person_id,
+									'Action',
+									array('name'=>'Access code generated','success'=>true,'message'=>'Access code has been generated because none was present'),
+									'bewerbung',
+									'bewerbung',
+									null,
+									'online'
+								);
+							}
 						}
 						if (isset($resend_code))
 						{
 							$zugangscode = $return->zugangscode;
 							echo '<p class="alert alert-success">'.resendMail($zugangscode, $email).'</p>';
+							// Logeintrag schreiben
+							$log->log($return->person_id,
+								'Action',
+								array('name'=>'Access code requested','success'=>true,'message'=>'User requested for access code'),
+								'bewerbung',
+								'bewerbung',
+								null,
+								'online'
+							);
 							exit();
 						}
 						else
+						{
 							$message = '<p class="alert alert-danger" id="danger-alert">'.$p->t('bewerbung/mailadresseBereitsGenutzt',array($email)).'</p>
 							<button type="submit" class="btn btn-primary" value="Ja" onclick="document.RegistrationLoginForm.action=\''.basename(__FILE__).'?method=registration&ReSendCode\'; document.getElementById(\'RegistrationLoginForm\').submit();">'.$p->t('bewerbung/codeZuschicken').'</button>
 							<button type="submit" class="btn btn-primary" value="Nein" onclick="document.RegistrationLoginForm.email.value=\'\'; document.getElementById(\'RegistrationLoginForm\').submit();">'.$p->t('global/abbrechen').'</button>';
+							// Logeintrag schreiben
+							$log->log($return->person_id,
+								'Action',
+								array('name'=>'Attempt to register with existing mailadress','success'=>false,'message'=>'User tried to register with the existing mail adress '.$email),
+								'bewerbung',
+								'bewerbung',
+								null,
+								'online'
+							);
+						}
 
 					}
 					else
@@ -334,6 +404,15 @@ elseif($username && $password)
 								die($p->t('global/fehlerBeimSpeichernDerDaten'));
 							}
 
+							// Logeintrag schreiben
+							$log->log($person->person_id,
+								'Processstate',
+								array('name'=>'New registration','message'=>'Person registered in application tool'),
+								'bewerbung',
+								'bewerbung',
+								null,
+								'online');
+
 							if(BEWERBERTOOL_STUDIENAUSWAHL_ANZEIGEN && count($studiengaenge) < ANZAHL_PREINTERESSENT)
 							{
 								$anzStg = count($studiengaenge);
@@ -384,6 +463,17 @@ elseif($username && $password)
 									if(!$prestudent_status->save_rolle())
 									{
 										die($p->t('global/fehlerBeimSpeichernDerDaten'));
+									}
+									else 
+									{
+										// Logeintrag schreiben
+										$log->log($person->person_id,
+											'Action',
+											array('name'=>'New PreStudent','success'=>true,'message'=>'New PreStudent for '.$studiengaenge_arr[$studiengaenge[$i]]['bezeichnung'].' ('.$orgform[$studiengaenge[$i]].') Studienplan '.$studienplan_id.' saved'),
+											'bewerbung',
+											'bewerbung',
+											$studiengaenge_arr[$studiengaenge[$i]]['oe_kurzbz'],
+											'online');
 									}
 									if (defined('BEWERBERTOOL_KONTOBELASTUNG_BUCHUNGSTYP') && BEWERBERTOOL_KONTOBELASTUNG_BUCHUNGSTYP != '')
 									{
@@ -567,12 +657,25 @@ elseif($username && $password)
 						</label>
 						<div class="col-sm-7" id="liste-studiengaenge">
 							<?php
+							// Zuerst sollen Bachelor- und Master-Studiengänge angezeigt werden, danach alle Anderen
+							if ($sprache == DEFAULT_LANGUAGE)
+								$order = "	CASE tbl_studiengang.typ
+												WHEN 'b' THEN 1
+												WHEN 'm' THEN 2
+												ELSE 3
+											END, tbl_lgartcode.bezeichnung ASC, studiengangbezeichnung";
+							else
+								$order = "	CASE tbl_studiengang.typ
+												WHEN 'b' THEN 1
+												WHEN 'm' THEN 2
+												ELSE 3
+											END, tbl_lgartcode.bezeichnung ASC, studiengangbezeichnung_englisch";
 							$stg = new studiengang();
-							$stg->getAllForOnlinebewerbung();
+							$stg->getAllForOnlinebewerbung($order);
 
 							$stghlp = new studiengang();
 							$stghlp->getLehrgangstyp();
-							$lgtyparr=array();
+							$lgtyparr = array();
 							foreach($stghlp->result as $row)
 								$lgtyparr[$row->lgartcode]=$row->bezeichnung;
 
@@ -925,7 +1028,7 @@ elseif($username && $password)
 				<?php echo $message;
 
 				$email = filter_input(INPUT_POST, 'email');
-				$return = check_load_bewerbungen($email);
+				$return = check_load_bewerbungen(trim($email));
 				$resend_code = filter_input(INPUT_POST, 'resend_code');
 				$orgform_kurzbz = filter_input(INPUT_GET, 'orgform_kurzbz');
 				if($email!='')
@@ -950,11 +1053,32 @@ elseif($username && $password)
 								{
 									die($p->t('global/fehlerBeimSpeichernDerDaten'));
 								}
+								else 
+								{
+									// Logeintrag schreiben
+									$log->log($return->person_id,
+										'Action',
+										array('name'=>'Access code generated','success'=>true,'message'=>'Access code has been generated because none was present'),
+										'bewerbung',
+										'bewerbung',
+										null,
+										'online'
+									);
+								}
 							}
 							if($return)
 							{
 								$zugangscode = $return->zugangscode;
 								echo '<p class="alert alert-success"><button type="button" class="close" data-dismiss="alert">x</button>'.sendMail($zugangscode, $email, $return->person_id).'</p>';
+								// Logeintrag schreiben
+								$log->log($return->person_id,
+									'Action',
+									array('name'=>'Access code sent','success'=>true,'message'=>'User requested his access code'),
+									'bewerbung',
+									'bewerbung',
+									null,
+									'online'
+								);
 							}
 							else
 								echo '<p class="alert alert-danger"><button type="button" class="close" data-dismiss="alert">x</button>'.$p->t('bewerbung/keinCodeVorhanden').'</p>';

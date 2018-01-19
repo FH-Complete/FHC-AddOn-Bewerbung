@@ -9,16 +9,15 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  * Authors: Robert Hofer <robert.hofer@technikum-wien.at>
  */
-
-if(!isset($person_id))
+if (! isset($person_id))
 {
 	die($p->t('bewerbung/ungueltigerZugriff'));
 }
@@ -28,37 +27,61 @@ if(!isset($person_id))
 	<h2><?php echo $p->t('bewerbung/menuDokumente'); ?></h2>
 	<p><?php echo $p->t('bewerbung/bitteDokumenteHochladen'); ?></p>
 	<a href="dms_akteupload.php?person_id=<?php echo $person_id ?>"
-	   onclick="FensterOeffnen(this.href); return false;">
+		onclick="FensterOeffnen(this.href); return false;">
 		<?php echo $p->t('bewerbung/linkDokumenteHochladen'); ?>
 	</a>
 	<p><?php echo $p->t('bewerbung/dokumenteZumHochladen'); ?></p>
 	<?php
-	$db = new basis_db();
-
-	$dokumente_person = new dokument();
-	$dokumente_person->getAllDokumenteForPerson($person_id, true);
 	
-	//Sortiert die Dokumente je nach Sprache alphabetisch nach bezeichnung_mehrsprachig
+	if ($save_error_dokumente === false)
+	{
+		echo '	<div class="alert alert-success" id="success-alert_daten">
+				<button type="button" class="close" data-dismiss="alert">x</button>
+					<strong>'.$message.'</strong>
+				</div>';
+	}
+	elseif ($save_error_dokumente === true)
+	{
+		echo '	<div class="alert alert-danger" id="danger-alert">
+			<button type="button" class="close" data-dismiss="alert">x</button>
+				<strong>'.$p->t('global/fehleraufgetreten').' </strong>'.$message.'
+			</div>';
+	}
+	
+	$db = new basis_db();
+	
+	// @todo: index tbl_akte in DB_UPDATE
+	
+	// Sortiert die Dokumente je nach Sprache alphabetisch nach bezeichnung_mehrsprachig
+	// Pflichtdokumente werden als erstes ausgegeben
+	// Gepruefte Dokumente werden nach unten sortiert
 	function sortDocuments($a, $b)
 	{
-		return strcmp(strtolower($a->bezeichnung_mehrsprachig[getSprache()]), strtolower($b->bezeichnung_mehrsprachig[getSprache()]));
+		
+		$c = $a->anzahl_akten_formal_geprueft - $b->anzahl_akten_formal_geprueft;
+		$c .= $a->anzahl_dokumente_akzeptiert - $b->anzahl_dokumente_akzeptiert;
+		$c .= $a->anzahl_akten_vorhanden - $b->anzahl_akten_vorhanden;
+		$c .= $b->pflicht - $a->pflicht;
+		$c .= strcmp(strtolower($a->bezeichnung_mehrsprachig[getSprache()]), strtolower($b->bezeichnung_mehrsprachig[getSprache()]));
+		return $c;
 	}
-	usort($dokumente_person->result, "sortDocuments");
-
-	$studiensemester = new studiensemester();
-	$studiensemester->getStudiensemesterOnlinebewerbung();
-	$stsem_array = array();
-	foreach($studiensemester->studiensemester AS $s)
-		$stsem_array[] = $s->studiensemester_kurzbz;
+	usort($dokumente_abzugeben, "sortDocuments");
+	
+// 	$studiensemester = new studiensemester();
+// 	$studiensemester->getStudiensemesterOnlinebewerbung();
+// 	$stsem_array = array();
+// 	foreach ($studiensemester->studiensemester as $s)
+// 		$stsem_array[] = $s->studiensemester_kurzbz;
 	?>
 
 	<div class="">
-		<table class="table table-striped">
+		<table id="document_table" class="table table-striped">
 			<thead>
 				<tr>
 					<th><?php echo $p->t('bewerbung/dokumentName'); ?></th>
 					<th><?php echo $p->t('bewerbung/details');?></th>
-					<th><?php echo $p->t('bewerbung/status'); ?></th>
+<!--					<th><?php echo $p->t('bewerbung/status'); ?></th>-->
+					<th><?php echo $p->t('bewerbung/dateien'); ?></th>
 					<th><?php echo $p->t('global/aktion'); ?></th>
 					<th></th>
 					<th><?php echo $p->t('bewerbung/benoetigtFuer'); ?></th>
@@ -66,232 +89,355 @@ if(!isset($person_id))
 			</thead>
 			<tbody>
 		<?php
-		foreach($dokumente_person->result as $dok):
-			$akte = new akte;
-			$akte->getAkten($person_id, $dok->dokument_kurzbz);
+		foreach ($dokumente_abzugeben as $dok)
+		:
+			if ($dok->pflicht === true || check_person_statusbestaetigt($person_id, 'Interessent', '', '')):
+				
+			$beschreibung = '';
+			$aktenliste = '';
+			$aktion = '';
+			$div = '';
+// 			$zeilenumbruch = '<br>';
+			
+			// Abfragen, bei welchen Studiengaengen das Dokument benoetigt wird
+			// @todo: Studiengangsnamen auch aus Studienplan holen? -> Nochmal checken, wie das bei den anderen Tabs ist
+			$benoetigtStudiengang = new dokument();
+			$benoetigtStudiengang->getStudiengaengeDokument($dok->dokument_kurzbz, $person_id);
 
-			$qry = "SELECT DISTINCT studiengang_kz,typ||kurzbz AS kuerzel, bezeichnung, english FROM public.tbl_dokumentstudiengang
-				JOIN public.tbl_prestudent USING (studiengang_kz)
-				JOIN public.tbl_prestudentstatus USING (prestudent_id)
-				JOIN public.tbl_studiengang USING (studiengang_kz)
-				WHERE dokument_kurzbz = ".$db->db_add_param($dok->dokument_kurzbz)."
- 				AND person_id =".$db->db_add_param($person_id, FHC_INTEGER)."
- 				AND tbl_prestudentstatus.status_kurzbz = 'Interessent'
- 				/*AND tbl_prestudentstatus.studiensemester_kurzbz IN (".$db->implode4SQL($stsem_array).") */
- 				ORDER BY kuerzel";
-
-			$ben = "";
+			$benoetigt_fuer = "";
 			$ben_bezeichnung = array();
 			$ben_bezeichnung['German'] = '';
 			$ben_bezeichnung['English'] = '';
 			$ben_kz = array();
 			$detailstring = '';
-			if($result = $db->db_query($qry))
+			foreach ($benoetigtStudiengang->result as $row)
 			{
-				while($row = $db->db_fetch_object($result))
+				
+				//if ($dok->pflicht === true || check_person_statusbestaetigt($person_id, 'Interessent', '', $row->studiengang_kz))
 				{
-					if($ben!='')
-						$ben.=', ';
-
+					if ($benoetigt_fuer != '')
+						$benoetigt_fuer .= ', ';
+					
 					$stg = new studiengang();
 					$stg->load($row->studiengang_kz);
-
-					$ben .= $stg->kuerzel;
+					
+					$benoetigt_fuer .= $stg->kuerzel;
 					$ben_bezeichnung['German'][] .= $stg->bezeichnung;
 					$ben_bezeichnung['English'][] .= $stg->english;
 					$ben_kz[] .= $row->studiengang_kz;
 				}
-			}
+// 				else 
+// 				{
+// 					$benoetigt_fuer .= '';
+// 					$ben_bezeichnung['German'][] .= '';
+// 					$ben_bezeichnung['English'][] .= '';
+// 				}
 
+			}
+			
+			// Detailbeschreibungen zu Dokumenten holen
 			$details = new dokument();
 			$details->getBeschreibungenDokumente($ben_kz, $dok->dokument_kurzbz);
-			$i=0;
-
-			foreach($details->result AS $row)
+			$zaehlerBeschreibungAllg = 0;
+			
+			foreach ($details->result as $row)
 			{
 				$stg = new studiengang();
 				$stg->load($row->studiengang_kz);
 
-				if($detailstring!='' && ($row->beschreibung_mehrsprachig[getSprache()]!='' || ($row->dokumentbeschreibung_mehrsprachig[getSprache()]!='' && $i==0)))
-					$detailstring .= '<br/><hr/>';
-				if($row->dokumentbeschreibung_mehrsprachig[getSprache()]!='' && $i==0)
+				if ($row->dokumentbeschreibung_mehrsprachig[getSprache()] != '' && $zaehlerBeschreibungAllg == 0)
 				{
-					$detailstring .= $row->dokumentbeschreibung_mehrsprachig[getSprache()];
-					//Allgemeine Dokumentbeschreibung nur einmal ausgeben
-					$i++;
+					$detailstring .= htmlspecialchars($row->dokumentbeschreibung_mehrsprachig[getSprache()]);
+					// Allgemeine Dokumentbeschreibung nur einmal ausgeben
+					$zaehlerBeschreibungAllg ++;
 				}
-				elseif ($row->beschreibung_mehrsprachig[getSprache()]!='')
+				if ($row->beschreibung_mehrsprachig[getSprache()] != '')
 				{
-					$detailstring .= '<b>'.$stg->kuerzel.'</b>: '.$row->beschreibung_mehrsprachig[getSprache()];
+					if ($detailstring != '')
+						$detailstring .= '<br/><hr/>';
+					$detailstring .= '<b>'.$stg->kuerzel.'</b>: '.htmlspecialchars($row->beschreibung_mehrsprachig[getSprache()]);
 				}
 				else
 					$detailstring .= '';
 			}
-
-			if($detailstring!='')
+			
+			if ($detailstring != '')
 				$beschreibung = '<button class="btn btn-md btn-info" data-toggle="popover" title="'.$p->t('bewerbung/details').'" data-trigger="focus" data-content="'.$detailstring.'">Details</button>';
 			else
 				$beschreibung = '';
-
-			$dokument = new dokument();
-			$style = '';
-			if($dok->pflicht==true)
-				$style = 'danger';
-			if(count($akte->result)>0)
+			
+			$akten = new akte();
+			$akten->getAkten($person_id, $dok->dokument_kurzbz);
+				
+			// Wenn mindestens eine Akte vorhanden ist
+			if ($dok->anzahl_akten_vorhanden > 0 || (isset($akten->result[0]) && $akten->result[0]->nachgereicht === true))
 			{
-				$akte_id = isset($akte->result[0]->akte_id)?$akte->result[0]->akte_id:'';
-
-				// check ob status "wird nachgereicht"
-				if($akte->result[0]->nachgereicht == true)
+				$aktenliste = '<ul class="list-unstyled">';
+				foreach ($akten->result as $akte)
 				{
-					// wird nachgereicht
-					$style = '';
-					$status = '<span class="glyphicon glyphicon-hourglass" aria-hidden="true" title="'.$p->t('bewerbung/dokumentWirdNachgereicht').'"></span>';
-					$nachgereicht_help = 'checked';
-					$div = "<form method='POST' action='".$_SERVER['PHP_SELF']."?active=dokumente'><span id='nachgereicht_".$dok->dokument_kurzbz."' style='display:true;'>".$akte->result[0]->anmerkung."</span></form>";
-					$aktion = '	<button type="button" title="'.$p->t('global/löschen').'" class="btn btn-default" onclick="location.href=\''.$_SERVER['PHP_SELF'].'?method=delete&akte_id='.$akte_id.'&active=dokumente\'; return false;">
-  									<span class="glyphicon glyphicon-remove" aria-hidden="true" title="'.$p->t('global/löschen').'"></span>
-								</button>';
-				}
-				else
-				{
-					if($dokument->akzeptiert($akte->result[0]->dokument_kurzbz,$person->person_id))
+					// Wenn mindestens eine Akte im Status "wird nachgereicht" ist, dann Button mit Sanduhr anzeigen. 
+					// Nachreichen nur moeglich, wenn noch keine Akten vorhanden sind
+					if ($akte->nachgereicht === true && $akte->inhalt == '' && $akte->dms_id == '')
 					{
-						// Dokument wurde bereits überprüft
-						$status = '<span class="glyphicon glyphicon-ok" aria-hidden="true" title="'.$p->t('bewerbung/abgegeben').'"></span>';
-						$nachgereicht_help = '';
-						$div = "<form method='POST' action='".$_SERVER['PHP_SELF']."&active=dokumente'>
-									<span id='nachgereicht_".$dok->dokument_kurzbz."' style='display:none;'>wird nachgereicht:<input type='checkbox' name='check_nachgereicht' ".$nachgereicht_help.">
-										<input type='text' size='15' maxlength='128' name='txt_anmerkung'>
-										<input type='submit' value='OK' name='submit_nachgereicht' class='btn btn-default'>
-									</span><input type='hidden' name='dok_kurzbz' value='".$dok->dokument_kurzbz."'>
-								<input type='hidden' name='akte_id' value='".$akte_id."'></form>";
-						//Beim Lichtbild wird aus cis/public/bild.php geladen und nicht aus dem DMS
-						if($akte->result[0]->dokument_kurzbz=='Lichtbil')
-						{
-							$aktion = '	<button type="button" title="'.$p->t('bewerbung/dokumentHerunterladen').'" class="btn btn-default" href="'.APP_ROOT.'cis/public/bild.php?src=person&person_id='.$person_id.'"  onclick="FensterOeffnen(\''.APP_ROOT.'cis/public/bild.php?src=person&person_id='.$person_id.'\'); return false;">
-	  										<span class="glyphicon glyphicon glyphicon-download-alt" aria-hidden="true" title="'.$p->t('bewerbung/dokumentHerunterladen').'"></span>
+						// wird nachgereicht
+						$aktion = '	<button type="button" 
+												title="'.$p->t('bewerbung/upload').'" 
+												class="btn btn-default" onclick="FensterOeffnen(\'dms_akteupload.php?person_id='.$person_id.'&dokumenttyp='.$dok->dokument_kurzbz.'\'); return false;">
+											<span class="glyphicon glyphicon-upload" aria-hidden="true" title="'.$p->t('bewerbung/upload').'"></span>
 										</button>';
-						}
-						else
-						{
-							$aktion = '	<button type="button" title="'.$p->t('bewerbung/dokumentHerunterladen').'" class="btn btn-default" href="'.APP_ROOT.'cms/dms.php?id='.$akte->result[0]->dms_id.'"  onclick="FensterOeffnen(\''.APP_ROOT.'cms/dms.php?id='.$akte->result[0]->dms_id.'&akte_id='.$akte_id.'\'); return false;">
-	  										<span class="glyphicon glyphicon glyphicon-download-alt" aria-hidden="true" title="'.$p->t('bewerbung/dokumentHerunterladen').'"></span>
-										</button>';
-						}
+						$aktenliste .= '<li>
+											<span class="glyphicon glyphicon-hourglass" aria-hidden="true" title="'.$p->t('bewerbung/dokumentWirdNachgereicht').'"></span>
+										</li>';
+						$div = '<form method="POST" action="'.$_SERVER['PHP_SELF'].'?active=dokumente">
+									<span id="nachgereicht_'.$akte->dokument_kurzbz.'" style="display:true;">
+										'.$p->t('bewerbung/wirdNachgreichtAm').': '.$datum->formatDatum($akte->nachgereicht_am, 'd.m.Y').'<br/>
+										'.$p->t('bewerbung/ausstellendeInstitution').': '.$akte->anmerkung.'</span>
+								</form>';
 					}
 					else
 					{
-						// Dokument hochgeladen ohne überprüfung der Assistenz*/
-						$style = '';
-						$status = '<span class="glyphicon glyphicon-eye-open" aria-hidden="true" title="'.$p->t('bewerbung/dokumentNichtUeberprueft').'"></span>';
-						$nachgereicht_help = '';
-						$div = "<form method='POST' action='".$_SERVER['PHP_SELF']."&active=dokumente'>
-									<span id='nachgereicht_".$dok->dokument_kurzbz."' style='display:none;'>wird nachgereicht:<input type='checkbox' name='check_nachgereicht' ".$nachgereicht_help.">
-										<input type='text' size='15' maxlength='128' name='txt_anmerkung'>
-										<input type='submit' value='OK' name='submit_nachgereicht' class='btn btn-default'>
-									</span>
-									<input type='hidden' name='dok_kurzbz' value='".$dok->dokument_kurzbz."'><input type='hidden' name='akte_id' value='".$akte_id."'>
-  								</form>";
-						$aktion = '	<button type="button" title="'.$p->t('global/löschen').'" class="btn btn-default" onclick="location.href=\''.$_SERVER['PHP_SELF'].'?method=delete&akte_id='.$akte_id.'&active=dokumente\'; return false;">
-  										<span class="glyphicon glyphicon-remove" aria-hidden="true" title="'.$p->t('global/löschen').'"></span>
-									</button>';
-						//Beim Lichtbild wird aus cis/public/bild.php geladen und nicht aus dem DMS
-						if($akte->result[0]->dokument_kurzbz=='Lichtbil')
+						if (akteAkzeptiert($akte->akte_id))
 						{
-							$aktion .= '	<button type="button" title="'.$p->t('bewerbung/dokumentHerunterladen').'" class="btn btn-default" href="'.APP_ROOT.'cis/public/bild.php?src=person&person_id='.$person_id.'"  onclick="FensterOeffnen(\''.APP_ROOT.'cis/public/bild.php?src=person&person_id='.$person_id.'\'); return false;">
-	  										<span class="glyphicon glyphicon glyphicon-download-alt" aria-hidden="true" title="'.$p->t('bewerbung/dokumentHerunterladen').'"></span>
-										</button>';
+							// Dokument wurde bereits überprüft. Nur Download zur Ansicht oder Upload eines neuen Dokuments (außer Lichtbild) moeglich
+
+							// Beim Lichtbild wird aus cis/public/bild.php geladen und nicht aus dem DMS
+							if ($akte->dokument_kurzbz == 'Lichtbil')
+							{
+								$aktion = '';
+								$aktenliste .= '<li title="'.$akte->titel.'">
+												<span class="glyphicon glyphicon-file" aria-hidden="true"></span>
+												  '.cutString($akte->titel, 25, '...').'  
+												<button type="button" 
+														title="'.$p->t('bewerbung/dokumentHerunterladen').'" 
+														class="btn btn-default btn-xs" href="'.APP_ROOT.'cis/public/bild.php?src=person&person_id='.$person_id.'" 
+														onclick="FensterOeffnen(\''.APP_ROOT.'cis/public/bild.php?src=person&person_id='.$person_id.'\'); return false;">
+													<span class="glyphicon glyphicon glyphicon-download-alt" aria-hidden="true" title="'.$p->t('bewerbung/dokumentHerunterladen').'"></span>
+												</button><br>
+												<span class="label label-success">'.$p->t('bewerbung/dokumentUeberprueft').'</span>
+											</li>';
+							}
+							else
+							{
+								// Auskommentiert, da BewerberInnen vorerst nur EIN Dokument pro Typ hochladen sollen
+								/*$aktion = '	<button type="button" 
+														title="'.$p->t('bewerbung/upload').'" 
+														class="btn btn-default" href="dms_akteupload.php?person_id='.$person_id.'&dokumenttyp='.$dok->dokument_kurzbz.'" 
+														onclick="FensterOeffnen(\'dms_akteupload.php?person_id='.$person_id.'&dokumenttyp='.$dok->dokument_kurzbz.'\'); return false;">
+													<span class="glyphicon glyphicon-upload" aria-hidden="true" title="'.$p->t('bewerbung/upload').'"></span>
+												</button>';*/
+								$aktion = '';
+								$aktenliste .= '<li title="'.$akte->titel.'">
+												<span class="glyphicon glyphicon-file" aria-hidden="true"></span>
+												  '.cutString($akte->titel, 25, '...').'  
+												<button type="button" 
+														title="'.$p->t('bewerbung/dokumentHerunterladen').'" 
+														class="btn btn-default btn-xs" href="'.APP_ROOT.'cms/dms.php?id='.$akte->dms_id.'" 
+														onclick="FensterOeffnen(\''.APP_ROOT.'cms/dms.php?id='.$akte->dms_id.'&akte_id='.$akte->akte_id.'\'); return false;">
+													<span class="glyphicon glyphicon glyphicon-download-alt" aria-hidden="true" title="'.$p->t('bewerbung/dokumentHerunterladen').'"></span>
+												</button><br>
+												<span class="label label-success">'.$p->t('bewerbung/dokumentUeberprueft').'</span> 
+											</li>';
+							}
+							$div = '<form method="POST" action="'.$_SERVER["PHP_SELF"].'&active=dokumente">
+										<span id="nachgereicht_'.$dok->dokument_kurzbz.'" style="display:none;">wird nachgereicht:
+											<input type="checkbox" name="check_nachgereicht">
+											<div class="input-group">
+												<input type="text" size="15" maxlength="128" name="txt_anmerkung">
+												<div class="input-group-btn">												
+												<input type="submit" value="OK" name="submit_nachgereicht" class="btn btn-default">
+												</div>
+											</div>
+										</span><input type="hidden" name="dok_kurzbz" value="'.$dok->dokument_kurzbz.'">
+									<input type="hidden" name="akte_id" value="'.$akte->akte_id.'"></form>';
 						}
 						else
 						{
-							$aktion .= '	<button type="button" title="'.$p->t('bewerbung/dokumentHerunterladen').'" class="btn btn-default" href="'.APP_ROOT.'cms/dms.php?id='.$akte->result[0]->dms_id.'"  onclick="FensterOeffnen(\''.APP_ROOT.'cms/dms.php?id='.$akte->result[0]->dms_id.'&akte_id='.$akte_id.'\'); return false;">
-  										<span class="glyphicon glyphicon glyphicon-download-alt" aria-hidden="true" title="'.$p->t('bewerbung/dokumentHerunterladen').'"></span>
-									</button>';
+							// Dokument hochgeladen ohne Ueberprüfung. Download moeglich, loeschen moeglich, neuer Upload moeglich (außer Lichtbild)
+							if ($akte->dokument_kurzbz == 'Lichtbil')
+							{
+								$aktion = '';
+							}
+							else 
+							{
+								// Auskommentiert, da BewerberInnen vorerst nur EIN Dokument pro Typ hochladen sollen
+								/*$aktion = '	<button type="button" 
+															title="'.$p->t('bewerbung/upload').'" 
+															class="btn btn-default" href="dms_akteupload.php?person_id='.$person_id.'&dokumenttyp='.$dok->dokument_kurzbz.'" 
+															onclick="FensterOeffnen(\'dms_akteupload.php?person_id='.$person_id.'&dokumenttyp='.$dok->dokument_kurzbz.'\'); return false;">
+						  								<span class="glyphicon glyphicon-upload" aria-hidden="true" title="'.$p->t('bewerbung/upload').'"></span>
+													</button>';*/
+								$aktion = '';
+							}
+							$aktenliste .= '<li title="'.$akte->titel.'">
+												<span class="glyphicon glyphicon-file" aria-hidden="true"></span>
+												  '.cutString($akte->titel, 25, '...').'  ';
+							// Beim Lichtbild wird aus cis/public/bild.php geladen und nicht aus dem DMS
+							if ($akte->dokument_kurzbz == 'Lichtbil')
+							{
+								$aktenliste .= '<button type="button" 
+														title="'.$p->t('bewerbung/dokumentHerunterladen').'" 
+														class="btn btn-default btn-xs" href="'.APP_ROOT.'cis/public/bild.php?src=person&person_id='.$person_id.'" 
+														onclick="FensterOeffnen(\''.APP_ROOT.'cis/public/bild.php?src=person&person_id='.$person_id.'\'); return false;">
+													<span class="glyphicon glyphicon glyphicon-download-alt" aria-hidden="true" title="'.$p->t('bewerbung/dokumentHerunterladen').'"></span>
+												</button>';
+							}
+							else 
+							{
+								$aktenliste .= '<button type="button" 
+														title="'.$p->t('bewerbung/dokumentHerunterladen').'" 
+														class="btn btn-default btn-xs" href="'.APP_ROOT.'cms/dms.php?id='.$akte->dms_id.'" 
+														onclick="FensterOeffnen(\''.APP_ROOT.'cms/dms.php?id='.$akte->dms_id.'&akte_id='.$akte->akte_id.'\'); return false;">
+													<span class="glyphicon glyphicon glyphicon-download-alt" aria-hidden="true" title="'.$p->t('bewerbung/dokumentHerunterladen').'"></span>
+												</button>';
+							}
+							$aktenliste .= '
+											<button type="button" 
+													title="'.$p->t('global/löschen').'" 
+													class="btn btn-default btn-xs" 
+													onclick="location.href=\''.$_SERVER['PHP_SELF'].'?method=delete&akte_id='.$akte->akte_id.'&active=dokumente\'; return false;">
+												<span class="glyphicon glyphicon-remove" aria-hidden="true" title="'.$p->t('global/löschen').'"></span>
+											</button><br> 
+											<span class="label label-warning">'.$p->t('bewerbung/dokumentWirdGeprueft').'</span>
+											</li>';
+							$div = '<form method="POST" action="'.$_SERVER["PHP_SELF"].'&active=dokumente">
+										<span id="nachgereicht_'.$dok->dokument_kurzbz.'" style="display:none;">wird nachgereicht:
+											<input type="checkbox" name="check_nachgereicht">
+											<div class="input-group">
+												<input type="text" size="15" maxlength="128" name="txt_anmerkung">
+												<div class="input-group-btn">												
+												<input type="submit" value="OK" name="submit_nachgereicht" class="btn btn-default">
+												</div>
+											</div>
+										</span>
+										<input type="hidden" name="dok_kurzbz" value="'.$dok->dokument_kurzbz.'"><input type="hidden" name="akte_id" value="'.$akte->akte_id.'">
+									</form>';
 						}
 					}
 				}
+				$aktenliste .= '</ul>';
 			}
-			//Fuer FHTW deaktiviert, damit Bewerber auch im Akzeptiert-Status Dokumente hochladen koennen, wenn noch keines hochgeladen war
-			//Wenn kein Dokument hochgeladen ist und trotzdem akzeptiert wurde
-			elseif(CAMPUS_NAME!='FH Technikum Wien' && $dokument->akzeptiert($dok->dokument_kurzbz,$person->person_id,$ben_kz))
+			// Fuer FHTW deaktiviert, damit Bewerber auch im Akzeptiert-Status Dokumente hochladen koennen, wenn noch keines hochgeladen war
+			// Wenn kein Dokument hochgeladen ist und trotzdem akzeptiert wurde
+			elseif (CAMPUS_NAME != 'FH Technikum Wien' && akteAkzeptiert($akte->akte_id))
 			{
-				$style = '';
-				$status = '<span class="glyphicon glyphicon-ok" aria-hidden="true" title="'.$p->t('bewerbung/abgegeben').'"></span>';
-				$nachgereicht_help = '';
-				$div = "<form method='POST' action='".$_SERVER['PHP_SELF']."&active=dokumente'>
-							<span id='nachgereicht_".$dok->dokument_kurzbz."' style='display:none;'>wird nachgereicht:
-								<input type='checkbox' name='check_nachgereicht' ".$nachgereicht_help.">
-								<input type='text' size='15' maxlength='128' name='txt_anmerkung'>
-								<input type='submit' value='OK' name='submit_nachgereicht' class='btn btn-default'>
-							</span><input type='hidden' name='dok_kurzbz' value='".$dok->dokument_kurzbz."'>
-							<input type='hidden' name='akte_id' value='".$akte_id."'>
-						</form>";
+				//$status = "<span class='glyphicon glyphicon-ok' aria-hidden='true' title='".$p->t("bewerbung/abgegeben")."'></span>";
+				$div = '<form method="POST" action="'.$_SERVER["PHP_SELF"].'&active=dokumente">
+							<span id="nachgereicht_'.$dok->dokument_kurzbz.'" style="display:none;">wird nachgereicht:
+								<input type="checkbox" name="check_nachgereicht">
+								<div class="input-group">
+									<input type="text" size="15" maxlength="128" name="txt_anmerkung">
+									<div class="input-group-btn">												
+									<input type="submit" value="OK" name="submit_nachgereicht" class="btn btn-default">
+									</div>
+								</div>
+							</span><input type="hidden" name="dok_kurzbz" value="'.$dok->dokument_kurzbz.'">
+							<input type="hidden" name="akte_id" value="'.$akte->akte_id.'">
+						</form>';
 				$aktion = '';
+				$aktenliste .= '<ul class="list-unstyled"><li>-</li></ul>';
 			}
 			else
 			{
 				// Dokument fehlt noch
-				$status = ' - ';
-				if ($dok->dokument_kurzbz == 'Lichtbil')
-				{
-					$aktion = '	<button title="'.$p->t('bewerbung/upload').'" type="button" class="btn btn-default" href="bildupload.php?person_id='.$person_id.'" onclick="FensterOeffnen(\'bildupload.php?person_id='.$person_id.'&dokumenttyp='.$dok->dokument_kurzbz.'\', 600, 700); return false;">
+				//$status = ' - ';
+				$aktenliste .= '<ul class="list-unstyled"><li>-</li></ul>';
+
+				$aktion = '	<button type="button" 
+										title="'.$p->t('bewerbung/upload').'" 
+										class="btn btn-default" onclick="FensterOeffnen(\'dms_akteupload.php?person_id='.$person_id.'&dokumenttyp='.$dok->dokument_kurzbz.'\'); return false;">
 	  								<span class="glyphicon glyphicon-upload" aria-hidden="true" title="'.$p->t('bewerbung/upload').'"></span>
 								</button>';
-				}
-				else 
+				
+				if (! defined('BEWERBERTOOL_DOKUMENTE_NACHREICHEN') || BEWERBERTOOL_DOKUMENTE_NACHREICHEN == true)
 				{
-					$aktion = '	<button title="'.$p->t('bewerbung/upload').'" type="button" class="btn btn-default" href="dms_akteupload.php?person_id='.$person_id.'&dokumenttyp='.$dok->dokument_kurzbz.'" onclick="FensterOeffnen(\'dms_akteupload.php?person_id='.$person_id.'&dokumenttyp='.$dok->dokument_kurzbz.'\'); return false;">
-	  								<span class="glyphicon glyphicon-upload" aria-hidden="true" title="'.$p->t('bewerbung/upload').'"></span>
+					// Nachreichbar nur, wenn das DB-Attribut "nachreichbar" true ist
+					if ($dok->nachreichbar === true)
+					{
+						$aktion .= '
+								<button type="button" 
+										title="'.$p->t('bewerbung/dokumentWirdNachgereicht').'" 
+										class="btn btn-default" onclick="toggleDiv(\''.$dok->dokument_kurzbz.'\');return false;">
+	  								<span class="glyphicon glyphicon-hourglass" aria-hidden="true" title="'.$p->t('bewerbung/dokumentWirdNachgereicht').'"></span>
 								</button>';
+					}
+					else 
+						$aktion .= '';
 				}
-
-				if(!defined('BEWERBERTOOL_DOKUMENTE_NACHREICHEN') || BEWERBERTOOL_DOKUMENTE_NACHREICHEN==true)
-				{
-					$aktion .='
-							<button title="'.$p->t('bewerbung/dokumentWirdNachgereicht').'" type="button" class="btn btn-default" onclick="toggleDiv(\'nachgereicht_'.$dok->dokument_kurzbz.'\');return false;">
-  								<span class="glyphicon glyphicon-hourglass" aria-hidden="true" title="'.$p->t('bewerbung/dokumentWirdNachgereicht').'"></span>
-							</button>';
-				}
-				$div = "<form method='POST' action='".$_SERVER['PHP_SELF']."?active=dokumente'>
-							<span id='nachgereicht_".$dok->dokument_kurzbz."' style='display:none;'>".$p->t('global/anmerkung').":
-								<input type='checkbox' name='check_nachgereicht' checked=\"checked\" style='display:none'>
-								<input id='anmerkung_".$dok->dokument_kurzbz."' type='text' size='15' maxlength='128' name='txt_anmerkung' onInput='zeichenCountdown(\"anmerkung_".$dok->dokument_kurzbz."\",128)'>
-								<span style='color: grey; display: inline-block; width: 30px;' id='countdown_anmerkung_".$dok->dokument_kurzbz."'>128</span>
-								<input type='submit' value='OK' name='submit_nachgereicht' class='btn btn-default'>
-							</span>
-							<input type='hidden' name='dok_kurzbz' value='".$dok->dokument_kurzbz."'>
-						</form>";
-
+				$div = '<form class="form-horizontal" method="POST" action="'.$_SERVER["PHP_SELF"].'?active=dokumente">
+							<span id="nachgereicht_'.$dok->dokument_kurzbz.'" style="display:none;">'.$p->t('bewerbung/placeholderAnmerkungNachgereicht').':
+							<input type="checkbox" name="check_nachgereicht" checked=\'checked\' style="display:none">
+							<div class="form-group">
+								<div class="row col-sm-12">
+									<input type="checkbox" name="check_nachgereicht" checked=\'checked\' style="display:none">
+									<div class="col-sm-3">
+										<input type="text" 
+													class="form-control" 
+													id="nachreichungam_'.$dok->dokument_kurzbz.'" 
+													name="nachreichungam"
+													autofocus="autofocus"
+													placeholder="'.$p->t('bewerbung/datumFormat').'">
+									</div>
+									<div class="col-sm-9">
+										<div class="input-group">
+											<input type="text" 
+													class="form-control" 
+													id="anmerkung_'.$dok->dokument_kurzbz.'" 
+													name="txt_anmerkung"
+													onInput="zeichenCountdown(\'anmerkung_'.$dok->dokument_kurzbz.'\',128)" 
+													placeholder="'.$p->t('bewerbung/placeholderOrtNachgereicht').'">
+											<span class="input-group-addon" style="color: grey;" id="countdown_anmerkung_'.$dok->dokument_kurzbz.'">128</span>
+											<div class="input-group-btn">
+												<input type="submit" value="OK" name="submit_nachgereicht" class="btn btn-default" onclick="return checkNachgereicht(\''.$dok->dokument_kurzbz.'\')">
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<input type="hidden" name="dok_kurzbz" value="'.$dok->dokument_kurzbz.'">
+						</form>';
 			}
+			
+			$style = '';
+				
+			// Wenn ein Dokument Pflicht ist und es noch keine Pruefung dazu gibt, wird es hervorgehoben
+			// Wenn es Pflicht ist und noch kein Upload erfolt ist, wird es auf jeden Fall hervorhegoben
+			if ($dok->pflicht === true && $dok->anzahl_akten_vorhanden == 0 && $dok->anzahl_akten_formal_geprueft == 0 && $dok->anzahl_dokumente_akzeptiert == 0)
+				$style = 'danger';
+			if ($dok->pflicht === true && $dok->anzahl_akten_vorhanden == 0)
+				$style = 'danger';
 
-			 ?>
+			echo '<tr id="row_'.$dok->dokument_kurzbz.'">
+					<td style="vertical-align: middle"	class="'.$style.'">'.$dok->bezeichnung_mehrsprachig[getSprache()];
+	
+					if($dok->pflicht)
+					{
+						echo '<span>*</span>';
+					}
+					echo'
+					</td>
 
-			<tr>
-				<td style="vertical-align: middle" class="<?php echo $style ?>">
-                    <?php
-					echo $dok->bezeichnung_mehrsprachig[getSprache()];
-                    ?>
-
-                    <?php if($dok->pflicht): ?>
-                        <span>*</span>
-                    <?php endif; ?>
-                </td>
-
-                <td style="vertical-align: middle" class="<?php echo $style ?>"><?php echo $beschreibung ?></td>
-				<td style="vertical-align: middle" class="<?php echo $style ?>"><?php echo $status ?></td>
-				<td style="vertical-align: middle" nowrap class="<?php echo $style ?>"><?php echo $aktion ?></td>
-				<td style="vertical-align: middle" class="<?php echo $style ?>"><?php echo $div ?></td>
-				<td style="vertical-align: middle" class="<?php echo $style ?>"><?php 	if (CAMPUS_NAME!='FH Technikum Wien')
-																							echo $ben ;
-																						else 
-																						{
-																							foreach ($ben_bezeichnung[getSprache()] as $value)
-																								echo '- '.$value.'<br/>';
-																						}
-																						?></td>
-			</tr>
-		<?php endforeach; ?>
+					<td style="vertical-align: middle"	class="'.$style.'">'.$beschreibung.'</td>
+					<!--<td style="vertical-align: middle"	class="'.$style.'">.$status.</td>-->
+					<td style="vertical-align: middle"	nowrap class="'.$style.'">'.$aktenliste.'</td>
+					<td style="vertical-align: middle"	nowrap class="'.$style.'">'.$aktion.'</td>
+					<td id="anmerkung_row_'.$dok->dokument_kurzbz.'" style="vertical-align: middle"	class="'.$style.'">'.$div.'</td>
+					<td style="vertical-align: middle"	class="'.$style.'">';
+			
+			if (CAMPUS_NAME != 'FH Technikum Wien')
+				echo $ben;
+			else
+			{
+				foreach ($ben_bezeichnung[getSprache()] as $value)
+				{
+					if ($value != '')
+						echo '- '.$value.'<br/>';
+				}
+			}
+			echo '</td>
+				</tr>';
+				
+		endif;
+		endforeach; ?>
 			</tbody>
 		</table>
 	</div>
@@ -299,32 +445,31 @@ if(!isset($person_id))
 	<h4><?php echo $p->t('bewerbung/legende'); ?></h4>
 	<table class="table">
 		<tr>
-			<td class="danger">
-				<span>&nbsp;*</span>
-			</td>
+			<td class="danger"><span>&nbsp;*</span></td>
 			<td><?php echo $p->t('bewerbung/dokumentErforderlich'); ?></td>
 		</tr>
 		<tr>
-			<td>
-				<span class="glyphicon glyphicon-upload" aria-hidden="true" title="<?php echo $p->t('bewerbung/dokumentOffen'); ?>"></span>
+			<td><span class="glyphicon glyphicon-upload" aria-hidden="true"
+				title="<?php echo $p->t('bewerbung/dokumentOffen'); ?>;"></span>
 			</td>
 			<td><?php echo $p->t('bewerbung/dokumentOffen'); ?></td>
 		</tr>
 		<tr>
-			<td>
-				<span class="glyphicon glyphicon glyphicon-download-alt" aria-hidden="true" title="<?php echo $p->t('bewerbung/dokumentHerunterladen'); ?>"></span>
+			<td><span class="glyphicon glyphicon glyphicon-download-alt"
+				aria-hidden="true"
+				title="<?php echo $p->t('bewerbung/dokumentHerunterladen'); ?>;"></span>
 			</td>
 			<td><?php echo $p->t('bewerbung/dokumentHerunterladen'); ?></td>
 		</tr>
 
-		<tr>
-			<td>
-				<span class="glyphicon glyphicon-eye-open" aria-hidden="true" title="<?php echo $p->t('bewerbung/dokumentNichtUeberprueft'); ?>"></span>
+		<!--<tr>
+			<td><span class="glyphicon glyphicon-eye-open" aria-hidden="true"
+				title="<?php echo $p->t('bewerbung/dokumentNichtUeberprueft'); ?>;"></span>
 			</td>
 			<td><?php echo $p->t('bewerbung/dokumentNichtUeberprueft'); ?></td>
-		</tr>
+		</tr>-->
 		<?php
-		if(!defined('BEWERBERTOOL_DOKUMENTE_NACHREICHEN') || BEWERBERTOOL_DOKUMENTE_NACHREICHEN==true)
+		if (! defined('BEWERBERTOOL_DOKUMENTE_NACHREICHEN') || BEWERBERTOOL_DOKUMENTE_NACHREICHEN == true)
 		{
 			echo '
 			<tr>
@@ -335,24 +480,64 @@ if(!isset($person_id))
 			</tr>';
 		}
 		?>
-		<tr>
-			<td>
-				<span class="glyphicon glyphicon-ok" aria-hidden="true" title="<?php echo $p->t('bewerbung/dokumentWurdeUeberprueft'); ?>"></span>
+		<!--<tr>
+			<td><span class="glyphicon glyphicon-ok" aria-hidden="true"
+				title="<?php echo $p->t('bewerbung/dokumentWurdeUeberprueft'); ?>;"></span>
 			</td>
 			<td><?php echo $p->t('bewerbung/dokumentWurdeUeberprueft'); ?></td>
-		</tr>
+		</tr>-->
 		<tr>
-			<td>
-				<span class="glyphicon glyphicon-remove" aria-hidden="true" title="<?php echo $p->t('global/löschen'); ?>"></span>
-			</td>
+			<td><span class="glyphicon glyphicon-remove" aria-hidden="true"
+				title="<?php echo $p->t('global/löschen'); ?>;"></span></td>
 			<td><?php echo $p->t('global/löschen'); ?></td>
 		</tr>
 	</table>
-	<button class="btn-nav btn btn-default" type="button" data-jump-tab="<?php echo $tabs[array_search('dokumente', $tabs)-1] ?>">
+	<button class="btn-nav btn btn-default" type="button"
+		data-jump-tab="<?php echo $tabs[array_search('dokumente', $tabs)-1] ?>">
 		<?php echo $p->t('global/zurueck') ?>
 	</button>
-	<button class="btn-nav btn btn-default" type="button" data-jump-tab="<?php echo $tabs[array_search('dokumente', $tabs)+1] ?>">
+	<button class="btn-nav btn btn-default" type="button"
+		data-jump-tab="<?php echo $tabs[array_search('dokumente', $tabs)+1] ?>">
 		<?php echo $p->t('bewerbung/weiter'); ?>
 	</button>
-	<br><?php //echo $message @todo: Braucht man das??><br/><br/>
+	<!--<br><?php echo $message ?><br />-->
+	<br />
+	<script type="text/javascript">
+	function checkNachgereicht(dokument)
+	{
+		var gebDat = document.getElementById('nachreichungam_'+dokument).value;
+		gebDat = gebDat.split(".");
+
+		if(gebDat.length !== 3)
+		{
+			alert("<?php echo $p->t('bewerbung/datumsformatUngueltig')?>");
+			return false;
+		}
+
+		if(gebDat[0].length !==2 && gebDat[1].length !== 2 && gebDat[2].length !== 4)
+		{
+			alert("<?php echo $p->t('bewerbung/datumsformatUngueltig')?>");
+			return false;
+		}
+
+		var date = new Date(gebDat[2], gebDat[1]-1, gebDat[0]);
+
+		gebDat[0] = parseInt(gebDat[0], 10);
+		gebDat[1] = parseInt(gebDat[1], 10);
+		gebDat[2] = parseInt(gebDat[2], 10);
+
+		if(!(date.getFullYear() === gebDat[2] && (date.getMonth()+1) === gebDat[1] && date.getDate() === gebDat[0]))
+		{
+			alert("<?php echo $p->t('bewerbung/datumsformatUngueltig')?>");
+			return false;
+		}
+
+		var anmerkung = document.getElementById('anmerkung_'+dokument).value;
+		if(anmerkung.length == 0)
+		{
+			alert("<?php echo $p->t('bewerbung/bitteAnmerkungEintragen')?>");
+			return false;
+		}
+	}
+	</script>
 </div>
