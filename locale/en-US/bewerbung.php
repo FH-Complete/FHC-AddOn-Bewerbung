@@ -228,6 +228,7 @@ $this->phrasen['bewerbung/placeholderOrtNachgereicht']='Name of school (e.g.: TG
 $this->phrasen['bewerbung/wirdNachgreichtAm']='Submitted on';//nur grob uebersetzt
 $this->phrasen['bewerbung/ausstellendeInstitution']='School';//nur grob uebersetzt
 $this->phrasen['bewerbung/dokumenteVollstaendig']='All required documents have been uploaded';//nur grob uebersetzt
+$this->phrasen['bewerbung/keinDokumententypUebergeben']='Document type is not set';
 
 // Ausbildung
 $this->phrasen['bewerbung/menuAusbildung']='Ausbildung';

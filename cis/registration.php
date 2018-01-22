@@ -1084,7 +1084,7 @@ elseif($username && $password)
 								echo '<p class="alert alert-danger"><button type="button" class="close" data-dismiss="alert">x</button>'.$p->t('bewerbung/keinCodeVorhanden').'</p>';
 						}
 						else
-							$message = '<p class="alert alert-danger" id="danger-alert">Fehler aufgetreten</p>';//@todo: Phrasenmodul
+							$message = '<p class="alert alert-danger" id="danger-alert">'.$p->t('global/fehleraufgetreten').'</p>';
 					}
 					else
 						echo '<p class="alert alert-danger"><button type="button" class="close" data-dismiss="alert">x</button>'.$p->t('bewerbung/keinCodeVorhanden').'</p>';

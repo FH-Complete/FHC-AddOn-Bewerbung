@@ -234,6 +234,7 @@ $this->phrasen['bewerbung/placeholderOrtNachgereicht']='Institution des Ausstell
 $this->phrasen['bewerbung/wirdNachgreichtAm']='Wird nachgereicht am';
 $this->phrasen['bewerbung/ausstellendeInstitution']='Ausstellende Institution';
 $this->phrasen['bewerbung/dokumenteVollstaendig']='Alle erforderlichen Dokumente wurden hochgeladen';
+$this->phrasen['bewerbung/keinDokumententypUebergeben']='Es wurde kein Dokumenttyp übergeben';
 
 // Ausbildung
 $this->phrasen['bewerbung/menuAusbildung']='Ausbildung';

@@ -77,7 +77,7 @@ $studiensemester_array = array();
 
 					$prestudent_status = new prestudent();
 					$prestatus_help = ($prestudent_status->getLastStatus($row->prestudent_id))?$prestudent_status->status_mehrsprachig[$sprache]:$p->t('bewerbung/keinStatus');
-					
+
 					// Bewerbungsstatus nicht abgeschickt
 					if ($prestudent_status->bewerbung_abgeschicktamum == '')
 						$bewerberstatus = $p->t('bewerbung/nichtAbgeschickt');
@@ -89,7 +89,10 @@ $studiensemester_array = array();
 					$bereits_angemeldet[$prestudent_status->studiensemester_kurzbz][]= $stg->studiengang_kz;
 
 					//Zaehlt die Anzahl an Bewerbungen in einem Studiensemester
-					if (in_array($prestudent_status->studiensemester_kurzbz, $stsem_bewerbung))
+					// Wenn ein Status Abgewiesen oder Abbrecher ist, zaehlt er nicht zu der Anzahl an Bewerbungen mit
+					if (in_array($prestudent_status->studiensemester_kurzbz, $stsem_bewerbung) &&
+						$prestudent_status->status_kurzbz != 'Abgewiesener' &&
+						$prestudent_status->status_kurzbz != 'Abbrecher')
 					{
 						if (!array_key_exists($prestudent_status->studiensemester_kurzbz, $anzahl_studiengaenge))
 							$anzahl_studiengaenge[$prestudent_status->studiensemester_kurzbz] = 0;
@@ -100,10 +103,23 @@ $studiensemester_array = array();
 							$studiengaengeBaMa[$prestudent_status->studiensemester_kurzbz][] = $row->studiengang_kz;
 					}
 
-					if($sprache!='German' && $stg->english!='')
-						$stg_bezeichnung = $stg->english;
-					else
-						$stg_bezeichnung = $stg->bezeichnung;
+					// Bezeichnung des Studiengangs über den Studienplan laden wenn vorhanden
+					if (isset($prestudent_status->studienplan_id) && $prestudent_status->studienplan_id != '')
+					{
+						$studienordnung = new studienordnung();
+						$studienordnung->getStudienordnungFromStudienplan($prestudent_status->studienplan_id);
+						if ($sprache != 'German' && $studienordnung->studiengangbezeichnung_englisch != '')
+							$stg_bezeichnung = $studienordnung->studiengangbezeichnung_englisch;
+						else
+							$stg_bezeichnung = $studienordnung->studiengangbezeichnung;
+					}
+					else 
+					{
+						if($sprache!='German' && $stg->english!='')
+							$stg_bezeichnung = $stg->english;
+						else
+							$stg_bezeichnung = $stg->bezeichnung;
+					}
 
 					$typ = new studiengang();
 					$typ->getStudiengangTyp($stg->typ);

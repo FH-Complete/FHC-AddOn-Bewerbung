@@ -462,7 +462,7 @@ if (isset($_POST['submitfile']))
 			}
 			else
 			{
-				$message .= $p->t('bewerbung/keinDokumententypUebergeben'); // @todo: Phrase
+				$message .= $p->t('bewerbung/keinDokumententypUebergeben');
 				$error = true;
 			}
 			
@@ -548,7 +548,7 @@ if (isset($_POST['submitfile']))
 					$message .= $p->t('global/erfolgreichgespeichert');
 					// Logeintrag schreiben
 					$log->log($person_id, 'Action', array(
-						'name' => 'New document uploaded',
+						'name' => 'Document ' . $akte->bezeichnung . ' uploaded',
 						'success' => true,
 						'message' => 'Document ' . $akte->bezeichnung . ' "' . $akte->titel . '" uploaded'
 					), 'bewerbung', 'bewerbung', null, 'online');

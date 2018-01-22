@@ -50,8 +50,6 @@ if (! isset($person_id))
 	
 	$db = new basis_db();
 	
-	// @todo: index tbl_akte in DB_UPDATE
-	
 	// Sortiert die Dokumente je nach Sprache alphabetisch nach bezeichnung_mehrsprachig
 	// Pflichtdokumente werden als erstes ausgegeben
 	// Gepruefte Dokumente werden nach unten sortiert
@@ -100,11 +98,11 @@ if (! isset($person_id))
 // 			$zeilenumbruch = '<br>';
 			
 			// Abfragen, bei welchen Studiengaengen das Dokument benoetigt wird
-			// @todo: Studiengangsnamen auch aus Studienplan holen? -> Nochmal checken, wie das bei den anderen Tabs ist
+			// @todo: Studiengangsnamen auch aus Studienplan holen? -> Falls noch benötigt, einfach Bezeichnung aus aktuellster Studienordnung holen 
 			$benoetigtStudiengang = new dokument();
 			$benoetigtStudiengang->getStudiengaengeDokument($dok->dokument_kurzbz, $person_id);
 
-			$benoetigt_fuer = "";
+			$benoetigt_fuer = '';
 			$ben_bezeichnung = array();
 			$ben_bezeichnung['German'] = '';
 			$ben_bezeichnung['English'] = '';

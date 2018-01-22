@@ -237,7 +237,7 @@ if ($person->load($person_id))
 			// Logeintrag schreiben
 			$log->log($person_id,
 				'Action',
-				array(	'name'=>'Lichtbild saved',
+				array(	'name'=>'Document Lichtbild uploaded',
 						'success'=>true,
 						'message'=>'Lichtbild has been saved to akte and person'),
 				'bewerbung',

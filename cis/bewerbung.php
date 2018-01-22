@@ -53,6 +53,7 @@ require_once ('../../../include/akte.class.php');
 require_once ('../../../include/mail.class.php');
 require_once ('../../../include/studiensemester.class.php');
 require_once ('../../../include/studienplan.class.php');
+require_once ('../../../include/studienordnung.class.php');
 require_once ('../../../include/basis_db.class.php');
 require_once ('../../../include/reihungstest.class.php');
 require_once ('../../../include/preinteressent.class.php');
@@ -169,7 +170,7 @@ if ($method == 'delete')
 				$message = $p->t('global/erfolgreichgelöscht');
 				// Logeintrag schreiben
 				$log->log($person_id, 'Action', array(
-					'name' => 'Document deleted',
+					'name' => 'Document ' . $akte->bezeichnung . ' deleted',
 					'success' => true,
 					'message' => 'Document ' . $akte->bezeichnung . ' "' . $akte->titel . '" deleted by user'
 				), 'bewerbung', 'bewerbung', null, 'online');
