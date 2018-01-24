@@ -1069,11 +1069,11 @@ $addStudiengang = filter_input(INPUT_POST, 'addStudiengang', FILTER_VALIDATE_BOO
 if($addStudiengang)
 {
 	$return = BewerbungPersonAddStudiengang(
-		$_POST['stgkz'], 
-		$_POST['anm'], 
-		$person, 
-		$_POST['studiensemester'], 
-		(isset($_POST['orgform'])?$_POST['orgform']:''), 
+		$_POST['stgkz'],
+		$_POST['anm'],
+		$person,
+		$_POST['studiensemester'],
+		(isset($_POST['orgform'])?$_POST['orgform']:''),
 		(isset($_POST['sprache'])?$_POST['sprache']:'')
 		);
 	if($return===true)
@@ -1331,9 +1331,9 @@ else
 		<meta http-equiv="X-UA-Compatible" content="chrome=1">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<title><?php echo $p->t('bewerbung/menuBewerbungFuerStudiengang') ?></title>
-		<link rel="stylesheet" type="text/css" href="../../../vendor/components/bootstrap/css/bootstrap.min.css">
+		<link rel="stylesheet" type="text/css" href="../../../vendor/twbs/bootstrap/dist/css/bootstrap.min.css">
 		<script type="text/javascript" src="../../../vendor/jquery/jqueryV1/jquery-1.12.4.min.js"></script>
-		<script type="text/javascript" src="../../../vendor/components/bootstrap/js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="../../../vendor/twbs/bootstrap/dist/js/bootstrap.min.js"></script>
 		<script src="../include/js/bewerbung.js"></script>
 
 		<script type="text/javascript">
@@ -1567,7 +1567,7 @@ function sendBewerbung($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz,
 
 	$person = new person();
 	$person->load($person_id);
-	
+
 	$studienplan_bezeichnung = '';
 	if ($studienplan_id != '')
 	{
@@ -1630,7 +1630,7 @@ function sendBewerbung($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz,
 		$email.= '<tr><td><b>'.$p->t('global/studiensemester').'</b></td><td>'.$studiensemester_kurzbz.'</td></tr>';
 		if ($studienplan_bezeichnung != '')
 			$email.= '<tr><td><b>'.$p->t('studienplan/studienplan').'</b></td><td>'.$studienplan_bezeichnung.'</td></tr>';
-		else 
+		else
 			$email.= '<tr><td><b>'.$p->t('studienplan/studienplan').'</b></td><td><span style="color: red">Es konnte kein passender Studienplan ermittelt werden</span></td></tr>';
 		$email.= '<tr><td><b>'.$p->t('global/geschlecht').'</b></td><td>'.($person->geschlecht=='m'?$p->t('bewerbung/maennlich'):$p->t('bewerbung/weiblich')).'</td></tr>';
 		$email.= '<tr><td><b>'.$p->t('global/titel').'</b></td><td>'.$person->titelpre.'</td></tr>';

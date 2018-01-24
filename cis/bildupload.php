@@ -51,7 +51,7 @@ echo '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www
 
 	<link rel="stylesheet" type="text/css" href="../../../vendor/components/jqueryui/themes/base/jquery-ui.min.css">
 	<link rel="stylesheet" type="text/css" href="../../../vendor/tomazdragar/SimpleCropper/css/jquery.Jcrop.css">
-	<link rel="stylesheet" type="text/css" href="../../../vendor/components/bootstrap/css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="../../../vendor/twbs/bootstrap/dist/css/bootstrap.min.css">
 
 	<script type="text/javascript" src="../../../vendor/jquery/jqueryV1/jquery-1.12.4.min.js"></script>
 	<script type="text/javascript" src="../../../vendor/christianbach/tablesorter/jquery.tablesorter.min.js"></script>
@@ -60,7 +60,7 @@ echo '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www
 	<script type="text/javascript" src="../../../vendor/jquery/sizzle/sizzle.js"></script>
 	<script type="text/javascript" src="../../../vendor/tapmodo/Jcrop/js/Jcrop.min.js"></script>
 	<script type="text/javascript" src="../../../vendor/tomazdragar/SimpleCropper/scripts/jquery.SimpleCropper.js"></script>
-	<script type="text/javascript" src="../../../vendor/components/bootstrap/js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="../../../vendor/twbs/bootstrap/dist/js/bootstrap.min.js"></script>
 
 	<title>'.$p->t('profil/Bildupload').'</title>
 	<script>

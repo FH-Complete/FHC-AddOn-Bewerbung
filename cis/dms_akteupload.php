@@ -74,10 +74,10 @@ echo '<!DOCTYPE HTML>
 		<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 		<title>'.$p->t('bewerbung/fileUpload').'</title>
-		<link rel="stylesheet" type="text/css" href="../../../vendor/components/bootstrap/css/bootstrap.min.css">
+		<link rel="stylesheet" type="text/css" href="../../../vendor/twbs/bootstrap/dist/css/bootstrap.min.css">
 		<link rel="stylesheet" type="text/css" href="../../../skin/fhcomplete.css">
 		<script type="text/javascript" src="../../../vendor/jquery/jqueryV1/jquery-1.12.4.min.js"></script>
-		<script type="text/javascript" src="../../../vendor/components/bootstrap/js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="../../../vendor/twbs/bootstrap/dist/js/bootstrap.min.js"></script>
 		<script>
 		function showExtensionInfo()
 		{
