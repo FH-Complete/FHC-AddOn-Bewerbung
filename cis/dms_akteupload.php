@@ -193,8 +193,9 @@ $PHP_SELF = $_SERVER['PHP_SELF']; ?>
 										$("#success-alert_dms_akteupload").fadeTo(500, 0).slideUp(500, function(){
 											$(this).remove();
 										});
-										location.reload(true);
-									}, 1500);
+										window.location.href = 'dms_akteupload.php?person_id=<?php echo $person_id; ?>';
+										window.opener.location = 'bewerbung.php?active=dokumente';
+									}, 1000);
 								}
 								else if (data.type == "error")
 								{
@@ -741,7 +742,7 @@ if ($person_id != '')
 			}
 			
 			if ($detailstring != '')
-				$detailDiv .= '<div id="details_'.$dok->dokument_kurzbz.'" class="datailDivs panel panel-info" style="'.$display.'"><div class="panel-heading">'.$detailstring.'</div></div>';
+				$detailDiv .= '<div id="details_'.$dok->dokument_kurzbz.'" class="datailDivs panel panel-default" style="'.$display.'"><div class="panel-heading">'.$detailstring.'</div></div>';
 	
 			$event = '	onclick="showAusstellungsnation('.($dok->ausstellungsdetails === true ? 'true' : 'false').'); showDetails(\''.$dok->dokument_kurzbz.'\')" 
 						onselect="showAusstellungsnation('.($dok->ausstellungsdetails === true ? 'true' : 'false').'); showDetails(\''.$dok->dokument_kurzbz.'\')"';

@@ -289,12 +289,15 @@ if (! isset($person_id))
 												</button>';
 							}
 							$aktenliste .= '
-											<button type="button" 
+											<form id="delete_akte_'.$akte->akte_id.'" method="POST" action="'.$_SERVER['PHP_SELF'].'?active=dokumente" style="display: inline">
+											<button type="submit" 
 													title="'.$p->t('global/löschen').'" 
 													class="btn btn-default btn-xs" 
-													onclick="location.href=\''.$_SERVER['PHP_SELF'].'?method=delete&akte_id='.$akte->akte_id.'&active=dokumente\'; return false;">
+													>
 												<span class="glyphicon glyphicon-remove" aria-hidden="true" title="'.$p->t('global/löschen').'"></span>
-											</button><br> 
+												<input type="hidden" name="method" value="delete">
+												<input type="hidden" name="akte_id" value="'.$akte->akte_id.'">
+											</button></form><br> 
 											<span class="label label-warning">'.$p->t('bewerbung/dokumentWirdGeprueft').'</span>
 											</li>';
 							$div = '<form method="POST" action="'.$_SERVER["PHP_SELF"].'&active=dokumente">

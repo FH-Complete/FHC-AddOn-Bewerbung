@@ -74,8 +74,8 @@ if (isset($_GET['logout']))
 }
 
 $person_id = (int) $_SESSION['bewerbung/personId'];
-$akte_id = isset($_GET['akte_id']) ? $_GET['akte_id'] : '';
-$method = isset($_GET['method']) ? $_GET['method'] : '';
+$akte_id = isset($_POST['akte_id']) ? $_POST['akte_id'] : '';
+$method = isset($_POST['method']) ? $_POST['method'] : '';
 $datum = new datum();
 $person = new person();
 
