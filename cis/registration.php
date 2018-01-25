@@ -177,8 +177,8 @@ elseif($username && $password)
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 		<meta name="robots" content="noindex">
-		<link href="../../../submodules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" type="text/css">
-		<link rel="stylesheet" type="text/css" href="../../../vendor/components/bootstrap/css/bootstrap.min.css">
+		<link href="../../../vendor/twbs/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+		<link rel="stylesheet" type="text/css" href="../../../vendor/twbs/bootstrap/dist/css/bootstrap.min.css">
 		<link href="../include/css/registration.css" rel="stylesheet" type="text/css">
 	</head>
 	<body class="main">
@@ -249,7 +249,7 @@ elseif($username && $password)
 						$std_semester = $stsem->studiensemester[0]->studiensemester_kurzbz;
 
 					$stg_auswahl = filter_input(INPUT_POST, 'stg');
-					
+
 					if(!is_array($studiengaenge))
 					{
 						$studiengaenge = array();
@@ -261,7 +261,7 @@ elseif($username && $password)
 				{
 					if (isset($stsem->studiensemester[0]))
 						$std_semester = $stsem->studiensemester[0]->studiensemester_kurzbz;
-					else 
+					else
 						$std_semester = null;
 				}
 
@@ -439,7 +439,7 @@ elseif($username && $password)
 									$studienplan = new studienplan();
 									$studienplan->getStudienplaeneFromSem($studiengaenge[$i], $std_semester, '1', $orgform[$studiengaenge[$i]]);
 
-									// Wenn kein passender Studienplan gefunden wird, wird er NULL gesetzt 
+									// Wenn kein passender Studienplan gefunden wird, wird er NULL gesetzt
 									if (isset($studienplan->result[0]))
 										$studienplan_id = $studienplan->result[0]->studienplan_id;
 									else
@@ -739,7 +739,7 @@ elseif($username && $password)
 								$fristAbgelaufen = false;
 								$class = '';
 								$stg_bezeichnung = '';
-								
+
 								// @todo: Was machen wir mit den Lehrgängen? Die sollten auch einen gültigen Studienplan haben, haben ihn aber nicht immer.
 								// Angezeigt werden müssen sie auf jeden Fall. Soll der Name dort immer aus dem Studiengang oder auch aus dem Studienplan kommen?
 								// Speichern wir sie auch ohne gültigen Studienplan?
@@ -752,7 +752,7 @@ elseif($username && $password)
 									if(count($orgformen_sprachen) > 1)
 									{
 										$modal = true;
-										
+
 										// Wenn mehr als 1 gueltiger Studienplan gefunden wird, Bezeichnung des Studiengangs laden
 										$bezeichnung_studiengang = new studiengang($result->studiengang_kz);
 										if($sprache != 'German' && $bezeichnung_studiengang->english != '')
@@ -767,9 +767,9 @@ elseif($username && $password)
 											$stg_bezeichnung = $studienplan[0]->studiengangbezeichnung_englisch;
 										else
 											$stg_bezeichnung = $studienplan[0]->studiengangbezeichnung;
-										
+
 										$stg_bezeichnung .= ' | <i>'.$p->t('bewerbung/orgform/'.$studienplan[0]->orgform_kurzbz).' - '.$p->t('bewerbung/'.$studienplan[0]->sprache).'</i>';
-										
+
 										// Bewerbungsfristen laden
 										$bewerbungszeitraum = getBewerbungszeitraum($result->studiengang_kz, $std_semester, $studienplan[0]->studienplan_id);
 										$stg_bezeichnung .= ' '.$bewerbungszeitraum['bewerbungszeitraum'];
@@ -793,14 +793,14 @@ elseif($username && $password)
 										$stg_bezeichnung = $bezeichnung_studiengang->english;
 									else
 										$stg_bezeichnung = $bezeichnung_studiengang->bezeichnung;
-										
+
 									// Wenn kein gueltiger Studienplan gefunden wird, ist die Registration nicht moeglich und es wird ein Infotext angezeigt
 									$fristAbgelaufen = true;
-									
+
 									$empf_array = array();
 									if(defined('BEWERBERTOOL_BEWERBUNG_EMPFAENGER'))
 										$empf_array = unserialize(BEWERBERTOOL_BEWERBUNG_EMPFAENGER);
-										
+
 									if(defined('BEWERBERTOOL_MAILEMPFANG') && BEWERBERTOOL_MAILEMPFANG!='')
 										$empfaenger = BEWERBERTOOL_MAILEMPFANG;
 									elseif(isset($empf_array[$result->studiengang_kz]))
@@ -841,7 +841,7 @@ elseif($username && $password)
 											<input class="'.$class.'" type="checkbox" name="studiengaenge[]" value="'.$result->studiengang_kz.'" '.$checked.' '.$disabled.'>
 											'.$stg_bezeichnung;
 								}
-								else 
+								else
 								{
 									echo '<div class="panel-body">
 									<div class="checkbox disabled">
@@ -852,13 +852,13 @@ elseif($username && $password)
 
 								if (!isset($anmerkungen[$result->studiengang_kz]) && in_array($result->studiengang_kz, $studiengaenge) && $orgform_kurzbz != '')
 									$anmerkungen[$result->studiengang_kz] = 'Prio: '.$orgform_kurzbz;
-								
+
 								if (!isset($orgform[$result->studiengang_kz]) && in_array($result->studiengang_kz, $studiengaenge) && $orgform_kurzbz != '')
 									$orgform[$result->studiengang_kz] = substr($orgform_kurzbz, 0, strpos($orgform_kurzbz, '_'));
-								
+
 								if(!isset($orgform[$result->studiengang_kz]) && count($orgformen_sprachen) == 1)
 									$orgform[$result->studiengang_kz] = key($orgformen_sprachen);
-									
+
 								echo '
 										<span class="badge" id="badge'.$result->studiengang_kz.'">'.(isset($anmerkungen[$result->studiengang_kz])?$anmerkungen[$result->studiengang_kz]:'').'</span>
 										<input type="hidden" id="anmerkung'.$result->studiengang_kz.'" name="anmerkung['.$result->studiengang_kz.']" value="'.(isset($anmerkungen[$result->studiengang_kz])?$anmerkungen[$result->studiengang_kz]:'').'">
@@ -913,7 +913,7 @@ elseif($username && $password)
 											{
 												$checked_orgform = 'checked="checked"';
 											}
-											
+
 											if (!$fristAbgelaufen)
 											{
 												echo '<div class="radio" onchange="changePrio('.$result->studiengang_kz.')">
@@ -922,7 +922,7 @@ elseif($username && $password)
 													'.$p->t('bewerbung/orgform/'.$row->orgform_kurzbz).' - '.$p->t('bewerbung/'.$row->sprache).$bewerbungszeitraum;
 												echo '</label>';
 											}
-											else 
+											else
 											{
 												echo '<div class="radio disabled">
 												<label>
@@ -952,23 +952,23 @@ elseif($username && $password)
 														'.$p->t('bewerbung/egal').'
 													</label>
 												</div>';
-										
+
 										foreach($studienplan as $row)
 										{
 											$fristAbgelaufen = false;
-											
+
 											// Bewerbungsfristen laden
 											$bewerbungszeitraum = '';
 											$bewerbungszeitraum_result = getBewerbungszeitraum($result->studiengang_kz, $std_semester, $row->studienplan_id);
 											$bewerbungszeitraum .= ' '.$bewerbungszeitraum_result['bewerbungszeitraum'];
 											$fristAbgelaufen = $bewerbungszeitraum_result['frist_abgelaufen'];
-											
+
 											$checked_orgform_alternativ = '';
 											if ((in_array($result->studiengang_kz, $studiengaenge) || $result->studiengang_kz == $stg_auswahl) && $orgform_alt[$result->studiengang_kz] == $row->orgform_kurzbz)
 											{
 												$checked_orgform_alternativ = 'checked="checked"';
 											}
-											
+
 											if (!$fristAbgelaufen)
 											{
 												echo '<div class="radio" onchange="changePrio('.$result->studiengang_kz.')">
@@ -1220,7 +1220,7 @@ elseif($username && $password)
 			//require('views/modal_sprache_orgform.php');
 		?>
 		<script type="text/javascript" src="../../../vendor/jquery/jqueryV1/jquery-1.12.4.min.js"></script>
-+		<script type="text/javascript" src="../../../vendor/components/bootstrap/js/bootstrap.min.js"></script>
++		<script type="text/javascript" src="../../../vendor/twbs/bootstrap/dist/js/bootstrap.min.js"></script>
 		<script type="text/javascript">
 
 			function changeSprache(sprache)
@@ -1477,7 +1477,7 @@ function sendMail($zugangscode, $email, $person_id=null)
 
 	if(defined('MAIL_DEBUG') && MAIL_DEBUG!='')
 		$msg .= "<br><br>Zugangscode: ".$zugangscode;
-	
+
 	return $msg;
 }
 function resendMail($zugangscode, $email, $person_id=null)
