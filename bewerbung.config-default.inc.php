@@ -40,4 +40,7 @@ define('BEWERBERTOOL_ERFOLGREICHBEWORBENMAIL', false);
 // RechnungsEmail: Kontakttyp: re_email
 define('BEWERBERTOOL_RECHNUNGSKONTAKT_ANZEIGEN', false);
 
+// Wenn ein Bewerber eine Bewerbung storniert, wird ein Status "Abgewiesener" angelegt
+// Dieser wird mit dem hier angegebenen Statusgrund versehen. Integer.
+define('BEWERBERTOOL_STORNIERUNG_STATUSGRUND_ID', '')
 ?>
