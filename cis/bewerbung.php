@@ -29,7 +29,7 @@ session_start();
 if (! isset($_SESSION['bewerbung/user']) || $_SESSION['bewerbung/user'] == '')
 {
 	$_SESSION['request_uri'] = $_SERVER['REQUEST_URI'];
-	
+
 	header('Location: registration.php?method=allgemein');
 	exit();
 }
@@ -153,10 +153,10 @@ if ($method == 'delete')
 			$save_error_dokumente = true;
 			die($p->t('global/fehlerBeimLadenDesDatensatzes'));
 		}
-		
+
 		$dms_id = $akte->dms_id;
 		$dms = new dms();
-		
+
 		if ($akte->delete($akte_id))
 		{
 			if (! $dms->deleteDms($dms_id))
@@ -245,10 +245,10 @@ if ($bewerbungStornieren && isset($_POST['prestudent_id']))
 
 if (isset($_GET['rt_id']))
 {
-	
+
 	$rt_id = filter_input(INPUT_GET, 'rt_id', FILTER_VALIDATE_INT);
 	$pre_id = filter_input(INPUT_GET, 'pre', FILTER_VALIDATE_INT);
-	
+
 	if (isset($_GET['delete']))
 	{
 		$prestudent = new prestudent();
@@ -256,7 +256,7 @@ if (isset($_GET['rt_id']))
 		{
 			die($p->t('global/fehlerBeimLadenDesDatensatzes'));
 		}
-		
+
 		foreach ($prestudent->result as $row)
 		{
 			if ($row->prestudent_id == $pre_id)
@@ -268,7 +268,7 @@ if (isset($_GET['rt_id']))
 				$prest->updateamum = date("Y-m-d H:i:s");
 				$prest->updatevon = 'online';
 				$prest->new = false;
-				
+
 				if (! $prest->save())
 				{
 					echo $p->t('global/fehlerBeimSpeichernDerDaten');
@@ -280,20 +280,20 @@ if (isset($_GET['rt_id']))
 	{
 		$reihungstest = new reihungstest();
 		$reihungstest->load($rt_id);
-		
+
 		if ($reihungstest->max_teilnehmer && $reihungstest->getTeilnehmerAnzahl($rt_id) >= $reihungstest->max_teilnehmer)
 		{
 			die($p->t('bewerbung/maxAnzahlTeilnehmer'));
 		}
-		
+
 		$timestamp = time();
-		
+
 		$prestudent = new prestudent();
 		if (! $prestudent->getPrestudenten($person_id))
 		{
 			die($p->t('global/fehlerBeimLadenDesDatensatzes'));
 		}
-		
+
 		foreach ($prestudent->result as $row)
 		{
 			if ($row->prestudent_id == $pre_id)
@@ -305,7 +305,7 @@ if (isset($_GET['rt_id']))
 				$prest->updateamum = date("Y-m-d H:i:s");
 				$prest->updatevon = 'online';
 				$prest->new = false;
-				
+
 				if (! $prest->save())
 				{
 					echo $p->t('global/fehlerBeimSpeichernDerDaten');
@@ -321,23 +321,23 @@ if (isset($_POST['btn_bewerbung_abschicken']))
 	$pr_id = isset($_POST['prestudent_id']) ? $_POST['prestudent_id'] : '';
 	$sendmail = false; // Damit das Mail beim Seitenreload nicht nochmal geschickt wird
 	$bewerbungszeitraum_gueltig = true;
-	
+
 	if ($pr_id != '')
 	{
 		// Status Bewerber anlegen
 		$prestudent_status = new prestudent();
 		$prestudent_status->load($pr_id);
-		
+
 		$alterstatus = new prestudent();
 		$alterstatus->getLastStatus($pr_id);
-		
+
 		// check ob es status schon gibt
 		if ($prestudent_status->load_rolle($pr_id, 'Interessent', $alterstatus->studiensemester_kurzbz, '1'))
 		{
 			// Check, ob Bewerbungsfrist schon begonnen hat, bzw abgelaufen ist
 			$bewerbungsfristen = new bewerbungstermin();
 			$bewerbungsfristen->getBewerbungstermine($prestudent_status->studiengang_kz, $prestudent_status->studiensemester_kurzbz, 'insertamum DESC', $prestudent_status->studienplan_id);
-			
+
 			if (isset($bewerbungsfristen->result[0]))
 			{
 				$bewerbungsfristen = $bewerbungsfristen->result[0];
@@ -367,7 +367,7 @@ if (isset($_POST['btn_bewerbung_abschicken']))
 				// An der FHTW wird das bestaetigungsdatum NICHT gesetzt
 				if (CAMPUS_NAME != 'FH Technikum Wien')
 					$prestudent_status->bestaetigtam = date('Y-m-d H:i:s');
-				
+
 				if ($prestudent_status->bewerbung_abgeschicktamum == '')
 				{
 					$prestudent_status->bewerbung_abgeschicktamum = date('Y-m-d H:i:s');
@@ -375,11 +375,11 @@ if (isset($_POST['btn_bewerbung_abschicken']))
 				}
 				else
 					$sendmail = false;
-				
+
 				$prestudent_status->new = false;
 				$prestudent_status->updateamum = date('Y-m-d H:i:s');
 				$prestudent_status->updatevon = 'online';
-				
+
 				if (! $prestudent_status->save_rolle())
 					die($p->t('global/fehlerBeimSpeichernDerDaten'));
 			}
@@ -389,7 +389,7 @@ if (isset($_POST['btn_bewerbung_abschicken']))
 				$save_error_abschicken = true;
 			}
 		}
-		
+
 		$prestudent = new prestudent();
 		$prestudent->load($pr_id);
 		$studiengang = new studiengang();
@@ -509,9 +509,9 @@ if (isset($_POST['btn_person']) && ! $eingabegesperrt)
 	$person->svnr = isset($_POST['svnr']) ? $_POST['svnr'] : '';
 	$person->gebort = $_POST['gebort'];
 	$person->geburtsnation = $_POST['geburtsnation'];
-	
+
 	$person->new = false;
-	
+
 	if (! $person->save())
 	{
 		$message = $person->errormsg;
@@ -533,7 +533,7 @@ if (isset($_POST['btn_person']) && ! $eingabegesperrt)
 			'message' => 'Personal data has been saved or changed'
 		), 'bewerbung', 'bewerbung', null, 'online');
 	}
-	
+
 	if (! $save_error_daten && $person->checkSvnr($person->svnr, $person_id))
 	{
 		$message = $p->t('bewerbung/svnrBereitsVorhanden');
@@ -545,18 +545,18 @@ if (isset($_POST['btn_person']) && ! $eingabegesperrt)
 			'message' => 'Sozialversicherungsnummer ' . $person->svnr . ' already present in database'
 		), 'bewerbung', 'bewerbung', null, 'online');
 	}
-	
+
 	$berufstaetig = filter_input(INPUT_POST, 'berufstaetig');
-	
+
 	if (in_array($berufstaetig, array(
 		'Vollzeit',
 		'Teilzeit'
 	), true))
 	{
-		
+
 		$berufstaetig_art = filter_input(INPUT_POST, 'berufstaetig_art');
 		$berufstaetig_dienstgeber = filter_input(INPUT_POST, 'berufstaetig_dienstgeber');
-		
+
 		$notiz = new notiz();
 		$notiz->person_id = $person_id;
 		$notiz->verfasser_uid = '';
@@ -569,13 +569,13 @@ if (isset($_POST['btn_person']) && ! $eingabegesperrt)
 		$notiz->save(true);
 		$notiz->saveZuordnung();
 	}
-	
+
 	$aufmerksamdurch = filter_input(INPUT_POST, 'aufmerksamdurch');
-	
+
 	// Aufmerksamdurch speichern
 	$prestudent = new prestudent();
 	$prestudent->getPrestudenten($person_id);
-	
+
 	foreach ($prestudent->result as $prestudent_eintrag)
 	{
 		$prestudent_eintrag->new = false;
@@ -665,7 +665,7 @@ if (isset($_POST['btn_kontakt']) && ! $eingabegesperrt)
 			$kontakt->insertamum = date('Y-m-d H:i:s');
 			$kontakt->insertvon = 'online';
 			$kontakt->new = true;
-			
+
 			if (! $kontakt->save())
 			{
 				$message = $kontakt->errormsg;
@@ -683,19 +683,19 @@ if (isset($_POST['btn_kontakt']) && ! $eingabegesperrt)
 			}
 		}
 	}
-	
+
 	if ($save_error_kontakt === false)
 	{
 		$kontakt_t = new kontakt();
 		$kontakt_t->load_persKontakttyp($person->person_id, 'telefon');
-		
+
 		// gibt es schon kontakte von user
 		if (count($kontakt_t->result) > 0)
 		{
 			// Es gibt bereits eine Telefonnummer
 			$kontakt_id = $kontakt_t->result[0]->kontakt_id;
 			$telefonnummer_alt = $kontakt_t->result[0]->kontakt;
-			
+
 			// Telefonnummer validieren
 			$telefonnummer = preg_replace("/[^0-9+]/", '', $_POST['telefonnummer']);
 			if ($_POST['telefonnummer'] == '')
@@ -713,7 +713,7 @@ if (isset($_POST['btn_kontakt']) && ! $eingabegesperrt)
 				$kontakt_t->updateamum = date('Y-m-d H:i:s');
 				$kontakt_t->updatevon = 'online';
 				$kontakt_t->new = false;
-				
+
 				if (! $kontakt_t->save())
 				{
 					$message = $kontakt_t->errormsg;
@@ -742,7 +742,7 @@ if (isset($_POST['btn_kontakt']) && ! $eingabegesperrt)
 			{
 				// Telefonnummer validieren
 				$telefonnummer = preg_replace("/[^0-9+]/", '', $_POST['telefonnummer']);
-				
+
 				// Wenn nache preg_replace Daten uebrig bleiben, neuen Kontakt anlegen
 				if ($telefonnummer != '')
 				{
@@ -753,7 +753,7 @@ if (isset($_POST['btn_kontakt']) && ! $eingabegesperrt)
 					$kontakt_t->insertamum = date('Y-m-d H:i:s');
 					$kontakt_t->insertvon = 'online';
 					$kontakt_t->new = true;
-					
+
 					if (! $kontakt_t->save())
 					{
 						$message = $kontakt_t->errormsg;
@@ -806,7 +806,7 @@ if (isset($_POST['btn_kontakt']) && ! $eingabegesperrt)
 				$ort_neu = isset($_POST['ort']) ? trim($_POST['ort']) : '';
 				$nation_alt = $adresse_help->nation;
 				$nation_neu = isset($_POST['nation']) ? $_POST['nation'] : '';
-				
+
 				// gibt schon eine Adresse
 				$adresse_help->strasse = $strasse_neu;
 				$adresse_help->plz = $plz_neu;
@@ -884,13 +884,13 @@ if (isset($_POST['btn_rechnungskontakt']))
 	{
 		$kontakt_t = new kontakt();
 		$kontakt_t->load_persKontakttyp($person->person_id, 're_telefon');
-		
+
 		// gibt es schon kontakte von user
 		if (count($kontakt_t->result) > 0)
 		{
 			// Es gibt bereits eine Telefonnummer
 			$kontakt_id = $kontakt_t->result[0]->kontakt_id;
-			
+
 			// Telefonnummer validieren
 			$telefonnummer = preg_replace("/[^0-9+]/", '', $_POST['re_telefonnummer']);
 			if ($_POST['re_telefonnummer'] == '')
@@ -908,7 +908,7 @@ if (isset($_POST['btn_rechnungskontakt']))
 				$kontakt_t->updateamum = date('Y-m-d H:i:s');
 				$kontakt_t->updatevon = 'online';
 				$kontakt_t->new = false;
-				
+
 				if (! $kontakt_t->save())
 				{
 					$message = $kontakt_t->errormsg;
@@ -929,7 +929,7 @@ if (isset($_POST['btn_rechnungskontakt']))
 			{
 				// Telefonnummer validieren
 				$telefonnummer = preg_replace("/[^0-9+]/", '', $_POST['re_telefonnummer']);
-				
+
 				// Wenn nache preg_replace Daten uebrig bleiben, neuen Kontakt anlegen
 				if ($telefonnummer != '')
 				{
@@ -940,7 +940,7 @@ if (isset($_POST['btn_rechnungskontakt']))
 					$kontakt_t->insertamum = date('Y-m-d H:i:s');
 					$kontakt_t->insertvon = 'online';
 					$kontakt_t->new = true;
-					
+
 					if (! $kontakt_t->save())
 					{
 						$message = $kontakt_t->errormsg;
@@ -961,7 +961,7 @@ if (isset($_POST['btn_rechnungskontakt']))
 	{
 		$kontakt_t = new kontakt();
 		$kontakt_t->load_persKontakttyp($person->person_id, 're_email');
-		
+
 		// gibt es schon kontakte von user
 		if (count($kontakt_t->result) > 0)
 		{
@@ -983,7 +983,7 @@ if (isset($_POST['btn_rechnungskontakt']))
 				$kontakt_t->updateamum = date('Y-m-d H:i:s');
 				$kontakt_t->updatevon = 'online';
 				$kontakt_t->new = false;
-				
+
 				if (! $kontakt_t->save())
 				{
 					$message = $kontakt_t->errormsg;
@@ -1004,7 +1004,7 @@ if (isset($_POST['btn_rechnungskontakt']))
 			{
 				// Telefonnummer validieren
 				$email = $_POST['re_email'];
-				
+
 				// Wenn nache preg_replace Daten uebrig bleiben, neuen Kontakt anlegen
 				if ($email != '')
 				{
@@ -1015,7 +1015,7 @@ if (isset($_POST['btn_rechnungskontakt']))
 					$kontakt_t->insertamum = date('Y-m-d H:i:s');
 					$kontakt_t->insertvon = 'online';
 					$kontakt_t->new = true;
-					
+
 					if (! $kontakt_t->save())
 					{
 						$message = $kontakt_t->errormsg;
@@ -1060,7 +1060,7 @@ if (isset($_POST['btn_rechnungskontakt']))
 				// gibt es schon eine adresse, wird die erste adresse genommen und upgedatet
 				$adresse_help = new adresse();
 				$adresse_help->load($adresse->result[0]->adresse_id);
-				
+
 				// gibt schon eine Adresse
 				$adresse_help->strasse = isset($_POST['re_strasse']) ? trim($_POST['re_strasse']) : '';
 				$adresse_help->plz = isset($_POST['re_plz']) ? trim($_POST['re_plz']) : '';
@@ -1116,9 +1116,9 @@ if (isset($_POST['btn_zgv']))
 	// Zugangsvoraussetzungen speichern
 	$prestudent = new prestudent();
 	$prestudent->getPrestudenten($person_id);
-	
+
 	// $master_zgv_art = filter_input(INPUT_POST, 'master_zgv_art', FILTER_VALIDATE_INT);
-	
+
 	$save_error_zgv = false;
 	// Datumsformat Bachelor überprüfen
 	if (filter_input(INPUT_POST, 'bachelor_zgv_datum') != '')
@@ -1162,7 +1162,7 @@ if (isset($_POST['btn_zgv']))
 	}
 	$datum_bachelor = $datum->formatDatum(filter_input(INPUT_POST, 'bachelor_zgv_datum'), 'Y-m-d');
 	$datum_master = $datum->formatDatum(filter_input(INPUT_POST, 'master_zgv_datum'), 'Y-m-d');
-	
+
 	if ($datum_bachelor > date('Y-m-d'))
 	{
 		$message = $p->t('bewerbung/zgvDatumNichtZukunft');
@@ -1175,12 +1175,12 @@ if (isset($_POST['btn_zgv']))
 		$save_error_zgv = true;
 		$datum_master = '';
 	}
-	
+
 	if (! $save_error_zgv)
 	{
 		foreach ($prestudent->result as $prestudent_eintrag)
 		{
-			
+
 			$prestudent_eintrag->new = false;
 			$prestudent_eintrag->zgv_code = ($prestudent_eintrag->zgv_code == '' ? filter_input(INPUT_POST, 'bachelor_zgv_art', FILTER_VALIDATE_INT) : $prestudent_eintrag->zgv_code);
 			$prestudent_eintrag->zgvort = ($prestudent_eintrag->zgvort == '' ? filter_input(INPUT_POST, 'bachelor_zgv_ort') : $prestudent_eintrag->zgvort);
@@ -1192,7 +1192,7 @@ if (isset($_POST['btn_zgv']))
 			$prestudent_eintrag->zgvnation = ($prestudent_eintrag->zgvnation == '' ? filter_input(INPUT_POST, 'bachelor_zgv_nation') : $prestudent_eintrag->zgvnation);
 			$prestudent_eintrag->updateamum = date('Y-m-d H:i:s');
 			$prestudent_eintrag->updatevon = 'online';
-			
+
 			$prestudent_eintrag->zgvmas_code = ($prestudent_eintrag->zgvmas_code == '' ? filter_input(INPUT_POST, 'master_zgv_art', FILTER_VALIDATE_INT) : $prestudent_eintrag->zgvmas_code);
 			$prestudent_eintrag->zgvmaort = ($prestudent_eintrag->zgvmaort == '' ? filter_input(INPUT_POST, 'master_zgv_ort') : $prestudent_eintrag->zgvmaort);
 			// An der FHTW darf das ZGV-Datum nicht vom Bewerber gesetzt werden, da dies zum prüfen der ZGV verwendet wird
@@ -1203,9 +1203,9 @@ if (isset($_POST['btn_zgv']))
 			$prestudent_eintrag->zgvmanation = ($prestudent_eintrag->zgvmanation == '' ? filter_input(INPUT_POST, 'master_zgv_nation') : $prestudent_eintrag->zgvmanation);
 			$prestudent_eintrag->updateamum = date('Y-m-d H:i:s');
 			$prestudent_eintrag->updatevon = 'online';
-			
+
 			$prestudent_eintrag->updateamum = date('c');
-			
+
 			if (! $prestudent_eintrag->save())
 			{
 				die($p->t('global/fehlerBeimSpeichernDerDaten'));
@@ -1218,7 +1218,7 @@ if (isset($_POST['btn_zgv']))
 if (isset($_POST['btn_notiz']))
 {
 	$anmerkung = filter_input(INPUT_POST, 'anmerkung');
-	
+
 	if ($anmerkung != '')
 	{
 		$notiz = new notiz();
@@ -1232,7 +1232,7 @@ if (isset($_POST['btn_notiz']))
 		$notiz->text = $anmerkung;
 		$notiz->save(true);
 		$notiz->saveZuordnung();
-		
+
 		// Logeintrag schreiben
 		$log->log($person_id, 'Action', array(
 			'name' => 'New notiz saved',
@@ -1246,11 +1246,16 @@ $addStudiengang = filter_input(INPUT_POST, 'addStudiengang', FILTER_VALIDATE_BOO
 
 if ($addStudiengang)
 {
-	$return = BewerbungPersonAddStudiengang($_POST['stgkz'], $_POST['anm'], $person, $_POST['studiensemester'], (isset($_POST['orgform']) ? $_POST['orgform'] : ''), (isset($_POST['sprache']) ? $_POST['sprache'] : ''));
+	$return = BewerbungPersonAddStudiengang(
+		$_POST['stgkz'],
+		$_POST['anm'],
+		$person,
+		$_POST['studiensemester'],
+		(isset($_POST['orgform'])?$_POST['orgform']:''),
+		(isset($_POST['sprache'])?$_POST['sprache']:'')
+		);
 	if ($return === true)
-		echo json_encode(array(
-			'status' => 'ok'
-		));
+		echo json_encode(array('status'=>'ok'));
 	else
 		echo json_encode(array(
 			'status' => 'fehler',
@@ -1355,7 +1360,7 @@ if (! defined('BEWERBERTOOL_ZGV_ANZEIGEN') || BEWERBERTOOL_ZGV_ANZEIGEN == true)
 	if (isset($studiengaenge))
 	{
 		$types = $stg->getTypes($studiengaenge);
-		
+
 		if ($bachelor_zgv_done)
 		{
 			$status_zgv_bak = true;
@@ -1493,14 +1498,14 @@ if (! defined('BEWERBERTOOL_REIHUNGSTEST_ANZEIGEN') || BEWERBERTOOL_REIHUNGSTEST
 			// Wenn keine Reihungstesttermine vorhanden sind ist die Bewerbung auch vollstaendig
 			if (! $prestudent->getPrestudenten($person_id))
 				die($p->t('global/fehlerBeimLadenDesDatensatzes'));
-			
+
 			$anzahl_reihungstests = 0;
 			foreach ($prestudent->result as $row)
 			{
 				$reihungstest = new reihungstest();
 				if (! $reihungstest->getStgZukuenftige($row->studiengang_kz))
 					die($p->t('global/fehleraufgetreten') . ': ' . $reihungstest->errormsg);
-				
+
 				$anzahl_reihungstests += count($reihungstest->result);
 			}
 			if ($anzahl_reihungstests == 0)
@@ -1524,8 +1529,8 @@ else
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<title><?php echo $p->t('bewerbung/menuBewerbungFuerStudiengang') ?></title>
 		<link rel="stylesheet" type="text/css" href="../../../vendor/twbs/bootstrap/dist/css/bootstrap.min.css">
-		<script type="text/javascript" src="../../../vendor/components/jquery/jquery.min.js"></script>
-		<script type="text/javascript" src="../../../vendor/twbs/bootstrap/dist/js/bootstrap.min.js"></script> 
+		<script type="text/javascript" src="../../../vendor/jquery/jqueryV1/jquery-1.12.4.min.js"></script>
+		<script type="text/javascript" src="../../../vendor/twbs/bootstrap/dist/js/bootstrap.min.js"></script>
 		<script src="../include/js/bewerbung.js"></script>
 		<script type="text/javascript">
 			var activeTab = <?php echo json_encode($active) ?>,
@@ -1553,7 +1558,7 @@ else
 					$(this).remove();
 				});
 			}, 1500);
-			
+
 			$(document).ready(function(){
 				$('[data-toggle="popover"]').popover({html:true});
 				$('[data-toggle="tooltip"]').tooltip();
@@ -1740,7 +1745,7 @@ function sendBewerbung($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz,
 
 	$person = new person();
 	$person->load($person_id);
-	
+
 	$studienplan_bezeichnung = '';
 	if ($studienplan_id != '')
 	{
@@ -1748,15 +1753,15 @@ function sendBewerbung($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz,
 		$studienplan->loadStudienplan($studienplan_id);
 		$studienplan_bezeichnung = $studienplan->bezeichnung;
 	}
-	
+
 	$prestudent = new prestudent();
 	if (! $prestudent->load($prestudent_id))
 		die($p->t('global/fehlerBeimLadenDesDatensatzes'));
-	
+
 	$studiengang = new studiengang();
 	if (! $studiengang->load($prestudent->studiengang_kz))
 		die($p->t('global/fehlerBeimLadenDesDatensatzes'));
-	
+
 	$typ = new studiengang();
 	$typ->getStudiengangTyp($studiengang->typ);
 	
@@ -1782,7 +1787,7 @@ function sendBewerbung($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz,
 		$kontakt = new kontakt();
 		$kontakt->load_persKontakttyp($person->person_id, 'email');
 		$mailadresse = isset($kontakt->result[0]->kontakt) ? $kontakt->result[0]->kontakt : '';
-		
+
 		$kontakt_t = new kontakt();
 		$kontakt_t->load_persKontakttyp($person->person_id, 'telefon');
 		$telefon = isset($kontakt_t->result[0]->kontakt) ? $kontakt_t->result[0]->kontakt : '';
@@ -1792,7 +1797,7 @@ function sendBewerbung($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz,
 			$kontakt_t->load_persKontakttyp($person->person_id, 'mobil');
 			$telefon = isset($kontakt_t->result[0]->kontakt) ? $kontakt_t->result[0]->kontakt : '';
 		}
-		
+
 		$adresse = new adresse();
 		$adresse->load_pers($person->person_id);
 		$strasse = isset($adresse->result[0]->strasse) ? $adresse->result[0]->strasse : '';
@@ -1800,7 +1805,7 @@ function sendBewerbung($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz,
 		$ort = isset($adresse->result[0]->ort) ? $adresse->result[0]->ort : '';
 		$adr_nation = isset($adresse->result[0]->nation) ? $adresse->result[0]->nation : '';
 		$nation = new nation($adr_nation);
-		
+
 		$notiz = new notiz();
 		$notiz->getBewerbungstoolNotizen($person_id);
 		$anmerkungen = '';
@@ -1813,7 +1818,7 @@ function sendBewerbung($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz,
 				$anmerkungen .= '- ' . htmlspecialchars($note->text);
 			}
 		}
-		
+
 		$email = $p->t('bewerbung/emailBodyStart');
 		// Wenn MAIL_DEBUG aktiv ist, zeige auch den Empfänger an
 		if(defined('MAIL_DEBUG') && MAIL_DEBUG != '')
@@ -1822,25 +1827,26 @@ function sendBewerbung($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz,
 		$email .= '<tr><td><b>' . $p->t('global/studiengang') . '</b></td><td>' . $typ->bezeichnung . ' ' . $studiengang->bezeichnung . ($orgform_kurzbz != '' ? ' (' . $orgform_kurzbz . ')' : '') . '</td></tr>';
 		$email .= '<tr><td><b>' . $p->t('global/studiensemester') . '</b></td><td>' . $studiensemester_kurzbz . '</td></tr>';
 		if ($studienplan_bezeichnung != '')
-			$email .= '<tr><td><b>' . $p->t('studienplan/studienplan') . '</b></td><td>' . $studienplan_bezeichnung . '</td></tr>';
+			$email.= '<tr><td><b>'.$p->t('studienplan/studienplan').'</b></td><td>'.$studienplan_bezeichnung.'</td></tr>';
 		else
-			$email .= '<tr><td><b>' . $p->t('studienplan/studienplan') . '</b></td><td><span style="color: red">Es konnte kein passender Studienplan ermittelt werden</span></td></tr>';
-		$email .= '<tr><td><b>' . $p->t('global/geschlecht') . '</b></td><td>' . ($person->geschlecht == 'm' ? $p->t('bewerbung/maennlich') : $p->t('bewerbung/weiblich')) . '</td></tr>';
-		$email .= '<tr><td><b>' . $p->t('global/titel') . '</b></td><td>' . $person->titelpre . '</td></tr>';
-		$email .= '<tr><td><b>' . $p->t('global/postnomen') . '</b></td><td>' . $person->titelpost . '</td></tr>';
-		$email .= '<tr><td><b>' . $p->t('global/vorname') . '</b></td><td>' . $person->vorname . '</td></tr>';
-		$email .= '<tr><td><b>' . $p->t('global/nachname') . '</b></td><td>' . $person->nachname . '</td></tr>';
-		$email .= '<tr><td><b>' . $p->t('global/geburtsdatum') . '</b></td><td>' . date('d.m.Y', strtotime($person->gebdatum)) . '</td></tr>';
-		$email .= '<tr><td><b>' . $p->t('global/adresse') . '</b></td><td>' . $strasse . '</td></tr>';
-		$email .= '<tr><td><b>' . $p->t('global/plz') . '</b></td><td>' . $plz . '</td></tr>';
-		$email .= '<tr><td><b>' . $p->t('global/ort') . '</b></td><td>' . $ort . '</td></tr>';
-		$email .= '<tr><td><b>' . $p->t('incoming/nation') . '</b></td><td>' . $nation->langtext . '</td></tr>';
-		$email .= '<tr><td><b>' . $p->t('global/emailAdresse') . '</b></td><td>' . $mailadresse . '</td></tr>';
-		$email .= '<tr><td><b>' . $p->t('global/telefon') . '</b></td><td>' . $telefon . '</td></tr>';
-		$email .= '<tr><td style="vertical-align:top"><b>' . $p->t('global/anmerkungen') . '</b></td><td>' . $anmerkungen . '</td></tr>';
-		$email .= '<tr><td><b>' . $p->t('bewerbung/prestudentID') . '</b></td><td>' . $prestudent_id . '</td></tr>';
-		$email .= '<tr><td style="vertical-align:top"><b>' . $p->t('tools/dokumente') . '</b></td><td>';
-		$akte = new akte();
+			$email.= '<tr><td><b>'.$p->t('studienplan/studienplan').'</b></td><td><span style="color: red">Es konnte kein passender Studienplan ermittelt werden</span></td></tr>';
+		$email.= '<tr><td><b>'.$p->t('global/geschlecht').'</b></td><td>'.($person->geschlecht=='m'?$p->t('bewerbung/maennlich'):$p->t('bewerbung/weiblich')).'</td></tr>';
+		$email.= '<tr><td><b>'.$p->t('global/titel').'</b></td><td>'.$person->titelpre.'</td></tr>';
+		$email.= '<tr><td><b>'.$p->t('global/postnomen').'</b></td><td>'.$person->titelpost.'</td></tr>';
+		$email.= '<tr><td><b>'.$p->t('global/vorname').'</b></td><td>'.$person->vorname.'</td></tr>';
+		$email.= '<tr><td><b>'.$p->t('global/nachname').'</b></td><td>'.$person->nachname.'</td></tr>';
+		$email.= '<tr><td><b>'.$p->t('global/geburtsdatum').'</b></td><td>'.date('d.m.Y', strtotime($person->gebdatum)).'</td></tr>';
+		$email.= '<tr><td><b>'.$p->t('global/adresse').'</b></td><td>'.$strasse.'</td></tr>';
+		$email.= '<tr><td><b>'.$p->t('global/plz').'</b></td><td>'.$plz.'</td></tr>';
+		$email.= '<tr><td><b>'.$p->t('global/ort').'</b></td><td>'.$ort.'</td></tr>';
+		$email.= '<tr><td><b>'.$p->t('incoming/nation').'</b></td><td>'.$nation->langtext.'</td></tr>';
+		$email.= '<tr><td><b>'.$p->t('global/emailAdresse').'</b></td><td>'.$mailadresse.'</td></tr>';
+		$email.= '<tr><td><b>'.$p->t('global/telefon').'</b></td><td>'.$telefon.'</td></tr>';
+		$email.= '<tr><td style="vertical-align:top"><b>'.$p->t('global/anmerkungen').'</b></td><td>'.$anmerkungen.'</td></tr>';
+		$email.= '<tr><td><b>'.$p->t('bewerbung/prestudentID').'</b></td><td>'.$prestudent_id.'</td></tr>';
+		$email.= '<tr><td style="vertical-align:top"><b>'.$p->t('tools/dokumente').'</b></td><td>';
+		$akte = new akte;
+
 		$akte->getAkten($person_id);
 		foreach ($akte->result as $row)
 		{
@@ -1876,12 +1882,12 @@ function sendBewerbung($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz,
 		$email .= $p->t('bewerbung/prestudentID') . ': ' . $prestudent_id . '<br><br>';
 		$email .= $p->t('bewerbung/emailBodyEnde');
 	}
-	
+
 	$email = wordwrap($email, 70); // Bricht den Code um, da es sonst zu Anzeigefehlern im Mail kommen kann
 
 	$mail = new mail($empfaenger, 'no-reply', $p->t('bewerbung/bewerbung') . ' ' . $person->vorname . ' ' . $person->nachname . ($orgform_kurzbz != '' ? ' (' . $orgform_kurzbz . ')' : ''), 'Bitte sehen Sie sich die Nachricht in HTML Sicht an, um den Link vollständig darzustellen.');
 	$mail->setHTMLContent($email);
-	
+
 	// send mail to Interessent
 	if (defined('BEWERBERTOOL_ERFOLGREICHBEWORBENMAIL') && BEWERBERTOOL_ERFOLGREICHBEWORBENMAIL == true)
 	{
@@ -1900,7 +1906,7 @@ function sendBewerbung($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz,
 		if (! $mail_bewerber->send())
 			return false;
 	}
-	
+
 	if (! $mail->send())
 		return false;
 	else
@@ -1911,30 +1917,30 @@ function sendAddStudiengang($prestudent_id, $studiensemester_kurzbz, $orgform_ku
 {
 	global $person_id;
 	$p = new phrasen(DEFAULT_LANGUAGE);
-	
+
 	// Array fuer Mailempfaenger. Vorruebergehende Loesung. Kindlm am 28.10.2015
 	$empf_array = array();
 	if (defined('BEWERBERTOOL_BEWERBUNG_EMPFAENGER'))
 		$empf_array = unserialize(BEWERBERTOOL_BEWERBUNG_EMPFAENGER);
-	
+
 	$person = new person();
 	$person->load($person_id);
-	
+
 	$prestudent = new prestudent();
 	if (! $prestudent->load($prestudent_id))
 		die($p->t('global/fehlerBeimLadenDesDatensatzes'));
-	
+
 	$studiengang = new studiengang();
 	if (! $studiengang->load($prestudent->studiengang_kz))
 		die($p->t('global/fehlerBeimLadenDesDatensatzes'));
-	
+
 	$typ = new studiengang();
 	$typ->getStudiengangTyp($studiengang->typ);
-	
+
 	$kontakt = new kontakt();
 	$kontakt->load_persKontakttyp($person->person_id, 'email');
 	$mailadresse = isset($kontakt->result[0]->kontakt) ? $kontakt->result[0]->kontakt : '';
-	
+
 	$kontakt_t = new kontakt();
 	$kontakt_t->load_persKontakttyp($person->person_id, 'telefon');
 	$telefon = isset($kontakt_t->result[0]->kontakt) ? $kontakt_t->result[0]->kontakt : '';
@@ -1944,7 +1950,7 @@ function sendAddStudiengang($prestudent_id, $studiensemester_kurzbz, $orgform_ku
 		$kontakt_t->load_persKontakttyp($person->person_id, 'mobil');
 		$telefon = isset($kontakt_t->result[0]->kontakt) ? $kontakt_t->result[0]->kontakt : '';
 	}
-	
+
 	$adresse = new adresse();
 	$adresse->load_pers($person->person_id);
 	$strasse = isset($adresse->result[0]->strasse) ? $adresse->result[0]->strasse : '';
@@ -1952,7 +1958,7 @@ function sendAddStudiengang($prestudent_id, $studiensemester_kurzbz, $orgform_ku
 	$ort = isset($adresse->result[0]->ort) ? $adresse->result[0]->ort : '';
 	$adr_nation = isset($adresse->result[0]->nation) ? $adresse->result[0]->nation : '';
 	$nation = new nation($adr_nation);
-	
+
 	$notiz = new notiz();
 	$notiz->getBewerbungstoolNotizen($person_id);
 	$anmerkungen = '';
@@ -1965,7 +1971,7 @@ function sendAddStudiengang($prestudent_id, $studiensemester_kurzbz, $orgform_ku
 			$anmerkungen .= '- ' . htmlspecialchars($note->text);
 		}
 	}
-	
+
 	$email = 'Es hat sich ' . ($person->geschlecht == 'm' ? 'ein Bewerber' : 'eine Bewerberin') . ' am System registriert<br>';
 	$email .= '<br><table style="font-size:small"><tbody>';
 	$email .= '<tr><td><b>' . $p->t('global/studiengang') . '</b></td><td>' . $typ->bezeichnung . ' ' . $studiengang->bezeichnung . ($orgform_kurzbz != '' ? ' (' . $orgform_kurzbz . ')' : '') . '</td></tr>';
@@ -1981,7 +1987,7 @@ function sendAddStudiengang($prestudent_id, $studiensemester_kurzbz, $orgform_ku
 	$email .= '</td></tr></tbody></table>';
 	$email .= '<br>';
 	$email .= $p->t('bewerbung/emailBodyEnde');
-	
+
 	$email = wordwrap($email, 70); // Bricht den Code um, da es sonst zu Anzeigefehlern im Mail kommen kann
 
 	$empfaenger = getMailEmpfaenger($prestudent->studiengang_kz);

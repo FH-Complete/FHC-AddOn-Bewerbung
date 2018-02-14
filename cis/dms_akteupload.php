@@ -80,12 +80,13 @@ $PHP_SELF = $_SERVER['PHP_SELF']; ?>
 		<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 		<title><?php echo $p->t('bewerbung/fileUpload'); ?></title>
+		<link rel="stylesheet" href="../include/css/croppie.css">
 		<link rel="stylesheet" type="text/css" href="../../../vendor/twbs/bootstrap/dist/css/bootstrap.min.css">
 		<link rel="stylesheet" type="text/css" href="../../../skin/fhcomplete.css">
-		<link rel="stylesheet" href="../include/css/croppie.css">
-		<script type="text/javascript" src="../../../vendor/components/jquery/jquery.min.js"></script>
+		<script type="text/javascript" src="../../../vendor/jquery/jqueryV1/jquery-1.12.4.min.js"></script>
 		<script type="text/javascript" src="../../../vendor/twbs/bootstrap/dist/js/bootstrap.min.js"></script>
 		<script src="../include/js/croppie.js"></script>
+
 		<script type="text/javascript">
 		function showExtensionInfo()
 		{
@@ -127,11 +128,11 @@ $PHP_SELF = $_SERVER['PHP_SELF']; ?>
 				$("#documentForm").show();
 				$("#infotextVollstaendig").hide();
 			}
-			
+
 
 			// Enable/Disable Upload wenn Akte vorhanden
 // 			var akte_vorhanden = $('select').find(':selected').data('aktevorhanden');
-			
+
 		};
 
 		function imageUpload()
@@ -151,7 +152,7 @@ $PHP_SELF = $_SERVER['PHP_SELF']; ?>
 
 			// Empfehlung von https://www.passbildgroesse.de/ sind 827x1063. Das Seitenverhältnis 828x1104 passt aber besser zum FH-Ausweis
 			$("#fileselect").on("change", function () { readFile(this); });
-			$("#submitimage").on("click", function (ev) 
+			$("#submitimage").on("click", function (ev)
 			{
 				// Check ob File gewählt wurde
 				if ($('input[type=file]').val() == '')
@@ -166,8 +167,8 @@ $PHP_SELF = $_SERVER['PHP_SELF']; ?>
 				{
 					$uploadCrop.croppie("result", {
 						type: "base64",
-	// 					size: {width: 828, height: 1104}, 
-						size: "original", 
+	// 					size: {width: 828, height: 1104},
+						size: "original",
 						format: 'jpeg',
 						backgroundColor: '#DDDDDD'
 					}).then(function (resultdata) {
@@ -177,9 +178,9 @@ $PHP_SELF = $_SERVER['PHP_SELF']; ?>
 
 						//in imageupload.php wird das Bild verarbeitet und abgespeichert
 						$.post(
-							"imageupload.php", 
-							{src: src, person_id: person_id, img_filename: filename, img_type: 'image/jpeg'}, 
-							function(data) 
+							"imageupload.php",
+							{src: src, person_id: person_id, img_filename: filename, img_type: 'image/jpeg'},
+							function(data)
 							{
 								if (data.type == "success")
 								{
@@ -188,7 +189,7 @@ $PHP_SELF = $_SERVER['PHP_SELF']; ?>
 															'<button type="button" class="close" data-dismiss="alert">x</button>'+
 															'<strong>'+data.msg+'</strong>'+
 															'</div>');
-									window.setTimeout(function() 
+									window.setTimeout(function()
 									{
 										$("#success-alert_dms_akteupload").fadeTo(500, 0).slideUp(500, function(){
 											$(this).remove();
@@ -213,7 +214,7 @@ $PHP_SELF = $_SERVER['PHP_SELF']; ?>
 			});
 		};
 
-		$(function() 
+		$(function()
 		{
 			showExtensionInfo();
 			showDetails($("#dokumenttyp").val());
@@ -221,13 +222,13 @@ $PHP_SELF = $_SERVER['PHP_SELF']; ?>
 			showAusstellungsnation(showAusstellungsdetails);
 		});
 
-		function readFile(input) 
+		function readFile(input)
 		{
- 			if (input.files && input.files[0]) 
+ 			if (input.files && input.files[0])
  	 		{
 				var reader = new FileReader();
 
-				reader.onload = function (e) 
+				reader.onload = function (e)
 				{
 					var image = new Image();
 					image.src = e.target.result;
@@ -244,7 +245,7 @@ $PHP_SELF = $_SERVER['PHP_SELF']; ?>
 						// Check auf Bildgroeße
 						var height = this.height;
 						var width = this.width;
-						if (height < 320 || width < 240) 
+						if (height < 320 || width < 240)
 						{
 							alert("Das Bild muss mindestens die Auflösung 240x320 Pixel haben.\nBitte wählen Sie ein größeres Bild.");
 							return false;
@@ -252,7 +253,7 @@ $PHP_SELF = $_SERVER['PHP_SELF']; ?>
 						else
 						{
 							$(".croppie-container").addClass("ready");
-							$uploadCrop.croppie("bind", 
+							$uploadCrop.croppie("bind",
 							{
 								url: e.target.result
 							}).then(function()
@@ -261,12 +262,12 @@ $PHP_SELF = $_SERVER['PHP_SELF']; ?>
 							});
 						}
 					};
-					
-					
+
+
 				}
 				reader.readAsDataURL(input.files[0]);
 			}
-			else 
+			else
 			{
 				alert("Sorry - you\'re browser doesn\'t support the FileReader API");
 			}
@@ -288,7 +289,7 @@ $PHP_SELF = $_SERVER['PHP_SELF']; ?>
 		};
 
 
-		function checkAusstellungsnation() 
+		function checkAusstellungsnation()
 		{
 			if ($("#ausstellungsnation").is(":visible") && $("#ausstellungsnation").val() == "")
 			{
@@ -303,10 +304,10 @@ $PHP_SELF = $_SERVER['PHP_SELF']; ?>
 
 		};
 
-		function showDetails(dokument) 
-		{			
+		function showDetails(dokument)
+		{
 			$(".datailDivs").hide();
-			$("#details_"+dokument).show();			
+			$("#details_"+dokument).show();
 
 			/*if (action === true)
 				$("#ausstellungsnation").prop("disabled", false);
@@ -315,7 +316,7 @@ $PHP_SELF = $_SERVER['PHP_SELF']; ?>
 
 		};
 
-		window.setTimeout(function() 
+		window.setTimeout(function()
 		{
 			$("#success-alert_dms_akteupload").fadeTo(500, 0).slideUp(500, function(){
 				$(this).remove();
@@ -324,7 +325,7 @@ $PHP_SELF = $_SERVER['PHP_SELF']; ?>
 
 		</script>
 		<style>
-		body 
+		body
 		{
 			margin:10px;
 		}
@@ -335,7 +336,7 @@ $PHP_SELF = $_SERVER['PHP_SELF']; ?>
 		</style>
 		</head>
 		<body>
-<?php 
+<?php
 // Benoetigte Dokumente abfragen
 $studiensemester = new studiensemester();
 $studiensemester->getStudiensemesterOnlinebewerbung();
@@ -367,10 +368,10 @@ if (isset($_POST['submitfile']))
 	$error = false;
 	$message = '';
 	// Check, ob ein File gewaelt wurde
-	if (!empty($_FILES['file']['tmp_name'])) 
+	if (!empty($_FILES['file']['tmp_name']))
 	{
 		$dokumenttyp_upload = $_REQUEST['dokumenttyp'];
-		
+
 		// Check, ob Akte vorhanden
 		$akte = new akte();
 		$akte->getAkten($person_id, $dokumenttyp_upload);
@@ -382,7 +383,7 @@ if (isset($_POST['submitfile']))
 				if (isset($_POST['fileupload']))
 				{
 					$ext = strtolower(pathinfo($_FILES['file']['name'], PATHINFO_EXTENSION));
-						
+
 					// Auf gültige Dateitypen prüfen
 					if (($_REQUEST['dokumenttyp'] == 'Lichtbil' && in_array($ext, array(
 						'jpg',
@@ -396,7 +397,7 @@ if (isset($_POST['submitfile']))
 						$filename = uniqid();
 						$filename .= "." . $ext;
 						$uploadfile = DMS_PATH . $filename;
-						
+
 						if (move_uploaded_file($_FILES['file']['tmp_name'], $uploadfile))
 						{
 							/*
@@ -412,7 +413,7 @@ if (isset($_POST['submitfile']))
 		// 					$akte = new akte();
 							$version = '0';
 							$dms_id = '';
-		
+
 							/*if ($akte->getAkten($_GET['person_id'], $dokumenttyp_upload))
 							{
 								// erste Akte @todo: Ist auch so in content/akte.php. Kann irrefuehrende Ergebisse liefern, wenn bereits mehrere Akten des selben Typs vorhanden sind.
@@ -423,24 +424,24 @@ if (isset($_POST['submitfile']))
 									{
 										$dms = new dms();
 										$dms->load($akte->dms_id);
-										
+
 										$version = $dms->version + 1;
 										$dms_id = $akte->dms_id;
 									}
 								}
 							}*/
-							
+
 							$dms = new dms();
 							//$dms->dms_id = $dms_id;
 							$dms->version = $version;
 							$dms->kategorie_kurzbz = 'Akte';
-							
+
 							$dms->insertamum = date('Y-m-d H:i:s');
 							$dms->insertvon = 'online';
 							$dms->mimetype = $_FILES['file']['type'];
 							$dms->filename = $filename;
 							$dms->name = $_FILES['file']['name'];
-							
+
 							if ($dms->save(true))
 							{
 								$dms_id = $dms->dms_id;
@@ -469,21 +470,21 @@ if (isset($_POST['submitfile']))
 				$message .= $p->t('bewerbung/keinDokumententypUebergeben');
 				$error = true;
 			}
-			
+
 			if (isset($_FILES['file']['tmp_name']) && ! $error)
 			{
 				// Extension herausfiltern
 				$ext = explode('.', $_FILES['file']['name']);
 				$ext = mb_strtolower($ext[count($ext) - 1]);
-				
+
 				$filename = $_FILES['file']['tmp_name'];
-				
+
 				$akte = new akte();
-				
+
 				// Lichtbilder darf es nur einmal geben und werden überschrieben
 				// Normale Akten werden für jeden Upload neu angelegt, es sei denn es gibt bereits Eine mit "nachgereicht"==true
 				// Dann wird diese überschrieben
-				
+
 				// Derzeit soll nur eine Akte pro Typ hochgeladen werden können
 				// Daher wird immer eine neue Akte angelegt es sei denn es gibt bereits Eine mit "nachgereicht"==true
 				$akte->getAkten($_GET['person_id'], $dokumenttyp_upload);
@@ -510,14 +511,14 @@ if (isset($_POST['submitfile']))
 					$akte->insertamum = date('Y-m-d H:i:s');
 					$akte->insertvon = 'online';
 				}
-	
+
 				$dokument = new dokument();
 				$dokument->loadDokumenttyp($dokumenttyp_upload);
-				
+
 				$exts_arr = explode(".", strtolower($_FILES['file']['name']));
 				$extension = end($exts_arr);
 				$titel = '';
-				
+
 				$akte->dokument_kurzbz = $dokumenttyp_upload;
 				$akte->titel = cutString($_FILES['file']['name'], 32, '~', true); // Dateiname
 				$akte->bezeichnung = cutString($dokument->bezeichnung, 32); // Dokumentbezeichnung
@@ -526,12 +527,12 @@ if (isset($_POST['submitfile']))
 				{
 					// Fotos auf maximal 827x1063 begrenzen
 					resize($uploadfile, 827, 1063);
-					
+
 					$fp = fopen($uploadfile, 'r');
 					// auslesen
 					$content = fread($fp, filesize($uploadfile));
 					fclose($fp);
-					
+
 					$akte->inhalt = base64_encode($content);
 				}*/
 				$akte->mimetype = $_FILES['file']['type'];
@@ -542,7 +543,7 @@ if (isset($_POST['submitfile']))
 				$akte->uid = '';
 				$akte->dms_id = $dms_id;
 				$akte->ausstellungsnation = $ausstellungsnation;
-				
+
 				if (! $akte->save())
 				{
 					$message .= $p->t('global/fehleraufgetreten') . ": $akte->errormsg";
@@ -562,7 +563,7 @@ if (isset($_POST['submitfile']))
 						// Wenn ein Foto hochgeladen wird, dieses auch in die Person speichern
 						// groesse auf maximal 101x130 begrenzen
 						$tempname = resize($uploadfile, 240, 320);
-						
+
 						// in DB speichern
 						// File oeffnen
 						$fp = fopen($tempname, 'r');
@@ -572,7 +573,7 @@ if (isset($_POST['submitfile']))
 						unset($tempname);
 						// in base64 umrechnen
 						$content = base64_encode($content);
-						
+
 						$person = new person();
 						if ($person->load($_GET['person_id']))
 						{
@@ -603,17 +604,17 @@ if (isset($_POST['submitfile']))
 						}
 					}
 				}
-				
+
 				if (! defined('BEWERBERTOOL_SEND_UPLOAD_EMPFAENGER') || BEWERBERTOOL_SEND_UPLOAD_EMPFAENGER)
 				{
 					// Wenn nach dem Bestätigen einer Bewerbung ein Dokument hochgeladen wird, wird ein Infomail verschickt
 					$prestudent = new prestudent();
 					$prestudent->getPrestudenten($person_id);
-					
+
 					// Beim verschicken der Infomail wird auch das vorvorige Studiensemester hinzugefügt, damit auch Infomails für Studiensemester verschickt werden, für die man sich nicht mehr bewerben aber noch Dokumente hochladen kann.
 					if (isset($stsem_array[0]))
 						array_unshift($stsem_array, $studiensemester->jump($stsem_array[0], - 2));
-					
+
 					foreach ($prestudent->result as $prest)
 					{
 						$prestudent2 = new prestudent();
@@ -636,7 +637,7 @@ if (isset($_POST['submitfile']))
 				</script>";
 			}
 		}
-		else 
+		else
 		{
 			$message .= $p->t('bewerbung/akteBereitsVorhanden');
 			$error = true;
@@ -660,12 +661,12 @@ foreach ($dokumente_abzugeben as $dok)
 	{
 		$akte_vorhanden[$dok->dokument_kurzbz] = true;
 	}
-	else 
+	else
 		$akte_vorhanden[$dok->dokument_kurzbz] = false;
 }
 
 echo '<div class="container" id="messages">';
-	
+
 if ($error === false)
 {
 	echo '<div class="alert alert-success" id="success-alert_dms_akteupload">
@@ -710,24 +711,24 @@ if ($person_id != '')
 			// Detailbeschreibungen zu Dokumenten holen
 			$details = new dokument();
 			$details->getBeschreibungenDokumente($ben_kz, $dok->dokument_kurzbz);
-	
+
 			$zaehlerBeschreibungAllg = 0;
 			if ($dokumenttyp == $dok->dokument_kurzbz)
 			{
 				$selected = 'selected="selected"';
 				$display = '';
 			}
-			else 
+			else
 			{
 				$selected = '';
 				$display = 'display: none;';
 			}
-		
+
 			foreach ($details->result as $row)
 			{
 				$stg = new studiengang();
 				$stg->load($row->studiengang_kz);
-				
+
 				if ($row->dokumentbeschreibung_mehrsprachig[getSprache()] != '' && $zaehlerBeschreibungAllg == 0)
 				{
 					$detailstring .= $row->dokumentbeschreibung_mehrsprachig[getSprache()];
@@ -743,13 +744,13 @@ if ($person_id != '')
 				else
 					$detailstring .= '';
 			}
-			
+
 			if ($detailstring != '')
 				$detailDiv .= '<div id="details_'.$dok->dokument_kurzbz.'" class="datailDivs panel panel-default" style="'.$display.'"><div class="panel-heading">'.$detailstring.'</div></div>';
-	
-			$event = '	onclick="showAusstellungsnation('.($dok->ausstellungsdetails === true ? 'true' : 'false').'); showDetails(\''.$dok->dokument_kurzbz.'\')" 
+
+			$event = '	onclick="showAusstellungsnation('.($dok->ausstellungsdetails === true ? 'true' : 'false').'); showDetails(\''.$dok->dokument_kurzbz.'\')"
 						onselect="showAusstellungsnation('.($dok->ausstellungsdetails === true ? 'true' : 'false').'); showDetails(\''.$dok->dokument_kurzbz.'\')"';
-	
+
 			if ($akte_vorhanden[$dok->dokument_kurzbz] === true)
 				continue;
 			else
@@ -763,7 +764,7 @@ if ($person_id != '')
 	$dokumenttypObj->loadDokumenttyp($dokumenttyp);
 	if ($dokumenttypObj->ausstellungsdetails === true)
 		$style = 'style="margin-top: 1em; display: block;" required="required"';
-	else 
+	else
 		$style = 'style="display: none;" disabled="disabled"';
 	echo'	<select name="ausstellungsnation" id="ausstellungsnation" class="form-control" '.$style.'>
 				<option value="">'. $p->t('bewerbung/bitteAusstellungsnationAuswaehlen') .'</option>
@@ -804,7 +805,7 @@ if ($person_id != '')
 		<div class="container"> <br />
 			<div class="row">
 				<div class="col-md-12">
-					<div class="alert alert-success">	
+					<div class="alert alert-success">
 					<strong>'.$p->t('bewerbung/dokumenteVollstaendig').'</strong>
 					</div>
 				</div>
@@ -820,10 +821,10 @@ function resize($filename, $width, $height)
 {
 	$ext = explode('.', $_FILES['file']['name']);
 	$ext = mb_strtolower($ext[count($ext) - 1]);
-	
+
 	// Hoehe und Breite neu berechnen
 	list ($width_orig, $height_orig) = getimagesize($filename);
-	
+
 	if ($width && ($width_orig < $height_orig))
 	{
 		$width = ($height / $height_orig) * $width_orig;
@@ -832,21 +833,21 @@ function resize($filename, $width, $height)
 	{
 		$height = ($width / $width_orig) * $height_orig;
 	}
-	
+
 	$image_p = imagecreatetruecolor($width, $height);
-	
+
 	$image = imagecreatefromjpeg($filename);
-	
+
 	// Bild nur verkleinern aber nicht vergroessern
 	if ($width_orig > $width || $height_orig > $height)
 		imagecopyresampled($image_p, $image, 0, 0, 0, 0, $width, $height, $width_orig, $height_orig);
 	else
 		$image_p = $image;
-	
+
 	$tmpfname = tempnam(sys_get_temp_dir(), 'FHC');
-	
+
 	imagejpeg($image_p, $tmpfname, 80);
-	
+
 	imagedestroy($image_p);
 	@imagedestroy($image);
 	return $tmpfname;
@@ -856,21 +857,21 @@ function resize($filename, $width, $height)
 function sendDokumentupload($empfaenger_stgkz, $dokument_kurzbz, $orgform_kurzbz, $studiensemester_kurzbz, $prestudent_id, $dms_id)
 {
 	global $person_id, $p;
-	
+
 	// Array fuer Mailempfaenger. Vorruebergehende Loesung. Kindlm am 28.10.2015
 	$empf_array = array();
 	if (defined('BEWERBERTOOL_UPLOAD_EMPFAENGER'))
 		$empf_array = unserialize(BEWERBERTOOL_UPLOAD_EMPFAENGER);
-	
+
 	$person = new person();
 	$person->load($person_id);
 	$dokumentbezeichnung = '';
-	
+
 	$studiengang = new studiengang();
 	$studiengang->load($empfaenger_stgkz);
 	$typ = new studiengang();
 	$typ->getStudiengangTyp($studiengang->typ);
-	
+
 	$email = $p->t('bewerbung/emailDokumentuploadStart');
 	$email .= '<br><table style="font-size:small"><tbody>';
 	$email .= '<tr><td><b>' . $p->t('global/studiengang') . '</b></td><td>' . $typ->bezeichnung . ' ' . $studiengang->bezeichnung . ($orgform_kurzbz != '' ? ' (' . $orgform_kurzbz . ')' : '') . '</td></tr>';
