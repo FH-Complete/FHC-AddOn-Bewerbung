@@ -177,8 +177,8 @@ elseif($username && $password)
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 		<meta name="robots" content="noindex">
-		<link href="../../../submodules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" type="text/css">
-		<link rel="stylesheet" type="text/css" href="../../../vendor/components/bootstrap/css/bootstrap.min.css">
+		<link href="../../../vendor/twbs/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" type="text/css"> 
+		<link rel="stylesheet" type="text/css" href="../../../vendor/twbs/bootstrap/dist/css/bootstrap.min.css">
 		<link href="../include/css/registration.css" rel="stylesheet" type="text/css">
 	</head>
 	<body class="main">
@@ -450,10 +450,10 @@ elseif($username && $password)
 									$prestudent_status->status_kurzbz = 'Interessent';
 									$prestudent_status->studiensemester_kurzbz = $std_semester;
 									$prestudent_status->ausbildungssemester = '1';
-									$prestudent_status->datum = date("Y-m-d H:m:s");
-									$prestudent_status->insertamum = date("Y-m-d H:m:s");
+									$prestudent_status->datum = date("Y-m-d H:i:s");
+									$prestudent_status->insertamum = date("Y-m-d H:i:s");
 									$prestudent_status->insertvon = 'online';
-									$prestudent_status->updateamum = date("Y-m-d H:m:s");
+									$prestudent_status->updateamum = date("Y-m-d H:i:s");
 									$prestudent_status->updatevon = 'online';
 									$prestudent_status->new = true;
 									$prestudent_status->anmerkung_status = $anmerkungen[$studiengaenge[$i]];
@@ -797,18 +797,21 @@ elseif($username && $password)
 									// Wenn kein gueltiger Studienplan gefunden wird, ist die Registration nicht moeglich und es wird ein Infotext angezeigt
 									$fristAbgelaufen = true;
 									
-									$empf_array = array();
-									if(defined('BEWERBERTOOL_BEWERBUNG_EMPFAENGER'))
-										$empf_array = unserialize(BEWERBERTOOL_BEWERBUNG_EMPFAENGER);
-										
-									if(defined('BEWERBERTOOL_MAILEMPFANG') && BEWERBERTOOL_MAILEMPFANG!='')
-										$empfaenger = BEWERBERTOOL_MAILEMPFANG;
-									elseif(isset($empf_array[$result->studiengang_kz]))
-										$empfaenger = $empf_array[$result->studiengang_kz];
-									else
+									// An der FHTW werden alle Mails von Bachelor-Studiengängen an das Infocenter geschickt, solange die Bewerbung noch nicht bestätigt wurde
+									if (CAMPUS_NAME == 'FH Technikum Wien')
 									{
-										$studiengang = new studiengang($result->studiengang_kz);
-										$empfaenger = $studiengang->email;
+										if(	defined('BEWERBERTOOL_MAILEMPFANG') && 
+											BEWERBERTOOL_MAILEMPFANG != '' && 
+											$result->typ == 'b')
+										{
+											$empfaenger = BEWERBERTOOL_MAILEMPFANG;
+										}
+										else
+											$empfaenger = getMailEmpfaenger($result->studiengang_kz, $studienplan[0]->studienplan_id);
+									}
+									else 
+									{
+										$empfaenger = getMailEmpfaenger($result->studiengang_kz);
 									}
 
 									$stg_bezeichnung .= '<br><span style="color:orange"><i>'.$p->t('bewerbung/bewerbungDerzeitNichtMoeglich',array($empfaenger)).'</i></span>';
@@ -1220,7 +1223,7 @@ elseif($username && $password)
 			//require('views/modal_sprache_orgform.php');
 		?>
 		<script type="text/javascript" src="../../../vendor/jquery/jqueryV1/jquery-1.12.4.min.js"></script>
-+		<script type="text/javascript" src="../../../vendor/components/bootstrap/js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="../../../vendor/twbs/bootstrap/dist/js/bootstrap.min.js"></script>
 		<script type="text/javascript">
 
 			function changeSprache(sprache)

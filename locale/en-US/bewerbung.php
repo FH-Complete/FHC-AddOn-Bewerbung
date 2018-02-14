@@ -229,6 +229,13 @@ $this->phrasen['bewerbung/wirdNachgreichtAm']='Submitted till';//nur grob uebers
 $this->phrasen['bewerbung/ausstellendeInstitution']='School';//nur grob uebersetzt
 $this->phrasen['bewerbung/dokumenteVollstaendig']='All required documents have been uploaded';//nur grob uebersetzt
 $this->phrasen['bewerbung/keinDokumententypUebergeben']='Document type is not set';
+$this->phrasen['bewerbung/aktion']='Action';
+$this->phrasen['bewerbung/bewerbungStornieren']='Bewerbung stornieren';
+$this->phrasen['bewerbung/bewerbungStornierenInfotext']='Wenn Sie die Bewerbung stornieren, können Sie sich im %1$s nicht wieder für %2$s bewerben.<br><br>Möchten Sie fortfahren?';
+$this->phrasen['bewerbung/bewerbungStornierenBestaetigen']='Ja, Bewerbung stornieren';
+$this->phrasen['bewerbung/vergangeneBewerbungen']='Vergangene Bewerbungen';
+$this->phrasen['bewerbung/buttonStornierenDisabled']='Wenn die Bewerbung abgeschickt oder abgewiesen wurde, können Sie diese nicht mehr stornieren';
+$this->phrasen['bewerbung/infotextDisabled']='Es ist bereits eine Bewerbung für das %s vorhanden';
 
 // Ausbildung
 $this->phrasen['bewerbung/menuAusbildung']='Ausbildung';
@@ -237,9 +244,10 @@ $this->phrasen['bewerbung/ausbildungSchule']='Name der Schule';
 $this->phrasen['bewerbung/ausbildungSchuleAdresse']='Adresse der Schule';
 $this->phrasen['bewerbung/paymentInfoText']='';
 
-$this->phrasen['bewerbung/bewerbungDerzeitNichtMoeglich']='Application currently not possible. Please contact the <a href="mailto:%s">Degree Program</a>';
+$this->phrasen['bewerbung/bewerbungDerzeitNichtMoeglich']='Application currently not possible. Please contact <a href="mailto:%1$s">%1$s</a>';
 $this->phrasen['bewerbung/bewerbungenFuerAb']='Application for %s starting %s';
 $this->phrasen['bewerbung/erfolgreichBeworbenMail']='You have applied successfully. The administrative assistant responsible will contact you in the course of the next 10 working days.';
+$this->phrasen['bewerbung/erfolgreichBeworbenMailBetreff']='Bewerbungsbestätigung Fachhochschule Technikum Wien';
 $this->phrasen['bewerbung/bewerbungsfrist']='Application deadline';
 $this->phrasen['bewerbung/bewerbungszeitraum']='Application period';
 $this->phrasen['bewerbung/bewerbungsfristAbgelaufen']='Application deadline expired';

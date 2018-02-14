@@ -82,60 +82,31 @@ if (! isset($person_id))
 					<th><?php echo $p->t('bewerbung/dateien'); ?></th>
 					<th><?php echo $p->t('global/aktion'); ?></th>
 					<th></th>
-					<th><?php echo $p->t('bewerbung/benoetigtFuer'); ?></th>
+					<?php 
+					// An der FHTW werden die benötigten Studiengänge im ersten Schritt ausgeblendet
+					if (CAMPUS_NAME == 'FH Technikum Wien' && !check_person_statusbestaetigt($person_id, 'Interessent', '', ''))
+						echo '';
+					else 
+						echo '<th>'.$p->t('bewerbung/benoetigtFuer').'</th>';
+					?>
 				</tr>
 			</thead>
 			<tbody>
-		<?php
+		<?php 
 		foreach ($dokumente_abzugeben as $dok)
 		:
 			if ($dok->pflicht === true || check_person_statusbestaetigt($person_id, 'Interessent', '', '')):
-				
+
 			$beschreibung = '';
 			$aktenliste = '';
 			$aktion = '';
 			$div = '';
 // 			$zeilenumbruch = '<br>';
 			
-			// Abfragen, bei welchen Studiengaengen das Dokument benoetigt wird
-			// @todo: Studiengangsnamen auch aus Studienplan holen? -> Falls noch benötigt, einfach Bezeichnung aus aktuellster Studienordnung holen 
-			$benoetigtStudiengang = new dokument();
-			$benoetigtStudiengang->getStudiengaengeDokument($dok->dokument_kurzbz, $person_id);
-
-			$benoetigt_fuer = '';
-			$ben_bezeichnung = array();
-			$ben_bezeichnung['German'] = '';
-			$ben_bezeichnung['English'] = '';
-			$ben_kz = array();
-			$detailstring = '';
-			foreach ($benoetigtStudiengang->result as $row)
-			{
-				
-				//if ($dok->pflicht === true || check_person_statusbestaetigt($person_id, 'Interessent', '', $row->studiengang_kz))
-				{
-					if ($benoetigt_fuer != '')
-						$benoetigt_fuer .= ', ';
-					
-					$stg = new studiengang();
-					$stg->load($row->studiengang_kz);
-					
-					$benoetigt_fuer .= $stg->kuerzel;
-					$ben_bezeichnung['German'][] .= $stg->bezeichnung;
-					$ben_bezeichnung['English'][] .= $stg->english;
-					$ben_kz[] .= $row->studiengang_kz;
-				}
-// 				else 
-// 				{
-// 					$benoetigt_fuer .= '';
-// 					$ben_bezeichnung['German'][] .= '';
-// 					$ben_bezeichnung['English'][] .= '';
-// 				}
-
-			}
-			
 			// Detailbeschreibungen zu Dokumenten holen
 			$details = new dokument();
-			$details->getBeschreibungenDokumente($ben_kz, $dok->dokument_kurzbz);
+			$details->getBeschreibungenDokumente($ben_kz[$dok->dokument_kurzbz], $dok->dokument_kurzbz);
+			$detailstring = '';
 			$zaehlerBeschreibungAllg = 0;
 			
 			foreach ($details->result as $row)
@@ -167,9 +138,18 @@ if (! isset($person_id))
 			$akten = new akte();
 			$akten->getAkten($person_id, $dok->dokument_kurzbz);
 				
-			// Wenn mindestens eine Akte vorhanden ist
+			// Wenn mindestens eine Akte vorhanden ist, zeige die Akten mit den Optionen "Löschen" und "Heruterladen"
 			if ($dok->anzahl_akten_vorhanden > 0 || (isset($akten->result[0]) && $akten->result[0]->nachgereicht === true))
 			{
+				//Dokument aus $status_dokumente_arr entfernen, um zu wissen, ob dieser Studiengang abgeschickt werden darf
+				foreach ($ben_kz[$dok->dokument_kurzbz] AS $kennzahl)
+				{
+					if (array_key_exists($kennzahl, $status_dokumente_arr))
+					{
+						unset($status_dokumente_arr[$kennzahl][array_search($dok->dokument_kurzbz, $status_dokumente_arr[$kennzahl])]);
+					}
+				}
+				
 				$aktenliste = '<ul class="list-unstyled">';
 				foreach ($akten->result as $akte)
 				{
@@ -319,7 +299,7 @@ if (! isset($person_id))
 			}
 			// Fuer FHTW deaktiviert, damit Bewerber auch im Akzeptiert-Status Dokumente hochladen koennen, wenn noch keines hochgeladen war
 			// Wenn kein Dokument hochgeladen ist und trotzdem akzeptiert wurde
-			elseif (CAMPUS_NAME != 'FH Technikum Wien' && akteAkzeptiert($akte->akte_id))
+			elseif (CAMPUS_NAME != 'FH Technikum Wien' && $dok->anzahl_dokumente_akzeptiert > 0)
 			{
 				//$status = "<span class='glyphicon glyphicon-ok' aria-hidden='true' title='".$p->t("bewerbung/abgegeben")."'></span>";
 				$div = '<form method="POST" action="'.$_SERVER["PHP_SELF"].'&active=dokumente">
@@ -332,7 +312,6 @@ if (! isset($person_id))
 									</div>
 								</div>
 							</span><input type="hidden" name="dok_kurzbz" value="'.$dok->dokument_kurzbz.'">
-							<input type="hidden" name="akte_id" value="'.$akte->akte_id.'">
 						</form>';
 				$aktion = '';
 				$aktenliste .= '<ul class="list-unstyled"><li>-</li></ul>';
@@ -421,21 +400,26 @@ if (! isset($person_id))
 					<!--<td style="vertical-align: middle"	class="'.$style.'">.$status.</td>-->
 					<td style="vertical-align: middle"	nowrap class="'.$style.'">'.$aktenliste.'</td>
 					<td style="vertical-align: middle"	nowrap class="'.$style.'">'.$aktion.'</td>
-					<td id="anmerkung_row_'.$dok->dokument_kurzbz.'" style="vertical-align: middle"	class="'.$style.'">'.$div.'</td>
-					<td style="vertical-align: middle"	class="'.$style.'">';
-			
-			if (CAMPUS_NAME != 'FH Technikum Wien')
-				echo $ben;
-			else
+					<td id="anmerkung_row_'.$dok->dokument_kurzbz.'" style="vertical-align: middle"	class="'.$style.'">'.$div.'</td>';
+					
+
+			// An der FHTW werden die benötigten Studiengänge im ersten Schritt ausgeblendet
+			if (CAMPUS_NAME == 'FH Technikum Wien' && !check_person_statusbestaetigt($person_id, 'Interessent', '', ''))
 			{
-				foreach ($ben_bezeichnung[getSprache()] as $value)
+				echo '';
+			}
+			else 
+			{
+				echo '<td style="vertical-align: middle"	class="'.$style.'">';
+				foreach ($ben_bezeichnung[getSprache()][$dok->dokument_kurzbz] as $value)
 				{
 					if ($value != '')
 						echo '- '.$value.'<br/>';
 				}
+				echo '</td>';
 			}
-			echo '</td>
-				</tr>';
+				
+			echo'</tr>';
 				
 		endif;
 		endforeach; ?>

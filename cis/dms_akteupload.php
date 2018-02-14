@@ -80,11 +80,11 @@ $PHP_SELF = $_SERVER['PHP_SELF']; ?>
 		<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 		<title><?php echo $p->t('bewerbung/fileUpload'); ?></title>
-		<link rel="stylesheet" type="text/css" href="../../../vendor/components/bootstrap/css/bootstrap.min.css">
+		<link rel="stylesheet" type="text/css" href="../../../vendor/twbs/bootstrap/dist/css/bootstrap.min.css">
 		<link rel="stylesheet" type="text/css" href="../../../skin/fhcomplete.css">
 		<link rel="stylesheet" href="../include/css/croppie.css">
 		<script type="text/javascript" src="../../../vendor/components/jquery/jquery.min.js"></script>
-		<script type="text/javascript" src="../../../vendor/components/bootstrap/js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="../../../vendor/twbs/bootstrap/dist/js/bootstrap.min.js"></script>
 		<script src="../include/js/croppie.js"></script>
 		<script type="text/javascript">
 		function showExtensionInfo()
@@ -116,7 +116,7 @@ $PHP_SELF = $_SERVER['PHP_SELF']; ?>
 				$(".croppie-container").empty();
 			}
 
-			var options = $( "#dokumenttyp option" ).size();
+			var options = $( "#dokumenttyp option" ).length;
 			if (options == 0)
 			{
 				$("#documentForm").hide();
@@ -217,7 +217,7 @@ $PHP_SELF = $_SERVER['PHP_SELF']; ?>
 		{
 			showExtensionInfo();
 			showDetails($("#dokumenttyp").val());
-			var showAusstellungsdetails = $('select').find(':selected').data('ausstellungsdetails');
+			var showAusstellungsdetails = $("#dokumenttyp").find(":selected").data("ausstellungsdetails");
 			showAusstellungsnation(showAusstellungsdetails);
 		});
 
@@ -274,7 +274,10 @@ $PHP_SELF = $_SERVER['PHP_SELF']; ?>
 
 		function showAusstellungsnation(action)
 		{
-			$("#ausstellungsnation").toggle(action);
+			if (action === true)
+				$("#ausstellungsnation").show();
+			else
+				$("#ausstellungsnation").hide();
 			$("#ausstellungsnation").prop("required",action);
 			$("#ausstellungsnation").css("margin-top", "1em");
 
@@ -603,7 +606,7 @@ if (isset($_POST['submitfile']))
 				
 				if (! defined('BEWERBERTOOL_SEND_UPLOAD_EMPFAENGER') || BEWERBERTOOL_SEND_UPLOAD_EMPFAENGER)
 				{
-					// Wenn nach dem Abschicken einer Bewerbung ein Dokument hochgeladen wird, wird ein Infomail verschickt
+					// Wenn nach dem Bestätigen einer Bewerbung ein Dokument hochgeladen wird, wird ein Infomail verschickt
 					$prestudent = new prestudent();
 					$prestudent->getPrestudenten($person_id);
 					
@@ -807,56 +810,7 @@ if ($person_id != '')
 				</div>
 			</div>
 		</div>
-	</div>
-';
-	
-	/*
-	 * echo ' <form method="POST" enctype="multipart/form-data" action="'.$PHP_SELF.'?person_id='.$_GET['person_id'].'&dokumenttyp='.$dokumenttyp.'" class="form-horizontal">
-	 * <div class="form-group">
-	 * <label for="file" class="col-xs-2 control-label">'.$p->t('incoming/dokument').':</label>
-	 * <div class="col-xs-5">
-	 * <input type="file" name="file" class="file"/>
-	 * </div>
-	 * </div>
-	 * <div class="form-group">
-	 * <label for="file" class="col-xs-2 control-label">'.$p->t('incoming/dokumenttyp').':</label>
-	 * <div class="col-xs-5">
-	 * <SELECT name="dokumenttyp" id="dokumenttyp" onchange="showExtensionInfo()" class="form-control">';
-	 * foreach ($dokument->result as $dok)
-	 * {
-	 * if (CAMPUS_NAME == 'FH Technikum Wien')// An der FHTW koennen auch akzeptierte Dokumente hochgeladen werden, wenn noch keine Akte dazu existiert
-	 * {
-	 * // $akte = new akte;
-	 * // $akte->getAkten($person_id, $dok->dokument_kurzbz);
-	 * // if (count($akte->result) == 0)
-	 * {
-	 * $selected = ($dokumenttyp == $dok->dokument_kurzbz)?'selected':'';
-	 * if ($dok->dokument_kurzbz == 'Lichtbil')
-	 * echo '<option '.$selected.' value="'.$dok->dokument_kurzbz.'" onclick="window.location.href=\'bildupload.php?person_id='.$person_id.'&dokumenttyp=Lichtbil\'; window.resizeTo(700, 800);" onselect="window.location.href=\'bildupload.php?person_id='.$person_id.'&dokumenttyp=Lichtbil\'; window.resizeTo(700, 800);">'.$dok->bezeichnung_mehrsprachig[$sprache]."</option>\n";
-	 * else
-	 * echo '<option '.$selected.' value="'.$dok->dokument_kurzbz.'" >'.$dok->bezeichnung_mehrsprachig[$sprache]."</option>\n";
-	 * }
-	 * }
-	 * else
-	 * {
-	 * // Mehrfachupload moeglich
-	 * //if (!$akzeptiert->akzeptiert($dok->dokument_kurzbz,$person_id))
-	 * {
-	 * $selected=($dokumenttyp == $dok->dokument_kurzbz)?'selected':'';
-	 * echo '<option '.$selected.' value="'.$dok->dokument_kurzbz.'" >'.$dok->bezeichnung_mehrsprachig[$sprache]."</option>\n";
-	 * }
-	 * }
-	 * }
-	 * echo ' </select>
-	 * </div>
-	 * </div>
-	 * <input type="submit" name="submitfile" value="Upload" class="btn btn-default">
-	 * <p class="help-block"><span id="extinfo"></span></p>
-	 * <input type="hidden" name="kategorie_kurzbz" id="kategorie_kurzbz" value="Akte">
-	 * <input type="hidden" name="fileupload" id="fileupload">
-	 * </div></div></div></div></div>
-	 * </form>';
-	 */
+	</div>';
 }
 else
 {
@@ -943,12 +897,22 @@ function sendDokumentupload($empfaenger_stgkz, $dokument_kurzbz, $orgform_kurzbz
 	$email .= '</tbody></table>';
 	$email .= '<br>' . $p->t('bewerbung/emailBodyEnde');
 	
-	if (defined('BEWERBERTOOL_MAILEMPFANG') && BEWERBERTOOL_MAILEMPFANG != '')
-		$empfaenger = BEWERBERTOOL_MAILEMPFANG;
-	elseif (isset($empf_array[$empfaenger_stgkz]))
-		$empfaenger = $empf_array[$empfaenger_stgkz];
-	else
-		$empfaenger = $studiengang->email;
+	// An der FHTW werden alle Mails von Bachelor-Studiengängen an das Infocenter geschickt, solange die Bewerbung noch nicht bestätigt wurde
+	if (CAMPUS_NAME == 'FH Technikum Wien')
+	{
+		if(	defined('BEWERBERTOOL_MAILEMPFANG') && 
+			BEWERBERTOOL_MAILEMPFANG != '' && 
+			$studiengang->typ == 'b')
+		{
+			$empfaenger = BEWERBERTOOL_MAILEMPFANG;
+		}
+		else
+			$empfaenger = getMailEmpfaenger($studiengang->typ, '', $orgform_kurzbz);
+	}
+	else 
+	{
+		$empfaenger = getMailEmpfaenger($empfaenger_stgkz);
+	}
 	
 	$mail = new mail($empfaenger, 'no-reply', $p->t('bewerbung/dokumentuploadZuBewerbung', array(
 		$dokumentbezeichnung

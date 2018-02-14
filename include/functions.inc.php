@@ -166,16 +166,6 @@ function BewerbungPersonAddStudiengang($studiengang_kz, $anmerkung, $person, $st
 			$studiengaenge_arr[$studiengang_kz]['oe_kurzbz'],
 			'online');
 	}
-	
-	/*
-	 * Durch das Einrichten des Cronjobs sollte sich das erledigt haben
-	 * if(CAMPUS_NAME=='FH Technikum Wien')
-	 * {
-	 * if(!sendAddStudiengang($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz))
-	 * return 'Senden der Mail fehlgeschlagen';
-	 * }
-	 */
-	
 	return true;
 }
 /**
@@ -722,5 +712,134 @@ function akteAkzeptiert($akte_id)
 		{
 			return true;
 		}
+	}
+}
+
+/**
+ * Liefert die interne Empfangsadresse des Studiengangs fuer den Mailversand.
+ * Wenn BEWERBERTOOL_MAILEMPFANG gesetzt ist, wird diese genommen, 
+ * sonst diejenige aus BEWERBERTOOL_BEWERBUNG_EMPFAENGER,
+ * sonst die Mailadresse des Studiengangs
+ *
+ * @param integer $studiengang_kz
+ * @param integer $studienplan_id
+ * @param string $orgform_kurzbz
+ * @return string mit den Mailadressen sonst false
+ */
+function getMailEmpfaenger($studiengang_kz, $studienplan_id = null, $orgform_kurzbz = null)
+{
+	$studiengang = new studiengang($studiengang_kz);
+	
+	if ($studienplan_id != '')
+	{
+		$studienplan = new studienplan();
+		$studienplan->loadStudienplan($studienplan_id);
+	}
+
+	$empf_array = array();
+	$empfaenger = '';
+	if(defined('BEWERBERTOOL_BEWERBUNG_EMPFAENGER'))
+		$empf_array = unserialize(BEWERBERTOOL_BEWERBUNG_EMPFAENGER);
+
+	// Umgehung für FHTW. Ausprogrammiert im Code
+	if(CAMPUS_NAME != 'FH Technikum Wien' && defined('BEWERBERTOOL_MAILEMPFANG') && BEWERBERTOOL_MAILEMPFANG != '')
+	{
+		$empfaenger = BEWERBERTOOL_MAILEMPFANG;
+	}
+	elseif(isset($empf_array[$studiengang_kz]))
+	{
+		// Pfuschloesung, damit bei BIF Dual die Mail an info.bid geht
+		if (CAMPUS_NAME == 'FH Technikum Wien' && $studiengang_kz == 257)
+		{
+			if ((isset($studienplan) && $studienplan->orgform_kurzbz == 'DUA') ||
+				($orgform_kurzbz != '' && $orgform_kurzbz == 'DUA'))
+			$empfaenger = 'info.bid@technikum-wien.at';
+		}
+		else
+			$empfaenger = $empf_array[$studiengang_kz];
+	}
+	else
+		$empfaenger = $studiengang->email;
+
+	if ($empfaenger != '')
+		return $empfaenger;
+	else 
+		return false;
+}
+
+/**
+ * Laedt alle Bewerbungen einer Person
+ * @param integer $person_id
+ * @param boolean $aktive. 	Wenn true werden nur aktive Bewerbungen (Interessenten, Bewerber, Studenten, ...) geliefert
+ * 							Wenn false werden nur inaktive Bewerbungen mit Endstatus (Abgewiesene, Abbrecher, Absolvent, ...) geliefert
+ * 							Wenn null werden alle Bewerbungen geliefert 
+ * @return true wenn ok, false wenn Fehler
+ */
+function getBewerbungen($person_id, $aktive = null)
+{
+	$db = new basis_db();
+	if(!is_numeric($person_id) || $person_id=='')
+	{
+		$db->errormsg='ID ist ungueltig';
+		return false;
+	}
+	
+	$qry = "SELECT tbl_prestudent.prestudent_id,
+			tbl_prestudent.studiengang_kz,
+			(
+				SELECT tbl_status.bezeichnung_mehrsprachig
+				FROM public.tbl_prestudentstatus
+				LEFT JOIN lehre.tbl_studienplan USING (studienplan_id)
+				JOIN public.tbl_status USING (status_kurzbz)
+				WHERE tbl_status.status_kurzbz = tbl_prestudentstatus.status_kurzbz
+				AND prestudent_id=tbl_prestudent.prestudent_id 
+				ORDER BY datum DESC, tbl_prestudentstatus.insertamum DESC LIMIT 1
+			) AS laststatus,
+			(
+				SELECT tbl_status.status_kurzbz
+				FROM public.tbl_prestudentstatus
+				LEFT JOIN lehre.tbl_studienplan USING (studienplan_id)
+				JOIN public.tbl_status USING (status_kurzbz)
+				WHERE tbl_status.status_kurzbz = tbl_prestudentstatus.status_kurzbz
+				AND prestudent_id=tbl_prestudent.prestudent_id 
+				ORDER BY datum DESC, tbl_prestudentstatus.insertamum DESC LIMIT 1
+			) AS laststatus_kurzbz,
+			tbl_studiengang.bezeichnung,
+			tbl_studiengang.english
+			FROM public.tbl_prestudent 
+			JOIN public.tbl_studiengang USING (studiengang_kz)
+			WHERE person_id=".$db->db_add_param($person_id, FHC_INTEGER)." ORDER BY prestudent_id";
+
+	if($db->db_query($qry))
+	{
+		while($row = $db->db_fetch_object())
+		{
+			$obj = new stdClass();
+			// Status Diplomand,Incoming,Outgoing,Student und Unterbrecher werden nicht ausgegeben
+			if ($aktive === true && in_array($row->laststatus_kurzbz, array('Diplomand','Incoming','Outgoing','Student','Unterbrecher')))
+				continue;
+			elseif ($aktive === true && in_array($row->laststatus_kurzbz, array('Abbrecher','Abgewiesener','Absolvent')))
+				continue;
+			elseif ($aktive === false && !in_array($row->laststatus_kurzbz, array('Abbrecher','Abgewiesener','Absolvent')))
+				continue;
+
+			$obj->prestudent_id = $row->prestudent_id;
+			$obj->studiengang_kz = $row->studiengang_kz;
+			$obj->laststatus = $db->db_parse_lang_array($row->laststatus);
+			$obj->laststatus_kurzbz = $row->laststatus_kurzbz;
+			$obj->bezeichnung_arr['German'] = $row->bezeichnung;
+			$obj->bezeichnung_arr['English'] = $row->english;
+
+			$db->result[] = $obj;
+		}
+		if (isset($db->result))
+			return $db->result;
+		else
+			return false;
+	}
+	else
+	{
+		$db->errormsg = "Fehler beim Laden";
+		return false;
 	}
 }

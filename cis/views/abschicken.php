@@ -91,7 +91,6 @@ if(	$status_person == true &&
 	$status_zahlungen == true && 
 	$status_reihungstest == true && 
 	$status_zgv_bak == true && 
-	$status_dokumente == true && 
 	$status_ausbildung == true)
 		$disabled = '';
 
@@ -199,6 +198,10 @@ foreach($prestudent_help->result as $prest)
 		if ($stg->typ == 'm' && $status_zgv_mas == false)
 			$disabled = 'disabled';
 		
+		// Die Vollständigkeit der Dokumente wird extra für jeden Studiengang gecheckt 
+		if (!empty($status_dokumente_arr[$prest->studiengang_kz]))
+			$disabled = 'disabled';
+		
 		$buttontext = $p->t('bewerbung/buttonBewerbungAbschicken').' ('.$stg->kurzbzlang.' '.$row->studiensemester_kurzbz.')';
 		
 		if ($tage_bis_bewerbungsbeginn != '' && $tage_bis_bewerbungsbeginn <= 0)
@@ -223,7 +226,7 @@ foreach($prestudent_help->result as $prest)
 										'.$stg_bezeichnung.' ('.$row->studiensemester_kurzbz.') 
 										'.$bewerbungsfrist.'
 								</label>
-								<button class="btn btn-default form-control" disabled type="button">'.$p->t('bewerbung/BewerbungBereitsVerschickt').'</button>
+								<button class="btn btn-default btn-block" disabled type="button">'.$p->t('bewerbung/BewerbungBereitsVerschickt').'</button>
 							</div>
 					</div>
 				</div>';
@@ -245,7 +248,7 @@ foreach($prestudent_help->result as $prest)
 										('.$row->studiensemester_kurzbz.') 
 										'.$bewerbungsfrist.'
 								</label>
-								<button id="'.$stg->kurzbzlang.'" class="btn '.$button_class.' form-control" '.$disabled.' '.$disabled_bewerbung.' type="submit" name="btn_bewerbung_abschicken">
+								<button id="'.$stg->kurzbzlang.'" class="btn '.$button_class.' btn-block" '.$disabled.' '.$disabled_bewerbung.' type="submit" name="btn_bewerbung_abschicken">
 										'.$buttontext.' 
 								</button>
 								<input type="hidden" name="prestudent_id" value="'.$prest->prestudent_id.'">

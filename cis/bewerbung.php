@@ -184,43 +184,64 @@ if ($method == 'delete')
 	}
 }
 
-/*
- * Der Web-User hat keine Berechtigung, aus der tbl_prestudent und tbl_prestudentstatus zu löschen.
- * Der elegantere Weg ist vermutlich, einen neuen Status "gelöscht" oder "abgesagt" (ev. mit Begründung) einzufügen.
- * Dann lassen sich auch schönere Statistiken fahren und wir haben eine Historie.
- * Ich lasse die Methode vorerst stehen, um eventuell später daran anzuknüpfen.
- * if($method=='deleteBewerbung' && isset($_GET['prestudent_id']))
- * {
- * $prestudent_id = filter_input(INPUT_GET, 'prestudent_id', FILTER_VALIDATE_INT);
- * $prestudent_status = new prestudent();
- * $prestudent_status->getLastStatus($prestudent_id);
- * $statusbestaetigt = $prestudent_status->bestaetigtam != '' || $prestudent_status->bestaetigtvon != ''?true:false;
- * if ($prestudent_status->status_kurzbz == 'Interessent' && $statusbestaetigt == false)
- * {
- * $prestudent = new prestudent();
- * if($prestudent->delete_rolle($prestudent_id, 'Interessent', $prestudent_status->studiensemester_kurzbz, $prestudent_status->ausbildungssemester, false))
- * {
- * // Wenn es keinen weiteren PrestudentStatus-Eintrag gibt, auch den Prestudenten löschen
- * $prestudent_status = new prestudent();
- * if (!$prestudent_status->getLastStatus($prestudent_id))
- * {
- * if($prestudent->deletePrestudent($prestudent_id, false))
- * {
- * $message = $p->t('global/erfolgreichgelöscht');
- * }
- * else
- * {
- * $message = $p->t('global/fehlerBeimLoeschenDesEintrags');
- * }
- * }
- * }
- * else
- * {
- * $message = $p->t('global/fehlerBeimLoeschenDesEintrags');
- * }
- * }
- * }
- */
+$bewerbungStornieren = filter_input(INPUT_POST, 'bewerbungStornieren', FILTER_VALIDATE_BOOLEAN);
+// Stornieren von Bewerbungen. Es wird ein Status "Abgewiesen" mit Statusgrund angelegt.
+// Der Bewerber darf seine Bewerbung je Studiensemester im selben Studiengang nur einmal stornieren.
+if ($bewerbungStornieren && isset($_POST['prestudent_id']))
+{
+	$prestudent_id = filter_input(INPUT_POST, 'prestudent_id', FILTER_VALIDATE_INT);
+	$studiensemester_kurzbz = filter_input(INPUT_POST, 'studiensemester_kurzbz');
+	
+	$prestudent_status = new prestudent($prestudent_id);
+	$prestudent_status->getLastStatus($prestudent_id, $studiensemester_kurzbz, 'Interessent');
+	
+	$statusbestaetigt = $prestudent_status->bestaetigtam != '' || $prestudent_status->bestaetigtvon != ''?true:false;
+	if ($prestudent_status->status_kurzbz == 'Interessent' && $statusbestaetigt == false)
+	
+	// Status "Abgewiesen" mit Statusgrund anlegen	
+	$prestudent_status->status_kurzbz = 'Abgewiesener';
+	$prestudent_status->studiensemester_kurzbz = $studiensemester_kurzbz;
+	$prestudent_status->ausbildungssemester = $prestudent_status->ausbildungssemester;
+	$prestudent_status->datum = date("Y-m-d H:i:s");
+	$prestudent_status->insertamum = date("Y-m-d H:i:s");
+	$prestudent_status->insertvon = 'online';
+// 	$prestudent_status->updateamum = date("Y-m-d H:i:s");
+// 	$prestudent_status->updatevon = 'online';
+	$prestudent_status->new = true;
+	$prestudent_status->orgform_kurzbz = $prestudent_status->orgform_kurzbz;
+	$prestudent_status->studienplan_id = $prestudent_status->studienplan_id;
+	// Wenn BEWERBERTOOL_STORNIERUNG_STATUSGRUND_ID definiert ist, wird ein Statusgrund gesetzt
+	if (defined('BEWERBERTOOL_STORNIERUNG_STATUSGRUND_ID') && is_int(BEWERBERTOOL_STORNIERUNG_STATUSGRUND_ID))
+		$prestudent_status->statusgrund_id = BEWERBERTOOL_STORNIERUNG_STATUSGRUND_ID;
+
+	if(!$prestudent_status->save_rolle())
+	{
+		echo json_encode(array(
+			'status' => 'fehler',
+			'msg' => $prestudent_status->errormsg
+		));
+		$message = $p->t('global/fehlerBeimSpeichernDerDaten');
+		exit();
+	}
+	else 
+	{
+		// Logeintrag schreiben
+		$stg = new studiengang($prestudent_status->studiengang_kz);
+		$log->log($person->person_id,
+			'Action',
+			array('name'=>'Application Deleted By User','success'=>true,'message'=>'Application For '.$stg->bezeichnung_arr[$sprache].' ('.$prestudent_status->orgform_kurzbz.') Studienplan '.$prestudent_status->studienplan_id.' Deleted By User'),
+			'bewerbung',
+			'bewerbung',
+			$stg->oe_kurzbz,
+			'online');
+		
+		echo json_encode(array(
+			'status' => 'ok'
+		));
+		exit();
+	}
+}
+
 
 if (isset($_GET['rt_id']))
 {
@@ -244,7 +265,7 @@ if (isset($_GET['rt_id']))
 				$prest->load($pre_id);
 				$prest->reihungstest_id = '';
 				$prest->anmeldungreihungstest = '';
-				$prest->updateamum = date("Y-m-d H:m:s");
+				$prest->updateamum = date("Y-m-d H:i:s");
 				$prest->updatevon = 'online';
 				$prest->new = false;
 				
@@ -281,7 +302,7 @@ if (isset($_GET['rt_id']))
 				$prest->load($pre_id);
 				$prest->reihungstest_id = $rt_id;
 				$prest->anmeldungreihungstest = date('Y-m-d', $timestamp);
-				$prest->updateamum = date("Y-m-d H:m:s");
+				$prest->updateamum = date("Y-m-d H:i:s");
 				$prest->updatevon = 'online';
 				$prest->new = false;
 				
@@ -1163,6 +1184,7 @@ if (isset($_POST['btn_zgv']))
 			$prestudent_eintrag->new = false;
 			$prestudent_eintrag->zgv_code = ($prestudent_eintrag->zgv_code == '' ? filter_input(INPUT_POST, 'bachelor_zgv_art', FILTER_VALIDATE_INT) : $prestudent_eintrag->zgv_code);
 			$prestudent_eintrag->zgvort = ($prestudent_eintrag->zgvort == '' ? filter_input(INPUT_POST, 'bachelor_zgv_ort') : $prestudent_eintrag->zgvort);
+			// An der FHTW darf das ZGV-Datum nicht vom Bewerber gesetzt werden, da dies zum prüfen der ZGV verwendet wird
 			if (CAMPUS_NAME != 'FH Technikum Wien')
 			{
 				$prestudent_eintrag->zgvdatum = ($prestudent_eintrag->zgvdatum == '' ? $datum_bachelor : $prestudent_eintrag->zgvdatum);
@@ -1173,6 +1195,7 @@ if (isset($_POST['btn_zgv']))
 			
 			$prestudent_eintrag->zgvmas_code = ($prestudent_eintrag->zgvmas_code == '' ? filter_input(INPUT_POST, 'master_zgv_art', FILTER_VALIDATE_INT) : $prestudent_eintrag->zgvmas_code);
 			$prestudent_eintrag->zgvmaort = ($prestudent_eintrag->zgvmaort == '' ? filter_input(INPUT_POST, 'master_zgv_ort') : $prestudent_eintrag->zgvmaort);
+			// An der FHTW darf das ZGV-Datum nicht vom Bewerber gesetzt werden, da dies zum prüfen der ZGV verwendet wird
 			if (CAMPUS_NAME != 'FH Technikum Wien')
 			{
 				$prestudent_eintrag->zgvmadatum = ($prestudent_eintrag->zgvmadatum == '' ? $datum_master : $prestudent_eintrag->zgvmadatum);
@@ -1363,7 +1386,12 @@ $dokumente_abzugeben = getAllDokumenteBewerbungstoolForPerson($person_id);
 
 $missing_document = false;
 $status_dokumente = false;
+$status_dokumente_arr = array();
 $akzeptierte_dokumente = array();
+$ben_kz = array();
+$ben_bezeichnung = array();
+// $ben_bezeichnung['German'][] = array();
+// $ben_bezeichnung['English'][] = array();
 
 /*
  * foreach($akte_person->result as $akte)
@@ -1376,43 +1404,38 @@ foreach ($dokumente_abzugeben as $dok)
 {
 	if ($dok->anzahl_akten_formal_geprueft > 0 || $dok->anzahl_akten_formal_geprueft > 0 || $dok->anzahl_dokumente_akzeptiert > 0 || $dok->anzahl_akten_nachgereicht > 0)
 		$akzeptierte_dokumente[] = $dok->dokument_kurzbz;
-}
-
-foreach ($dokumente_abzugeben as $dok)
-{
+	
 	if ($dok->pflicht && ! in_array($dok->dokument_kurzbz, $akzeptierte_dokumente, true) && $dok->anzahl_akten_vorhanden == 0)
 	{
 		$missing_document = true;
 	}
-	/*
-	 * if(CAMPUS_NAME=='FH Technikum Wien' && !in_array($dok->dokument_kurzbz, $akzeptierte_dokumente, true))
-	 * {
-	 * $missing = true;
-	 * }
-	 */
+	
+	// Abfragen, bei welchen Studiengaengen das Dokument benoetigt wird
+	// @todo: Studiengangsnamen auch aus Studienplan holen? -> Falls noch benötigt, einfach Bezeichnung aus aktuellster Studienordnung holen 
+	$benoetigtStudiengang = new dokument();
+	$benoetigtStudiengang->getStudiengaengeDokument($dok->dokument_kurzbz, $person_id);
+
+	foreach ($benoetigtStudiengang->result as $row)
+	{
+		
+		//if ($dok->pflicht === true || check_person_statusbestaetigt($person_id, 'Interessent', '', $row->studiengang_kz))
+		{
+			$stg = new studiengang();
+			$stg->load($row->studiengang_kz);
+
+			$ben_bezeichnung['German'][$dok->dokument_kurzbz][] = $stg->bezeichnung;
+			$ben_bezeichnung['English'][$dok->dokument_kurzbz][] = $stg->english;
+			$ben_kz[$dok->dokument_kurzbz][] = $row->studiengang_kz;
+			if ($dok->pflicht)
+				$status_dokumente_arr[$row->studiengang_kz][] = $dok->dokument_kurzbz;
+		}
+	}
 }
 
 if ($missing_document && (! defined('BEWERBERTOOL_DOKUMENTE_ANZEIGEN') || BEWERBERTOOL_DOKUMENTE_ANZEIGEN == true))
 {
-	/*
-	 * if(CAMPUS_NAME == 'FH Technikum Wien' && !check_person_statusbestaetigt($person_id,'Interessent'))
-	 * {
-	 * $status_dokumente = true;
-	 * $status_dokumente_text = $vollstaendig;
-	 * }
-	 */
-	/*
-	 * if(CAMPUS_NAME == 'FH Technikum Wien' && count($akzeptierte_dokumente) > 0)
-	 * {
-	 * $status_dokumente = true;
-	 * $status_dokumente_text = $teilvollstaendig;
-	 * }
-	 * else
-	 */
-	{
-		$status_dokumente = false;
-		$status_dokumente_text = $unvollstaendig;
-	}
+	$status_dokumente = false;
+	$status_dokumente_text = $unvollstaendig;
 }
 else
 {
@@ -1500,9 +1523,9 @@ else
 		<meta http-equiv="X-UA-Compatible" content="chrome=1">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<title><?php echo $p->t('bewerbung/menuBewerbungFuerStudiengang') ?></title>
-		<link rel="stylesheet" type="text/css" href="../../../vendor/components/bootstrap/css/bootstrap.min.css">
+		<link rel="stylesheet" type="text/css" href="../../../vendor/twbs/bootstrap/dist/css/bootstrap.min.css">
 		<script type="text/javascript" src="../../../vendor/components/jquery/jquery.min.js"></script>
-		<script type="text/javascript" src="../../../vendor/components/bootstrap/js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="../../../vendor/twbs/bootstrap/dist/js/bootstrap.min.js"></script> 
 		<script src="../include/js/bewerbung.js"></script>
 		<script type="text/javascript">
 			var activeTab = <?php echo json_encode($active) ?>,
@@ -1601,26 +1624,11 @@ else
 						<?php
 						if(!defined('BEWERBERTOOL_DOKUMENTE_ANZEIGEN') || BEWERBERTOOL_DOKUMENTE_ANZEIGEN)
 						{
-							// An der FHTW wird der Punkt Dokumente erst angezeigt, wenn der Status bestätigt ist (außer im Mail-Debug-Mode)
-							/*if(CAMPUS_NAME=='FH Technikum Wien' && MAIL_DEBUG == '')
-							{
-								if(check_person_statusbestaetigt($person_id,'Interessent'))
-								{
-									echo '	<li>
-												<a href="#dokumente" aria-controls="dokumente" role="tab" data-toggle="tab" '.($status_dokumente_text == $unvollstaendig?'style="background-color: #F2DEDE !important"':($status_dokumente_text == $teilvollstaendig?'style="background-color: #FCF8E3 !important"':'style="background-color: #DFF0D8 !important"')).'>
-													'.$p->t('bewerbung/menuDokumente').' <br> '.$status_dokumente_text.'
-												</a>
-											</li>';
-								}
-							}
-							else*/
-							{
-								echo '	<li>
-											<a href="#dokumente" aria-controls="dokumente" role="tab" data-toggle="tab" '.($status_dokumente_text == $unvollstaendig?'style="background-color: #F2DEDE !important"':'style="background-color: #DFF0D8 !important"').'>
-												'.$p->t('bewerbung/menuDokumente').' <br> '.$status_dokumente_text.'
-											</a>
-										</li>';
-							}
+							echo '	<li>
+										<a href="#dokumente" aria-controls="dokumente" role="tab" data-toggle="tab" '.($status_dokumente_text == $unvollstaendig?'style="background-color: #F2DEDE !important"':'style="background-color: #DFF0D8 !important"').'>
+											'.$p->t('bewerbung/menuDokumente').' <br> '.$status_dokumente_text.'
+										</a>
+									</li>';
 						}
 						 ?>
 
@@ -1697,13 +1705,7 @@ else
 				);
 				if(!defined('BEWERBERTOOL_DOKUMENTE_ANZEIGEN') || BEWERBERTOOL_DOKUMENTE_ANZEIGEN)
 				{
-					if(CAMPUS_NAME=='FH Technikum Wien' && MAIL_DEBUG == '')
-					{
-						if(check_person_statusbestaetigt($person_id,'Interessent'))
-							$tabs[]='dokumente';
-					}
-					else
-						$tabs[]='dokumente';
+					$tabs[]='dokumente';
 				}
 				if(defined('BEWERBERTOOL_AUSBILDUNG_ANZEIGEN') && BEWERBERTOOL_AUSBILDUNG_ANZEIGEN)
 					$tabs[]='ausbildung';
@@ -1730,17 +1732,12 @@ else
 
 <?php
 	
-	// sendet eine Email an die Assistenz dass die Bewerbung abgeschlossen ist
+// Sendet eine Email an die Assistenz, dass die Bewerbung abgeschlossen ist und eine an den Bewerber zur Bestätigung
 function sendBewerbung($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz, $studienplan_id = '')
 {
 	global $person_id;
 	$p = new phrasen(DEFAULT_LANGUAGE);
-	
-	// Array fuer Mailempfaenger. Vorruebergehende Loesung. Kindlm am 28.10.2015
-	$empf_array = array();
-	if (defined('BEWERBERTOOL_BEWERBUNG_EMPFAENGER'))
-		$empf_array = unserialize(BEWERBERTOOL_BEWERBUNG_EMPFAENGER);
-	
+
 	$person = new person();
 	$person->load($person_id);
 	
@@ -1762,6 +1759,23 @@ function sendBewerbung($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz,
 	
 	$typ = new studiengang();
 	$typ->getStudiengangTyp($studiengang->typ);
+	
+	// An der FHTW werden alle Mails von Bachelor-Studiengängen an das Infocenter geschickt, solange die Bewerbung noch nicht bestätigt wurde
+	if (CAMPUS_NAME == 'FH Technikum Wien')
+	{
+		if(	defined('BEWERBERTOOL_MAILEMPFANG') && 
+			BEWERBERTOOL_MAILEMPFANG != '' && 
+			$studiengang->typ == 'b')
+		{
+			$empfaenger = BEWERBERTOOL_MAILEMPFANG;
+		}
+		else
+			$empfaenger = getMailEmpfaenger($studiengang->typ, $studienplan_id);
+	}
+	else 
+	{
+		$empfaenger = getMailEmpfaenger($stg->studiengang_kz);
+	}
 	
 	if (CAMPUS_NAME == 'FH Technikum Wien')
 	{
@@ -1801,6 +1815,9 @@ function sendBewerbung($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz,
 		}
 		
 		$email = $p->t('bewerbung/emailBodyStart');
+		// Wenn MAIL_DEBUG aktiv ist, zeige auch den Empfänger an
+		if(defined('MAIL_DEBUG') && MAIL_DEBUG != '')
+			$email .= '<br><br>Empfänger: '.$empfaenger.'<br><br>';
 		$email .= '<br><table style="font-size:small"><tbody>';
 		$email .= '<tr><td><b>' . $p->t('global/studiengang') . '</b></td><td>' . $typ->bezeichnung . ' ' . $studiengang->bezeichnung . ($orgform_kurzbz != '' ? ' (' . $orgform_kurzbz . ')' : '') . '</td></tr>';
 		$email .= '<tr><td><b>' . $p->t('global/studiensemester') . '</b></td><td>' . $studiensemester_kurzbz . '</td></tr>';
@@ -1861,18 +1878,7 @@ function sendBewerbung($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz,
 	}
 	
 	$email = wordwrap($email, 70); // Bricht den Code um, da es sonst zu Anzeigefehlern im Mail kommen kann
-	if (defined('BEWERBERTOOL_MAILEMPFANG') && BEWERBERTOOL_MAILEMPFANG != '')
-		$empfaenger = BEWERBERTOOL_MAILEMPFANG;
-	elseif (isset($empf_array[$prestudent->studiengang_kz]))
-		$empfaenger = $empf_array[$prestudent->studiengang_kz];
-	else
-		$empfaenger = $studiengang->email;
-	
-	// Pfuschloesung fur BIF Dual
-	if (CAMPUS_NAME == 'FH Technikum Wien' && $prestudent->studiengang_kz == 257 && $orgform_kurzbz == 'DUA')
-		$empfaenger = 'info.bid@technikum-wien.at';
-	
-	// $email.= $empfaenger;
+
 	$mail = new mail($empfaenger, 'no-reply', $p->t('bewerbung/bewerbung') . ' ' . $person->vorname . ' ' . $person->nachname . ($orgform_kurzbz != '' ? ' (' . $orgform_kurzbz . ')' : ''), 'Bitte sehen Sie sich die Nachricht in HTML Sicht an, um den Link vollständig darzustellen.');
 	$mail->setHTMLContent($email);
 	
@@ -1883,8 +1889,13 @@ function sendBewerbung($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz,
 		$kontakt->load_persKontakttyp($person->person_id, 'email');
 		$mailadresse = isset($kontakt->result[0]->kontakt) ? $kontakt->result[0]->kontakt : '';
 		
-		$mail_bewerber = new mail($mailadresse, 'no-reply', 'Bewerbung erfolgreich abgeschickt', 'Bitte sehen Sie sich die Nachricht in HTML Sicht an, um den Inhalt vollständig darzustellen.');
-		$email_bewerber = $p->t('bewerbung/erfolgreichBeworbenMail');
+		if($person->geschlecht == 'm')
+			$anrede = $p->t('bewerbung/anredeMaennlich');
+		else
+			$anrede = $p->t('bewerbung/anredeWeiblich');
+		
+		$mail_bewerber = new mail($mailadresse, 'no-reply', $p->t('bewerbung/erfolgreichBeworbenMailBetreff'), 'Bitte sehen Sie sich die Nachricht in HTML Sicht an, um den Inhalt vollständig darzustellen.');
+		$email_bewerber = $p->t('bewerbung/erfolgreichBeworbenMail', array($person->vorname, $person->nachname, $anrede, $studiengang->bezeichnung));
 		$mail_bewerber->setHTMLContent($email_bewerber);
 		if (! $mail_bewerber->send())
 			return false;
@@ -1972,13 +1983,8 @@ function sendAddStudiengang($prestudent_id, $studiensemester_kurzbz, $orgform_ku
 	$email .= $p->t('bewerbung/emailBodyEnde');
 	
 	$email = wordwrap($email, 70); // Bricht den Code um, da es sonst zu Anzeigefehlern im Mail kommen kann
-	if (defined('BEWERBERTOOL_MAILEMPFANG') && BEWERBERTOOL_MAILEMPFANG != '')
-		$empfaenger = BEWERBERTOOL_MAILEMPFANG;
-	elseif (isset($empf_array[$prestudent->studiengang_kz]))
-		$empfaenger = $empf_array[$prestudent->studiengang_kz];
-	else
-		$empfaenger = $studiengang->email;
-	// $email.= $empfaenger;
+
+	$empfaenger = getMailEmpfaenger($prestudent->studiengang_kz);
 	$mail = new mail($empfaenger, 'no-reply', ($person->geschlecht == 'm' ? 'Neuer Bewerber ' : 'Neue Bewerberin ') . $person->vorname . ' ' . $person->nachname . ' registriert', 'Bitte sehen Sie sich die Nachricht in HTML Sicht an, um den Inhalt vollständig darzustellen.');
 	$mail->setHTMLContent($email);
 	if (! $mail->send())
