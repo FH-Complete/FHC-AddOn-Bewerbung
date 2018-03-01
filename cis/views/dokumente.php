@@ -63,7 +63,8 @@ if (! isset($person_id))
 		$c .= strcmp(strtolower($a->bezeichnung_mehrsprachig[getSprache()]), strtolower($b->bezeichnung_mehrsprachig[getSprache()]));
 		return $c;
 	}
-	usort($dokumente_abzugeben, "sortDocuments");
+	if ($dokumente_abzugeben)
+		usort($dokumente_abzugeben, "sortDocuments");
 	
 // 	$studiensemester = new studiensemester();
 // 	$studiensemester->getStudiensemesterOnlinebewerbung();
@@ -93,10 +94,17 @@ if (! isset($person_id))
 			</thead>
 			<tbody>
 		<?php 
+		if ($dokumente_abzugeben):
 		foreach ($dokumente_abzugeben as $dok)
 		:
 			if ($dok->pflicht === true || check_person_statusbestaetigt($person_id, 'Interessent', '', '')):
 
+			// An der FHTW ist das Dokument "Sprachkenntnisse B2" nicht verpflichtend, soll aber im ersten Schritt angezeigt werden
+			if (CAMPUS_NAME == 'FH Technikum Wien')
+			{
+				if ($dok->dokument_kurzbz == 'SprachB2')
+					$dok->pflicht = false;
+			}
 			$beschreibung = '';
 			$aktenliste = '';
 			$aktion = '';
@@ -422,7 +430,8 @@ if (! isset($person_id))
 			echo'</tr>';
 				
 		endif;
-		endforeach; ?>
+		endforeach;
+		endif; ?>
 			</tbody>
 		</table>
 	</div>

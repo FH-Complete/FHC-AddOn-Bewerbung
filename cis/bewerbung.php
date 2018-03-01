@@ -1404,35 +1404,50 @@ $ben_bezeichnung = array();
  * $akzeptierte_dokumente[] = $akte->dokument_kurzbz;
  * }
  */
-
-foreach ($dokumente_abzugeben as $dok)
+if ($dokumente_abzugeben)
 {
-	if ($dok->anzahl_akten_formal_geprueft > 0 || $dok->anzahl_akten_formal_geprueft > 0 || $dok->anzahl_dokumente_akzeptiert > 0 || $dok->anzahl_akten_nachgereicht > 0)
-		$akzeptierte_dokumente[] = $dok->dokument_kurzbz;
-	
-	if ($dok->pflicht && ! in_array($dok->dokument_kurzbz, $akzeptierte_dokumente, true) && $dok->anzahl_akten_vorhanden == 0)
+	foreach ($dokumente_abzugeben as $dok)
 	{
-		$missing_document = true;
-	}
-	
-	// Abfragen, bei welchen Studiengaengen das Dokument benoetigt wird
-	// @todo: Studiengangsnamen auch aus Studienplan holen? -> Falls noch benötigt, einfach Bezeichnung aus aktuellster Studienordnung holen 
-	$benoetigtStudiengang = new dokument();
-	$benoetigtStudiengang->getStudiengaengeDokument($dok->dokument_kurzbz, $person_id);
-
-	foreach ($benoetigtStudiengang->result as $row)
-	{
+		if ($dok->anzahl_akten_formal_geprueft > 0 || $dok->anzahl_akten_formal_geprueft > 0 || $dok->anzahl_dokumente_akzeptiert > 0 || $dok->anzahl_akten_nachgereicht > 0)
+			$akzeptierte_dokumente[] = $dok->dokument_kurzbz;
 		
-		//if ($dok->pflicht === true || check_person_statusbestaetigt($person_id, 'Interessent', '', $row->studiengang_kz))
+		// An der FHTW ist das Dokument "Sprachkenntnisse B2" nicht verpflichtend, soll aber im ersten Schritt angezeigt werden
+		if (CAMPUS_NAME == 'FH Technikum Wien')
 		{
-			$stg = new studiengang();
-			$stg->load($row->studiengang_kz);
-
-			$ben_bezeichnung['German'][$dok->dokument_kurzbz][] = $stg->bezeichnung;
-			$ben_bezeichnung['English'][$dok->dokument_kurzbz][] = $stg->english;
-			$ben_kz[$dok->dokument_kurzbz][] = $row->studiengang_kz;
-			if ($dok->pflicht)
-				$status_dokumente_arr[$row->studiengang_kz][] = $dok->dokument_kurzbz;
+			if ($dok->pflicht && ! in_array($dok->dokument_kurzbz, $akzeptierte_dokumente, true) && $dok->anzahl_akten_vorhanden == 0 && $dok->dokument_kurzbz != 'SprachB2')
+				$missing_document = true;
+		}
+		elseif ($dok->pflicht && ! in_array($dok->dokument_kurzbz, $akzeptierte_dokumente, true) && $dok->anzahl_akten_vorhanden == 0)
+		{
+			$missing_document = true;
+		}
+		
+		// Abfragen, bei welchen Studiengaengen das Dokument benoetigt wird
+		// @todo: Studiengangsnamen auch aus Studienplan holen? -> Falls noch benötigt, einfach Bezeichnung aus aktuellster Studienordnung holen 
+		$benoetigtStudiengang = new dokument();
+		$benoetigtStudiengang->getStudiengaengeDokument($dok->dokument_kurzbz, $person_id);
+	
+		foreach ($benoetigtStudiengang->result as $row)
+		{
+			//if ($dok->pflicht === true || check_person_statusbestaetigt($person_id, 'Interessent', '', $row->studiengang_kz))
+			{
+				$stg = new studiengang();
+				$stg->load($row->studiengang_kz);
+	
+				$ben_bezeichnung['German'][$dok->dokument_kurzbz][] = $stg->bezeichnung;
+				$ben_bezeichnung['English'][$dok->dokument_kurzbz][] = $stg->english;
+				$ben_kz[$dok->dokument_kurzbz][] = $row->studiengang_kz;
+				if ($dok->pflicht)
+				{
+					// An der FHTW ist das Dokument "Sprachkenntnisse B2" nicht verpflichtend, soll aber im ersten Schritt angezeigt werden
+					if (CAMPUS_NAME == 'FH Technikum Wien')
+					{
+						if ($dok->dokument_kurzbz == 'SprachB2')
+							continue;
+					}
+					$status_dokumente_arr[$row->studiengang_kz][] = $dok->dokument_kurzbz;
+				}
+			}
 		}
 	}
 }
@@ -1740,7 +1755,7 @@ else
 // Sendet eine Email an die Assistenz, dass die Bewerbung abgeschlossen ist und eine an den Bewerber zur Bestätigung
 function sendBewerbung($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz, $studienplan_id = '')
 {
-	global $person_id;
+	global $person_id, $sprache;
 	$p = new phrasen(DEFAULT_LANGUAGE);
 
 	$person = new person();
@@ -1764,25 +1779,9 @@ function sendBewerbung($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz,
 
 	$typ = new studiengang();
 	$typ->getStudiengangTyp($studiengang->typ);
+	$empfaenger = getMailEmpfaenger($studiengang->studiengang_kz);
 	
-	// An der FHTW werden alle Mails von Bachelor-Studiengängen an das Infocenter geschickt, solange die Bewerbung noch nicht bestätigt wurde
-	if (CAMPUS_NAME == 'FH Technikum Wien')
-	{
-		if(	defined('BEWERBERTOOL_MAILEMPFANG') && 
-			BEWERBERTOOL_MAILEMPFANG != '' && 
-			$studiengang->typ == 'b')
-		{
-			$empfaenger = BEWERBERTOOL_MAILEMPFANG;
-		}
-		else
-			$empfaenger = getMailEmpfaenger($studiengang->typ, $studienplan_id);
-	}
-	else 
-	{
-		$empfaenger = getMailEmpfaenger($stg->studiengang_kz);
-	}
-	
-	if (CAMPUS_NAME == 'FH Technikum Wien')
+	if (CAMPUS_NAME == 'FH Technikum Wien' && $studiengang->typ != 'b')
 	{
 		$kontakt = new kontakt();
 		$kontakt->load_persKontakttyp($person->person_id, 'email');
@@ -1883,14 +1882,29 @@ function sendBewerbung($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz,
 		$email .= $p->t('bewerbung/emailBodyEnde');
 	}
 
-	$email = wordwrap($email, 70); // Bricht den Code um, da es sonst zu Anzeigefehlern im Mail kommen kann
-
-	$mail = new mail($empfaenger, 'no-reply', $p->t('bewerbung/bewerbung') . ' ' . $person->vorname . ' ' . $person->nachname . ($orgform_kurzbz != '' ? ' (' . $orgform_kurzbz . ')' : ''), 'Bitte sehen Sie sich die Nachricht in HTML Sicht an, um den Link vollständig darzustellen.');
-	$mail->setHTMLContent($email);
+	// An der FHTW werden alle Bachelor-Studiengänge vom Infocenter abgearbeitet und deshalb keine Mail verschickt
+	if (CAMPUS_NAME == 'FH Technikum Wien')
+	{
+		if ($studiengang->typ != 'b')
+		{
+			$email = wordwrap($email, 70); // Bricht den Code um, da es sonst zu Anzeigefehlern im Mail kommen kann
+		
+			$mail = new mail($empfaenger, 'no-reply', $p->t('bewerbung/bewerbung') . ' ' . $person->vorname . ' ' . $person->nachname . ($orgform_kurzbz != '' ? ' (' . $orgform_kurzbz . ')' : ''), 'Bitte sehen Sie sich die Nachricht in HTML Sicht an, um den Link vollständig darzustellen.');
+			$mail->setHTMLContent($email);
+		}
+	}
+	else 
+	{
+		$email = wordwrap($email, 70); // Bricht den Code um, da es sonst zu Anzeigefehlern im Mail kommen kann
+	
+		$mail = new mail($empfaenger, 'no-reply', $p->t('bewerbung/bewerbung') . ' ' . $person->vorname . ' ' . $person->nachname . ($orgform_kurzbz != '' ? ' (' . $orgform_kurzbz . ')' : ''), 'Bitte sehen Sie sich die Nachricht in HTML Sicht an, um den Link vollständig darzustellen.');
+		$mail->setHTMLContent($email);
+	}
 
 	// send mail to Interessent
 	if (defined('BEWERBERTOOL_ERFOLGREICHBEWORBENMAIL') && BEWERBERTOOL_ERFOLGREICHBEWORBENMAIL == true)
 	{
+		$p = new phrasen($sprache);
 		$kontakt = new kontakt();
 		$kontakt->load_persKontakttyp($person->person_id, 'email');
 		$mailadresse = isset($kontakt->result[0]->kontakt) ? $kontakt->result[0]->kontakt : '';
@@ -1907,10 +1921,26 @@ function sendBewerbung($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz,
 			return false;
 	}
 
-	if (! $mail->send())
-		return false;
-	else
-		return true;
+	// An der FHTW werden alle Bachelor-Studiengänge vom Infocenter abgearbeitet und deshalb keine Mail verschickt
+	if (CAMPUS_NAME == 'FH Technikum Wien')
+	{
+		if ($studiengang->typ != 'b')
+		{
+			if (! $mail->send())
+				return false;
+			else
+				return true;
+		}
+		else 
+			return true;
+	}
+	else 
+	{
+		if (! $mail->send())
+			return false;
+		else
+			return true;;
+	}
 }
 // sendet eine Email an die Assistenz, wenn nachträglich eine Bewerbung hinzugefügt wird
 function sendAddStudiengang($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz)
