@@ -83,179 +83,174 @@ if(!defined('BEWERBERTOOL_ABSCHICKEN_ANMERKUNG') || BEWERBERTOOL_ABSCHICKEN_ANME
 	else
 		echo '	</div><br>';
 }
-//echo '<p>'.$p->t('bewerbung/erklaerungBewerbungAbschicken').'</p>';
 
-$disabled = 'disabled';
-if(	$status_person == true && 
-	$status_kontakt == true && 
-	$status_zahlungen == true && 
-	$status_reihungstest == true && 
-	$status_zgv_bak == true && 
-	$status_ausbildung == true)
-		$disabled = '';
-
-/*if(CAMPUS_NAME == 'FH Technikum Wien' && 
-	$status_person == true && 
-	$status_kontakt == true && 
-	$status_zahlungen == true && 
-	$status_reihungstest == true && 
-	$status_zgv_bak == true && 
-	$status_dokumente == false)
-		$disabled = '';*/
-
-$prestudent_help= new prestudent();
-$prestudent_help->getPrestudenten($person->person_id);
 $stg = new studiengang();
 $typ = new studiengang();
 
-foreach($prestudent_help->result as $prest)
+if(!$prestudent_help = getBewerbungen($person_id, true))
 {
-	$stg->load($prest->studiengang_kz);
-	$typ->getStudiengangTyp($stg->typ);
-
-	if($sprache!='German' && $stg->english!='')
-		$stg_bezeichnung = $stg->english;
-	else
-		$stg_bezeichnung = $stg->bezeichnung;
-
-	$prestudent_help2 = new prestudent();
-	$prestudent_help2->getPrestudentRolle($prest->prestudent_id,'Interessent');
-
-	$studiensemester = new studiensemester();
-	$studiensemester->getStudiensemesterOnlinebewerbung();
-	$stsem_array = array();
-	foreach($studiensemester->studiensemester AS $s)
-		$stsem_array[] = $s->studiensemester_kurzbz;
-
-	foreach($prestudent_help2->result AS $row)
+	echo '';
+}
+else 
+{
+	foreach($prestudent_help as $prest)
 	{
-		// Bewerbungsfristen laden
-		$disabled_bewerbung = '';
-		$bewerbungsfrist = '<span style="font-weight: normal"><br>'.$p->t('bewerbung/bewerbungszeitraum').': '.$p->t('bewerbung/unbegrenzt').'</span>';
-		$tage_bis_fristablauf = '';
-		$tage_bis_bewerbungsbeginn = '';
-		$class = '';
-		$button_class = 'btn-primary';
-		$bewerbungsfristen = new bewerbungstermin();
-		$bewerbungsfristen->getBewerbungstermine($prest->studiengang_kz, $row->studiensemester_kurzbz, 'insertamum DESC', $row->studienplan_id);
-
-		if (isset($bewerbungsfristen->result[0]))
+		$disabled = 'disabled';
+		if(	$status_person == true && 
+			$status_kontakt == true && 
+			$status_zahlungen == true && 
+			$status_reihungstest == true && 
+			$status_zgv_bak == true && 
+			$status_ausbildung == true)
+				$disabled = '';
+		
+		$stg->load($prest->studiengang_kz);
+		$typ->getStudiengangTyp($stg->typ);
+	
+		if($sprache!='German' && $stg->english!='')
+			$stg_bezeichnung = $stg->english;
+		else
+			$stg_bezeichnung = $stg->bezeichnung;
+	
+		$prestudent_help2 = new prestudent();
+		$prestudent_help2->getPrestudentRolle($prest->prestudent_id,'Interessent');
+	
+		$studiensemester = new studiensemester();
+		$studiensemester->getStudiensemesterOnlinebewerbung();
+		$stsem_array = array();
+		foreach($studiensemester->studiensemester AS $s)
+			$stsem_array[] = $s->studiensemester_kurzbz;
+	
+		foreach($prestudent_help2->result AS $row)
 		{
-			$bewerbungsfristen = $bewerbungsfristen->result[0];
-			$bewerbungsbeginn = '';
-			if ($bewerbungsfristen->beginn != '')
-				$bewerbungsbeginn = $datum->formatDatum($bewerbungsfristen->beginn, 'd.m.Y');
-			else
-				$bewerbungsbeginn = $p->t('bewerbung/unbegrenzt');
+			// Bewerbungsfristen laden
+			$disabled_bewerbung = '';
+			$bewerbungsfrist = '<span style="font-weight: normal"><br>'.$p->t('bewerbung/bewerbungszeitraum').': '.$p->t('bewerbung/unbegrenzt').'</span>';
+			$tage_bis_fristablauf = '';
+			$tage_bis_bewerbungsbeginn = '';
+			$class = '';
+			$button_class = 'btn-primary';
+			$bewerbungsfristen = new bewerbungstermin();
+			$bewerbungsfristen->getBewerbungstermine($prest->studiengang_kz, $row->studiensemester_kurzbz, 'insertamum DESC', $row->studienplan_id);
+	
+			if (isset($bewerbungsfristen->result[0]))
+			{
+				$bewerbungsfristen = $bewerbungsfristen->result[0];
+				$bewerbungsbeginn = '';
+				if ($bewerbungsfristen->beginn != '')
+					$bewerbungsbeginn = $datum->formatDatum($bewerbungsfristen->beginn, 'd.m.Y');
+				else
+					$bewerbungsbeginn = $p->t('bewerbung/unbegrenzt');
+				
+				$tage_bis_bewerbungsbeginn = ((time() - strtotime($bewerbungsfristen->beginn))/86400);
+				// Wenn Nachfrist gesetzt und das Nachfrist-Datum befuellt ist, gilt die Nachfrist
+				// sonst das Endedatum, wenn eines gesetzt ist
+				if ($bewerbungsfristen->nachfrist == true && $bewerbungsfristen->nachfrist_ende != '')
+				{
+					$tage_bis_fristablauf = ((strtotime($bewerbungsfristen->nachfrist_ende) - time())/86400);
+					// Wenn die Frist in weniger als 7 Tagen ablaeuft, hervorheben
+					if ($tage_bis_fristablauf <= 7)
+					{
+						$class = 'class="bg-warning text-warning"';
+					}
+					if ($tage_bis_fristablauf <= 0)
+					{
+						$class = 'class="bg-danger text-danger"';
+						$button_class = 'btn-default';
+					}
+					$bewerbungsfrist = '<span style="font-weight: normal"><br>'.$p->t('bewerbung/bewerbungszeitraum').': '.$bewerbungsbeginn.' - <span '.$class.'>'.$datum->formatDatum($bewerbungsfristen->nachfrist_ende, 'd.m.Y').'</span></span>';
+				}
+				elseif ($bewerbungsfristen->ende != '')
+				{
+					$tage_bis_fristablauf = ((strtotime($bewerbungsfristen->ende) - time())/86400);
+					// Wenn die Frist in weniger als 7 Tagen ablaeuft, hervorheben
+					if ($tage_bis_fristablauf <= 7)
+					{
+						$class = 'class="bg-warning text-warning"';
+					}
+					if ($tage_bis_fristablauf <= 0)
+					{
+						$class = 'class="bg-danger text-danger"';
+						$button_class = 'btn-default';
+					}
+					$bewerbungsfrist = '<span style="font-weight: normal"><br>'.$p->t('bewerbung/bewerbungszeitraum').': '.$bewerbungsbeginn.' - <span '.$class.'>'.$datum->formatDatum($bewerbungsfristen->ende, 'd.m.Y').'</span></span>';
+				}
+				elseif ($bewerbungsfristen->beginn != '')
+				{
+					$bewerbungsfrist = '<span style="font-weight: normal"><br>'.$p->t('bewerbung/bewerbungszeitraum').': '.$bewerbungsbeginn.' - '.$p->t('bewerbung/unbegrenzt').'</span>';
+				}
+				else
+				{
+					$bewerbungsfrist = '<span style="font-weight: normal"><br>'.$p->t('bewerbung/unbegrenzt').'</span>';
+				}
+				
+				// Wenn die Frist abgelaufen ist, Button deaktivieren
+				if (($tage_bis_fristablauf != '' && $tage_bis_fristablauf <= 0) || ($tage_bis_bewerbungsbeginn != '' && $tage_bis_bewerbungsbeginn <= 0))
+					$disabled_bewerbung = 'disabled';
+			}
+	
+			if ($stg->typ == 'm' && $status_zgv_mas == false)
+				$disabled = 'disabled';
+	
+			// Die Vollständigkeit der Dokumente wird extra für jeden Studiengang gecheckt 
+			if (!empty($status_dokumente_arr[$prest->studiengang_kz]))
+				$disabled = 'disabled';
 			
-			$tage_bis_bewerbungsbeginn = ((time() - strtotime($bewerbungsfristen->beginn))/86400);
-			// Wenn Nachfrist gesetzt und das Nachfrist-Datum befuellt ist, gilt die Nachfrist
-			// sonst das Endedatum, wenn eines gesetzt ist
-			if ($bewerbungsfristen->nachfrist == true && $bewerbungsfristen->nachfrist_ende != '')
-			{
-				$tage_bis_fristablauf = ((strtotime($bewerbungsfristen->nachfrist_ende) - time())/86400);
-				// Wenn die Frist in weniger als 7 Tagen ablaeuft, hervorheben
-				if ($tage_bis_fristablauf <= 7)
-				{
-					$class = 'class="bg-warning text-warning"';
-				}
-				if ($tage_bis_fristablauf <= 0)
-				{
-					$class = 'class="bg-danger text-danger"';
-					$button_class = 'btn-default';
-				}
-				$bewerbungsfrist = '<span style="font-weight: normal"><br>'.$p->t('bewerbung/bewerbungszeitraum').': '.$bewerbungsbeginn.' - <span '.$class.'>'.$datum->formatDatum($bewerbungsfristen->nachfrist_ende, 'd.m.Y').'</span></span>';
-			}
-			elseif ($bewerbungsfristen->ende != '')
-			{
-				$tage_bis_fristablauf = ((strtotime($bewerbungsfristen->ende) - time())/86400);
-				// Wenn die Frist in weniger als 7 Tagen ablaeuft, hervorheben
-				if ($tage_bis_fristablauf <= 7)
-				{
-					$class = 'class="bg-warning text-warning"';
-				}
-				if ($tage_bis_fristablauf <= 0)
-				{
-					$class = 'class="bg-danger text-danger"';
-					$button_class = 'btn-default';
-				}
-				$bewerbungsfrist = '<span style="font-weight: normal"><br>'.$p->t('bewerbung/bewerbungszeitraum').': '.$bewerbungsbeginn.' - <span '.$class.'>'.$datum->formatDatum($bewerbungsfristen->ende, 'd.m.Y').'</span></span>';
-			}
-			elseif ($bewerbungsfristen->beginn != '')
-			{
-				$bewerbungsfrist = '<span style="font-weight: normal"><br>'.$p->t('bewerbung/bewerbungszeitraum').': '.$bewerbungsbeginn.' - '.$p->t('bewerbung/unbegrenzt').'</span>';
-			}
-			else
-			{
-				$bewerbungsfrist = '<span style="font-weight: normal"><br>'.$p->t('bewerbung/unbegrenzt').'</span>';
-			}
+			$buttontext = $p->t('bewerbung/buttonBewerbungAbschicken').' ('.$stg->kurzbzlang.' '.$row->studiensemester_kurzbz.')';
 			
-			// Wenn die Frist abgelaufen ist, Button deaktivieren
-			if (($tage_bis_fristablauf != '' && $tage_bis_fristablauf <= 0) || ($tage_bis_bewerbungsbeginn != '' && $tage_bis_bewerbungsbeginn <= 0))
-				$disabled_bewerbung = 'disabled';
-		}
-
-		if ($stg->typ == 'm' && $status_zgv_mas == false)
-			$disabled = 'disabled';
-		
-		// Die Vollständigkeit der Dokumente wird extra für jeden Studiengang gecheckt 
-		if (!empty($status_dokumente_arr[$prest->studiengang_kz]))
-			$disabled = 'disabled';
-		
-		$buttontext = $p->t('bewerbung/buttonBewerbungAbschicken').' ('.$stg->kurzbzlang.' '.$row->studiensemester_kurzbz.')';
-		
-		if ($tage_bis_bewerbungsbeginn != '' && $tage_bis_bewerbungsbeginn <= 0)
-			$buttontext = $p->t('bewerbung/bewerbungszeitraumStartetAm', array($bewerbungsbeginn));
-		elseif ($tage_bis_fristablauf != '' && $tage_bis_fristablauf <= 0)
-			$buttontext = $p->t('bewerbung/bewerbungsfristAbgelaufen');
-		elseif ($disabled == 'disabled')
-			$buttontext = $p->t('bewerbung/buttonBewerbungUnvollstaendig');
-		
-		if(in_array($row->studiensemester_kurzbz, $stsem_array)) //Fuer Studiensemester ohne Onlinebewerbung kann sich nicht mehr beworben werden @todo: Dies soll zukuenftig je Studiengang abgespeichert werden koennen
-		{
-			if($row->bewerbung_abgeschicktamum!='')
+			if ($tage_bis_bewerbungsbeginn != '' && $tage_bis_bewerbungsbeginn <= 0)
+				$buttontext = $p->t('bewerbung/bewerbungszeitraumStartetAm', array($bewerbungsbeginn));
+			elseif ($tage_bis_fristablauf != '' && $tage_bis_fristablauf <= 0)
+				$buttontext = $p->t('bewerbung/bewerbungsfristAbgelaufen');
+			elseif ($disabled == 'disabled')
+				$buttontext = $p->t('bewerbung/buttonBewerbungUnvollstaendig');
+			
+			if(in_array($row->studiensemester_kurzbz, $stsem_array)) //Fuer Studiensemester ohne Onlinebewerbung kann sich nicht mehr beworben werden @todo: Dies soll zukuenftig je Studiengang abgespeichert werden koennen
 			{
-				// Bewerbung bereits geschickt
-				echo '
-				<div class="row">
-					<div class="col-md-6 col-sm-8 col-xs-10">
-							<div class="form-group">
-								<label for="'.$stg->kurzbzlang.'">
-										'.$p->t('bewerbung/bewerbungAbschickenFuer').' 
-										'.$typ->bezeichnung.' 
-										'.$stg_bezeichnung.' ('.$row->studiensemester_kurzbz.') 
-										'.$bewerbungsfrist.'
-								</label>
-								<button class="btn btn-default btn-block" disabled type="button">'.$p->t('bewerbung/BewerbungBereitsVerschickt').'</button>
-							</div>
-					</div>
-				</div>';
-			}
-			else
-			{
-				// Bewerbung noch nicht geschickt
-				$orgform = new organisationsform();
-				$orgform->load($row->orgform_kurzbz);
-				echo '
-				<div class="row">
-					<div class="col-md-6 col-sm-8 col-xs-10">
-						<form method="POST"  action="'.$_SERVER['PHP_SELF'].'?active=abschicken">
-							<div class="form-group">
-								<label for="'.$stg->kurzbzlang.'">
-										'.$p->t('bewerbung/bewerbungAbschickenFuer').' 
-										'.$typ->bezeichnung.' 
-										'.$stg_bezeichnung.($orgform->bezeichnung!=''?' '.$orgform->bezeichnung:'').' 
-										('.$row->studiensemester_kurzbz.') 
-										'.$bewerbungsfrist.'
-								</label>
-								<button id="'.$stg->kurzbzlang.'" class="btn '.$button_class.' btn-block" '.$disabled.' '.$disabled_bewerbung.' type="submit" name="btn_bewerbung_abschicken">
-										'.$buttontext.' 
-								</button>
-								<input type="hidden" name="prestudent_id" value="'.$prest->prestudent_id.'">
-							</div>
-						</form>
-					</div>
-				</div>';
+				if($row->bewerbung_abgeschicktamum!='')
+				{
+					// Bewerbung bereits geschickt
+					echo '
+					<div class="row">
+						<div class="col-md-6 col-sm-8 col-xs-10">
+								<div class="form-group">
+									<label for="'.$stg->kurzbzlang.'">
+											'.$p->t('bewerbung/bewerbungAbschickenFuer').' 
+											'.$typ->bezeichnung.' 
+											'.$stg_bezeichnung.' ('.$row->studiensemester_kurzbz.') 
+											'.$bewerbungsfrist.'
+									</label>
+									<button class="btn btn-default btn-block" disabled type="button">'.$p->t('bewerbung/BewerbungBereitsVerschickt').'</button>
+								</div>
+						</div>
+					</div>';
+				}
+				else
+				{
+					// Bewerbung noch nicht geschickt
+					$orgform = new organisationsform();
+					$orgform->load($row->orgform_kurzbz);
+					echo '
+					<div class="row">
+						<div class="col-md-6 col-sm-8 col-xs-10">
+							<form method="POST"  action="'.$_SERVER['PHP_SELF'].'?active=abschicken">
+								<div class="form-group">
+									<label for="'.$stg->kurzbzlang.'">
+											'.$p->t('bewerbung/bewerbungAbschickenFuer').' 
+											'.$typ->bezeichnung.' 
+											'.$stg_bezeichnung.($orgform->bezeichnung!=''?' '.$orgform->bezeichnung:'').' 
+											('.$row->studiensemester_kurzbz.') 
+											'.$bewerbungsfrist.'
+									</label>
+									<button id="'.$stg->kurzbzlang.'" class="btn '.$button_class.' btn-block" '.$disabled.' '.$disabled_bewerbung.' type="submit" name="btn_bewerbung_abschicken">
+											'.$buttontext.' 
+									</button>
+									<input type="hidden" name="prestudent_id" value="'.$prest->prestudent_id.'">
+								</div>
+							</form>
+						</div>
+					</div>';
+				}
 			}
 		}
 	}

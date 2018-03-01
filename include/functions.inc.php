@@ -640,9 +640,10 @@ function getAllDokumenteBewerbungstoolForPerson($person_id)
 			JOIN PUBLIC.tbl_dokument USING (dokument_kurzbz)
 			WHERE tbl_prestudent.person_id = " . $db->db_add_param($person_id, FHC_INTEGER) . "
 				AND dok_stg.onlinebewerbung IS true
+				AND get_rolle_prestudent (tbl_prestudent.prestudent_id, NULL) NOT IN ('Abgewiesener','Abbrecher')
 			ORDER BY dokument_kurzbz,
 				pflicht DESC";
-	
+
 	if ($result = $db->db_query($qry))
 	{
 		while ($row = $db->db_fetch_object($result))
@@ -665,7 +666,10 @@ function getAllDokumenteBewerbungstoolForPerson($person_id)
 			
 			$db->result[] = $dok;
 		}
-		return $db->result;
+		if (isset($db->result))
+			return $db->result;
+		else
+			return false;
 	}
 	else
 	{

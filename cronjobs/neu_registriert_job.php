@@ -26,6 +26,7 @@ require_once('../../../include/kontakt.class.php');
 require_once('../include/functions.inc.php');
 require_once('../bewerbung.config.inc.php');
 
+// An der FHTW werden alle Bachelor-Studiengänge über das Infocenter abgewickelt
 $qry = "
 SELECT 
 	person_id,
@@ -46,12 +47,15 @@ JOIN
 	public.tbl_prestudentstatus USING (prestudent_id)
 JOIN
 	lehre.tbl_studienplan USING (studienplan_id)
+JOIN
+	public.tbl_studiengang USING (studiengang_kz)
 WHERE 
 	tbl_prestudent.insertvon='online' 
 AND (tbl_prestudent.insertamum >= (SELECT (CURRENT_DATE -1||' '||'03:00:00')::timestamp)
 	OR tbl_prestudentstatus.insertamum >= (SELECT (CURRENT_DATE -1||' '||'03:00:00')::timestamp))
 AND tbl_prestudentstatus.status_kurzbz = 'Interessent'
 AND tbl_prestudentstatus.bewerbung_abgeschicktamum IS NULL
+AND tbl_studiengang.typ != 'b'
 ORDER BY studiengang_kz, studiensemester_kurzbz, orgform_kurzbz, nachname, vorname";
 
 $db = new basis_db();

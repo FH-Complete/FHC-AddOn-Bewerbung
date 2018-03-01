@@ -220,6 +220,8 @@ $PHP_SELF = $_SERVER['PHP_SELF']; ?>
 			showDetails($("#dokumenttyp").val());
 			var showAusstellungsdetails = $("#dokumenttyp").find(":selected").data("ausstellungsdetails");
 			showAusstellungsnation(showAusstellungsdetails);
+
+			window.resizeTo(700, $('#documentForm').height() + 100);
 		});
 
 		function readFile(input)
@@ -653,16 +655,19 @@ if (isset($_POST['submitfile']))
 $dokumente_abzugeben = getAllDokumenteBewerbungstoolForPerson($person_id);
 $akte_vorhanden = array();
 
-foreach ($dokumente_abzugeben as $dok)
+if ($dokumente_abzugeben)
 {
-	$akte = new akte();
-	$akte->getAkten($person_id, $dok->dokument_kurzbz);
-	if ($dok->anzahl_akten_vorhanden > 0 && isset($akte->result[0]))
+	foreach ($dokumente_abzugeben as $dok)
 	{
-		$akte_vorhanden[$dok->dokument_kurzbz] = true;
+		$akte = new akte();
+		$akte->getAkten($person_id, $dok->dokument_kurzbz);
+		if ($dok->anzahl_akten_vorhanden > 0 && isset($akte->result[0]))
+		{
+			$akte_vorhanden[$dok->dokument_kurzbz] = true;
+		}
+		else
+			$akte_vorhanden[$dok->dokument_kurzbz] = false;
 	}
-	else
-		$akte_vorhanden[$dok->dokument_kurzbz] = false;
 }
 
 echo '<div class="container" id="messages">';

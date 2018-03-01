@@ -79,10 +79,18 @@ $this->phrasen['bewerbung/aktuelleBewerbungen']='Aktuelle Bewerbungen:';
 $this->phrasen['bewerbung/status']='Status';
 $this->phrasen['bewerbung/legende']='Legende';
 $this->phrasen['bewerbung/bewerbungsstatus']='Bewerbungsstatus';
-$this->phrasen['bewerbung/keinStatus']='Noch kein Status vorhanden';
+$this->phrasen['bewerbung/keinStatus']='Keine aktuelle Bewerbung vorhanden. Klicken Sie auf "Neue Bewerbung für Studiengang/Lehrgang hinzufügen" um eine Bewerbung hinzuzufügen';
 $this->phrasen['bewerbung/bestaetigt']='Bestätigt, in Bearbeitung';
 $this->phrasen['bewerbung/nichtBestaetigt']='Abgeschickt, in Bearbeitung';
-$this->phrasen['bewerbung/nichtAbgeschickt']='Nicht abgeschickt';
+$this->phrasen['bewerbung/nichtAbgeschickt']='Bewerbung abschicken zur weiteren Bearbeitung';
+$this->phrasen['bewerbung/bewerbungAbgeschickt']='Bewerbung abgeschickt';
+$this->phrasen['bewerbung/datenPruefung']='Datenprüfung';
+$this->phrasen['bewerbung/datenWerdenGeprueft']='Daten werden geprüft';
+$this->phrasen['bewerbung/freigegebenAnStudiengang']='Freigegeben an den Studiengang';
+$this->phrasen['bewerbung/freigabeAnStudiengang']='Freigabe an Studiengang';
+$this->phrasen['bewerbung/kontaktaufnahmeDurchStudiengang']='Kontaktaufnahme durch Studiengang';
+$this->phrasen['bewerbung/datenVollstaendig']='Daten vollständig';
+$this->phrasen['bewerbung/datenUnvollstaendig']='Daten vervollständigen';
 $this->phrasen['bewerbung/studiengangHinzufuegen']='Neue Bewerbung für Studiengang/Lehrgang hinzufügen';
 $this->phrasen['bewerbung/weiter']='Weiter';
 $this->phrasen['bewerbung/geburtsnation']='Geburtsnation';
@@ -156,7 +164,7 @@ $this->phrasen['bewerbung/vollstaendig']='vollständig';
 $this->phrasen['bewerbung/unvollstaendig']='unvollständig';
 $this->phrasen['bewerbung/teilweiseVollstaendig']='teilweise vollständig';
 $this->phrasen['bewerbung/maxAnzahlTeilnehmer']='max. Teilnehmeranzahl erreicht';
-$this->phrasen['bewerbung/erfolgreichBeworben']='Sie haben sich erfolgreich für %s beworben. Die zuständige Assistenz wird sich in den nächsten Tagen bei Ihnen melden. Falls Sie innerhalb von 10 Werktagen keine Reaktion erhalten, nehmen Sie bitte Kontakt mit uns auf.';
+$this->phrasen['bewerbung/erfolgreichBeworben']='Sie haben sich erfolgreich für %s beworben. In der Regel werden Sie innerhalb von 5 Werktagen kontaktiert.';
 $this->phrasen['bewerbung/fehlerBeimVersendenDerBewerbung']='Es ist ein Fehler beim Versenden der Bewerbung aufgetreten. Bitte versuchen Sie es nocheinmal.';
 $this->phrasen['bewerbung/svnrBereitsVorhanden']='SVNR bereits vorhanden';
 $this->phrasen['bewerbung/menuBewerbungFuerStudiengang']='Bewerbung für einen Studiengang';
@@ -255,7 +263,8 @@ $this->phrasen['bewerbung/paymentInfoText']='';
 
 $this->phrasen['bewerbung/erfolgreichBeworbenMail']='Sehr %3$s %1$s %2$s,<br><br>
 Sie haben sich erfolgreich für den Studiengang %4$s beworben. In der Regel werden Sie innerhalb von 5 Werktagen kontaktiert. Gegebenenfalls werden Sie dann aufgefordert, weitere Dokumente hochzuladen.<br><br>
-Sollten Sie bis dahin Fragen zur Bewerbung haben, kontaktieren Sie bitte unsere Infocenter <a href="mailto:infocenter@technikum-wien.at">infocenter@technikum-wien.at</a>.<br><br>
+Den Status Ihrer Bewerbung können Sie jederzeit im Bewerbungstool verfolgen.<br>
+Sollten Sie Fragen zur Bewerbung haben, kontaktieren Sie bitte unsere Infocenter <a href="mailto:infocenter@technikum-wien.at">infocenter@technikum-wien.at</a>.<br><br>
 Mit freundlichen Grüßen<br>
 Fachhochschule Technikum Wien';
 $this->phrasen['bewerbung/erfolgreichBeworbenMailBetreff']='Bewerbungsbestätigung Fachhochschule Technikum Wien';
