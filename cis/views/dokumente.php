@@ -355,31 +355,38 @@ if (! isset($person_id))
 							<span id="nachgereicht_'.$dok->dokument_kurzbz.'" style="display:none;">'.$p->t('bewerbung/placeholderAnmerkungNachgereicht').':
 							<input type="checkbox" name="check_nachgereicht" checked=\'checked\' style="display:none">
 							<div class="form-group">
-								<div class="row col-sm-12">
+								<nobr>
+								<div class="row col-xs-12 col-sm-12 col-lg-12">
 									<input type="checkbox" name="check_nachgereicht" checked=\'checked\' style="display:none">
-									<div class="col-sm-3">
-										<input type="text" 
-													class="form-control" 
-													id="nachreichungam_'.$dok->dokument_kurzbz.'" 
-													name="nachreichungam"
-													autofocus="autofocus"
-													placeholder="'.$p->t('bewerbung/datumFormat').'">
-									</div>
-									<div class="col-sm-9">
+									<div class="col-xs-8 col-sm-8 col-lg-9">
+
 										<div class="input-group">
-											<input type="text" 
+										<input type="text" 
 													class="form-control" 
 													id="anmerkung_'.$dok->dokument_kurzbz.'" 
 													name="txt_anmerkung"
 													onInput="zeichenCountdown(\'anmerkung_'.$dok->dokument_kurzbz.'\',128)" 
 													placeholder="'.$p->t('bewerbung/placeholderOrtNachgereicht').'">
-											<span class="input-group-addon" style="color: grey;" id="countdown_anmerkung_'.$dok->dokument_kurzbz.'">128</span>
-											<div class="input-group-btn">
+										<span class="input-group-addon" style="color: grey;" id="countdown_anmerkung_'.$dok->dokument_kurzbz.'">128</span>
+										</div>
+									</div>
+									<div class="col-xs-3 col-sm-3 col-lg-3">
+										<div class="input-group">
+											
+											<input type="text" 
+													class="form-control" 
+													id="nachreichungam_'.$dok->dokument_kurzbz.'" 
+													name="nachreichungam"
+													autofocus="autofocus"
+													placeholder="'.$p->t('bewerbung/datumFormat').'">
+											
+											
 												<input type="submit" value="OK" name="submit_nachgereicht" class="btn btn-default" onclick="return checkNachgereicht(\''.$dok->dokument_kurzbz.'\')">
-											</div>
+											
 										</div>
 									</div>
 								</div>
+								</nobr>
 							</div>
 							<input type="hidden" name="dok_kurzbz" value="'.$dok->dokument_kurzbz.'">
 						</form>';

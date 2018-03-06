@@ -172,7 +172,7 @@ elseif($username && $password)
 <!DOCTYPE html>
 <html>
 	<head>
-		<title>Registration für Studiengänge</title>
+		<title><?php echo $p->t('bewerbung/bewerbung') ?></title>
 		<meta http-equiv="X-UA-Compatible" content="chrome=1">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
@@ -556,26 +556,6 @@ elseif($username && $password)
 					<p class="infotext">
 						<?php echo $p->t('bewerbung/einleitungstext') ?>
 					</p>
-					<!--
-					<div class="form-group">
-						<label for="zugangscode" class="col-sm-3 control-label">
-							<?php echo $p->t('bewerbung/zugangscode') ?> <?php echo $p->t('bewerbung/fallsVorhanden') ?>
-						</label>
-						<div class="col-sm-4">
-							<div class="input-group">
-								<input type="text" class="form-control" id="zugangscode" name="userid" placeholder="<?php echo $p->t('bewerbung/zugangscode') ?>">
-								<span class="input-group-btn">
-									<button type="submit" class="btn btn-primary" value="Login">
-										<?php echo $p->t('bewerbung/login') ?>
-									</button>
-								</span>
-							</div>
-						</div>
-						<div class="col-sm-4">
-							<a href="<?php echo basename(__FILE__) ?>?method=resendcode">Zugangscode vergessen?</a>
-						</div>
-					</div>-->
-
 					<div class="form-group">
 						<label for="vorname" class="col-sm-3 control-label">
 							<?php echo $p->t('global/vorname') ?>
@@ -807,7 +787,7 @@ elseif($username && $password)
 											$empfaenger = BEWERBERTOOL_MAILEMPFANG;
 										}
 										else
-											$empfaenger = getMailEmpfaenger($result->studiengang_kz, $studienplan[0]->studienplan_id);
+											$empfaenger = getMailEmpfaenger($result->studiengang_kz);
 									}
 									else 
 									{
@@ -1096,10 +1076,16 @@ elseif($username && $password)
 				<div class="row">
 					<div class="col-sm-8 col-sm-offset-2">
 						<form method="post" action="<?php echo basename(__FILE__) ?>?method=resendcode" id="ResendCodeForm" name="ResendCodeForm" class="form-horizontal">
-							<img class="center-block img-responsive" src="../../../skin/styles/<?php echo DEFAULT_STYLE ?>/logo.png">
-							<h1 class="text-center page-header">
-								<?php echo $p->t('bewerbung/welcome') ?>
-							</h1>
+							<div style="border-bottom: 1px solid #eee; margin-bottom: 30px;" class="row">
+								<div class="col-md-4">
+									<div style="text-align: center;">
+										<img style="margin: 30px 10px;" src="../../../skin/styles/<?php echo DEFAULT_STYLE ?>/logo.png"/>
+									</div>
+								</div>
+								<div style="text-align: center;" class="col-md-8">
+									<h1 style="margin: 30px 10px;"><?php echo $p->t('bewerbung/welcome') ?></h1>
+								</div>
+							</div>
 							<p class="text-center"><?php echo $p->t('bewerbung/codeZuschickenAnleitung') ?></p><br>
 							<div class="form-group">
 								<label for="email" class="col-sm-4 control-label">
@@ -1134,19 +1120,25 @@ elseif($username && $password)
 					<!--<div class="col-xs-10 col-xs-offset-1 col-sm-6 col-sm-offset-3">-->
 					<div class="col-sm-8 col-sm-offset-2">
 						<form action ="<?php echo basename(__FILE__) ?>" method="POST" id="lp" class="form-horizontal">
-							<img class="center-block img-responsive" src="../../../skin/styles/<?php echo DEFAULT_STYLE ?>/logo.png">
-							<h1 class="text-center page-header">
-								<?php echo $p->t('bewerbung/welcome') ?>
-							</h1>
+							<div style="border-bottom: 1px solid #eee; margin-bottom: 30px;" class="row">
+								<div class="col-md-4">
+									<div style="text-align: center;">
+										<img style="margin: 30px 10px;" src="../../../skin/styles/<?php echo DEFAULT_STYLE ?>/logo.png"/>
+									</div>
+								</div>
+								<div style="text-align: center;" class="col-md-8">
+									<h1 style="margin: 30px 10px;"><?php echo $p->t('bewerbung/welcome') ?></h1>
+								</div>
+							</div>
 							<div class="panel panel-info">
-							  <div class="panel-heading text-center">
-							    <h3 class="panel-title"><?php echo $p->t('bewerbung/sieHabenNochKeinenZugangscode') ?></h3>
-							  </div>
-							  <div class="panel-body text-center">
-							  	<br>
-							    <a class="btn btn-primary btn-lg" href="<?php echo basename(__FILE__) ?>?method=registration&stg_kz=<?php echo filter_input(INPUT_GET, 'stg_kz') ?>&orgform_kurzbz=<?php echo filter_input(INPUT_GET, 'orgform_kurzbz') ?>" role="button"><?php echo $p->t('bewerbung/hierUnverbindlichAnmelden') ?></a>
-							    <br><br>
-							  </div>
+								<div class="panel-heading text-center">
+									<h3 class="panel-title"><?php echo $p->t('bewerbung/sieHabenNochKeinenZugangscode') ?></h3>
+								</div>
+								<div class="panel-body text-center">
+									<br>
+									<a class="btn btn-primary btn-lg" href="<?php echo basename(__FILE__) ?>?method=registration&stg_kz=<?php echo filter_input(INPUT_GET, 'stg_kz') ?>&orgform_kurzbz=<?php echo filter_input(INPUT_GET, 'orgform_kurzbz') ?>" role="button"><?php echo $p->t('bewerbung/hierUnverbindlichAnmelden') ?></a>
+									<br><br>
+								</div>
 							</div>
 							<div class="panel panel-info">
 								<div class="panel-heading text-center">

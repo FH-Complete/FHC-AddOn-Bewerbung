@@ -56,6 +56,7 @@ AND (tbl_prestudent.insertamum >= (SELECT (CURRENT_DATE -1||' '||'03:00:00')::ti
 AND tbl_prestudentstatus.status_kurzbz = 'Interessent'
 AND tbl_prestudentstatus.bewerbung_abgeschicktamum IS NULL
 AND tbl_studiengang.typ != 'b'
+AND get_rolle_prestudent (tbl_prestudent.prestudent_id, studiensemester_kurzbz) != 'Abgewiesener'
 ORDER BY studiengang_kz, studiensemester_kurzbz, orgform_kurzbz, nachname, vorname";
 
 $db = new basis_db();
