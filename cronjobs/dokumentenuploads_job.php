@@ -105,6 +105,7 @@ AND (tbl_akte.insertamum >= (SELECT (CURRENT_DATE -1||' '||'03:00:00')::timestam
 AND tbl_prestudentstatus.bestaetigtam IS NOT NULL
 AND studiensemester_kurzbz IN (".$db->implode4SQL($studiensemester_arr).")
 AND (SELECT get_rolle_prestudent(tbl_prestudent.prestudent_id, NULL)) NOT IN ('Abgewiesener', 'Abbrecher')
+AND dokument_kurzbz NOT IN ('zgv_bakk', 'identity', 'SprachB2')
 ORDER BY studiengang_kz, orgform_kurzbz, nachname, vorname, person_id";
 //echo $qry;exit;
 $mailtext = '
