@@ -222,6 +222,9 @@ $this->phrasen['bewerbung/pflichtfelder']='Pflichtfelder';
 $this->phrasen['bewerbung/bitteGueltigeOesterreichischePlzEingeben']='Bitte geben Sie eine gültige österreichische Postleitzahl ein';
 $this->phrasen['bewerbung/plzMussGueltigSein']='Postleitzahl muss eine gültige Nummer sein';
 $this->phrasen['bewerbung/plzUnbekannt']='Postleitzahl unbekannt';
+$this->phrasen['bewerbung/hackTypBezeichnungLehrgeange']='Postgraduale Lehrgänge'; // Überschreibt die Typ-Bezeichnung "Lehrgang". Leer lassen, wenn nicht benötigt
+$this->phrasen['bewerbung/hackStufeBezeichnungBachelor']='Bachelor / postgradualer Lehrgang'; // Überschreibt die ZGV Stufen-Bezeichnung "Bachelor". Leer lassen, wenn nicht benötigt
+$this->phrasen['bewerbung/hackStufeBezeichnungMaster']='Master / postgradualer Master Lehrgang'; // Überschreibt die ZGV Stufen-Bezeichnung "Master". Leer lassen, wenn nicht benötigt
 
 // Ausbildung
 $this->phrasen['bewerbung/menuAusbildung']='Ausbildung';

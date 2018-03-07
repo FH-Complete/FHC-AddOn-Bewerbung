@@ -228,6 +228,9 @@ $this->phrasen['bewerbung/bewerbungszeitraumStartetAm']='Application period star
 $this->phrasen['bewerbung/bewerbungsfristEndetInXTagen']='Application period ends in %s days';
 $this->phrasen['bewerbung/bewerbungsfristEndetHeute']='Application period ends today';
 $this->phrasen['bewerbung/bewerbungsfristFuerStudiensemesterXAbgelaufen']='Application deadline for %s has expired';
+$this->phrasen['bewerbung/hackTypBezeichnungLehrgeange']=''; // Überschreibt die Typ-Bezeichnung "Lehrgang". Leer lassen, wenn nicht benötigt
+$this->phrasen['bewerbung/hackStufeBezeichnungBachelor']=''; // Überschreibt die ZGV Stufen-Bezeichnung "Bachelor". Leer lassen, wenn nicht benötigt
+$this->phrasen['bewerbung/hackStufeBezeichnungMaster']=''; // Überschreibt die ZGV Stufen-Bezeichnung "Master". Leer lassen, wenn nicht benötigt
 
 // Rechnungskontakt
 $this->phrasen['bewerbung/menuRechnungsKontaktinformationen']='Billing Data';

@@ -75,14 +75,25 @@ elseif($save_error_zgv===true)
 	<?php else: ?>
 	<form method="POST" class="form-horizontal" action="<?php echo $_SERVER['PHP_SELF'] ?>?active=zgv">
 		<?php foreach ($zgv as $stufe => $attribute):
-			if ($stufe === 'master' && !in_array('m', $types, true)) {
+			if ($stufe === 'master' && !in_array('m', $types, true)) 
+			{
 				continue;
 			}
 			if (count($zgv[$stufe])>0)
 				$gesperrt = true;
+			
+			// Hack um $stufe mit Phrasen zu überschreiben
+			$stufe_bezeichung = '';
+
+			if ($stufe == 'bachelor' && $p->t('bewerbung/hackStufeBezeichnungBachelor') != '')
+				$stufe_bezeichung = $p->t('bewerbung/hackStufeBezeichnungBachelor');
+			elseif ($stufe == 'master' && $p->t('bewerbung/hackStufeBezeichnungMaster') != '')
+				$stufe_bezeichung = $p->t('bewerbung/hackStufeBezeichnungMaster');
+			else
+				$stufe_bezeichung = $stufe;
 			?>
 			<fieldset>
-				<legend><?php echo $p->t('bewerbung/fuer'); ?> <?php echo ucfirst($stufe) ?></legend>
+				<legend><?php echo $p->t('bewerbung/fuer'); ?> <?php echo ucfirst($stufe_bezeichung) ?></legend>
 				<div class="form-group <?php echo (!isset($attribute['art'])?'has-error':'') ?>">
 					<label for="<?php echo $stufe ?>_zgv_art" class="col-sm-3 control-label">
 						<?php echo $p->t('bewerbung/artDerVoraussetzung'); ?>

@@ -590,11 +590,18 @@ elseif($username && $password)
 							$lasttyp = '';
 							$last_lgtyp = '';
 							$bewerbungszeitraum = '';
+							$typ_bezeichung = '';
 
 							foreach($stg->result as $result)
 							{
 								if($lasttyp != $result->typ)
 								{
+									// Hack um typ_bezeichung mit Phrasen zu überschreiben
+									if ($result->typ_bezeichnung == 'Lehrgang' && $p->t('bewerbung/hackTypBezeichnungLehrgeange') != '')
+										$typ_bezeichung = $p->t('bewerbung/hackTypBezeichnungLehrgeange');
+									else
+										$typ_bezeichung = $result->typ_bezeichnung;
+										
 									if($lasttyp != '')
 										echo '</div></div></div>';
 
@@ -605,7 +612,7 @@ elseif($username && $password)
 									echo '<div class="panel-group"><div class="panel panel-default">';
 									echo '<div class="panel-heading">
 											<a href="#'.$result->typ_bezeichnung.'" data-toggle="collapse">
-												<h4>'.$result->typ_bezeichnung.'  <small><span class="glyphicon glyphicon-collapse-down"></span></small></h4>
+												<h4>'.$typ_bezeichung.'  <small><span class="glyphicon glyphicon-collapse-down"></span></small></h4>
 											</a>
 											</div>';
 									echo '<div id="'.$result->typ_bezeichnung.'" class="panel-collapse '.$collapse.'">';
