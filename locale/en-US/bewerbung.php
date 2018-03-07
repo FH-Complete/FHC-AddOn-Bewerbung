@@ -179,6 +179,7 @@ $this->phrasen['bewerbung/maennlich']='Male';
 $this->phrasen['bewerbung/weiblich']='Female';
 $this->phrasen['bewerbung/maturazeugnis']='School leaving certificate';
 $this->phrasen['bewerbung/details']='Details';
+$this->phrasen['bewerbung/mehrDetails']='More details...';
 $this->phrasen['bewerbung/codeZuschicken']='Send code';
 $this->phrasen['bewerbung/codeZuschickenAnleitung']='Please enter your e-mail adress and click "Send code"';
 $this->phrasen['bewerbung/keinCodeVorhanden']='There is no access code available yet for this e-mail address. Please register in advance.';

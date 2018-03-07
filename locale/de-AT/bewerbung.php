@@ -193,6 +193,7 @@ $this->phrasen['bewerbung/maennlich']='Männlich';
 $this->phrasen['bewerbung/weiblich']='Weiblich';
 $this->phrasen['bewerbung/maturazeugnis']='Maturazeugnis';
 $this->phrasen['bewerbung/details']='Details';
+$this->phrasen['bewerbung/mehrDetails']='Mehr Details...';
 $this->phrasen['bewerbung/codeZuschicken']='Code zuschicken';
 $this->phrasen['bewerbung/codeZuschickenAnleitung']='Wenn Sie sich schon einmal registriert aber den Zugangscode verloren oder vergessen haben, können Sie sich hier den Zugangscode erneut zuschicken lassen. Bitte geben Sie dazu Ihre Mailadresse ein und drücken Sie auf "Code zuschicken"';
 $this->phrasen['bewerbung/keinCodeVorhanden']='Für diese E-Mail Adresse ist noch kein Zugangscode vorhanden. Bitte <a href="'.$_SERVER['PHP_SELF'].'?method=registration">melden Sie sich vorher an</a>.';

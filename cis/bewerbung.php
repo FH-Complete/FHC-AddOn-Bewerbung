@@ -1596,7 +1596,7 @@ else
 		}
 		.popover
 		{
-			max-width: 400px;
+			max-width: 500px;
 		}
 		.list-unstyled li
 		{

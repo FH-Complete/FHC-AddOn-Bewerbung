@@ -78,8 +78,7 @@ if (! isset($person_id))
 			<thead>
 				<tr>
 					<th><?php echo $p->t('bewerbung/dokumentName'); ?></th>
-					<th><?php echo $p->t('bewerbung/details');?></th>
-<!--					<th><?php echo $p->t('bewerbung/status'); ?></th>-->
+<!--					<th><?php echo $p->t('bewerbung/details');?></th>-->
 					<th><?php echo $p->t('bewerbung/dateien'); ?></th>
 					<th><?php echo $p->t('global/aktion'); ?></th>
 					<th></th>
@@ -114,7 +113,8 @@ if (! isset($person_id))
 			// Detailbeschreibungen zu Dokumenten holen
 			$details = new dokument();
 			$details->getBeschreibungenDokumente($ben_kz[$dok->dokument_kurzbz], $dok->dokument_kurzbz);
-			$detailstring = '';
+			$detailstring_short = array();
+			$detailstring_htmlspecialchars = '';
 			$zaehlerBeschreibungAllg = 0;
 			
 			foreach ($details->result as $row)
@@ -124,22 +124,35 @@ if (! isset($person_id))
 
 				if ($row->dokumentbeschreibung_mehrsprachig[getSprache()] != '' && $zaehlerBeschreibungAllg == 0)
 				{
-					$detailstring .= htmlspecialchars($row->dokumentbeschreibung_mehrsprachig[getSprache()]);
+					// Wenn im dokumentbeschreibung_mehrsprachig ein string "<span style="display: none;">Text<span>" vorkommt,
+					// entferne den span-Tag und verwende diesen als $detailstring_short
+					$regex_pattern = '#^.*?display: none.*?<\/span>#i';
+					if (preg_match($regex_pattern, $row->dokumentbeschreibung_mehrsprachig[getSprache()], $detailstring_short) == 1)
+					{
+						$detailstring_short = preg_replace('#^<span style="display: none;">#i', '', $detailstring_short);
+						$detailstring_short = preg_replace('#<\/span>#i', '', $detailstring_short);
+					}
+					$detailstring_htmlspecialchars .= htmlspecialchars($row->dokumentbeschreibung_mehrsprachig[getSprache()]);
 					// Allgemeine Dokumentbeschreibung nur einmal ausgeben
 					$zaehlerBeschreibungAllg ++;
 				}
 				if ($row->beschreibung_mehrsprachig[getSprache()] != '')
 				{
-					if ($detailstring != '')
-						$detailstring .= '<br/><hr/>';
-					$detailstring .= '<b>'.$stg->kuerzel.'</b>: '.htmlspecialchars($row->beschreibung_mehrsprachig[getSprache()]);
+					if ($detailstring_htmlspecialchars != '')
+						$detailstring_htmlspecialchars .= '<br/><hr/>';
+					$detailstring_htmlspecialchars .= '<b>'.$stg->kuerzel.'</b>: '.htmlspecialchars($row->beschreibung_mehrsprachig[getSprache()]);
 				}
 				else
-					$detailstring .= '';
+					$detailstring_htmlspecialchars .= '';
 			}
 			
-			if ($detailstring != '')
-				$beschreibung = '<button class="btn btn-md btn-info" data-toggle="popover" title="'.$p->t('bewerbung/details').'" data-trigger="focus" data-content="'.$detailstring.'">Details</button>';
+			if ($detailstring_htmlspecialchars != '')
+				$beschreibung = '<a href="#" 
+									class="linkPopover" 
+									data-toggle="popover" 
+									data-trigger="focus" 
+									title="'.$p->t('bewerbung/details').'" 
+									data-content="'.$detailstring_htmlspecialchars.'">'.$p->t('bewerbung/mehrDetails').'</a>';
 			else
 				$beschreibung = '';
 			
@@ -408,11 +421,21 @@ if (! isset($person_id))
 					{
 						echo '<span>*</span>';
 					}
-					echo'
-					</td>
+					// Wenn $detailstring_short gesetzt ist, entferne HTML-Tags und kürze auf 200 Zeichen
+					if (isset($detailstring_short[0]) || $beschreibung != '')
+					{
+						if (isset($detailstring_short[0]))
+							echo '<br><br>';
+						
+						echo '<span style="font-style: italic; padding-left: 10px">';
+						if (isset($detailstring_short[0]))
+							echo cutString($detailstring_short[0], 200);
+						
+						echo ' '.$beschreibung.'</span>';
+					}
+					echo'</td>
 
-					<td style="vertical-align: middle"	class="'.$style.'">'.$beschreibung.'</td>
-					<!--<td style="vertical-align: middle"	class="'.$style.'">.$status.</td>-->
+					<!--<td style="vertical-align: middle"	class="'.$style.'">'.$beschreibung.'</td>-->
 					<td style="vertical-align: middle"	nowrap class="'.$style.'">'.$aktenliste.'</td>
 					<td style="vertical-align: middle"	nowrap class="'.$style.'">'.$aktion.'</td>
 					<td id="anmerkung_row_'.$dok->dokument_kurzbz.'" style="vertical-align: middle"	class="'.$style.'">'.$div.'</td>';
@@ -539,6 +562,17 @@ if (! isset($person_id))
 			alert("<?php echo $p->t('bewerbung/bitteAnmerkungEintragen')?>");
 			return false;
 		}
-	}
+	};
+	$('.linkPopover').on('click', function (event) {
+		//Set timeout to wait for popup div to redraw(animation)
+		setTimeout(function(){
+			if($('div.popover').css('top').charAt(0) === '-'){
+				 $('div.popover').css('top', '0px');
+				 var buttonTop = $(event.currentTarget).position().top;
+				 var buttonHeight = $(event.currentTarget).height();
+				 $('.popover.right>.arrow').css('top', buttonTop + (buttonHeight/2));
+			}
+		},100);
+	});
 	</script>
 </div>
