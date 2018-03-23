@@ -26,6 +26,8 @@ require_once('../../../include/kontakt.class.php');
 require_once('../../../include/studiensemester.class.php');
 require_once('../include/functions.inc.php');
 require_once('../bewerbung.config.inc.php');
+require_once('../../../include/functions.inc.php');
+require_once('../../../include/benutzerberechtigung.class.php');
 
 $db = new basis_db();
 $studiengaenge = array();
@@ -36,22 +38,30 @@ $person = '';
 $dokument = '';
 $zeile = '';
 
-$write_log = true;
-$logfile = 'log/dokumentenuploads/'.date('Y_m').'_log.html';
-$logcontent = '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-				<h2 style="text-align: center">'.date('Y-m-d').'</h2><hr>';
+// Wenn das Script ueber die Kommandozeile aufgerufen wird, erfolgt keine Authentifizierung
+if (php_sapi_name() != 'cli')
+{
+	$uid = get_uid();
+	$rechte = new benutzerberechtigung();
+	$rechte->getBerechtigungen($uid);
+
+	if(!$rechte->isBerechtigt('admin'))
+	{
+		exit($rechte->errormsg);
+	}
+}
 
 // Prueft, ob das Logverzeichnis existiert.
 // Wenn nicht, wird versucht, eines anzulegen.
 // Falls dies fehl schlaegt, wird kein Logfile erstellt.
-
-if(!is_dir('log/dokumentenuploads/'))
+$write_log = true;
+if(!is_dir(LOG_PATH.'bewerbungstool/dokumentenuploads/'))
 {
-	if (mkdir('/log',0777,true))
+	if (mkdir(LOG_PATH.'bewerbungstool',0777,true))
 	{
-		if(!is_dir('log/dokumentenuploads/'))
+		if(!is_dir(LOG_PATH.'bewerbungstool/dokumentenuploads/'))
 		{
-			if (mkdir('/log/dokumentenuploads',0777,true))
+			if (mkdir(LOG_PATH.'bewerbungstool/dokumentenuploads',0777,true))
 				$write_log = true;
 			else
 				$write_log = false;
@@ -60,6 +70,17 @@ if(!is_dir('log/dokumentenuploads/'))
 	else
 		$write_log = false;
 }
+// Aus Datenschutzgründen werden Logfiles älter als 3 Monate gelöscht
+$dateLess3Months = date("Y_m", strtotime("-3 months"));
+
+if (file_exists(LOG_PATH.'bewerbungstool/dokumentenuploads/'.$dateLess3Months.'_log.html'))
+{
+	unlink(LOG_PATH.'bewerbungstool/dokumentenuploads/'.$dateLess3Months.'_log.html');
+}
+
+$logfile = LOG_PATH.'bewerbungstool/dokumentenuploads/'.date('Y_m').'_log.html';
+$logcontent = '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+				<h2 style="text-align: center">'.date('Y-m-d').'</h2><hr>';
 
 $studiensemester = new studiensemester();
 $studiensemester->getPlusMinus(10, 2);
@@ -203,7 +224,7 @@ if($result = $db->db_query($qry))
 					$empfaenger = 'info.bid@technikum-wien.at';
 
 				$mail = new mail($empfaenger, 'no-reply', 'Neue Dokumentenuploads '.$bezeichnung.' '.$orgform, 'Bitte sehen Sie sich die Nachricht in HTML Sicht an, um den Inhalt vollständig darzustellen.');
-				$mail->setBCCRecievers('kindlm@technikum-wien.at');
+				//$mail->setBCCRecievers('kindlm@technikum-wien.at');
 				$mail->setHTMLContent($mailcontent);
 				$mail->send();
 				
@@ -291,7 +312,7 @@ if($result = $db->db_query($qry))
 			$empfaenger = 'info.bid@technikum-wien.at';
 
 		$mail = new mail($empfaenger, 'no-reply', 'Neue Dokumentenuploads '.$bezeichnung.' '.$orgform, 'Bitte sehen Sie sich die Nachricht in HTML Sicht an, um den Inhalt vollständig darzustellen.');
-		$mail->setBCCRecievers('kindlm@technikum-wien.at');
+		//$mail->setBCCRecievers('kindlm@technikum-wien.at');
 		$mail->setHTMLContent($mailcontent);
 		$mail->send();
 		
