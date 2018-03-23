@@ -66,7 +66,7 @@ $studiensemester_array = array();
 
 			if(!$prestudent = getBewerbungen($person_id, true))
 			{
-				echo '<td class="warning" colspan="7">'.$p->t('bewerbung/keinStatus').'</td>'; // @todo: Schöner wäre hier ein echo aber dann müssen alle Fehlermeldungen, die danach entstehen, behoben werden
+				echo '<td class="warning" colspan="7">'.$p->t('bewerbung/keinStatus').'</td>';
 			}
 			else 
 			{

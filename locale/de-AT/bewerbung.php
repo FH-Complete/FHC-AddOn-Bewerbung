@@ -265,7 +265,7 @@ $this->phrasen['bewerbung/paymentInfoText']='';
 $this->phrasen['bewerbung/erfolgreichBeworbenMail']='Sehr %3$s %1$s %2$s,<br><br>
 Sie haben sich erfolgreich für den Studiengang %4$s beworben. In der Regel werden Sie innerhalb von 5 Werktagen kontaktiert. Gegebenenfalls werden Sie dann aufgefordert, weitere Dokumente hochzuladen.<br><br>
 Den Status Ihrer Bewerbung können Sie jederzeit im Bewerbungstool verfolgen.<br>
-Sollten Sie Fragen zur Bewerbung haben, kontaktieren Sie bitte unsere Infocenter <a href="mailto:infocenter@technikum-wien.at">infocenter@technikum-wien.at</a>.<br><br>
+Sollten Sie Fragen zur Bewerbung haben, kontaktieren Sie bitte unser Infocenter <a href="mailto:infocenter@technikum-wien.at">infocenter@technikum-wien.at</a>.<br><br>
 Mit freundlichen Grüßen<br>
 Fachhochschule Technikum Wien';
 $this->phrasen['bewerbung/erfolgreichBeworbenMailBetreff']='Bewerbungsbestätigung Fachhochschule Technikum Wien';

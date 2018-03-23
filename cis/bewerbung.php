@@ -1382,7 +1382,26 @@ else
 	$status_zgv_mas_text = $vollstaendig;
 }
 
-$dokumente_abzugeben = getAllDokumenteBewerbungstoolForPerson($person_id);
+$studiensemester_bewerbungen = array();
+$prestudent_bewerbungen = getBewerbungen($person_id, true);
+
+// Studiensemester der aktiven Bewerbungen laden, ansonsten jene, für die sich aktuell bworben werden kann
+if ($prestudent_bewerbungen)
+{
+	foreach ($prestudent_bewerbungen AS $studiensemester)
+		$studiensemester_bewerbungen[] = $studiensemester->laststatus_studiensemester_kurzbz;
+}
+else 
+{
+	$stsem = new studiensemester();
+	$stsem->getStudiensemesterOnlinebewerbung();
+	foreach ($stsem->studiensemester as $row)
+		$studiensemester_bewerbungen[] = $row->studiensemester_kurzbz;
+}
+$studiensemester_bewerbungen =  array_unique($studiensemester_bewerbungen);
+
+$dokumente_abzugeben = getAllDokumenteBewerbungstoolForPerson($person_id, $studiensemester_bewerbungen);
+
 // $dokumente_abzugeben = new dokument();
 // $dokumente_abzugeben->getAllDokumenteForPerson($person_id, true);
 
@@ -1644,11 +1663,46 @@ else
 						<?php
 						if(!defined('BEWERBERTOOL_DOKUMENTE_ANZEIGEN') || BEWERBERTOOL_DOKUMENTE_ANZEIGEN)
 						{
-							echo '	<li>
+							// An der FHTW werden Dokumente nur angezeigt wenn eine aktive Bewerbung vorliegt
+							if (CAMPUS_NAME == 'FH Technikum Wien')
+							{
+								$standalone_masterbewerbung = false;
+								$masterbewerbung_bestaetigt = false;
+								if ($prestudent = getBewerbungen($person_id, true))
+								{
+									foreach ($prestudent as $row)
+									{
+										if ($row->studiengang_typ != 'm')
+										{
+											$standalone_masterbewerbung = false;
+											break;
+										}
+										if ($row->studiengang_typ == 'm')
+										{
+											$standalone_masterbewerbung = true;
+											if (check_person_statusbestaetigt($person_id, 'Interessent', null, $row->studiengang_kz))
+												$masterbewerbung_bestaetigt = true;
+										}
+									}
+									if (!$standalone_masterbewerbung || $masterbewerbung_bestaetigt)
+									{
+										echo '	<li>
+											<a href="#dokumente" aria-controls="dokumente" role="tab" data-toggle="tab" '.($status_dokumente_text == $unvollstaendig?'style="background-color: #F2DEDE !important"':'style="background-color: #DFF0D8 !important"').'>
+												'.$p->t('bewerbung/menuDokumente').' <br> '.$status_dokumente_text.'
+											</a>
+										</li>';
+									}
+								}
+								
+							}
+							else
+							{
+								echo '	<li>
 										<a href="#dokumente" aria-controls="dokumente" role="tab" data-toggle="tab" '.($status_dokumente_text == $unvollstaendig?'style="background-color: #F2DEDE !important"':'style="background-color: #DFF0D8 !important"').'>
 											'.$p->t('bewerbung/menuDokumente').' <br> '.$status_dokumente_text.'
 										</a>
 									</li>';
+							}
 						}
 						 ?>
 

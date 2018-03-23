@@ -96,6 +96,18 @@ function BewerbungPersonAddStudiengang($studiengang_kz, $anmerkung, $person, $st
 			$zgvmadatum = $prestudent_zgv->zgvmadatum;
 			$zgvmanation = $prestudent_zgv->zgvmanation;
 		}
+		// An der FHTW werden seit dem Infocenter keine bestehenden ZGVs übernommen
+		if (CAMPUS_NAME == 'FH Technikum Wien')
+		{
+			$zgv_code = '';
+			$zgvort = '';
+			$zgvdatum = '';
+			$zgvnation = '';
+			$zgvmas_code = '';
+			$zgvmaort = '';
+			$zgvmadatum = '';
+			$zgvmanation = '';
+		}
 		$prestudent = new prestudent();
 		
 		$prestudent->studiengang_kz = $studiengang_kz;
@@ -589,13 +601,21 @@ function getBewerbungszeitraum($studiengang_kz, $studiensemester, $studienplan_i
  * Liefert alle Dokumente die eine Person im Bewerbungstool abzugeben hat.
  * 
  * @param integer $person_id
+ * @param array $studiensemester_array
  */
-function getAllDokumenteBewerbungstoolForPerson($person_id)
+function getAllDokumenteBewerbungstoolForPerson($person_id, $studiensemester_array = null)
 {
 	$db = new basis_db();
 	$sprache = new sprache();
 	$bezeichnung_mehrsprachig = $sprache->getSprachQuery('bezeichnung_mehrsprachig');
 	$dokumentbeschreibung_mehrsprachig = $sprache->getSprachQuery('dokumentbeschreibung_mehrsprachig');
+	
+	if(isset($studiensemester_array) && !is_array($studiensemester_array))
+	{
+		$db->errormsg = '$studiensemester_array is not an array';
+		return false;
+	}
+
 	// $beschreibung_mehrsprachig = $sprache->getSprachQuery('beschreibung_mehrsprachig');
 	$qry = "SELECT DISTINCT 
 			dok_stg.dokument_kurzbz,
@@ -639,9 +659,25 @@ function getAllDokumenteBewerbungstoolForPerson($person_id)
 			JOIN PUBLIC.tbl_prestudent USING (studiengang_kz)
 			JOIN PUBLIC.tbl_dokument USING (dokument_kurzbz)
 			WHERE tbl_prestudent.person_id = " . $db->db_add_param($person_id, FHC_INTEGER) . "
-				AND dok_stg.onlinebewerbung IS true
-				AND get_rolle_prestudent (tbl_prestudent.prestudent_id, NULL) NOT IN ('Abgewiesener','Abbrecher')
-			ORDER BY dokument_kurzbz,
+				AND dok_stg.onlinebewerbung IS true ";
+
+			if (isset($studiensemester_array) && !empty($studiensemester_array))
+			{
+				$i = 0;
+				$qry .= " AND (";
+				foreach ($studiensemester_array as $studiensemester)
+				{
+					if ($i > 0)
+						$qry .= " OR ";
+					$qry .= " get_rolle_prestudent (tbl_prestudent.prestudent_id, " . $db->db_add_param($studiensemester, FHC_STRING) . ") NOT IN ('Abgewiesener','Abbrecher')";
+					$i ++;
+				}
+				$qry .= " ) ";
+			}
+			else 
+				$qry .= " AND get_rolle_prestudent (tbl_prestudent.prestudent_id, null) NOT IN ('Abgewiesener','Abbrecher')";
+			
+			$qry .= " ORDER BY dokument_kurzbz,
 				pflicht DESC";
 
 	if ($result = $db->db_query($qry))
@@ -774,7 +810,7 @@ function getMailEmpfaenger($studiengang_kz, $studienplan_id = null, $orgform_kur
 /**
  * Laedt alle Bewerbungen einer Person
  * @param integer $person_id
- * @param boolean $aktive. 	Wenn true werden nur aktive Bewerbungen (Interessenten, Bewerber, Studenten, ...) geliefert
+ * @param boolean $aktive. 	Wenn true werden nur aktive Bewerbungen (Interessenten, Bewerber, ...) geliefert
  * 							Wenn false werden nur inaktive Bewerbungen mit Endstatus (Abgewiesene, Abbrecher, Absolvent, ...) geliefert
  * 							Wenn null werden alle Bewerbungen geliefert 
  * @return true wenn ok, false wenn Fehler
@@ -793,7 +829,6 @@ function getBewerbungen($person_id, $aktive = null)
 			(
 				SELECT tbl_status.bezeichnung_mehrsprachig
 				FROM public.tbl_prestudentstatus
-				LEFT JOIN lehre.tbl_studienplan USING (studienplan_id)
 				JOIN public.tbl_status USING (status_kurzbz)
 				WHERE tbl_status.status_kurzbz = tbl_prestudentstatus.status_kurzbz
 				AND prestudent_id=tbl_prestudent.prestudent_id 
@@ -802,14 +837,22 @@ function getBewerbungen($person_id, $aktive = null)
 			(
 				SELECT tbl_status.status_kurzbz
 				FROM public.tbl_prestudentstatus
-				LEFT JOIN lehre.tbl_studienplan USING (studienplan_id)
 				JOIN public.tbl_status USING (status_kurzbz)
 				WHERE tbl_status.status_kurzbz = tbl_prestudentstatus.status_kurzbz
 				AND prestudent_id=tbl_prestudent.prestudent_id 
 				ORDER BY datum DESC, tbl_prestudentstatus.insertamum DESC LIMIT 1
 			) AS laststatus_kurzbz,
+			(
+				SELECT studiensemester_kurzbz
+				FROM public.tbl_prestudentstatus
+				JOIN public.tbl_status USING (status_kurzbz)
+				WHERE tbl_status.status_kurzbz = tbl_prestudentstatus.status_kurzbz
+				AND prestudent_id=tbl_prestudent.prestudent_id 
+				ORDER BY datum DESC, tbl_prestudentstatus.insertamum DESC LIMIT 1
+			) AS laststatus_studiensemester_kurzbz,
 			tbl_studiengang.bezeichnung,
-			tbl_studiengang.english
+			tbl_studiengang.english,
+			tbl_studiengang.typ
 			FROM public.tbl_prestudent 
 			JOIN public.tbl_studiengang USING (studiengang_kz)
 			WHERE person_id=".$db->db_add_param($person_id, FHC_INTEGER)." ORDER BY prestudent_id";
@@ -829,8 +872,10 @@ function getBewerbungen($person_id, $aktive = null)
 
 			$obj->prestudent_id = $row->prestudent_id;
 			$obj->studiengang_kz = $row->studiengang_kz;
+			$obj->studiengang_typ = $row->typ;
 			$obj->laststatus = $db->db_parse_lang_array($row->laststatus);
 			$obj->laststatus_kurzbz = $row->laststatus_kurzbz;
+			$obj->laststatus_studiensemester_kurzbz = $row->laststatus_studiensemester_kurzbz;
 			$obj->bezeichnung_arr['German'] = $row->bezeichnung;
 			$obj->bezeichnung_arr['English'] = $row->english;
 
