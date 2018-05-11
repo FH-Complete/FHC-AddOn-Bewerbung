@@ -362,6 +362,10 @@ elseif($username && $password)
 						{
 							$message = '<p class="bg-danger padding-10">'.$p->t('bewerbung/sieKoennenMaximalXStudiengaengeWaehlen', array(BEWERBERTOOL_MAX_STUDIENGAENGE)).'</p>';
 						}
+						elseif (BEWERBERTOOL_SHOW_ZUSTIMMUNGSERKLAERUNG_REGISTRATION && !isset($_POST['zustimmung_datenuebermittlung']))
+						{
+							$message = '<p class="bg-danger padding-10">'.$p->t('bewerbung/bitteDatenuebermittlungZustimmen').'</p>';
+						}
 						else
 						{
 							// Person anlegen
@@ -984,12 +988,21 @@ elseif($username && $password)
 					<?php endif; ?>
 
 					<div class="form-group">
-						<div class="col-sm-3">
+						<div class="col-xs-10 col-xs-offset-1 col-sm-9 col-sm-offset-3">
+							<label class="checkbox-inline">
+								<input type="checkbox" name="zustimmung_datenuebermittlung" id="checkbox_zustimmung_datenuebermittlung" value="" required="required">
+								<?php echo $p->t('bewerbung/zustimmungDatenuebermittlung') ?>
+							</label>
+						</div>
+					</div>
+					<div class="form-group">
+						
+						<label for="captcha_code" class="col-sm-3 control-label">
 							<img id="captcha" class="center-block img-responsive" src="<?php echo APP_ROOT ?>include/securimage/securimage_show.php" alt="CAPTCHA Image" />
 							<a href="#" onclick="document.getElementById('captcha').src = '<?php echo APP_ROOT ?>include/securimage/securimage_show.php?' + Math.random(); return false">
 								<?php echo $p->t('bewerbung/andereGrafik') ?>
 							</a>
-						</div>
+						</label>
 						<div class="col-sm-4">
 							<?php echo $p->t('bewerbung/captcha') ?>
 							<input type="text" name="captcha_code" maxlength="6" id="captcha_code" class="form-control">
@@ -1215,7 +1228,7 @@ elseif($username && $password)
 			//require('views/modal_sprache_orgform.php');
 		?>
 		<script type="text/javascript" src="../../../vendor/jquery/jqueryV1/jquery-1.12.4.min.js"></script>
-+		<script type="text/javascript" src="../../../vendor/twbs/bootstrap/dist/js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="../../../vendor/twbs/bootstrap/dist/js/bootstrap.min.js"></script>
 		<script type="text/javascript">
 
 			function changeSprache(sprache)
@@ -1289,7 +1302,7 @@ elseif($username && $password)
 
 
 				}
-				if((document.getElementById('geschlechtm').checked == false)&&(document.getElementById('geschlechtw').checked == false))
+				if((document.getElementById('geschlechtm').checked == false) && (document.getElementById('geschlechtw').checked == false))
 				{
 					alert("<?php echo $p->t('bewerbung/bitteGeschlechtWaehlen')?>");
 					return false;
@@ -1303,6 +1316,13 @@ elseif($username && $password)
 				if(document.RegistrationLoginForm.studiensemester_kurzbz.value == "")
 				{
 					alert("<?php echo $p->t('bewerbung/bitteStudienbeginnWaehlen')?>");
+					return false;
+				}
+				<?php endif; ?>
+				<?php if(BEWERBERTOOL_SHOW_ZUSTIMMUNGSERKLAERUNG_REGISTRATION): ?>
+				if(document.getElementById('checkbox_zustimmung_datenuebermittlung').checked == false)
+				{
+					alert("<?php echo $p->t('bewerbung/bitteDatenuebermittlungZustimmen')?>");
 					return false;
 				}
 				<?php endif; ?>

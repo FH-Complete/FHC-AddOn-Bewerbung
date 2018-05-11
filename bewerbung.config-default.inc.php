@@ -42,5 +42,8 @@ define('BEWERBERTOOL_RECHNUNGSKONTAKT_ANZEIGEN', false);
 
 // Wenn ein Bewerber eine Bewerbung storniert, wird ein Status "Abgewiesener" angelegt
 // Dieser wird mit dem hier angegebenen Statusgrund versehen. Integer.
-define('BEWERBERTOOL_STORNIERUNG_STATUSGRUND_ID', '')
+define('BEWERBERTOOL_STORNIERUNG_STATUSGRUND_ID', '');
+
+// Wenn true, wird bei der Registration die Checkbox mit der (verpflichtenden) Zustimmung zur Datenübermittlung angezeigt 
+define('BEWERBERTOOL_SHOW_ZUSTIMMUNGSERKLAERUNG_REGISTRATION', false);
 ?>
