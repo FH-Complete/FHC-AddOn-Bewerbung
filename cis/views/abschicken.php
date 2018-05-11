@@ -89,7 +89,7 @@ $typ = new studiengang();
 
 if(!$prestudent_help = getBewerbungen($person_id, true))
 {
-	echo '';
+	echo '<div class="col-xs-12 alert alert-warning">'.$p->t('bewerbung/keinStatus').'</div>';
 }
 else 
 {

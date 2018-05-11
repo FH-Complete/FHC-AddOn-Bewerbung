@@ -168,6 +168,8 @@ if ($method == 'delete')
 			{
 				$save_error_dokumente = false;
 				$message = $p->t('global/erfolgreichgelöscht');
+				// Geparkten Logeintrag löschen
+				$log->deleteParked($person_id);
 				// Logeintrag schreiben
 				$log->log($person_id, 'Action', array(
 					'name' => 'Document ' . $akte->bezeichnung . ' deleted',
@@ -193,52 +195,55 @@ if ($bewerbungStornieren && isset($_POST['prestudent_id']))
 	$studiensemester_kurzbz = filter_input(INPUT_POST, 'studiensemester_kurzbz');
 	
 	$prestudent_status = new prestudent($prestudent_id);
-	$prestudent_status->getLastStatus($prestudent_id, $studiensemester_kurzbz, 'Interessent');
+	$prestudent_status->getLastStatus($prestudent_id, $studiensemester_kurzbz);
 	
 	$statusbestaetigt = $prestudent_status->bestaetigtam != '' || $prestudent_status->bestaetigtvon != ''?true:false;
 	if ($prestudent_status->status_kurzbz == 'Interessent' && $statusbestaetigt == false)
+	{
+		// Status "Abgewiesen" mit Statusgrund anlegen	
+		$prestudent_status->status_kurzbz = 'Abgewiesener';
+		$prestudent_status->studiensemester_kurzbz = $studiensemester_kurzbz;
+		$prestudent_status->ausbildungssemester = $prestudent_status->ausbildungssemester;
+		$prestudent_status->datum = date("Y-m-d H:i:s");
+		$prestudent_status->insertamum = date("Y-m-d H:i:s");
+		$prestudent_status->insertvon = 'online';
+	// 	$prestudent_status->updateamum = date("Y-m-d H:i:s");
+	// 	$prestudent_status->updatevon = 'online';
+		$prestudent_status->new = true;
+		$prestudent_status->orgform_kurzbz = $prestudent_status->orgform_kurzbz;
+		$prestudent_status->studienplan_id = $prestudent_status->studienplan_id;
+		// Wenn BEWERBERTOOL_STORNIERUNG_STATUSGRUND_ID definiert ist, wird ein Statusgrund gesetzt
+		if (defined('BEWERBERTOOL_STORNIERUNG_STATUSGRUND_ID') && is_int(BEWERBERTOOL_STORNIERUNG_STATUSGRUND_ID))
+			$prestudent_status->statusgrund_id = BEWERBERTOOL_STORNIERUNG_STATUSGRUND_ID;
 	
-	// Status "Abgewiesen" mit Statusgrund anlegen	
-	$prestudent_status->status_kurzbz = 'Abgewiesener';
-	$prestudent_status->studiensemester_kurzbz = $studiensemester_kurzbz;
-	$prestudent_status->ausbildungssemester = $prestudent_status->ausbildungssemester;
-	$prestudent_status->datum = date("Y-m-d H:i:s");
-	$prestudent_status->insertamum = date("Y-m-d H:i:s");
-	$prestudent_status->insertvon = 'online';
-// 	$prestudent_status->updateamum = date("Y-m-d H:i:s");
-// 	$prestudent_status->updatevon = 'online';
-	$prestudent_status->new = true;
-	$prestudent_status->orgform_kurzbz = $prestudent_status->orgform_kurzbz;
-	$prestudent_status->studienplan_id = $prestudent_status->studienplan_id;
-	// Wenn BEWERBERTOOL_STORNIERUNG_STATUSGRUND_ID definiert ist, wird ein Statusgrund gesetzt
-	if (defined('BEWERBERTOOL_STORNIERUNG_STATUSGRUND_ID') && is_int(BEWERBERTOOL_STORNIERUNG_STATUSGRUND_ID))
-		$prestudent_status->statusgrund_id = BEWERBERTOOL_STORNIERUNG_STATUSGRUND_ID;
-
-	if(!$prestudent_status->save_rolle())
-	{
-		echo json_encode(array(
-			'status' => 'fehler',
-			'msg' => $prestudent_status->errormsg
-		));
-		$message = $p->t('global/fehlerBeimSpeichernDerDaten');
-		exit();
-	}
-	else 
-	{
-		// Logeintrag schreiben
-		$stg = new studiengang($prestudent_status->studiengang_kz);
-		$log->log($person->person_id,
-			'Action',
-			array('name'=>'Application Deleted By User','success'=>true,'message'=>'Application For '.$stg->bezeichnung_arr[$sprache].' ('.$prestudent_status->orgform_kurzbz.') Studienplan '.$prestudent_status->studienplan_id.' Deleted By User'),
-			'bewerbung',
-			'bewerbung',
-			$stg->oe_kurzbz,
-			'online');
-		
-		echo json_encode(array(
-			'status' => 'ok'
-		));
-		exit();
+		if(!$prestudent_status->save_rolle())
+		{
+			echo json_encode(array(
+				'status' => 'fehler',
+				'msg' => $prestudent_status->errormsg
+			));
+			$message = $p->t('global/fehlerBeimSpeichernDerDaten');
+			exit();
+		}
+		else 
+		{
+			// Geparkten Logeintrag löschen
+			$log->deleteParked($person->person_id);
+			// Logeintrag schreiben
+			$stg = new studiengang($prestudent_status->studiengang_kz);
+			$log->log($person->person_id,
+				'Action',
+				array('name'=>'Application Deleted By User','success'=>true,'message'=>'Application For '.$stg->bezeichnung_arr[$sprache].' ('.$prestudent_status->orgform_kurzbz.') Studienplan '.$prestudent_status->studienplan_id.' Deleted By User'),
+				'bewerbung',
+				'bewerbung',
+				$stg->oe_kurzbz,
+				'online');
+			
+			echo json_encode(array(
+				'status' => 'ok'
+			));
+			exit();
+		}
 	}
 }
 
@@ -404,6 +409,8 @@ if (isset($_POST['btn_bewerbung_abschicken']))
 				// echo '<script type="text/javascript">alert("'.$p->t('bewerbung/erfolgreichBeworben',array($studiengang->bezeichnung_arr[$sprache])).'");</script>';
 				// echo '<script type="text/javascript">window.location="'.$_SERVER['PHP_SELF'].'?active=abschicken";</script>';
 				$save_error_abschicken = false;
+				// Geparkten Logeintrag löschen
+				$log->deleteParked($prestudent_status->person_id);
 				// Logeintrag schreiben
 				$log->log($prestudent_status->person_id, 'Processstate', array(
 					'name' => 'Application sent',
@@ -414,6 +421,8 @@ if (isset($_POST['btn_bewerbung_abschicken']))
 			{
 				echo '<script type="text/javascript">alert("' . $p->t('bewerbung/fehlerBeimVersendenDerBewerbung') . '");</script>';
 				$save_error_abschicken = true;
+				// Geparkten Logeintrag löschen
+				$log->deleteParked($prestudent_status->person_id);
 				// Logeintrag schreiben
 				$log->log($prestudent_status->person_id, 'Processstate', array(
 					'name' => 'Application sent',
@@ -476,6 +485,8 @@ if (isset($_POST['submit_nachgereicht']))
 			}
 			else
 			{
+				// Geparkten Logeintrag löschen
+				$log->deleteParked($person_id);
 				// Logeintrag schreiben
 				$log->log($person_id, 'Action', array(
 					'name' => $_POST['dok_kurzbz'] . ' set to nachgereicht',
@@ -483,6 +494,169 @@ if (isset($_POST['submit_nachgereicht']))
 					'message' => 'Document ' . $_POST['dok_kurzbz'] . ' has been set to nachgereicht'
 				), 'bewerbung', 'bewerbung', null, 'online');
 			}
+			
+			
+			
+			
+			
+			// An der FHTW wird ein vorläufiges ZGV-Dokument verlangt
+			if (CAMPUS_NAME == 'FH Technikum Wien' && $_POST['dok_kurzbz'] == 'zgv_bakk')
+			{
+				// Check, ob Dakumenttyp 'ZgvBaPre' schon existiert
+				$dokument = new dokument();
+				if ($dokument->loadDokumenttyp('ZgvBaPre'))
+				{
+					$error = false;
+					$message = '';
+					// Check, ob ein File gewaelt wurde
+					if (!empty($_FILES['filenachgereicht']['tmp_name']))
+					{
+						$dokumenttyp_upload = 'ZgvBaPre';
+						
+						// Es wird eine neue Akte vom Typ "ZgvBaPre" angelegt
+						// DMS-Eintrag erstellen
+						$ext = strtolower(pathinfo($_FILES['filenachgereicht']['name'], PATHINFO_EXTENSION));
+						
+						// Auf gültige Dateitypen prüfen
+						if (in_array($ext, array(
+							'pdf',
+							'jpg',
+							'jpeg'
+						)))
+						{
+							$filename = uniqid();
+							$filename .= "." . $ext;
+							$uploadfile = DMS_PATH . $filename;
+
+							if (move_uploaded_file($_FILES['filenachgereicht']['tmp_name'], $uploadfile))
+							{
+								$dms_id = '';
+								
+								$dms = new dms();
+								$dms->version = '0';
+								$dms->kategorie_kurzbz = 'Akte';
+								
+								$dms->insertamum = date('Y-m-d H:i:s');
+								$dms->insertvon = 'online';
+								$dms->mimetype = $_FILES['filenachgereicht']['type'];
+								$dms->filename = $filename;
+								$dms->name = $_FILES['filenachgereicht']['name'];
+								
+								if ($dms->save(true))
+								{
+									$dms_id = $dms->dms_id;
+								}
+								else
+								{
+									$message .= $p->t('global/fehlerBeimSpeichernDerDaten');
+									$error = true;
+								}
+							}
+							else
+							{
+								$message .= $p->t('global/dateiNichtErfolgreichHochgeladen');
+								$error = true;
+							}
+						}
+						else
+						{
+							$message .= $p->t('bewerbung/falscherDateityp');
+							$error = true;
+						}
+
+						if (! $error && isset($_FILES['filenachgereicht']['tmp_name']))
+						{
+							$akte = new akte();
+							$akte->new = true;
+							$akte->insertamum = date('Y-m-d H:i:s');
+							$akte->insertvon = 'online';
+							
+							$dokument = new dokument();
+							$dokument->loadDokumenttyp('ZgvBaPre');
+	
+							$akte->dokument_kurzbz = 'ZgvBaPre';
+							$akte->titel = cutString($_FILES['filenachgereicht']['name'], 32, '~', true); // Dateiname
+							$akte->bezeichnung = cutString($dokument->bezeichnung, 32); // Dokumentbezeichnung
+							$akte->person_id = $person_id;
+							$akte->mimetype = $_FILES['filenachgereicht']['type'];
+							$akte->erstelltam = date('Y-m-d H:i:s');
+							$akte->gedruckt = false;
+							$akte->nachgereicht = false;
+							$akte->anmerkung = '';
+							$akte->uid = '';
+							$akte->dms_id = $dms_id;
+							$akte->ausstellungsnation = '';
+							
+							if (! $akte->save())
+							{
+								$message .= $p->t('global/fehleraufgetreten') . ": $akte->errormsg";
+							}
+							else
+							{
+								$message .= $p->t('global/erfolgreichgespeichert');
+								// Geparkten Logeintrag löschen
+								$log->deleteParked($person_id);
+								// Logeintrag schreiben
+								$log->log($person_id, 'Action', array(
+									'name' => 'Document ' . $akte->bezeichnung . ' uploaded',
+									'success' => true,
+									'message' => 'Document ' . $akte->bezeichnung . ' "' . $akte->titel . '" uploaded'
+								), 'bewerbung', 'bewerbung', null, 'online');
+							}
+							
+							if (! defined('BEWERBERTOOL_SEND_UPLOAD_EMPFAENGER') || BEWERBERTOOL_SEND_UPLOAD_EMPFAENGER)
+							{
+								// Wenn nach dem Bestätigen einer Bewerbung ein Dokument hochgeladen wird, wird ein Infomail verschickt
+								$prestudent = new prestudent();
+								$prestudent->getPrestudenten($person_id);
+								
+								// Beim verschicken der Infomail wird auch das vorvorige Studiensemester hinzugefügt, damit auch Infomails für Studiensemester verschickt werden, für die man sich nicht mehr bewerben aber noch Dokumente hochladen kann.
+								if (isset($stsem_array[0]))
+									array_unshift($stsem_array, $studiensemester->jump($stsem_array[0], - 2));
+									
+									foreach ($prestudent->result as $prest)
+									{
+										$prestudent2 = new prestudent();
+										$prestudent2->getPrestudentRolle($prest->prestudent_id, 'Interessent');
+										foreach ($prestudent2->result as $row)
+										{
+											if (in_array($row->studiensemester_kurzbz, $stsem_array))
+											{
+												if ($row->bestaetigtam != '' && in_array($prest->studiengang_kz, $benoetigt))
+												{
+													sendDokumentupload($prest->studiengang_kz, $dokument->dokument_kurzbz, $row->orgform_kurzbz, $row->studiensemester_kurzbz, $row->prestudent_id, $dms_id);
+												}
+											}
+										}
+									}
+							}
+							echo "<script>
+									var loc = window.opener.location;
+									window.opener.location = 'bewerbung.php?active=dokumente';
+									</script>";
+						}
+						else
+						{
+							$message .= $p->t('bewerbung/akteBereitsVorhanden');
+							$error = true;
+						}
+					}
+					else
+					{
+						$message .= $p->t('bewerbung/keineDateiAusgewaehlt');
+						$error = true;
+					}
+				}
+			}
+			
+			
+			
+			
+			
+			
+			
+			
+			
 		}
 	}
 }
@@ -516,6 +690,8 @@ if (isset($_POST['btn_person']) && ! $eingabegesperrt)
 	{
 		$message = $person->errormsg;
 		$save_error_daten = true;
+		// Geparkten Logeintrag löschen
+		$log->deleteParked($person_id);
 		// Logeintrag schreiben
 		$log->log($person_id, 'Action', array(
 			'name' => 'Personal data saved',
@@ -526,6 +702,8 @@ if (isset($_POST['btn_person']) && ! $eingabegesperrt)
 	else
 	{
 		$save_error_daten = false;
+		// Geparkten Logeintrag löschen
+		$log->deleteParked($person_id);
 		// Logeintrag schreiben
 		$log->log($person_id, 'Action', array(
 			'name' => 'Personal data saved',
@@ -538,6 +716,8 @@ if (isset($_POST['btn_person']) && ! $eingabegesperrt)
 	{
 		$message = $p->t('bewerbung/svnrBereitsVorhanden');
 		$save_error_daten = true;
+		// Geparkten Logeintrag löschen
+		$log->deleteParked($person_id);
 		// Logeintrag schreiben
 		$log->log($person_id, 'Action', array(
 			'name' => 'Error saving Sozialversicherungsnummer',
@@ -722,6 +902,8 @@ if (isset($_POST['btn_kontakt']) && ! $eingabegesperrt)
 				else
 				{
 					$save_error_kontakt = false;
+					// Geparkten Logeintrag löschen
+					$log->deleteParked($person->person_id);
 					// Logeintrag schreiben
 					$log->log($person->person_id, 'Action', array(
 						'name' => 'Phone number updated',
@@ -762,6 +944,8 @@ if (isset($_POST['btn_kontakt']) && ! $eingabegesperrt)
 					else
 					{
 						$save_error_kontakt = false;
+						// Geparkten Logeintrag löschen
+						$log->deleteParked($person->person_id);
 						// Logeintrag schreiben
 						$log->log($person->person_id, 'Action', array(
 							'name' => 'New phone number saved',
@@ -830,6 +1014,9 @@ if (isset($_POST['btn_kontakt']) && ! $eingabegesperrt)
 						$ort_alt != $ort_neu ||
 						$nation_alt != $nation_neu)
 					{
+						// Geparkten Logeintrag löschen
+						$log->deleteParked($person->person_id);
+						// Logeintrag anlegen
 						$log->log($person->person_id, 'Action', array(
 							'name' => 'Adress updated',
 							'success' => true,
@@ -863,6 +1050,8 @@ if (isset($_POST['btn_kontakt']) && ! $eingabegesperrt)
 				else
 				{
 					$save_error = false;
+					// Geparkten Logeintrag löschen
+					$log->deleteParked($person->person_id);
 					// Logeintrag schreiben
 					$log->log($person->person_id, 'Action', array(
 						'name' => 'New adress saved',
@@ -1233,6 +1422,8 @@ if (isset($_POST['btn_notiz']))
 		$notiz->save(true);
 		$notiz->saveZuordnung();
 
+		// Geparkten Logeintrag löschen
+		$log->deleteParked($person_id);
 		// Logeintrag schreiben
 		$log->log($person_id, 'Action', array(
 			'name' => 'New notiz saved',
@@ -1385,14 +1576,38 @@ else
 $studiensemester_bewerbungen = array();
 $prestudent_bewerbungen = getBewerbungen($person_id, true);
 
-// Studiensemester der aktiven Bewerbungen laden, ansonsten jene, für die sich aktuell bworben werden kann
+$status_abschicken = false;
+$status_abschicken_text = $unvollstaendig;
+$count_abgeschickte = 0;
+
+// Studiensemester der aktiven Bewerbungen laden, ansonsten jene, für die sich aktuell beworben werden kann
 if ($prestudent_bewerbungen)
 {
-	foreach ($prestudent_bewerbungen AS $studiensemester)
-		$studiensemester_bewerbungen[] = $studiensemester->laststatus_studiensemester_kurzbz;
+	foreach ($prestudent_bewerbungen AS $row)
+	{
+		$studiensemester_bewerbungen[] = $row->laststatus_studiensemester_kurzbz;
+		
+		// Checken, ob schon Bewerbungen abgeschickt wurden, wenn nicht, hervorheben
+		$prestudent_status = new prestudent();
+		$prestudent_status->getLastStatus($row->prestudent_id, $row->laststatus_studiensemester_kurzbz, 'Interessent');
+		
+		if ($prestudent_status->bewerbung_abgeschicktamum != '' && ($count_abgeschickte == 0 || $count_abgeschickte < count($prestudent_bewerbungen)))
+		{
+			$status_abschicken = true;
+			$status_abschicken_text = $teilvollstaendig;
+			$count_abgeschickte ++;
+		}
+		if ($prestudent_status->bewerbung_abgeschicktamum != '' && $count_abgeschickte == count($prestudent_bewerbungen))
+		{
+			$status_abschicken = true;
+			$status_abschicken_text = $vollstaendig;
+		}
+	}
 }
 else 
 {
+	$status_abschicken_text = $vollstaendig;
+	
 	$stsem = new studiensemester();
 	$stsem->getStudiensemesterOnlinebewerbung();
 	foreach ($stsem->studiensemester as $row)
@@ -1625,6 +1840,42 @@ else
 		{
 			margin-top: 10px;
 		}
+		.statusverlauf_top
+		{
+			max-height: 20px;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			content: "";
+			position: relative;
+		}
+		.statusverlauf_top:before 
+		{
+			content: '';
+			width: 100%;
+			height: 100%;		
+			position: absolute;
+			left: 0;
+			top: 0;
+			background: linear-gradient(white , transparent);
+		}
+		.statusverlauf_bottom
+		{
+			max-height: 20px;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			content: "";
+			position: relative;
+		}
+		.statusverlauf_bottom:before 
+		{
+			content: '';
+			width: 100%;
+			height: 100%;		
+			position: absolute;
+			left: 0;
+			top: 0;
+			background: linear-gradient(transparent , white );
+		}
 		</style>
 	</head>
 	<body class="bewerbung">
@@ -1663,11 +1914,18 @@ else
 						<?php
 						if(!defined('BEWERBERTOOL_DOKUMENTE_ANZEIGEN') || BEWERBERTOOL_DOKUMENTE_ANZEIGEN)
 						{
-							// An der FHTW werden Dokumente nur angezeigt wenn eine aktive Bewerbung vorliegt
+							// An der FHTW werden Dokumente nur angezeigt wenn eine aktive Bewerbung vorliegt oder die Person einen aktiven Account hat
 							if (CAMPUS_NAME == 'FH Technikum Wien')
 							{
 								$standalone_masterbewerbung = false;
 								$masterbewerbung_bestaetigt = false;
+								$aktiverBenutzer = false;
+								$benutzer = new benutzer();
+								if ($benutzer->getBenutzerFromPerson($person_id, true))
+								{
+									if (count($benutzer->result) > 0)
+										$aktiverBenutzer = true;
+								}
 								if ($prestudent = getBewerbungen($person_id, true))
 								{
 									foreach ($prestudent as $row)
@@ -1692,6 +1950,14 @@ else
 											</a>
 										</li>';
 									}
+								}
+								elseif ($aktiverBenutzer)
+								{
+									echo '	<li>
+										<a href="#dokumente" aria-controls="dokumente" role="tab" data-toggle="tab" '.($status_dokumente_text == $unvollstaendig?'style="background-color: #F2DEDE !important"':'style="background-color: #DFF0D8 !important"').'>
+											'.$p->t('bewerbung/menuDokumente').' <br> '.$status_dokumente_text.'
+										</a>
+									</li>';
 								}
 								
 							}
@@ -1756,8 +2022,8 @@ else
 						</li>
 						<?php endif; ?>
 						<li>
-							<a href="#abschicken" aria-controls="abschicken" role="tab" data-toggle="tab">
-								<?php echo $p->t('bewerbung/menuAbschließen') ?> <br> &nbsp;
+							<a href="#abschicken" aria-controls="abschicken" role="tab" data-toggle="tab" <?php echo ($status_abschicken_text == $unvollstaendig ? 'style="background-color: #F2DEDE !important"': ($status_abschicken_text == $teilvollstaendig ? 'style="background-color: #FCF8E3 !important"' : 'style="background-color: #DFF0D8 !important"'));?>>
+								<?php echo $p->t('bewerbung/menuAbschließen') ?> <br> <?php echo $status_abschicken_text;?>
 							</a>
 						</li>
 						<li>

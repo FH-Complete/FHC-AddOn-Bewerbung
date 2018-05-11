@@ -381,51 +381,99 @@ if (! isset($person_id))
 							else
 								$aktion .= '';
 						}
-						$div = '<form class="form-horizontal" method="POST" action="' . $_SERVER["PHP_SELF"] . '?active=dokumente">
+						$div = '<form class="form-horizontal" method="POST" enctype="multipart/form-data" action="' . $_SERVER["PHP_SELF"] . '?active=dokumente">
 							<span id="nachgereicht_' . $dok->dokument_kurzbz . '" style="display:none;">' . $p->t('bewerbung/placeholderAnmerkungNachgereicht') . ':
 							<input type="checkbox" name="check_nachgereicht" checked=\'checked\' style="display:none">
-							<div class="form-group">
-								<nobr>
-								<div class="row col-xs-12 col-sm-12 col-lg-12">
-									<input type="checkbox" name="check_nachgereicht" checked=\'checked\' style="display:none">
-									<div class="col-xs-8 col-sm-8 col-lg-9">
-
-										<div class="input-group">
-										<input type="text" 
-													class="form-control" 
-													id="anmerkung_' . $dok->dokument_kurzbz . '" 
-													name="txt_anmerkung"
-													onInput="zeichenCountdown(\'anmerkung_' . $dok->dokument_kurzbz . '\',128)" 
-													placeholder="' . $p->t('bewerbung/placeholderOrtNachgereicht') . '">
-										<span class="input-group-addon" style="color: grey;" id="countdown_anmerkung_' . $dok->dokument_kurzbz . '">128</span>
+								<div class="form-group">
+									<div class="row col-sm-12 col-lg-12">
+										<input type="checkbox" name="check_nachgereicht" checked=\'checked\' style="display:none">
+										<div class="col-xs-12 col-sm-8 col-lg-8">
+											<div class="input-group">
+												<input type="text" 
+															class="form-control" 
+															id="anmerkung_' . $dok->dokument_kurzbz . '" 
+															name="txt_anmerkung"
+															onInput="zeichenCountdown(\'anmerkung_' . $dok->dokument_kurzbz . '\',128)" 
+															placeholder="' . $p->t('bewerbung/placeholderOrtNachgereicht') . '">
+												<span class="input-group-addon" style="color: grey;" id="countdown_anmerkung_' . $dok->dokument_kurzbz . '">128</span>
+											</div>
 										</div>
-									</div>
-									<div class="col-xs-3 col-sm-3 col-lg-3">
-										<div class="input-group">
+										
+									';
+						// An der FHTW wird beim nachreichen des Dokuments "zgv_bakk" ein vorläufiges ZGV-Dokument verlangt
+						if (CAMPUS_NAME == 'FH Technikum Wien' && $dok->dokument_kurzbz == 'zgv_bakk')
+						{
+							// Checken, ob der Dokumenttyp vorhanden ist
+							$checkZgvBaPre = new dokument();
+							if ($checkZgvBaPre->loadDokumenttyp('ZgvBaPre'))
+							{
+								$div .= '	<div class="col-sm-4 col-lg-4">
+													<input type="text" 
+															class="form-control" 
+															id="nachreichungam_' . $dok->dokument_kurzbz . '" 
+															name="nachreichungam"
+															autofocus="autofocus"
+															placeholder="' . $p->t('bewerbung/datumFormat') . '">
+											</div>
+										</div>
+									</div><span>' . $p->t('bewerbung/infotextVorlaeufigesZgvDokument') . ':</span>
+									<div class="form-group">
+										<div class="col-sm-12 col-lg-12">
 											
+											<div class="form-group">
+												
+												<div class="col-sm-5 col-lg-3">
+													<input id="filenachgereicht_' . $dok->dokument_kurzbz . '" type="file" name="filenachgereicht" class="form-control-file" />
+												</div>
+												<div class="col-sm-7 col-lg-8">
+													<input type="submit" value="OK" name="submit_nachgereicht" class="btn btn-primary" onclick="return checkNachgereicht(\'' . $dok->dokument_kurzbz . '\')">
+												</div>
+											</div>';
+							}
+							else 
+							{
+								$div .= '	<div class="col-sm-3 col-lg-3">
+											<input type="text"
+													class="form-control"
+													id="nachreichungam_' . $dok->dokument_kurzbz . '"
+													name="nachreichungam"
+													autofocus="autofocus"
+													placeholder="' . $p->t('bewerbung/datumFormat') . '">
+										</div>
+										<div class="col-sm-1 col-lg-1">
+											<input type="submit" value="OK" name="submit_nachgereicht" class="btn btn-primary" onclick="return checkNachgereicht(\'' . $dok->dokument_kurzbz . '\')">
+										</div>';
+							}
+						}
+						else 
+						{
+							$div .= '	<div class="col-sm-3 col-lg-3">
 											<input type="text" 
 													class="form-control" 
 													id="nachreichungam_' . $dok->dokument_kurzbz . '" 
 													name="nachreichungam"
 													autofocus="autofocus"
 													placeholder="' . $p->t('bewerbung/datumFormat') . '">
-											
-											
-												<input type="submit" value="OK" name="submit_nachgereicht" class="btn btn-default" onclick="return checkNachgereicht(\'' . $dok->dokument_kurzbz . '\')">
-											
 										</div>
+										<div class="col-sm-1 col-lg-1">
+											<input type="submit" value="OK" name="submit_nachgereicht" class="btn btn-primary" onclick="return checkNachgereicht(\'' . $dok->dokument_kurzbz . '\')">
+										</div>';
+						}
+						$div .=	'
 									</div>
 								</div>
-								</nobr>
-							</div>
-							<input type="hidden" name="dok_kurzbz" value="' . $dok->dokument_kurzbz . '">
+								<input type="hidden" name="dok_kurzbz" value="' . $dok->dokument_kurzbz . '">
 						</form>';
 					}
 					
 					$style = '';
-					
+					// Fallback Dokumentbezeichnung auf DEFAULT_LANGUAGE
+					$dokumentbezeichnung = $dok->bezeichnung_mehrsprachig[getSprache()];
+					if ($dokumentbezeichnung == '')
+						$dokumentbezeichnung = $dok->bezeichnung_mehrsprachig[DEFAULT_LANGUAGE];
+
 					echo '<tr id="row_' . $dok->dokument_kurzbz . '">
-					<td style="vertical-align: middle"	class="' . $style . '">' . $dok->bezeichnung_mehrsprachig[getSprache()];
+					<td style="vertical-align: middle"	class="' . $style . '">' . $dokumentbezeichnung;
 					
 					if ($dok->pflicht)
 					{
@@ -546,30 +594,38 @@ if (! isset($person_id))
 	<script type="text/javascript">
 	function checkNachgereicht(dokument)
 	{
-		var gebDat = document.getElementById('nachreichungam_'+dokument).value;
-		gebDat = gebDat.split(".");
+		var zgvDat = document.getElementById('nachreichungam_'+dokument).value;
+		zgvDat = zgvDat.split(".");
 
-		if(gebDat.length !== 3)
+		if(zgvDat.length !== 3)
 		{
 			alert("<?php echo $p->t('bewerbung/datumsformatUngueltig')?>");
 			return false;
 		}
 
-		if(gebDat[0].length !==2 && gebDat[1].length !== 2 && gebDat[2].length !== 4)
+		if(zgvDat[0].length !==2 && zgvDat[1].length !== 2 && zgvDat[2].length !== 4)
 		{
 			alert("<?php echo $p->t('bewerbung/datumsformatUngueltig')?>");
 			return false;
 		}
 
-		var date = new Date(gebDat[2], gebDat[1]-1, gebDat[0]);
+		var dateZgv = new Date(zgvDat[2], zgvDat[1]-1, zgvDat[0]);
+		var now = new Date();
 
-		gebDat[0] = parseInt(gebDat[0], 10);
-		gebDat[1] = parseInt(gebDat[1], 10);
-		gebDat[2] = parseInt(gebDat[2], 10);
+		zgvDat[0] = parseInt(zgvDat[0], 10);
+		zgvDat[1] = parseInt(zgvDat[1], 10);
+		zgvDat[2] = parseInt(zgvDat[2], 10);
 
-		if(!(date.getFullYear() === gebDat[2] && (date.getMonth()+1) === gebDat[1] && date.getDate() === gebDat[0]))
+		if(!(dateZgv.getFullYear() === zgvDat[2] && (dateZgv.getMonth()+1) === zgvDat[1] && dateZgv.getDate() === zgvDat[0]))
 		{
 			alert("<?php echo $p->t('bewerbung/datumsformatUngueltig')?>");
+			return false;
+		}
+
+		// Check ob ZGV-Datum in der Vergangenheit liegt
+		if(dateZgv < now)
+		{
+			alert("<?php echo $p->t('bewerbung/nachreichDatumNichtVergangenheit')?>");
 			return false;
 		}
 
@@ -577,6 +633,12 @@ if (! isset($person_id))
 		if(anmerkung.length == 0)
 		{
 			alert("<?php echo $p->t('bewerbung/bitteAnmerkungEintragen')?>");
+			return false;
+		}
+		// Check ob File ausgewählt wurde
+		if(document.getElementById('filenachgereicht_'+dokument).value == "")
+		{
+			alert("<?php echo $p->t('bewerbung/bitteDateiAuswaehlen')?>");
 			return false;
 		}
 	};

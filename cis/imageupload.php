@@ -234,6 +234,8 @@ if ($person->load($person_id))
 		{
 			$result_obj['type'] = "success";
 			$result_obj['msg'] = "<b>Bild wurde erfolgreich gespeichert</b>";
+			// Geparkten Logeintrag löschen
+			$log->deleteParked($person_id);
 			// Logeintrag schreiben
 			$log->log($person_id,
 				'Action',

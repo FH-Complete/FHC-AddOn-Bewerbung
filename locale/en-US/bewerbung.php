@@ -68,7 +68,9 @@ $this->phrasen['bewerbung/allgemeineErklaerung']='We are pleased that you are in
 You may select - online - up to 3 study programs and as many further education courses as you like.<br>
 Click the green button to add a study program or course to your application.<br>
 Should you require any additional information, please do not hesitate to contact our <a href=\'https://www.technikum-wien.at/en/student-guide/admission-counselors/\' target=\'_blank\'>student counselling team</a> in person, by phone, or via e-mail or WhatsApp.<br><br>
-Complete the form in full. Once you have entered all details, send in your application by clicking "Finish".';
+Complete the form in full. Once you have entered all details, send in your application by clicking "Finish".<br><br>
+Application deadlines for third countries (outside the EU) see:<br>
+<a href=\'https://www.technikum-wien.at/bewerbungsfristen\' target=\'_blank\'>https://www.technikum-wien.at/bewerbungsfristen</a>';
 $this->phrasen['bewerbung/erklaerungStudierende']='We are pleased that you are interested in the study programs we offer.<br><br>Click the green button to add a study program or course to your application.';
 $this->phrasen['bewerbung/aktuelleBewerbungen']='Current applications:';
 $this->phrasen['bewerbung/status']='Status';
@@ -233,11 +235,19 @@ $this->phrasen['bewerbung/dokumenteVollstaendig']='All required documents have b
 $this->phrasen['bewerbung/keinDokumententypUebergeben']='Document type is not set';
 $this->phrasen['bewerbung/aktion']='Action';
 $this->phrasen['bewerbung/bewerbungStornieren']='Cancel application';
+$this->phrasen['bewerbung/bewerbungStorniert']='Application cancelled';
 $this->phrasen['bewerbung/bewerbungStornierenInfotext']='If you cancel the application you will not be able to assign again for "%2$s" in %1$s<br><br>Do you want to proceed?';
 $this->phrasen['bewerbung/bewerbungStornierenBestaetigen']='Yes, cancel application';
 $this->phrasen['bewerbung/vergangeneBewerbungen']='Past applications';
 $this->phrasen['bewerbung/buttonStornierenDisabled']='Once the application has been sent or rejected you can not cancel it any more';
 $this->phrasen['bewerbung/infotextDisabled']='An application for %s already exists';
+$this->phrasen['bewerbung/bitteAnmerkungEintragen']='Please enter the name of the institution that will issue the document';//nur grob uebersetzt
+$this->phrasen['bewerbung/nachreichDatumNichtVergangenheit']='The date may not be in the past';//nur grob uebersetzt
+$this->phrasen['bewerbung/infotextVorlaeufigesZgvDokument']='Please upload the last received certificate from your school';//nur grob uebersetzt
+$this->phrasen['bewerbung/bitteDateiAuswaehlen']='Please choose a file';//nur grob uebersetzt
+$this->phrasen['bewerbung/zustimmungDatenuebermittlung']='If in exceptional cases the admission requirements can not be finally clarified by the UAS Technikum Wien, I give my consent that the UAS Technikum Wien can forward the documents to the competent authorities for verification.<br>
+I have been informed that I am under no obligation to consent to the transmission of my data. However, this consent is necessary in order for the application to be considered.';
+$this->phrasen['bewerbung/bitteDatenuebermittlungZustimmen']='You have to consent the transmission of your data to send the application.';
 
 // Ausbildung
 $this->phrasen['bewerbung/menuAusbildung']='Ausbildung';
@@ -256,7 +266,7 @@ Best regards,<br>
 UAS Technikum Wien';
 $this->phrasen['bewerbung/erfolgreichBeworbenMailBetreff']='Application confirmation UAS Technikum Wien';
 $this->phrasen['bewerbung/bewerbungsfrist']='Application deadline';
-$this->phrasen['bewerbung/bewerbungszeitraum']='Application period';
+$this->phrasen['bewerbung/bewerbungszeitraum']='Application period (within the EU)';
 $this->phrasen['bewerbung/bewerbungsfristAbgelaufen']='Application deadline expired';
 $this->phrasen['bewerbung/bewerbungAusserhalbZeitraum']='Your application for this degree program is out of period. Your application has not been sent.';
 $this->phrasen['bewerbung/unbegrenzt']='open';
