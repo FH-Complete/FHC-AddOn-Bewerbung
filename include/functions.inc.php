@@ -96,8 +96,8 @@ function BewerbungPersonAddStudiengang($studiengang_kz, $anmerkung, $person, $st
 			$zgvmadatum = $prestudent_zgv->zgvmadatum;
 			$zgvmanation = $prestudent_zgv->zgvmanation;
 		}
-		// An der FHTW werden seit dem Infocenter keine bestehenden ZGVs übernommen
-		if (CAMPUS_NAME == 'FH Technikum Wien')
+		// An der FHTW werden seit dem Infocenter keine bestehenden ZGVs für Bachelor übernommen
+		if (CAMPUS_NAME == 'FH Technikum Wien' && $studiengaenge_arr[$studiengang_kz]['typ'] == 'b')
 		{
 			$zgv_code = '';
 			$zgvort = '';
@@ -187,7 +187,7 @@ function BewerbungPersonAddStudiengang($studiengang_kz, $anmerkung, $person, $st
  * 
  * @param string $mailadresse Zu pruefende E-Mail-Adresse.
  * @param string $studiensemester_kurzbz. Optional. Studiensemester fuer welches eine Bewerbung vorliegt.
- * @return person_id und zugangscode; False im Fehlerfall
+ * @return integer person_id und zugangscode; False im Fehlerfall
  */
 function check_load_bewerbungen($mailadresse, $studiensemester_kurzbz = null)
 {
@@ -361,7 +361,7 @@ function getStudienplaeneForOnlinebewerbung($studiengang_kz = null, $studienseme
 	{
 		$qry .= " AND orgform_kurzbz=" . $db->db_add_param($orgform_kurzbz);
 	}
-	
+
 	if ($result = $db->db_query($qry))
 	{
 		$db->result = '';
@@ -465,7 +465,7 @@ function getOrgformSpracheForOnlinebewerbung($studiengang_kz = null, $studiensem
  * Laedt alle Gemeinden zu einer PLZ
  * 
  * @param integer $plz PLZ
- * @return Objekt mit den Gemeinden, sonst false
+ * @return boolean Objekt mit den Gemeinden, sonst false
  */
 function BewerbungGetGemeinden($plz)
 {
