@@ -1660,7 +1660,7 @@ if ($dokumente_abzugeben)
 		// @todo: Studiengangsnamen auch aus Studienplan holen? -> Falls noch benötigt, einfach Bezeichnung aus aktuellster Studienordnung holen 
 		$benoetigtStudiengang = new dokument();
 		$benoetigtStudiengang->getStudiengaengeDokument($dok->dokument_kurzbz, $person_id);
-	
+
 		foreach ($benoetigtStudiengang->result as $row)
 		{
 			//if ($dok->pflicht === true || check_person_statusbestaetigt($person_id, 'Interessent', '', $row->studiengang_kz))
@@ -1695,6 +1695,8 @@ else
 {
 	$status_dokumente = true;
 	$status_dokumente_text = $vollstaendig;
+	if (CAMPUS_NAME == 'FH Technikum Wien')
+		$status_dokumente_text = '&nbsp;';
 }
 
 $konto = new konto();
@@ -1945,7 +1947,7 @@ else
 									if (!$standalone_masterbewerbung || $masterbewerbung_bestaetigt)
 									{
 										echo '	<li>
-											<a href="#dokumente" aria-controls="dokumente" role="tab" data-toggle="tab" '.($status_dokumente_text == $unvollstaendig?'style="background-color: #F2DEDE !important"':'style="background-color: #DFF0D8 !important"').'>
+											<a href="#dokumente" aria-controls="dokumente" role="tab" data-toggle="tab" '.($status_dokumente_text == $unvollstaendig?'style="background-color: #F2DEDE !important"':'').'>
 												'.$p->t('bewerbung/menuDokumente').' <br> '.$status_dokumente_text.'
 											</a>
 										</li>';
