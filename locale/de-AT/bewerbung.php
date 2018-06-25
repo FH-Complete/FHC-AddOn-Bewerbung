@@ -12,7 +12,15 @@ $this->phrasen['bewerbung/einleitungstext']='Bitte füllen Sie das Formular aus,
 		'.(defined('BEWERBERTOOL_MAX_STUDIENGAENGE') && BEWERBERTOOL_MAX_STUDIENGAENGE != ''?BEWERBERTOOL_MAX_STUDIENGAENGE:'').'
 		Studienrichtungen auswählen. <br>Wenn Sie mehr Informationen benötigen,
 		steht Ihnen unsere <a href=\'https://www.technikum-wien.at/studieninformationen/studienberatung-kontaktieren/\' target=\'_blank\'>Studienberatung</a>
-		gerne persönlich, telefonisch, per E-Mail oder WhatsApp zur Verfügung.';
+		gerne persönlich, telefonisch, per E-Mail oder WhatsApp zur Verfügung.<br><br>
+		Datenschutz-Hinweis:<br>
+Die uns von Ihnen zum Zwecke der Bewerbung bekanntgegebenen Daten werden von uns ausschließlich zur Abwicklung der Bewerbung auf der Grundlage von vor- bzw vertraglichen Zwecken verarbeitet und mit der unten beschriebenen Ausnahme bei Unklarheiten betreffend die Zugangsvoraussetzungen nicht an Dritte weitergegeben. Kommt es zu keinem weiteren Kontakt bzw zu keiner Aufnahme, löschen wir Ihre Daten nach drei Jahren.<br><br>
+Informationen zu Ihren Betroffenenrechten finden Sie hier: <a href=\'https://www.technikum-wien.at/information-ueber-ihre-rechte-gemaess-datenschutz-grundverordnung/\' target=\'_blank\'>https://www.technikum-wien.at/information-ueber-ihre-rechte-gemaess-datenschutz-grundverordnung/</a><br><br>
+Bei Fragen stehen wir Ihnen jederzeit unter <a href=\'mailto:datenschutz@technikum-wien.at\'>datenschutz@technikum-wien.at</a> zur Verfügung.<br><br>
+Verantwortlich für die Datenverarbeitung:<br>
+Fachhochschule Technikum Wien<br>
+Höchstädtplatz 6<br>
+1200 Wien';
 $this->phrasen['bewerbung/login']='Login';
 $this->phrasen['bewerbung/zugangscode']='Zugangscode';
 $this->phrasen['bewerbung/fallsVorhanden']='(falls vorhanden)';
@@ -74,7 +82,8 @@ $this->phrasen['bewerbung/allgemeineErklaerung']='Wir freuen uns, dass Sie sich 
 	Wenn Sie mehr Informationen benötigen, steht Ihnen unsere <a href=\'https://www.technikum-wien.at/studieninformationen/studienberatung-kontaktieren/\' target=\'_blank\'>Studienberatung</a> gerne persönlich, telefonisch, per E-Mail oder WhatsApp zur Verfügung.<br><br>
 	Bitte füllen Sie das Formular vollständig aus. Sind alle Werte eingetragen, können Sie unter "Abschließen" Ihre Bewerbung abschicken.<br><br>
 	Bewerbungsfristen für Drittstaatenbewerbungen (außerhalb der EU) siehe:<br>
-	<a href=\'https://www.technikum-wien.at/bewerbungsfristen\' target=\'_blank\'>https://www.technikum-wien.at/bewerbungsfristen</a>';
+	<a href=\'https://www.technikum-wien.at/bewerbungsfristen\' target=\'_blank\'>https://www.technikum-wien.at/bewerbungsfristen</a><br><br>
+	An dieser Stelle möchten wir Sie auf unsere <a href=\'https://cis.technikum-wien.at/cms/dms.php?id=77605\' target=\'_blank\'>Information über die Verwendung personenbezogener Daten von BewerberInnen</a> hinweisen.';
 $this->phrasen['bewerbung/erklaerungStudierende']='Wir freuen uns über Ihr Interesse an unserem Bildungsangebot.<br>
 	Klicken Sie auf den grünen Button, um Ihrer Bewerbung einen Studiengang oder Lehrgang hinzuzufügen.';
 $this->phrasen['bewerbung/aktuelleBewerbungen']='Aktuelle Bewerbungen:';
@@ -262,6 +271,7 @@ $this->phrasen['bewerbung/bitteDateiAuswaehlen']='Bitte wählen Sie eine Datei a
 $this->phrasen['bewerbung/zustimmungDatenuebermittlung']='Können in Ausnahmefällen die Zugangsvoraussetzungen von der FH Technikum Wien nicht abschließend abgeklärt werden, erteile ich die Zustimmung, dass die FH Technikum Wien die Dokumente zur Überprüfung an die zuständigen Behörden weiterleiten kann.<br>
 Ich wurde darüber informiert, dass ich nicht verpflichtet bin, der Übermittlung meiner Daten zuzustimmen. Diese Zustimmung ist allerdings notwendig, um die Bewerbung berücksichtigen zu können.';
 $this->phrasen['bewerbung/bitteDatenuebermittlungZustimmen']='Sie müssen der Datenübermittlung zustimmen, um Ihre Bewerbung abschicken zu können';
+$this->phrasen['bewerbung/vorlaeufigesDokument']='Vorläufiges Dokument';
 
 // Ausbildung
 $this->phrasen['bewerbung/menuAusbildung']='Ausbildung';

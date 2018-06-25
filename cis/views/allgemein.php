@@ -295,9 +295,15 @@ $studiensemester_array = array();
 						$bewerbungsfristen = $bewerbungsfristen->result[0];
 						$bewerbungsbeginn = '';
 						if ($bewerbungsfristen->beginn != '')
-							$bewerbungsbeginn = $datum->formatDatum($bewerbungsfristen->beginn, 'd.m.Y');
+							$bewerbungsbeginn = $datum->formatDatum($bewerbungsfristen->beginn, 'd.m.Y').' - ';
 						else
-							$bewerbungsbeginn = $p->t('bewerbung/unbegrenzt');
+						{
+							if (CAMPUS_NAME == 'FH Technikum Wien')
+								$bewerbungsbeginn = '';
+							else 
+								$bewerbungsbeginn = $p->t('bewerbung/unbegrenzt');
+						}
+							
 						// Wenn Nachfrist gesetzt und das Nachfrist-Datum befuellt ist, gilt die Nachfrist
 						// sonst das Endedatum, wenn eines gesetzt ist
 						if ($bewerbungsfristen->nachfrist == true && $bewerbungsfristen->nachfrist_ende != '')
@@ -309,7 +315,7 @@ $studiensemester_array = array();
 							if ($tage_bis_fristablauf <= 0)
 								$class = 'class="alert-danger"';
 							
-							$bewerbungszeitraum = $bewerbungsbeginn.' - <span '.$class.'>'.$datum->formatDatum($bewerbungsfristen->nachfrist_ende, 'd.m.Y').'</span>';
+							$bewerbungszeitraum = $bewerbungsbeginn.'<span '.$class.'>'.$datum->formatDatum($bewerbungsfristen->nachfrist_ende, 'd.m.Y').'</span>';
 						}
 						elseif ($bewerbungsfristen->ende != '')
 						{
@@ -320,11 +326,11 @@ $studiensemester_array = array();
 							if ($tage_bis_fristablauf <= 0)
 								$class = 'class="alert-danger"';
 							
-							$bewerbungszeitraum = $bewerbungsbeginn.' - <span '.$class.'>'.$datum->formatDatum($bewerbungsfristen->ende, 'd.m.Y').'</span>';
+							$bewerbungszeitraum = $bewerbungsbeginn.'<span '.$class.'>'.$datum->formatDatum($bewerbungsfristen->ende, 'd.m.Y').'</span>';
 						}
 						elseif ($bewerbungsfristen->beginn != '')
 						{
-							$bewerbungszeitraum = $bewerbungsbeginn.' - '.$p->t('bewerbung/unbegrenzt');
+							$bewerbungszeitraum = $bewerbungsbeginn.$p->t('bewerbung/unbegrenzt');
 						}
 						else 
 							$bewerbungszeitraum = $p->t('bewerbung/unbegrenzt');
@@ -454,17 +460,14 @@ $studiensemester_array = array();
 				$prestudent_status = new prestudent();
 				$prestatus_help = ($prestudent_status->getLastStatus($row->prestudent_id))?$prestudent_status->status_mehrsprachig[$sprache]:$p->t('bewerbung/keinStatus');
 
-				// Bewerbungsstatus nicht abgeschickt
+				// Statusgrund anzeigen
 				if ($prestudent_status->statusgrund_id != '')
 				{
 					$statusgrund = new statusgrund($prestudent_status->statusgrund_id);
 					$bewerberstatus = $statusgrund->bezeichnung_mehrsprachig[$sprache];
 				}
-				
-				elseif ($prestudent_status->status_kurzbz == 'Abgewiesener')
-					$bewerberstatus = $p->t('bewerbung/nichtBestaetigt');
-				if ($prestudent_status->bestaetigtam != '' || $prestudent_status->bestaetigtvon != '')
-					$bewerberstatus = $p->t('bewerbung/bestaetigt');
+				else 
+					$bewerberstatus = '';
 
 				$bereits_angemeldet[$prestudent_status->studiensemester_kurzbz][]= $stg->studiengang_kz;
 
@@ -544,7 +547,12 @@ $studiensemester_array = array();
 					if ($bewerbungsfristen->beginn != '')
 						$bewerbungsbeginn = $datum->formatDatum($bewerbungsfristen->beginn, 'd.m.Y');
 					else
-						$bewerbungsbeginn = $p->t('bewerbung/unbegrenzt');
+					{
+						if (CAMPUS_NAME == 'FH Technikum Wien')
+							$bewerbungsbeginn = '';
+						else
+							$bewerbungsbeginn = $p->t('bewerbung/unbegrenzt');
+					}
 					// Wenn Nachfrist gesetzt und das Nachfrist-Datum befuellt ist, gilt die Nachfrist
 					// sonst das Endedatum, wenn eines gesetzt ist
 					if ($bewerbungsfristen->nachfrist == true && $bewerbungsfristen->nachfrist_ende != '')
@@ -556,7 +564,7 @@ $studiensemester_array = array();
 						if ($tage_bis_fristablauf <= 0)
 							$class = 'class="alert-danger"';
 						
-						$bewerbungszeitraum = $bewerbungsbeginn.' - <span '.$class.'>'.$datum->formatDatum($bewerbungsfristen->nachfrist_ende, 'd.m.Y').'</span>';
+						$bewerbungszeitraum = $bewerbungsbeginn.'<span '.$class.'>'.$datum->formatDatum($bewerbungsfristen->nachfrist_ende, 'd.m.Y').'</span>';
 					}
 					elseif ($bewerbungsfristen->ende != '')
 					{
@@ -567,11 +575,11 @@ $studiensemester_array = array();
 						if ($tage_bis_fristablauf <= 0)
 							$class = 'class="alert-danger"';
 						
-						$bewerbungszeitraum = $bewerbungsbeginn.' - <span '.$class.'>'.$datum->formatDatum($bewerbungsfristen->ende, 'd.m.Y').'</span>';
+						$bewerbungszeitraum = $bewerbungsbeginn.'<span '.$class.'>'.$datum->formatDatum($bewerbungsfristen->ende, 'd.m.Y').'</span>';
 					}
 					elseif ($bewerbungsfristen->beginn != '')
 					{
-						$bewerbungszeitraum = $bewerbungsbeginn.' - '.$p->t('bewerbung/unbegrenzt');
+						$bewerbungszeitraum = $bewerbungsbeginn.$p->t('bewerbung/unbegrenzt');
 					}
 					else 
 						$bewerbungszeitraum = $p->t('bewerbung/unbegrenzt');

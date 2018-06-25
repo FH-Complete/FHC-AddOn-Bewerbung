@@ -8,7 +8,15 @@ $this->phrasen['bewerbung/registrierenOderZugangscode']='<a href="'.$_SERVER['PH
 $this->phrasen['bewerbung/einleitungstext']='Please complete the form, select your preferred degree program(s) and click "Submit".<br>
 We will then send you an access code via e-mail to the address specified. You may use this access code at any time to log in, add personal information or degree programs and submit non-binding applications.<br><br>
 If you are interested in more than one degree programs, you may select up to 3 study programs.<br><br>
-Should you require any additional information, please do not hesitate to contact our <a href=\'https://www.technikum-wien.at/en/student-guide/admission-counselors/\' target=\'_blank\'>student counselling team</a> in person, by phone, or via e-mail or WhatsApp.';
+Should you require any additional information, please do not hesitate to contact our <a href=\'https://www.technikum-wien.at/en/student-guide/admission-counselors/\' target=\'_blank\'>student counselling team</a> in person, by phone, or via e-mail or WhatsApp.<br><br>
+		Privacy information:<br>
+The data communicated to us by you for the purpose of the application will be used by us exclusively for the processing of the application on the basis of pre-contractual or contractual purposes and will not be passed on to third parties with the exception described below in case of uncertainties regarding the entry requirements. If there is no further contact or enrolment, your data will be deleted after three years.<br><br>
+Information on your data subject rights can be found here: <a href=\'https://www.technikum-wien.at/information-ueber-ihre-rechte-gemaess-datenschutz-grundverordnung/\' target=\'_blank\'>https://www.technikum-wien.at/information-ueber-ihre-rechte-gemaess-datenschutz-grundverordnung/</a><br><br>
+If you have any questions, please contact us at <a href=\'mailto:datenschutz@technikum-wien.at\'>datenschutz@technikum-wien.at</a><br><br>
+Data Processing Office:<br>
+University of Applied Sciences Technikum Wien<br>
+Höchstädtplatz 6<br>
+1200 Wien';
 $this->phrasen['bewerbung/login']='Login';
 $this->phrasen['bewerbung/zugangscode']='Access Code';
 $this->phrasen['bewerbung/fallsVorhanden']='(if available)';
@@ -70,7 +78,8 @@ Click the green button to add a study program or course to your application.<br>
 Should you require any additional information, please do not hesitate to contact our <a href=\'https://www.technikum-wien.at/en/student-guide/admission-counselors/\' target=\'_blank\'>student counselling team</a> in person, by phone, or via e-mail or WhatsApp.<br><br>
 Complete the form in full. Once you have entered all details, send in your application by clicking "Finish".<br><br>
 Application deadlines for third countries (outside the EU) see:<br>
-<a href=\'https://www.technikum-wien.at/bewerbungsfristen\' target=\'_blank\'>https://www.technikum-wien.at/bewerbungsfristen</a>';
+<a href=\'https://www.technikum-wien.at/bewerbungsfristen\' target=\'_blank\'>https://www.technikum-wien.at/bewerbungsfristen</a><br><br>
+In accordance with the new provisions of the GDPR we want to <a href=\'https://cis.technikum-wien.at/cms/dms.php?id=77605\' target=\'_blank\'>inform you where personal data</a> are collected from you';
 $this->phrasen['bewerbung/erklaerungStudierende']='We are pleased that you are interested in the study programs we offer.<br><br>Click the green button to add a study program or course to your application.';
 $this->phrasen['bewerbung/aktuelleBewerbungen']='Current applications:';
 $this->phrasen['bewerbung/status']='Status';
@@ -248,6 +257,7 @@ $this->phrasen['bewerbung/bitteDateiAuswaehlen']='Please choose a file';//nur gr
 $this->phrasen['bewerbung/zustimmungDatenuebermittlung']='If in exceptional cases the admission requirements can not be finally clarified by the UAS Technikum Wien, I give my consent that the UAS Technikum Wien can forward the documents to the competent authorities for verification.<br>
 I have been informed that I am under no obligation to consent to the transmission of my data. However, this consent is necessary in order for the application to be considered.';
 $this->phrasen['bewerbung/bitteDatenuebermittlungZustimmen']='You have to consent the transmission of your data to send the application.';
+$this->phrasen['bewerbung/vorlaeufigesDokument']='Temporary document';
 
 // Ausbildung
 $this->phrasen['bewerbung/menuAusbildung']='Ausbildung';

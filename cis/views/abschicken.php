@@ -140,7 +140,12 @@ else
 				if ($bewerbungsfristen->beginn != '')
 					$bewerbungsbeginn = $datum->formatDatum($bewerbungsfristen->beginn, 'd.m.Y');
 				else
-					$bewerbungsbeginn = $p->t('bewerbung/unbegrenzt');
+				{
+					if (CAMPUS_NAME == 'FH Technikum Wien')
+						$bewerbungsbeginn = '';
+					else
+						$bewerbungsbeginn = $p->t('bewerbung/unbegrenzt');
+				}
 				
 				$tage_bis_bewerbungsbeginn = ((time() - strtotime($bewerbungsfristen->beginn))/86400);
 				// Wenn Nachfrist gesetzt und das Nachfrist-Datum befuellt ist, gilt die Nachfrist
@@ -158,7 +163,7 @@ else
 						$class = 'class="bg-danger text-danger"';
 						$button_class = 'btn-default';
 					}
-					$bewerbungsfrist = '<span style="font-weight: normal"><br>'.$p->t('bewerbung/bewerbungszeitraum').': '.$bewerbungsbeginn.' - <span '.$class.'>'.$datum->formatDatum($bewerbungsfristen->nachfrist_ende, 'd.m.Y').'</span></span>';
+					$bewerbungsfrist = '<span style="font-weight: normal"><br>'.$p->t('bewerbung/bewerbungszeitraum').': '.$bewerbungsbeginn.'<span '.$class.'>'.$datum->formatDatum($bewerbungsfristen->nachfrist_ende, 'd.m.Y').'</span></span>';
 				}
 				elseif ($bewerbungsfristen->ende != '')
 				{
@@ -173,11 +178,11 @@ else
 						$class = 'class="bg-danger text-danger"';
 						$button_class = 'btn-default';
 					}
-					$bewerbungsfrist = '<span style="font-weight: normal"><br>'.$p->t('bewerbung/bewerbungszeitraum').': '.$bewerbungsbeginn.' - <span '.$class.'>'.$datum->formatDatum($bewerbungsfristen->ende, 'd.m.Y').'</span></span>';
+					$bewerbungsfrist = '<span style="font-weight: normal"><br>'.$p->t('bewerbung/bewerbungszeitraum').': '.$bewerbungsbeginn.'<span '.$class.'>'.$datum->formatDatum($bewerbungsfristen->ende, 'd.m.Y').'</span></span>';
 				}
 				elseif ($bewerbungsfristen->beginn != '')
 				{
-					$bewerbungsfrist = '<span style="font-weight: normal"><br>'.$p->t('bewerbung/bewerbungszeitraum').': '.$bewerbungsbeginn.' - '.$p->t('bewerbung/unbegrenzt').'</span>';
+					$bewerbungsfrist = '<span style="font-weight: normal"><br>'.$p->t('bewerbung/bewerbungszeitraum').': '.$bewerbungsbeginn.$p->t('bewerbung/unbegrenzt').'</span>';
 				}
 				else
 				{
