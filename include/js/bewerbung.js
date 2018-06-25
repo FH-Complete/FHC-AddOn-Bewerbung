@@ -107,6 +107,7 @@ function toggleDiv(div)
 {
 	var colspan = document.getElementById('document_table').rows[0].cells.length;
 	$('#nachgereicht_'+div).toggle();
+	$('#leerSymbol_'+div).toggle();
 	$('#row_'+div).find('td').toggle();
 	$('#anmerkung_row_'+div).toggle();
 	$('#anmerkung_row_'+div).attr('colspan',colspan);

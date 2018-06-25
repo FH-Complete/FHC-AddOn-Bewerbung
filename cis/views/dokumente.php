@@ -82,7 +82,7 @@ if (! isset($person_id))
 					<th></th>
 					<th><?php echo $p->t('bewerbung/dateien'); ?></th>
 					<th><?php echo $p->t('global/aktion'); ?></th>
-					<th></th>
+					<!-- Div Spalte nicht mehr notwendig <th></th>-->
 					<?php 
 					// An der FHTW werden die benötigten Studiengänge im ersten Schritt ausgeblendet
 					if (CAMPUS_NAME == 'FH Technikum Wien' && !check_person_statusbestaetigt($person_id, 'Interessent', '', ''))
@@ -197,14 +197,47 @@ if (! isset($person_id))
 												class="btn btn-default" onclick="FensterOeffnen(\'dms_akteupload.php?person_id=' . $person_id . '&dokumenttyp=' . $dok->dokument_kurzbz . '\'); return false;">
 											<span class="glyphicon glyphicon-upload" aria-hidden="true" title="' . $p->t('bewerbung/upload') . '"></span>
 										</button>';
-								$aktenliste .= '<li>
+								/*$aktenliste .= '<li>
 											<span class="glyphicon glyphicon-hourglass" aria-hidden="true" title="' . $p->t('bewerbung/dokumentWirdNachgereicht') . '"></span>
-										</li>';
-								$div = '<form method="POST" action="' . $_SERVER['PHP_SELF'] . '?active=dokumente">
-									<span id="nachgereicht_' . $akte->dokument_kurzbz . '" style="display:true;">
-										' . $p->t('bewerbung/wirdNachgreichtAm') . ': ' . $datum->formatDatum($akte->nachgereicht_am, 'd.m.Y') . '<br/>
-										' . $p->t('bewerbung/ausstellendeInstitution') . ': ' . $akte->anmerkung . '</span>
-								</form>';
+										</li>';*/
+								$aktenliste = '<table id="nachgereicht_' . $akte->dokument_kurzbz . '" style="border: 0; display:true;">
+									<tr><td style="vertical-align: top" nowrap>' . $p->t('bewerbung/wirdNachgreichtAm') . ': </td><td style="vertical-align: top; padding-left: 5px;"	 >' . $datum->formatDatum($akte->nachgereicht_am, 'd.m.Y') . '</td></tr>
+									<tr><td style="vertical-align: top" nowrap>' . $p->t('bewerbung/ausstellendeInstitution') . ': </td><td style="vertical-align: top; padding-left: 5px;"	 >' . $akte->anmerkung . '</td></tr>';
+								
+								// An der FHTW wird beim Dokument "zgv_bakk" das vorläufiges ZGV-Dokument angezeigt, wenn eines vorhanden ist
+								if (CAMPUS_NAME == 'FH Technikum Wien' && $dok->dokument_kurzbz == 'zgv_bakk')
+								{
+									// Checken, ob der Dokumenttyp ZgvBaPre in der DB vorhanden ist
+									$checkZgvBaPre = new dokument();
+									if ($checkZgvBaPre->loadDokumenttyp('ZgvBaPre'))
+									{
+										// Laden des vorläufigen ZGV Dokuments der Person
+										$zgvBaPre = new akte();
+										$zgvBaPre->getAkten($person_id, 'ZgvBaPre');
+										if (isset($zgvBaPre->result[0]))
+										{
+											$aktenliste .= '<tr><td style="vertical-align: top" nowrap>' . $p->t('bewerbung/vorlaeufigesDokument') . ': </td>
+													<td style="vertical-align: top; padding-left: 5px;"	 >
+													<span class="glyphicon glyphicon-file" aria-hidden="true"></span>
+													  ' . cutString($zgvBaPre->result[0]->titel, 25, '...') . '
+													<button type="button"
+															title="' . $p->t('bewerbung/dokumentHerunterladen') . '"
+															class="btn btn-default btn-xs" href="' . APP_ROOT . 'cms/dms.php?id=' . $zgvBaPre->result[0]->dms_id . '"
+															onclick="FensterOeffnen(\'' . APP_ROOT . 'cms/dms.php?id=' . $zgvBaPre->result[0]->dms_id . '&akte_id=' . $zgvBaPre->result[0]->akte_id . '\'); return false;">
+														<span class="glyphicon glyphicon glyphicon-download-alt" aria-hidden="true" title="' . $p->t('bewerbung/dokumentHerunterladen') . '"></span>
+													</button><br>';
+											if (akteAkzeptiert($zgvBaPre->result[0]->akte_id))
+												$aktenliste .= '<span class="label label-success">' . $p->t('bewerbung/dokumentUeberprueft') . '</span>';
+											else
+												$aktenliste .= '<span class="label label-warning">' . $p->t('bewerbung/dokumentWirdGeprueft') . '</span>';
+											
+												$aktenliste .= '</td></tr>';
+										}
+										else
+											$aktenliste .= '';
+									}
+								}
+								$aktenliste .= '</table>';
 							}
 							else
 							{
@@ -252,7 +285,7 @@ if (! isset($person_id))
 												<span class="label label-success">' . $p->t('bewerbung/dokumentUeberprueft') . '</span> 
 											</li>';
 									}
-									$div = '<form method="POST" action="' . $_SERVER["PHP_SELF"] . '&active=dokumente">
+									/*$div = '<form method="POST" action="' . $_SERVER["PHP_SELF"] . '&active=dokumente">
 										<span id="nachgereicht_' . $dok->dokument_kurzbz . '" style="display:none;">wird nachgereicht:
 											<input type="checkbox" name="check_nachgereicht">
 											<div class="input-group">
@@ -262,7 +295,8 @@ if (! isset($person_id))
 												</div>
 											</div>
 										</span><input type="hidden" name="dok_kurzbz" value="' . $dok->dokument_kurzbz . '">
-									<input type="hidden" name="akte_id" value="' . $akte->akte_id . '"></form>';
+									<input type="hidden" name="akte_id" value="' . $akte->akte_id . '"></form>';*/
+// 									$div = '';
 								}
 								else
 								{
@@ -318,7 +352,7 @@ if (! isset($person_id))
 											</button></form><br> 
 											<span class="label label-warning">' . $p->t('bewerbung/dokumentWirdGeprueft') . '</span>
 											</li>';
-									$div = '<form method="POST" action="' . $_SERVER["PHP_SELF"] . '&active=dokumente">
+									/*$div = '<form method="POST" action="' . $_SERVER["PHP_SELF"] . '&active=dokumente">
 										<span id="nachgereicht_' . $dok->dokument_kurzbz . '" style="display:none;">wird nachgereicht:
 											<input type="checkbox" name="check_nachgereicht">
 											<div class="input-group">
@@ -329,7 +363,9 @@ if (! isset($person_id))
 											</div>
 										</span>
 										<input type="hidden" name="dok_kurzbz" value="' . $dok->dokument_kurzbz . '"><input type="hidden" name="akte_id" value="' . $akte->akte_id . '">
-									</form>';
+									</form>';*/
+// 									$div = '';
+									
 								}
 							}
 						}
@@ -340,7 +376,7 @@ if (! isset($person_id))
 					elseif (CAMPUS_NAME != 'FH Technikum Wien' && $dok->anzahl_dokumente_akzeptiert > 0)
 					{
 						// $status = "<span class='glyphicon glyphicon-ok' aria-hidden='true' title='".$p->t("bewerbung/abgegeben")."'></span>";
-						$div = '<form method="POST" action="' . $_SERVER["PHP_SELF"] . '&active=dokumente">
+						/*$div = '<form method="POST" action="' . $_SERVER["PHP_SELF"] . '&active=dokumente">
 							<span id="nachgereicht_' . $dok->dokument_kurzbz . '" style="display:none;">wird nachgereicht:
 								<input type="checkbox" name="check_nachgereicht">
 								<div class="input-group">
@@ -350,15 +386,16 @@ if (! isset($person_id))
 									</div>
 								</div>
 							</span><input type="hidden" name="dok_kurzbz" value="' . $dok->dokument_kurzbz . '">
-						</form>';
+						</form>';*/
+// 						$div = '';
 						$aktion = '';
-						$aktenliste .= '<ul class="list-unstyled"><li>-</li></ul>';
+						$aktenliste .= '<ul id="leerSymbol_' . $dok->dokument_kurzbz . '" class="list-unstyled" style="display: inline;"><li>-</li></ul>';
 					}
 					else
 					{
 						// Dokument fehlt noch
 						// $status = ' - ';
-						$aktenliste .= '<ul class="list-unstyled"><li>-</li></ul>';
+						$aktenliste .= '<ul id="leerSymbol_' . $dok->dokument_kurzbz . '" class="list-unstyled" style="display: inline;"><li>-</li></ul>';
 						
 						$aktion = '	<button type="button" 
 										title="' . $p->t('bewerbung/upload') . '" 
@@ -381,7 +418,7 @@ if (! isset($person_id))
 							else
 								$aktion .= '';
 						}
-						$div = '<form class="form-horizontal" method="POST" enctype="multipart/form-data" action="' . $_SERVER["PHP_SELF"] . '?active=dokumente">
+						$aktenliste .= '<form class="form-horizontal" method="POST" enctype="multipart/form-data" action="' . $_SERVER["PHP_SELF"] . '?active=dokumente">
 							<span id="nachgereicht_' . $dok->dokument_kurzbz . '" style="display:none;">' . $p->t('bewerbung/placeholderAnmerkungNachgereicht') . ':
 							<input type="checkbox" name="check_nachgereicht" checked=\'checked\' style="display:none">
 								<div class="form-group">
@@ -407,7 +444,7 @@ if (! isset($person_id))
 							$checkZgvBaPre = new dokument();
 							if ($checkZgvBaPre->loadDokumenttyp('ZgvBaPre'))
 							{
-								$div .= '	<div class="col-sm-4 col-lg-4">
+								$aktenliste .= '	<div class="col-sm-4 col-lg-4">
 													<input type="text" 
 															class="form-control" 
 															id="nachreichungam_' . $dok->dokument_kurzbz . '" 
@@ -432,7 +469,7 @@ if (! isset($person_id))
 							}
 							else 
 							{
-								$div .= '	<div class="col-sm-3 col-lg-3">
+								$aktenliste .= '	<div class="col-sm-3 col-lg-3">
 											<input type="text"
 													class="form-control"
 													id="nachreichungam_' . $dok->dokument_kurzbz . '"
@@ -447,7 +484,7 @@ if (! isset($person_id))
 						}
 						else 
 						{
-							$div .= '	<div class="col-sm-3 col-lg-3">
+							$aktenliste .= '	<div class="col-sm-3 col-lg-3">
 											<input type="text" 
 													class="form-control" 
 													id="nachreichungam_' . $dok->dokument_kurzbz . '" 
@@ -459,7 +496,7 @@ if (! isset($person_id))
 											<input type="submit" value="OK" name="submit_nachgereicht" class="btn btn-primary" onclick="return checkNachgereicht(\'' . $dok->dokument_kurzbz . '\')">
 										</div>';
 						}
-						$div .=	'
+						$aktenliste .=	'
 									</div>
 								</div>
 								<input type="hidden" name="dok_kurzbz" value="' . $dok->dokument_kurzbz . '">
@@ -473,7 +510,7 @@ if (! isset($person_id))
 						$dokumentbezeichnung = $dok->bezeichnung_mehrsprachig[DEFAULT_LANGUAGE];
 
 					echo '<tr id="row_' . $dok->dokument_kurzbz . '">
-					<td style="vertical-align: middle"	class="' . $style . '">' . $dokumentbezeichnung;
+					<td style="vertical-align: top"	class="' . $style . '">' . $dokumentbezeichnung;
 					
 					if ($dok->pflicht)
 					{
@@ -498,9 +535,12 @@ if (! isset($person_id))
 						echo '<button class="btn btn-default" data-toggle="collapse" data-target="#toggle_detailstring_' . $dok->dokument_kurzbz . '"><span class="glyphicon glyphicon-collapse-down"></span> ' . $p->t('bewerbung/details') . '</button>';
 					echo '
 					</td>
-					<td style="vertical-align: middle"	nowrap class="' . $style . '">' . $aktenliste . '</td>
-					<td style="vertical-align: middle"	nowrap class="' . $style . '">' . $aktion . '</td>
-					<td id="anmerkung_row_' . $dok->dokument_kurzbz . '" style="vertical-align: middle"	class="' . $style . '">' . $div . '</td>';
+					<td id="anmerkung_row_' . $dok->dokument_kurzbz . '" style="vertical-align: top" nowrap class="' . $style . '">
+						' . $aktenliste . '
+					</td>
+					<td style="vertical-align: top"	nowrap class="' . $style . '">' . $aktion . '</td>';
+					//Div Spalte nicht mehr notwendig
+					//echo '<td id="anmerkung_row_' . $dok->dokument_kurzbz . '" style="vertical-align: middle"	class="' . $style . '">' . $div . '</td>';
 					
 					// An der FHTW werden die benötigten Studiengänge im ersten Schritt ausgeblendet
 					if (CAMPUS_NAME == 'FH Technikum Wien' && ! check_person_statusbestaetigt($person_id, 'Interessent', '', ''))
@@ -509,7 +549,7 @@ if (! isset($person_id))
 					}
 					else
 					{
-						echo '<td style="vertical-align: middle" class="' . $style . '">';
+						echo '<td style="vertical-align: top" class="' . $style . '">';
 						foreach ($ben_bezeichnung[getSprache()][$dok->dokument_kurzbz] as $value)
 						{
 							if ($value != '')
