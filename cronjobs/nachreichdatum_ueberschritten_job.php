@@ -219,7 +219,7 @@ if($result = $db->db_query($qry))
 					$empfaenger = 'info.bid@technikum-wien.at';
 
 				$mail = new mail($empfaenger, 'no-reply', 'Überschrittenes Nachreichdatum '.$bezeichnung.' '.$orgform, 'Bitte sehen Sie sich die Nachricht in HTML Sicht an, um den Inhalt vollständig darzustellen.');
-				$mail->setBCCRecievers('kindlm@technikum-wien.at');
+				//$mail->setBCCRecievers('kindlm@technikum-wien.at');
 				$mail->setHTMLContent($mailcontent);
 				$mail->send();
 				
@@ -288,7 +288,7 @@ if($result = $db->db_query($qry))
 			$empfaenger = 'info.bid@technikum-wien.at';
 
 		$mail = new mail($empfaenger, 'no-reply', 'Überschrittenes Nachreichdatum '.$bezeichnung.' '.$orgform, 'Bitte sehen Sie sich die Nachricht in HTML Sicht an, um den Inhalt vollständig darzustellen.');
-		$mail->setBCCRecievers('kindlm@technikum-wien.at');
+		//$mail->setBCCRecievers('kindlm@technikum-wien.at');
 		$mail->setHTMLContent($mailcontent);
 		$mail->send();
 		
