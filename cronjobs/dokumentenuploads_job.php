@@ -127,6 +127,46 @@ AND tbl_prestudentstatus.bestaetigtam IS NOT NULL
 AND studiensemester_kurzbz IN (".$db->implode4SQL($studiensemester_arr).")
 AND (SELECT get_rolle_prestudent(tbl_prestudent.prestudent_id, NULL)) NOT IN ('Abgewiesener', 'Abbrecher', 'Absolvent')
 AND dokument_kurzbz NOT IN ('zgv_bakk', 'identity', 'SprachB2')
+
+-- Upload nach Nachreichung
+UNION
+
+SELECT DISTINCT
+	studiengang_kz,
+	tbl_prestudentstatus.orgform_kurzbz,
+	person_id,
+	tbl_prestudent.insertamum,
+	vorname,
+	nachname,
+	gebdatum,
+	geschlecht,
+	dokument_kurzbz,
+	tbl_dokument.bezeichnung AS dokumentbezeichnung,
+	tbl_akte.bezeichnung AS dateiname,
+	tbl_akte.titel,
+	dms_id,
+	nachgereicht,
+	tbl_akte.anmerkung 
+FROM
+	public.tbl_prestudent
+JOIN
+	public.tbl_person USING (person_id)
+JOIN
+	public.tbl_prestudentstatus USING (prestudent_id)
+JOIN
+	public.tbl_akte USING (person_id)
+JOIN
+	public.tbl_dokument USING (dokument_kurzbz)
+WHERE
+	tbl_akte.updatevon='online'
+AND (tbl_akte.updateamum >= (SELECT (CURRENT_DATE -1||' '||'03:00:00')::timestamp))
+AND tbl_prestudentstatus.bestaetigtam IS NOT NULL
+AND nachgereicht = FALSE
+AND nachgereicht_am IS NOT NULL
+AND (inhalt IS NOT NULL OR dms_id IS NOT NULL)
+AND studiensemester_kurzbz IN ('WS2018')
+AND (SELECT get_rolle_prestudent(tbl_prestudent.prestudent_id, NULL)) NOT IN ('Abgewiesener', 'Abbrecher', 'Absolvent')
+
 ORDER BY studiengang_kz, orgform_kurzbz, nachname, vorname, person_id";
 //echo $qry;exit;
 $mailtext = '
