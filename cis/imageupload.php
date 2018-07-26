@@ -63,7 +63,7 @@ function resize($base64, $width, $height) // 828 x 1104 -> 240 x 320
 {
 	ob_start();
 	$image = imagecreatefromstring (base64_decode($base64));
-	
+
 	// Hoehe und Breite neu berechnen
 	list ($width_orig, $height_orig) = getimagesizefromstring (base64_decode($base64));
 
@@ -78,7 +78,7 @@ function resize($base64, $width, $height) // 828 x 1104 -> 240 x 320
 
 	$image_p = imagecreatetruecolor($width, $height);
 	//$image = imagecreatefromjpeg($filename);
-	
+
 	// Bild nur verkleinern aber nicht vergroessern
 	if ($width_orig > $width || $height_orig > $height)
 		imagecopyresampled($image_p, $image, 0, 0, 0, 0, $width, $height, $width_orig, $height_orig);
@@ -89,7 +89,7 @@ function resize($base64, $width, $height) // 828 x 1104 -> 240 x 320
 	$retval =  ob_get_contents();
 	ob_end_clean();
 	$retval = base64_encode($retval);
-	
+
 	@imagedestroy($image_p);
 	@imagedestroy($image);
 	return $retval;
@@ -126,31 +126,32 @@ if (fclose($newfile))
 			{
 				$dms = new dms();
 				$dms->load($akte->dms_id);
-				
+
 				$version = $dms->version + 1;
 				$dms_id = $akte->dms_id;
 			}
 		}
 	}
-	
+
 	$dms = new dms();
+	$dms->setPermission($filename_path);
 	
 	$dms->dms_id = $dms_id;
 	$dms->version = $version;
 	$dms->kategorie_kurzbz = 'Akte';
-	
+
 	$dms->insertamum = date('Y-m-d H:i:s');
 	$dms->insertvon = 'online';
 	$dms->mimetype = cutString($img_type, 256);
 	$dms->filename = $dms_filename;
 	$dms->name = cutString($img_filename, 256, '~', true);
-	
+
 	if ($dms->save(true))
 	{
 		$dms_id = $dms->dms_id;
 
 		$akte = new akte();
-		
+
 		if ($akte->getAkten($person_id, 'Lichtbil'))
 		{
 			if (count($akte->result) > 0)
@@ -173,7 +174,7 @@ if (fclose($newfile))
 			$akte->insertamum = date('Y-m-d H:i:s');
 			$akte->insertvon = 'online';
 		}
-		
+
 		$akte->dokument_kurzbz = 'Lichtbil';
 		$akte->person_id = $person_id;
 		//$akte->inhalt = base64_encode($content); Fotos werden nur als DMS und in tbl_person gespeichert
@@ -186,7 +187,7 @@ if (fclose($newfile))
  		$akte->nachgereicht = false;
 // 		$akte->anmerkung = ''; Auch bei nachträglichem Upload bleibt die Anmerkung erhalten
 		$akte->dms_id = $dms_id;
-		
+
 		if (! $akte->save())
 		{
 			$result_obj['type'] = "error";

@@ -402,39 +402,16 @@ if (isset($_POST['submitfile']))
 
 						if (move_uploaded_file($_FILES['file']['tmp_name'], $uploadfile))
 						{
-							/*
-							 * if(!@chgrp($uploadfile,'dms'))
-							 * echo 'CHGRP failed';
-							 * if(!@chmod($uploadfile, 0774))
-							 * echo 'CHMOD failed';
-							 * //exec('sudo chown wwwrun '.$uploadfile);
-							 */
 							// Wenn Akte mit DMS-ID vorhanden, wird diese geladen
 							// Derzeit soll nur eine Akte pro Typ hochgeladen werden können
 							// Daher wird immer ein neuer DMS-Eintrag erstellt
-		// 					$akte = new akte();
 							$version = '0';
 							$dms_id = '';
 
-							/*if ($akte->getAkten($_GET['person_id'], $dokumenttyp_upload))
-							{
-								// erste Akte @todo: Ist auch so in content/akte.php. Kann irrefuehrende Ergebisse liefern, wenn bereits mehrere Akten des selben Typs vorhanden sind.
-								if (isset($akte->result[0]))
-								{
-									$akte = $akte->result[0];
-									if ($akte->dms_id != '')
-									{
-										$dms = new dms();
-										$dms->load($akte->dms_id);
-
-										$version = $dms->version + 1;
-										$dms_id = $akte->dms_id;
-									}
-								}
-							}*/
-
 							$dms = new dms();
-							//$dms->dms_id = $dms_id;
+							if(!$dms->setPermission($uploadfile))
+								$message .= $dms->errormsg;
+							
 							$dms->version = $version;
 							$dms->kategorie_kurzbz = 'Akte';
 
@@ -902,12 +879,12 @@ function sendDokumentupload($empfaenger_stgkz, $dokument_kurzbz, $orgform_kurzbz
 	$email .= '<tr><td><b>' . $p->t('bewerbung/prestudentID') . '</b></td><td>' . $prestudent_id . '</td></tr>';
 	$email .= '</tbody></table>';
 	$email .= '<br>' . $p->t('bewerbung/emailBodyEnde');
-	
+
 	// An der FHTW werden alle Mails von Bachelor-Studiengängen an das Infocenter geschickt, solange die Bewerbung noch nicht bestätigt wurde
 	if (CAMPUS_NAME == 'FH Technikum Wien')
 	{
-		if(	defined('BEWERBERTOOL_MAILEMPFANG') && 
-			BEWERBERTOOL_MAILEMPFANG != '' && 
+		if(	defined('BEWERBERTOOL_MAILEMPFANG') &&
+			BEWERBERTOOL_MAILEMPFANG != '' &&
 			$studiengang->typ == 'b')
 		{
 			$empfaenger = BEWERBERTOOL_MAILEMPFANG;
@@ -915,11 +892,11 @@ function sendDokumentupload($empfaenger_stgkz, $dokument_kurzbz, $orgform_kurzbz
 		else
 			$empfaenger = getMailEmpfaenger($studiengang->typ, '', $orgform_kurzbz);
 	}
-	else 
+	else
 	{
 		$empfaenger = getMailEmpfaenger($empfaenger_stgkz);
 	}
-	
+
 	$mail = new mail($empfaenger, 'no-reply', $p->t('bewerbung/dokumentuploadZuBewerbung', array(
 		$dokumentbezeichnung
 	)) . ' ' . $person->vorname . ' ' . $person->nachname, 'Bitte sehen Sie sich die Nachricht in HTML Sicht an, um den Link vollständig darzustellen.');

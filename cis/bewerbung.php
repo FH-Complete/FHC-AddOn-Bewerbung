@@ -193,14 +193,14 @@ if ($bewerbungStornieren && isset($_POST['prestudent_id']))
 {
 	$prestudent_id = filter_input(INPUT_POST, 'prestudent_id', FILTER_VALIDATE_INT);
 	$studiensemester_kurzbz = filter_input(INPUT_POST, 'studiensemester_kurzbz');
-	
+
 	$prestudent_status = new prestudent($prestudent_id);
 	$prestudent_status->getLastStatus($prestudent_id, $studiensemester_kurzbz);
-	
+
 	$statusbestaetigt = $prestudent_status->bestaetigtam != '' || $prestudent_status->bestaetigtvon != ''?true:false;
 	if ($prestudent_status->status_kurzbz == 'Interessent' && $statusbestaetigt == false)
 	{
-		// Status "Abgewiesen" mit Statusgrund anlegen	
+		// Status "Abgewiesen" mit Statusgrund anlegen
 		$prestudent_status->status_kurzbz = 'Abgewiesener';
 		$prestudent_status->studiensemester_kurzbz = $studiensemester_kurzbz;
 		$prestudent_status->ausbildungssemester = $prestudent_status->ausbildungssemester;
@@ -215,7 +215,7 @@ if ($bewerbungStornieren && isset($_POST['prestudent_id']))
 		// Wenn BEWERBERTOOL_STORNIERUNG_STATUSGRUND_ID definiert ist, wird ein Statusgrund gesetzt
 		if (defined('BEWERBERTOOL_STORNIERUNG_STATUSGRUND_ID') && is_int(BEWERBERTOOL_STORNIERUNG_STATUSGRUND_ID))
 			$prestudent_status->statusgrund_id = BEWERBERTOOL_STORNIERUNG_STATUSGRUND_ID;
-	
+
 		if(!$prestudent_status->save_rolle())
 		{
 			echo json_encode(array(
@@ -225,7 +225,7 @@ if ($bewerbungStornieren && isset($_POST['prestudent_id']))
 			$message = $p->t('global/fehlerBeimSpeichernDerDaten');
 			exit();
 		}
-		else 
+		else
 		{
 			// Geparkten Logeintrag löschen
 			$log->deleteParked($person->person_id);
@@ -238,7 +238,7 @@ if ($bewerbungStornieren && isset($_POST['prestudent_id']))
 				'bewerbung',
 				$stg->oe_kurzbz,
 				'online');
-			
+
 			echo json_encode(array(
 				'status' => 'ok'
 			));
@@ -494,11 +494,11 @@ if (isset($_POST['submit_nachgereicht']))
 					'message' => 'Document ' . $_POST['dok_kurzbz'] . ' has been set to nachgereicht'
 				), 'bewerbung', 'bewerbung', null, 'online');
 			}
-			
-			
-			
-			
-			
+
+
+
+
+
 			// An der FHTW wird ein vorläufiges ZGV-Dokument verlangt
 			if (CAMPUS_NAME == 'FH Technikum Wien' && $_POST['dok_kurzbz'] == 'zgv_bakk')
 			{
@@ -512,11 +512,11 @@ if (isset($_POST['submit_nachgereicht']))
 					if (!empty($_FILES['filenachgereicht']['tmp_name']))
 					{
 						$dokumenttyp_upload = 'ZgvBaPre';
-						
+
 						// Es wird eine neue Akte vom Typ "ZgvBaPre" angelegt
 						// DMS-Eintrag erstellen
 						$ext = strtolower(pathinfo($_FILES['filenachgereicht']['name'], PATHINFO_EXTENSION));
-						
+
 						// Auf gültige Dateitypen prüfen
 						if (in_array($ext, array(
 							'pdf',
@@ -531,17 +531,20 @@ if (isset($_POST['submit_nachgereicht']))
 							if (move_uploaded_file($_FILES['filenachgereicht']['tmp_name'], $uploadfile))
 							{
 								$dms_id = '';
-								
+
 								$dms = new dms();
+								if(!$dms->setPermission($uploadfile))
+									$message .= $dms->errormsg;
+
 								$dms->version = '0';
 								$dms->kategorie_kurzbz = 'Akte';
-								
+
 								$dms->insertamum = date('Y-m-d H:i:s');
 								$dms->insertvon = 'online';
 								$dms->mimetype = $_FILES['filenachgereicht']['type'];
 								$dms->filename = $filename;
 								$dms->name = $_FILES['filenachgereicht']['name'];
-								
+
 								if ($dms->save(true))
 								{
 									$dms_id = $dms->dms_id;
@@ -570,10 +573,10 @@ if (isset($_POST['submit_nachgereicht']))
 							$akte->new = true;
 							$akte->insertamum = date('Y-m-d H:i:s');
 							$akte->insertvon = 'online';
-							
+
 							$dokument = new dokument();
 							$dokument->loadDokumenttyp('ZgvBaPre');
-	
+
 							$akte->dokument_kurzbz = 'ZgvBaPre';
 							$akte->titel = cutString($_FILES['filenachgereicht']['name'], 32, '~', true); // Dateiname
 							$akte->bezeichnung = cutString($dokument->bezeichnung, 32); // Dokumentbezeichnung
@@ -586,7 +589,7 @@ if (isset($_POST['submit_nachgereicht']))
 							$akte->uid = '';
 							$akte->dms_id = $dms_id;
 							$akte->ausstellungsnation = '';
-							
+
 							if (! $akte->save())
 							{
 								$message .= $p->t('global/fehleraufgetreten') . ": $akte->errormsg";
@@ -603,17 +606,17 @@ if (isset($_POST['submit_nachgereicht']))
 									'message' => 'Document ' . $akte->bezeichnung . ' "' . $akte->titel . '" uploaded'
 								), 'bewerbung', 'bewerbung', null, 'online');
 							}
-							
+
 							if (! defined('BEWERBERTOOL_SEND_UPLOAD_EMPFAENGER') || BEWERBERTOOL_SEND_UPLOAD_EMPFAENGER)
 							{
 								// Wenn nach dem Bestätigen einer Bewerbung ein Dokument hochgeladen wird, wird ein Infomail verschickt
 								$prestudent = new prestudent();
 								$prestudent->getPrestudenten($person_id);
-								
+
 								// Beim verschicken der Infomail wird auch das vorvorige Studiensemester hinzugefügt, damit auch Infomails für Studiensemester verschickt werden, für die man sich nicht mehr bewerben aber noch Dokumente hochladen kann.
 								if (isset($stsem_array[0]))
 									array_unshift($stsem_array, $studiensemester->jump($stsem_array[0], - 2));
-									
+
 									foreach ($prestudent->result as $prest)
 									{
 										$prestudent2 = new prestudent();
@@ -648,15 +651,15 @@ if (isset($_POST['submit_nachgereicht']))
 					}
 				}
 			}
-			
-			
-			
-			
-			
-			
-			
-			
-			
+
+
+
+
+
+
+
+
+
 		}
 	}
 }
@@ -1586,11 +1589,11 @@ if ($prestudent_bewerbungen)
 	foreach ($prestudent_bewerbungen AS $row)
 	{
 		$studiensemester_bewerbungen[] = $row->laststatus_studiensemester_kurzbz;
-		
+
 		// Checken, ob schon Bewerbungen abgeschickt wurden, wenn nicht, hervorheben
 		$prestudent_status = new prestudent();
 		$prestudent_status->getLastStatus($row->prestudent_id, $row->laststatus_studiensemester_kurzbz, 'Interessent');
-		
+
 		if ($prestudent_status->bewerbung_abgeschicktamum != '' && ($count_abgeschickte == 0 || $count_abgeschickte < count($prestudent_bewerbungen)))
 		{
 			$status_abschicken = true;
@@ -1604,10 +1607,10 @@ if ($prestudent_bewerbungen)
 		}
 	}
 }
-else 
+else
 {
 	$status_abschicken_text = $vollstaendig;
-	
+
 	$stsem = new studiensemester();
 	$stsem->getStudiensemesterOnlinebewerbung();
 	foreach ($stsem->studiensemester as $row)
@@ -1644,7 +1647,7 @@ if ($dokumente_abzugeben)
 	{
 		if ($dok->anzahl_akten_formal_geprueft > 0 || $dok->anzahl_akten_formal_geprueft > 0 || $dok->anzahl_dokumente_akzeptiert > 0 || $dok->anzahl_akten_nachgereicht > 0)
 			$akzeptierte_dokumente[] = $dok->dokument_kurzbz;
-		
+
 		// An der FHTW ist das Dokument "Sprachkenntnisse B2" nicht verpflichtend, soll aber im ersten Schritt angezeigt werden
 		if (CAMPUS_NAME == 'FH Technikum Wien')
 		{
@@ -1655,9 +1658,9 @@ if ($dokumente_abzugeben)
 		{
 			$missing_document = true;
 		}
-		
+
 		// Abfragen, bei welchen Studiengaengen das Dokument benoetigt wird
-		// @todo: Studiengangsnamen auch aus Studienplan holen? -> Falls noch benötigt, einfach Bezeichnung aus aktuellster Studienordnung holen 
+		// @todo: Studiengangsnamen auch aus Studienplan holen? -> Falls noch benötigt, einfach Bezeichnung aus aktuellster Studienordnung holen
 		$benoetigtStudiengang = new dokument();
 		$benoetigtStudiengang->getStudiengaengeDokument($dok->dokument_kurzbz, $person_id);
 
@@ -1667,7 +1670,7 @@ if ($dokumente_abzugeben)
 			{
 				$stg = new studiengang();
 				$stg->load($row->studiengang_kz);
-	
+
 				$ben_bezeichnung['German'][$dok->dokument_kurzbz][] = $stg->bezeichnung;
 				$ben_bezeichnung['English'][$dok->dokument_kurzbz][] = $stg->english;
 				$ben_kz[$dok->dokument_kurzbz][] = $row->studiengang_kz;
@@ -1850,11 +1853,11 @@ else
 			content: "";
 			position: relative;
 		}
-		.statusverlauf_top:before 
+		.statusverlauf_top:before
 		{
 			content: '';
 			width: 100%;
-			height: 100%;		
+			height: 100%;
 			position: absolute;
 			left: 0;
 			top: 0;
@@ -1868,11 +1871,11 @@ else
 			content: "";
 			position: relative;
 		}
-		.statusverlauf_bottom:before 
+		.statusverlauf_bottom:before
 		{
 			content: '';
 			width: 100%;
-			height: 100%;		
+			height: 100%;
 			position: absolute;
 			left: 0;
 			top: 0;
@@ -1961,7 +1964,7 @@ else
 										</a>
 									</li>';
 								}
-								
+
 							}
 							else
 							{
@@ -2073,7 +2076,7 @@ else
 </html>
 
 <?php
-	
+
 // Sendet eine Email an die Assistenz, dass die Bewerbung abgeschlossen ist und eine an den Bewerber zur Bestätigung
 function sendBewerbung($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz, $studienplan_id = '')
 {
@@ -2102,7 +2105,7 @@ function sendBewerbung($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz,
 	$typ = new studiengang();
 	$typ->getStudiengangTyp($studiengang->typ);
 	$empfaenger = getMailEmpfaenger($studiengang->studiengang_kz);
-	
+
 	if (CAMPUS_NAME == 'FH Technikum Wien' && $studiengang->typ != 'b')
 	{
 		$kontakt = new kontakt();
@@ -2210,15 +2213,15 @@ function sendBewerbung($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz,
 		if ($studiengang->typ != 'b')
 		{
 			$email = wordwrap($email, 70); // Bricht den Code um, da es sonst zu Anzeigefehlern im Mail kommen kann
-		
+
 			$mail = new mail($empfaenger, 'no-reply', $p->t('bewerbung/bewerbung') . ' ' . $person->vorname . ' ' . $person->nachname . ($orgform_kurzbz != '' ? ' (' . $orgform_kurzbz . ')' : ''), 'Bitte sehen Sie sich die Nachricht in HTML Sicht an, um den Link vollständig darzustellen.');
 			$mail->setHTMLContent($email);
 		}
 	}
-	else 
+	else
 	{
 		$email = wordwrap($email, 70); // Bricht den Code um, da es sonst zu Anzeigefehlern im Mail kommen kann
-	
+
 		$mail = new mail($empfaenger, 'no-reply', $p->t('bewerbung/bewerbung') . ' ' . $person->vorname . ' ' . $person->nachname . ($orgform_kurzbz != '' ? ' (' . $orgform_kurzbz . ')' : ''), 'Bitte sehen Sie sich die Nachricht in HTML Sicht an, um den Link vollständig darzustellen.');
 		$mail->setHTMLContent($email);
 	}
@@ -2230,12 +2233,12 @@ function sendBewerbung($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz,
 		$kontakt = new kontakt();
 		$kontakt->load_persKontakttyp($person->person_id, 'email');
 		$mailadresse = isset($kontakt->result[0]->kontakt) ? $kontakt->result[0]->kontakt : '';
-		
+
 		if($person->geschlecht == 'm')
 			$anrede = $p->t('bewerbung/anredeMaennlich');
 		else
 			$anrede = $p->t('bewerbung/anredeWeiblich');
-		
+
 		$mail_bewerber = new mail($mailadresse, 'no-reply', $p->t('bewerbung/erfolgreichBeworbenMailBetreff'), 'Bitte sehen Sie sich die Nachricht in HTML Sicht an, um den Inhalt vollständig darzustellen.');
 		$email_bewerber = $p->t('bewerbung/erfolgreichBeworbenMail', array($person->vorname, $person->nachname, $anrede, $studiengang->bezeichnung));
 		$mail_bewerber->setHTMLContent($email_bewerber);
@@ -2253,10 +2256,10 @@ function sendBewerbung($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz,
 			else
 				return true;
 		}
-		else 
+		else
 			return true;
 	}
-	else 
+	else
 	{
 		if (! $mail->send())
 			return false;
