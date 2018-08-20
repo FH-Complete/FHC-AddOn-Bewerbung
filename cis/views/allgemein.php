@@ -637,7 +637,7 @@ $studiensemester_array = array();
 				<div class="dropdown">
 					<select id="ausbildungstyp" name="ausbildungstyp" class="form-control">
 						<option value="stg"><?php echo $p->t('global/studiengang') ?></option>
-						<option value="lehrg"><?php echo $p->t('bewerbung/lehrgangZurWeiterbildung') ?></option>
+						<option value="lehrg"><?php echo ($p->t('bewerbung/hackTypBezeichnungLehrgeange') != '' ? $p->t('bewerbung/hackTypBezeichnungLehrgeange') : $p->t('bewerbung/lehrgang')); ?></option>
 					</select>
 				</div>
 				<label for="studiensemester_kurzbz" class="control-label">

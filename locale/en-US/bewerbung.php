@@ -258,12 +258,14 @@ $this->phrasen['bewerbung/zustimmungDatenuebermittlung']='If in exceptional case
 I have been informed that I am under no obligation to consent to the transmission of my data. However, this consent is necessary in order for the application to be considered.';
 $this->phrasen['bewerbung/bitteDatenuebermittlungZustimmen']='You have to consent the transmission of your data to send the application.';
 $this->phrasen['bewerbung/vorlaeufigesDokument']='Temporary document';
-$this->phrasen['bewerbung/lehrgangZurWeiterbildung']='Certificate Program for Further Education';
 $this->phrasen['bewerbung/lehrgangsArt/1']='Post graduate program';
 $this->phrasen['bewerbung/lehrgangsArt/2']='Academic course';
 $this->phrasen['bewerbung/lehrgangsArt/3']='International course';
 $this->phrasen['bewerbung/lehrgangsArt/4']='Certificate program';
 $this->phrasen['bewerbung/lehrgangsArt/5']='Postgradualer Lehrgang';
+$this->phrasen['bewerbung/hackTypBezeichnungLehrgeange']='Certificate Program for Further Education'; // Überschreibt die Typ-Bezeichnung "Lehrgang". Leer lassen, wenn nicht benötigt
+$this->phrasen['bewerbung/hackStufeBezeichnungBachelor']=''; // Überschreibt die ZGV Stufen-Bezeichnung "Bachelor". Leer lassen, wenn nicht benötigt
+$this->phrasen['bewerbung/hackStufeBezeichnungMaster']=''; // Überschreibt die ZGV Stufen-Bezeichnung "Master". Leer lassen, wenn nicht benötigt
 
 // Ausbildung
 $this->phrasen['bewerbung/menuAusbildung']='Ausbildung';
