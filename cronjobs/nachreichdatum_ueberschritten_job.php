@@ -55,13 +55,13 @@ if (php_sapi_name() != 'cli')
 // Wenn nicht, wird versucht, eines anzulegen.
 // Falls dies fehl schlaegt, wird kein Logfile erstellt.
 $write_log = true;
-if(!is_dir(LOG_PATH.'bewerbungstool/dokumentenuploads/'))
+if(!is_dir(LOG_PATH.'bewerbungstool/nachreichdatum_ueberschritten/'))
 {
 	if (mkdir(LOG_PATH.'bewerbungstool',0777,true))
 	{
-		if(!is_dir(LOG_PATH.'bewerbungstool/dokumentenuploads/'))
+		if(!is_dir(LOG_PATH.'bewerbungstool/nachreichdatum_ueberschritten/'))
 		{
-			if (mkdir(LOG_PATH.'bewerbungstool/dokumentenuploads',0777,true))
+			if (mkdir(LOG_PATH.'bewerbungstool/nachreichdatum_ueberschritten',0777,true))
 				$write_log = true;
 			else
 				$write_log = false;
@@ -73,12 +73,12 @@ if(!is_dir(LOG_PATH.'bewerbungstool/dokumentenuploads/'))
 // Aus Datenschutzgründen werden Logfiles älter als 3 Monate gelöscht
 $dateLess3Months = date("Y_m", strtotime("-3 months"));
 
-if (file_exists(LOG_PATH.'bewerbungstool/dokumentenuploads/'.$dateLess3Months.'_log.html'))
+if (file_exists(LOG_PATH.'bewerbungstool/nachreichdatum_ueberschritten/'.$dateLess3Months.'_log.html'))
 {
-	unlink(LOG_PATH.'bewerbungstool/dokumentenuploads/'.$dateLess3Months.'_log.html');
+	unlink(LOG_PATH.'bewerbungstool/nachreichdatum_ueberschritten/'.$dateLess3Months.'_log.html');
 }
 
-$logfile = LOG_PATH.'bewerbungstool/dokumentenuploads/'.date('Y_m').'_log.html';
+$logfile = LOG_PATH.'bewerbungstool/nachreichdatum_ueberschritten/'.date('Y_m').'_log.html';
 $logcontent = '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 				<h2 style="text-align: center">'.date('Y-m-d').'</h2><hr>';
 
@@ -93,22 +93,22 @@ $empf_array = array();
 if(defined('BEWERBERTOOL_BEWERBUNG_EMPFAENGER'))
 	$empf_array = unserialize(BEWERBERTOOL_BEWERBUNG_EMPFAENGER);
 
+//  Abfrage, wer mit dem gestrigen Datum ein Dokument hätte nachreichen sollen
 $qry = "
 SELECT DISTINCT
 	studiengang_kz,
 	tbl_prestudentstatus.orgform_kurzbz,
 	person_id,
-	tbl_prestudent.insertamum,
 	vorname,
 	nachname,
 	gebdatum,
 	geschlecht,
 	dokument_kurzbz,
 	tbl_dokument.bezeichnung AS dokumentbezeichnung,
-	tbl_akte.bezeichnung AS dateiname,
 	tbl_akte.titel,
 	dms_id,
 	nachgereicht,
+	nachgereicht_am,
 	tbl_akte.anmerkung
 FROM
 	public.tbl_prestudent
@@ -122,52 +122,22 @@ JOIN
 	public.tbl_dokument USING (dokument_kurzbz)
 WHERE
 	tbl_akte.insertvon='online'
-AND (tbl_akte.insertamum >= (SELECT (CURRENT_DATE -1||' '||'03:00:00')::timestamp))
-AND tbl_prestudentstatus.bestaetigtam IS NOT NULL
-AND studiensemester_kurzbz IN (".$db->implode4SQL($studiensemester_arr).")
-AND (SELECT get_rolle_prestudent(tbl_prestudent.prestudent_id, NULL)) NOT IN ('Abgewiesener', 'Abbrecher', 'Absolvent')
-AND dokument_kurzbz NOT IN ('zgv_bakk', 'identity', 'SprachB2')
-
--- Upload nach Nachreichung
-UNION
-
-SELECT DISTINCT
-	studiengang_kz,
-	tbl_prestudentstatus.orgform_kurzbz,
-	person_id,
-	tbl_prestudent.insertamum,
-	vorname,
-	nachname,
-	gebdatum,
-	geschlecht,
-	dokument_kurzbz,
-	tbl_dokument.bezeichnung AS dokumentbezeichnung,
-	tbl_akte.bezeichnung AS dateiname,
-	tbl_akte.titel,
-	dms_id,
-	nachgereicht,
-	tbl_akte.anmerkung 
-FROM
-	public.tbl_prestudent
-JOIN
-	public.tbl_person USING (person_id)
-JOIN
-	public.tbl_prestudentstatus USING (prestudent_id)
-JOIN
-	public.tbl_akte USING (person_id)
-JOIN
-	public.tbl_dokument USING (dokument_kurzbz)
-WHERE
-	tbl_akte.updatevon='online'
-AND (tbl_akte.updateamum >= (SELECT (CURRENT_DATE -1||' '||'03:00:00')::timestamp))
-AND tbl_prestudentstatus.bestaetigtam IS NOT NULL
-AND nachgereicht = FALSE
-AND nachgereicht_am IS NOT NULL
-AND (inhalt IS NOT NULL OR dms_id IS NOT NULL)
-AND studiensemester_kurzbz IN ('WS2018')
-AND (SELECT get_rolle_prestudent(tbl_prestudent.prestudent_id, NULL)) NOT IN ('Abgewiesener', 'Abbrecher', 'Absolvent')
-
+	AND (tbl_akte.nachgereicht_am = (SELECT CURRENT_DATE -1))
+	AND nachgereicht=true
+	AND studiensemester_kurzbz IN (".$db->implode4SQL($studiensemester_arr).")
+	AND (
+		SELECT get_rolle_prestudent(tbl_prestudent.prestudent_id, NULL)
+		) NOT IN ('Abgewiesener', 'Abbrecher', 'Absolvent')
+	AND (
+		SELECT bewerbung_abgeschicktamum
+		FROM PUBLIC.tbl_prestudentstatus
+		WHERE prestudent_id = tbl_prestudent.prestudent_id
+			AND status_kurzbz = 'Interessent'
+			AND studiensemester_kurzbz IN (".$db->implode4SQL($studiensemester_arr).")
+		ORDER BY datum DESC LIMIT 1
+		) IS NOT NULL
 ORDER BY studiengang_kz, orgform_kurzbz, nachname, vorname, person_id";
+
 //echo $qry;exit;
 $mailtext = '
 		<style type="text/css">
@@ -189,22 +159,8 @@ $mailtext = '
 			padding: 4px;
 		 	vertical-align: top;
 		}
-		/* Optional mit Hover-Effekt. Ist eventuell unpraktisch
-		.popup
-		{
-			display: none;
-		}
-		.hover
-		{
-			position: relative;
-		}
-		.hover:hover .popup
-		{
-			display: initial;
-			z-index: 1;
-		}*/
 		</style>
-		Folgende Personen haben gestern Dokumente hochgeladen:<br><br>
+		Folgende Person(en) haben das Datum der Nachreichung gestern überschritten:<br><br>
 		<table class="table1">
 		<thead>
 		<tr>
@@ -213,8 +169,7 @@ $mailtext = '
 			<th>Vorname</th>
 			<th>Geburtsdatum</th>
 			<th>Mailadresse</th>
-			<th>Dokumente</th>
-			<!--<th>DropDown</th>-->
+			<th>Dokument(e)</th>
 		</tr>
 		</thead>
 		<tbody>';
@@ -263,7 +218,7 @@ if($result = $db->db_query($qry))
 				if (CAMPUS_NAME=='FH Technikum Wien' && $stg_kz == 257 && $orgform == 'DUA')
 					$empfaenger = 'info.bid@technikum-wien.at';
 
-				$mail = new mail($empfaenger, 'no-reply', 'Neue Dokumentenuploads '.$bezeichnung.' '.$orgform, 'Bitte sehen Sie sich die Nachricht in HTML Sicht an, um den Inhalt vollständig darzustellen.');
+				$mail = new mail($empfaenger, 'no-reply', 'Überschrittenes Nachreichdatum '.$bezeichnung.' '.$orgform, 'Bitte sehen Sie sich die Nachricht in HTML Sicht an, um den Inhalt vollständig darzustellen.');
 				//$mail->setBCCRecievers('kindlm@technikum-wien.at');
 				$mail->setHTMLContent($mailcontent);
 				$mail->send();
@@ -272,7 +227,7 @@ if($result = $db->db_query($qry))
 				{
 					$logcontent .= '<h3>Studiengang: '.$stg_kz.'</h3>';
 					$logcontent .= 'Empfänger: '.$empfaenger.'<br>';
-					$logcontent .= 'Betreff: Neue Dokumentenuploads '.$bezeichnung.' '.$orgform.'<br><br>';
+					$logcontent .= 'Betreff: Überschrittenes Nachreichdatum '.$bezeichnung.' '.$orgform.'<br><br>';
 					$logcontent .= $mailcontent;
 					$logcontent .= '<hr>';
 						
@@ -287,27 +242,9 @@ if($result = $db->db_query($qry))
 				$mailcontent = $mailtext;
 			}
 			
-			$dateiname = '';
-			if ($row->dateiname == '')
-			{
-				if ($row->titel != '')
-					$dateiname = $row->titel;
-			}
-			else 
-				$dateiname = $row->dateiname;
-			
 			if ($dokument != $row->dokument_kurzbz)
 			{
-				if ($db->db_parse_bool($row->nachgereicht) == true)
-					$dokumentenliste .= $row->dokumentbezeichnung.' (Wird nachgereicht: '.$row->anmerkung.')<br>';
-				else
-				{
-					if ($row->dokument_kurzbz == 'Lichtbil')
-						$dokumentenliste .= '<a href="'.APP_ROOT.'cis/public/bild.php?src=person&person_id='.$row->person_id.'">'.$row->dokumentbezeichnung.' ['.$dateiname.']</a><br>';
-					else 
-						$dokumentenliste .= '<a href="'.APP_ROOT.'cms/dms.php?id='.$row->dms_id.'">'.$row->dokumentbezeichnung.' ['.$dateiname.']</a><br>';
-				}
-				
+				$dokumentenliste .= $row->dokumentbezeichnung.' (Aussteller: '.$row->anmerkung.')<br>';
 				$dokument = $row->dokument_kurzbz;
 			}
 			
@@ -324,7 +261,6 @@ if($result = $db->db_query($qry))
 			$zeile .= '<td><div class="popup">';
 			$zeile .= $dokumentenliste;
 			$zeile .= '</div></td>';
-			//$zeile .= '<td><select><option>Foo</option><option>Bar</option><option>FooBar</option></select></td>';
 			$zeile .= '</tr>';
 	
 			$person = $row->person_id;
@@ -351,7 +287,7 @@ if($result = $db->db_query($qry))
 		if (CAMPUS_NAME=='FH Technikum Wien' && $stg_kz == 257 && $orgform == 'DUA')
 			$empfaenger = 'info.bid@technikum-wien.at';
 
-		$mail = new mail($empfaenger, 'no-reply', 'Neue Dokumentenuploads '.$bezeichnung.' '.$orgform, 'Bitte sehen Sie sich die Nachricht in HTML Sicht an, um den Inhalt vollständig darzustellen.');
+		$mail = new mail($empfaenger, 'no-reply', 'Überschrittenes Nachreichdatum '.$bezeichnung.' '.$orgform, 'Bitte sehen Sie sich die Nachricht in HTML Sicht an, um den Inhalt vollständig darzustellen.');
 		//$mail->setBCCRecievers('kindlm@technikum-wien.at');
 		$mail->setHTMLContent($mailcontent);
 		$mail->send();
@@ -360,7 +296,7 @@ if($result = $db->db_query($qry))
 		{
 			$logcontent .= '<h3>Studiengang: '.$stg_kz.'</h3>';
 			$logcontent .= 'Empfänger: '.$empfaenger.'<br>';
-			$logcontent .= 'Betreff: Neue Dokumentenuploads '.$bezeichnung.' '.$orgform.'<br><br>';
+			$logcontent .= 'Betreff: Überschrittenes Nachreichdatum '.$bezeichnung.' '.$orgform.'<br><br>';
 			$logcontent .= $mailcontent;
 			$logcontent .= '<hr>';
 		
@@ -375,8 +311,8 @@ if($result = $db->db_query($qry))
 }
 else
 {
-	$mailcontent = '<h3>Fehler in Cronjob "addons/bewerbung/cronjobs/dokumentenuploads_job.php"</h3><br><br><b>'.$db->errormsg.'</b>';
-	$mail = new mail(MAIL_ADMIN, 'no-reply', 'Fehler in Cronjob "addons/bewerbung/cronjobs/dokumentenuploads_job.php"', 'Bitte sehen Sie sich die Nachricht in HTML Sicht an, um den Inhalt vollständig darzustellen.');
+	$mailcontent = '<h3>Fehler in Cronjob "addons/bewerbung/cronjobs/nachreichdatum_ueberschritten_job.php"</h3><br><br><b>'.$db->errormsg.'</b>';
+	$mail = new mail(MAIL_ADMIN, 'no-reply', 'Fehler in Cronjob "addons/bewerbung/cronjobs/nachreichdatum_ueberschritten_job.php"', 'Bitte sehen Sie sich die Nachricht in HTML Sicht an, um den Inhalt vollständig darzustellen.');
 	$mail->setHTMLContent($mailcontent);
 	$mail->send();
 }

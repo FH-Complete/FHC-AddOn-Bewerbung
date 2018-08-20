@@ -10,9 +10,17 @@ $this->phrasen['bewerbung/einleitungstext']='Bitte füllen Sie das Formular aus,
 		Mit dem Zugangscode können Sie sich jederzeit einloggen, Ihre Daten vervollständigen, Studienrichtungen hinzufügen und sich unverbindlich bewerben.<br><br>
 		Falls Sie Interesse an mehreren Studiengängen haben, können Sie bis zu
 		'.(defined('BEWERBERTOOL_MAX_STUDIENGAENGE') && BEWERBERTOOL_MAX_STUDIENGAENGE != ''?BEWERBERTOOL_MAX_STUDIENGAENGE:'').'
-		Studienrichtungen anklicken. <br>Wenn Sie mehr Informationen benötigen,
+		Studienrichtungen auswählen. <br>Wenn Sie mehr Informationen benötigen,
 		steht Ihnen unsere <a href=\'https://www.technikum-wien.at/studieninformationen/studienberatung-kontaktieren/\' target=\'_blank\'>Studienberatung</a>
-		gerne persönlich, telefonisch oder per E-Mail zur Verfügung.';
+		gerne persönlich, telefonisch, per E-Mail oder WhatsApp zur Verfügung.<br><br>
+		Datenschutz-Hinweis:<br>
+Die uns von Ihnen zum Zwecke der Bewerbung bekanntgegebenen Daten werden von uns ausschließlich zur Abwicklung der Bewerbung auf der Grundlage von vor- bzw vertraglichen Zwecken verarbeitet und mit der unten beschriebenen Ausnahme bei Unklarheiten betreffend die Zugangsvoraussetzungen nicht an Dritte weitergegeben. Kommt es zu keinem weiteren Kontakt bzw zu keiner Aufnahme, löschen wir Ihre Daten nach drei Jahren.<br><br>
+Informationen zu Ihren Betroffenenrechten finden Sie hier: <a href=\'https://www.technikum-wien.at/information-ueber-ihre-rechte-gemaess-datenschutz-grundverordnung/\' target=\'_blank\'>https://www.technikum-wien.at/information-ueber-ihre-rechte-gemaess-datenschutz-grundverordnung/</a><br><br>
+Bei Fragen stehen wir Ihnen jederzeit unter <a href=\'mailto:datenschutz@technikum-wien.at\'>datenschutz@technikum-wien.at</a> zur Verfügung.<br><br>
+Verantwortlich für die Datenverarbeitung:<br>
+Fachhochschule Technikum Wien<br>
+Höchstädtplatz 6<br>
+1200 Wien';
 $this->phrasen['bewerbung/login']='Login';
 $this->phrasen['bewerbung/zugangscode']='Zugangscode';
 $this->phrasen['bewerbung/fallsVorhanden']='(falls vorhanden)';
@@ -44,6 +52,7 @@ $this->phrasen['bewerbung/captcha']='Geben Sie bitte hier die Zeichen aus der Gr
 $this->phrasen['bewerbung/andereGrafik']='Andere Grafik';
 $this->phrasen['bewerbung/datumFormat']='tt.mm.jjjj';
 $this->phrasen['bewerbung/datumUngueltig']='Das Datumsformat ist ungültig oder liegt außerhalb des gültigen Bereichs. Bitte geben Sie ein gültiges Datum im Format tt.mm.jjjj ein.';
+$this->phrasen['bewerbung/datumsformatUngueltig']='Das Datumsformat ist ungültig. Bitte geben Sie ein gültiges Datum im Format tt.mm.jjjj ein.';
 $this->phrasen['bewerbung/egal']='gleichgültig';
 $this->phrasen['bewerbung/orgform']='Organisationsform';
 $this->phrasen['bewerbung/orgform/BB']='Berufsbegleitend';
@@ -67,22 +76,32 @@ $this->phrasen['bewerbung/neuerStudiengang'] = 'Bitte wählen Sie einen Studieng
 $this->phrasen['bewerbung/geplanteStudienrichtung']='Geplante Studienrichtung';
 $this->phrasen['bewerbung/menuAllgemein']='Allgemein';
 $this->phrasen['bewerbung/loginmitAccount']='Wenn Sie bereits einen Account haben, können sie sich mit Ihrem Usernamen / Passwort anmelden';
-$this->phrasen['bewerbung/allgemeineErklaerung']='Wir freuen uns, dass Sie sich für einen oder mehrere unserer Studiengänge oder Lehrgänge interessieren.<br>
-	Sie können online bis zu '.(defined('BEWERBERTOOL_MAX_STUDIENGAENGE') && BEWERBERTOOL_MAX_STUDIENGAENGE != ''?BEWERBERTOOL_MAX_STUDIENGAENGE:'').' Studienrichtungen auswählen.<br>
+$this->phrasen['bewerbung/allgemeineErklaerung']='Wir freuen uns, dass Sie sich für unser Bildungsangebot interessieren.<br>
+	Sie können online bis zu '.(defined('BEWERBERTOOL_MAX_STUDIENGAENGE') && BEWERBERTOOL_MAX_STUDIENGAENGE != ''?BEWERBERTOOL_MAX_STUDIENGAENGE:'').' Studienrichtungen und beliebig viele Lehrgänge zur Weiterbildung auswählen.<br>
 	Klicken Sie auf den grünen Button, um Ihrer Bewerbung einen Studiengang oder Lehrgang hinzuzufügen.<br><br>
-	Wenn Sie mehr Informationen benötigen, steht Ihnen unsere <a href=\'https://www.technikum-wien.at/studieninformationen/studienberatung-kontaktieren/\' target=\'_blank\'>Studienberatung</a> gerne persönlich, telefonisch oder per E-Mail zur Verfügung.<br><br>
-	Bitte füllen Sie das Formular vollständig aus. Sind alle Werte eingetragen, können Sie unter "Abschließen" Ihre Bewerbung an die zuständige Assistenz schicken.';
-$this->phrasen['bewerbung/erklaerungStudierende']='Wir freuen uns über Ihr Interesse an unseren Weiterbildungsprogrammen.<br><br>
-	Bitte klicken Sie auf "Neue Bewerbung für Studiengang/Lehrgang hinzufügen" um Ihrer Bewerbung einen Studiengang oder Lehrgang hinzuzufügen.
-	Gegebenenfalls sind danach weitere Daten zu ergänzen, bevor Sie die Bewerbung im letzten Schritt abschicken können.';
+	Wenn Sie mehr Informationen benötigen, steht Ihnen unsere <a href=\'https://www.technikum-wien.at/studieninformationen/studienberatung-kontaktieren/\' target=\'_blank\'>Studienberatung</a> gerne persönlich, telefonisch, per E-Mail oder WhatsApp zur Verfügung.<br><br>
+	Bitte füllen Sie das Formular vollständig aus. Sind alle Werte eingetragen, können Sie unter "Abschließen" Ihre Bewerbung abschicken.<br><br>
+	Bewerbungsfristen für Drittstaatenbewerbungen (außerhalb der EU) siehe:<br>
+	<a href=\'https://www.technikum-wien.at/bewerbungsfristen\' target=\'_blank\'>https://www.technikum-wien.at/bewerbungsfristen</a><br><br>
+	An dieser Stelle möchten wir Sie auf unsere <a href=\'https://cis.technikum-wien.at/cms/dms.php?id=77605\' target=\'_blank\'>Information über die Verwendung personenbezogener Daten von BewerberInnen</a> hinweisen.';
+$this->phrasen['bewerbung/erklaerungStudierende']='Wir freuen uns über Ihr Interesse an unserem Bildungsangebot.<br>
+	Klicken Sie auf den grünen Button, um Ihrer Bewerbung einen Studiengang oder Lehrgang hinzuzufügen.';
 $this->phrasen['bewerbung/aktuelleBewerbungen']='Aktuelle Bewerbungen:';
 $this->phrasen['bewerbung/status']='Status';
 $this->phrasen['bewerbung/legende']='Legende';
 $this->phrasen['bewerbung/bewerbungsstatus']='Bewerbungsstatus';
-$this->phrasen['bewerbung/keinStatus']='Noch kein Status vorhanden';
+$this->phrasen['bewerbung/keinStatus']='Keine aktuelle Bewerbung vorhanden. Klicken Sie auf "Neue Bewerbung für Studiengang/Lehrgang hinzufügen" um eine Bewerbung hinzuzufügen';
 $this->phrasen['bewerbung/bestaetigt']='Bestätigt, in Bearbeitung';
 $this->phrasen['bewerbung/nichtBestaetigt']='Abgeschickt, in Bearbeitung';
-$this->phrasen['bewerbung/nichtAbgeschickt']='Nicht abgeschickt';
+$this->phrasen['bewerbung/nichtAbgeschickt']='Bewerbung abschicken zur weiteren Bearbeitung';
+$this->phrasen['bewerbung/bewerbungAbgeschickt']='Bewerbung abgeschickt';
+$this->phrasen['bewerbung/datenPruefung']='Datenprüfung';
+$this->phrasen['bewerbung/datenWerdenGeprueft']='Daten werden geprüft';
+$this->phrasen['bewerbung/freigegebenAnStudiengang']='Freigegeben an den Studiengang';
+$this->phrasen['bewerbung/freigabeAnStudiengang']='Freigabe an Studiengang';
+$this->phrasen['bewerbung/kontaktaufnahmeDurchStudiengang']='Kontaktaufnahme durch Studiengang';
+$this->phrasen['bewerbung/datenVollstaendig']='Daten vollständig';
+$this->phrasen['bewerbung/datenUnvollstaendig']='Daten vervollständigen';
 $this->phrasen['bewerbung/studiengangHinzufuegen']='Neue Bewerbung für Studiengang/Lehrgang hinzufügen';
 $this->phrasen['bewerbung/weiter']='Weiter';
 $this->phrasen['bewerbung/geburtsnation']='Geburtsnation';
@@ -103,7 +122,10 @@ $this->phrasen['bewerbung/kontakt']='Kontakt';
 $this->phrasen['bewerbung/nation']='Nation';
 $this->phrasen['bewerbung/menuDokumente']='Dokumente';
 $this->phrasen['bewerbung/dokument']='Dokument';
-$this->phrasen['bewerbung/bitteDokumenteHochladen']='Die Studiengangsassistenz wird Sie darüber in Kenntnis setzen, welche Dokumente für Ihr Studium benötigt werden. Sie haben außerdem die Möglichkeit, Dokumente nachzureichen. Klicken Sie dazu das Symbol für "Dokument wird nachgereicht" (Sanduhr). Danach haben Sie die Möglichkeit, eine kurze Begründung einzutragen.';
+$this->phrasen['bewerbung/bitteDokumenteHochladen']='Um Ihre Bewerbung abschicken zu können, müssen Sie Dokumente, die als „erforderlich“ markiert sind, hochladen.<br>
+	Sollte das Dokument zum gegenwärtigen Zeitpunkt noch nicht verfügbar sein, haben Sie die Möglichkeit, das Dokument nachzureichen.<br>
+	Klicken Sie dazu das Symbol für "Dokument wird nachgereicht" (Sanduhr) und geben Sie an, bis zu welchem Zeitpunkt Sie das Dokument nachreichen werden und welche Institution das Dokument ausstellt.<br><br>
+	Gegebenenfalls werden Sie im weiteren Verlauf der Bewerbung aufgefordert, hier weitere Dokumente hochzuladen.';
 $this->phrasen['bewerbung/linkDokumenteHochladen']='Dokumente hochladen';
 $this->phrasen['bewerbung/dokumenteZumHochladen']='Benötigte Dokumente:';
 $this->phrasen['bewerbung/dokumentName']='Name';
@@ -131,8 +153,7 @@ $this->phrasen['bewerbung/angemeldetPlaetze']='angemeldet / Plätze';
 $this->phrasen['bewerbung/uhrzeit']='Uhrzeit';
 $this->phrasen['bewerbung/stornieren']='stornieren';
 $this->phrasen['bewerbung/menuBewerbungAbschicken']='Bewerbung abschicken';
-$this->phrasen['bewerbung/erklaerungBewerbungAbschicken']='Wenn Sie alle Daten vervollständigt haben, können Sie Ihre Bewerbung abschicken.	Die jeweilige Assistenz wird sich in den folgenden Tagen bezüglich Ihrer Bewerbung bei Ihnen melden. <br>
-		Falls Sie innerhalb von 10 Werktagen keine Reaktion erhalten, nehmen Sie bitte Kontakt mit uns auf.';
+$this->phrasen['bewerbung/erklaerungBewerbungAbschicken']='Wenn Sie alle Daten vervollständigt haben, können Sie Ihre Bewerbung hier abschicken. Sie werden in der Regel innerhalb von 5 Werktagen kontaktiert.';
 $this->phrasen['bewerbung/erklaerungBewerbungAbschicken2']='Bitte überprüfen Sie nochmals Ihre Daten.<br>
 		Um Ihre Bewerbung abzuschließen klicken Sie auf die entsprechende Schaltfläche:';
 $this->phrasen['bewerbung/bewerbungAbschickenFuer']='Bewerbung abschicken für';
@@ -154,7 +175,7 @@ $this->phrasen['bewerbung/vollstaendig']='vollständig';
 $this->phrasen['bewerbung/unvollstaendig']='unvollständig';
 $this->phrasen['bewerbung/teilweiseVollstaendig']='teilweise vollständig';
 $this->phrasen['bewerbung/maxAnzahlTeilnehmer']='max. Teilnehmeranzahl erreicht';
-$this->phrasen['bewerbung/erfolgreichBeworben']='Sie haben sich erfolgreich für %s beworben. Die zuständige Assistenz wird sich in den nächsten Tagen bei Ihnen melden. Falls Sie innerhalb von 10 Werktagen keine Reaktion erhalten, nehmen Sie bitte Kontakt mit uns auf.';
+$this->phrasen['bewerbung/erfolgreichBeworben']='Sie haben sich erfolgreich für %s beworben. In der Regel werden Sie innerhalb von 5 Werktagen kontaktiert.';
 $this->phrasen['bewerbung/fehlerBeimVersendenDerBewerbung']='Es ist ein Fehler beim Versenden der Bewerbung aufgetreten. Bitte versuchen Sie es nocheinmal.';
 $this->phrasen['bewerbung/svnrBereitsVorhanden']='SVNR bereits vorhanden';
 $this->phrasen['bewerbung/menuBewerbungFuerStudiengang']='Bewerbung für einen Studiengang';
@@ -183,6 +204,7 @@ $this->phrasen['bewerbung/maennlich']='Männlich';
 $this->phrasen['bewerbung/weiblich']='Weiblich';
 $this->phrasen['bewerbung/maturazeugnis']='Maturazeugnis';
 $this->phrasen['bewerbung/details']='Details';
+$this->phrasen['bewerbung/mehrDetails']='Mehr Details...';
 $this->phrasen['bewerbung/codeZuschicken']='Code zuschicken';
 $this->phrasen['bewerbung/codeZuschickenAnleitung']='Wenn Sie sich schon einmal registriert aber den Zugangscode verloren oder vergessen haben, können Sie sich hier den Zugangscode erneut zuschicken lassen. Bitte geben Sie dazu Ihre Mailadresse ein und drücken Sie auf "Code zuschicken"';
 $this->phrasen['bewerbung/keinCodeVorhanden']='Für diese E-Mail Adresse ist noch kein Zugangscode vorhanden. Bitte <a href="'.$_SERVER['PHP_SELF'].'?method=registration">melden Sie sich vorher an</a>.';
@@ -222,6 +244,40 @@ $this->phrasen['bewerbung/pflichtfelder']='Pflichtfelder';
 $this->phrasen['bewerbung/bitteGueltigeOesterreichischePlzEingeben']='Bitte geben Sie eine gültige österreichische Postleitzahl ein';
 $this->phrasen['bewerbung/plzMussGueltigSein']='Postleitzahl muss eine gültige Nummer sein';
 $this->phrasen['bewerbung/plzUnbekannt']='Postleitzahl unbekannt';
+$this->phrasen['bewerbung/dateien']='Datei(en)';
+$this->phrasen['bewerbung/dokumentWirdGeprueft']='Dokument wird überprüft';
+$this->phrasen['bewerbung/dokumentUeberprueft']='Dokument überprüft';
+$this->phrasen['bewerbung/keineDateiAusgewaehlt']='Keine Datei zum Hochladen ausgewählt oder gefunden';
+$this->phrasen['bewerbung/placeholderAnmerkungNachgereicht']='Bitte geben Sie an, welche Institution das Dokument ausstellen wird und bis wann Sie das Dokument voraussichtlich nachreichen können';
+$this->phrasen['bewerbung/bitteAusstellungsnationAuswaehlen']='-- Bitte wählen Sie, in welchem Land das Dokument ausgestellt wurde --';
+$this->phrasen['bewerbung/sitzungAbgelaufen']='Die Sitzung ist abgelaufen. Bitte loggen Sie sich erneut ein';
+$this->phrasen['bewerbung/placeholderOrtNachgereicht']='Institution des Ausstellers (zB: TGM Wien)';
+$this->phrasen['bewerbung/wirdNachgreichtAm']='Wird nachgereicht bis';
+$this->phrasen['bewerbung/ausstellendeInstitution']='Ausstellende Institution';
+$this->phrasen['bewerbung/dokumenteVollstaendig']='Alle erforderlichen Dokumente wurden hochgeladen';
+$this->phrasen['bewerbung/keinDokumententypUebergeben']='Es wurde kein Dokumenttyp übergeben';
+$this->phrasen['bewerbung/aktion']='Aktion';
+$this->phrasen['bewerbung/bewerbungStornieren']='Bewerbung stornieren';
+$this->phrasen['bewerbung/bewerbungStorniert']='Bewerbung storniert';
+$this->phrasen['bewerbung/bewerbungStornierenInfotext']='Wenn Sie die Bewerbung stornieren, können Sie sich im %1$s nicht wieder für %2$s bewerben.<br><br>Möchten Sie fortfahren?';
+$this->phrasen['bewerbung/bewerbungStornierenBestaetigen']='Ja, Bewerbung stornieren';
+$this->phrasen['bewerbung/vergangeneBewerbungen']='Vergangene Bewerbungen';
+$this->phrasen['bewerbung/buttonStornierenDisabled']='Wenn die Bewerbung abgeschickt oder abgewiesen wurde, können Sie diese nicht mehr stornieren';
+$this->phrasen['bewerbung/infotextDisabled']='Es ist bereits eine Bewerbung für das %s vorhanden';
+$this->phrasen['bewerbung/bitteAnmerkungEintragen']='Bitte geben Sie den Namen der Institution ein, die das Dokument ausstellen wird';
+$this->phrasen['bewerbung/nachreichDatumNichtVergangenheit']='Das Datum der Nachreichung darf nicht in der Vergangenheit liegen';
+$this->phrasen['bewerbung/infotextVorlaeufigesZgvDokument']='Bitte laden Sie das letzte erhaltene Semesterzeugnis Ihrer Ausbildung hoch';
+$this->phrasen['bewerbung/bitteDateiAuswaehlen']='Bitte wählen Sie eine Datei aus';
+$this->phrasen['bewerbung/zustimmungDatenuebermittlung']='Können in Ausnahmefällen die Zugangsvoraussetzungen von der FH Technikum Wien nicht abschließend abgeklärt werden, erteile ich die Zustimmung, dass die FH Technikum Wien die Dokumente zur Überprüfung an die zuständigen Behörden weiterleiten kann.<br>
+Ich wurde darüber informiert, dass ich nicht verpflichtet bin, der Übermittlung meiner Daten zuzustimmen. Diese Zustimmung ist allerdings notwendig, um die Bewerbung berücksichtigen zu können.';
+$this->phrasen['bewerbung/bitteDatenuebermittlungZustimmen']='Sie müssen der Datenübermittlung zustimmen, um Ihre Bewerbung abschicken zu können';
+$this->phrasen['bewerbung/vorlaeufigesDokument']='Vorläufiges Dokument';
+$this->phrasen['bewerbung/lehrgangZurWeiterbildung']='Lehrgang zur Weiterbildung';
+$this->phrasen['bewerbung/lehrgangsArt/1']='Master Lehrgang';
+$this->phrasen['bewerbung/lehrgangsArt/2']='Akademischer Lehrgang';
+$this->phrasen['bewerbung/lehrgangsArt/3']='Lehrgang zur Weiterbildung';
+$this->phrasen['bewerbung/lehrgangsArt/4']='Zertifizierungslehrgang';
+$this->phrasen['bewerbung/lehrgangsArt/5']='Postgradualer Lehrgang';
 $this->phrasen['bewerbung/hackTypBezeichnungLehrgeange']='Postgraduale Lehrgänge'; // Überschreibt die Typ-Bezeichnung "Lehrgang". Leer lassen, wenn nicht benötigt
 $this->phrasen['bewerbung/hackStufeBezeichnungBachelor']='Bachelor / postgradualer Lehrgang'; // Überschreibt die ZGV Stufen-Bezeichnung "Bachelor". Leer lassen, wenn nicht benötigt
 $this->phrasen['bewerbung/hackStufeBezeichnungMaster']='Master / postgradualer Master Lehrgang'; // Überschreibt die ZGV Stufen-Bezeichnung "Master". Leer lassen, wenn nicht benötigt
@@ -233,18 +289,25 @@ $this->phrasen['bewerbung/ausbildungSchule']='Name der Schule';
 $this->phrasen['bewerbung/ausbildungSchuleAdresse']='Adresse der Schule';
 $this->phrasen['bewerbung/paymentInfoText']='';
 
-$this->phrasen['bewerbung/erfolgreichBeworbenMail']='Sie haben sich erfolgreich beworben. Die zuständige Assistenz wird sich in den nächsten Tagen bei Ihnen melden.';
+$this->phrasen['bewerbung/erfolgreichBeworbenMail']='Sehr %3$s %1$s %2$s,<br><br>
+Sie haben sich erfolgreich für den Studiengang %4$s beworben. In der Regel werden Sie innerhalb von 5 Werktagen kontaktiert. Gegebenenfalls werden Sie dann aufgefordert, weitere Dokumente hochzuladen.<br><br>
+Den Status Ihrer Bewerbung können Sie jederzeit im Bewerbungstool verfolgen.<br>
+Sollten Sie Fragen zur Bewerbung haben, kontaktieren Sie bitte unser Infocenter <a href="mailto:infocenter@technikum-wien.at">infocenter@technikum-wien.at</a>.<br><br>
+Mit freundlichen Grüßen<br>
+Fachhochschule Technikum Wien';
+$this->phrasen['bewerbung/erfolgreichBeworbenMailBetreff']='Bewerbungsbestätigung Fachhochschule Technikum Wien';
 $this->phrasen['bewerbung/bewerbungsfrist']='Bewerbungsfrist';
-$this->phrasen['bewerbung/bewerbungszeitraum']='Bewerbungszeitraum';
+$this->phrasen['bewerbung/bewerbungszeitraum']='Bewerbungszeitraum (innerhalb der EU)';
 $this->phrasen['bewerbung/bewerbungsfristAbgelaufen']='Bewerbungsfrist abgelaufen';
 $this->phrasen['bewerbung/bewerbungAusserhalbZeitraum']='Ihre Bewerbung liegt außerhalb des Bewerbungszeitraums. Ihre Bewerbung wurde nicht verschickt.';
-$this->phrasen['bewerbung/unbegrenzt']='undefiniert';
+$this->phrasen['bewerbung/unbegrenzt']='offen';
 $this->phrasen['bewerbung/bewerbungszeitraumStartetAm']='Bewerbungszeitraum startet am %s';
 $this->phrasen['bewerbung/bewerbungsfristEndetInXTagen']='Bewerbungsfrist endet in %s Tagen';
 $this->phrasen['bewerbung/bewerbungsfristEndetHeute']='Bewerbungsfrist endet heute';
 $this->phrasen['bewerbung/bewerbungsfristFuerStudiensemesterXAbgelaufen']='Bewerbungsfrist für das %s ist abgelaufen';
-$this->phrasen['bewerbung/bewerbungDerzeitNichtMoeglich']='Bewerbung derzeit nicht möglich. Wenden Sie sich bitte direkt an den <a href="mailto:%s">Studiengang</a>';
+$this->phrasen['bewerbung/bewerbungDerzeitNichtMoeglich']='Bewerbung derzeit nicht möglich. Bitte kontaktieren Sie <a href="mailto:%1$s">%1$s</a>';
 $this->phrasen['bewerbung/bewerbungenFuerAb']='Bewerbungen fürs %s ab %s';
+
 // Rechnungskontakt
 $this->phrasen['bewerbung/menuRechnungsKontaktinformationen']='Rechnungsdaten';
 $this->phrasen['bewerbung/rechnungsadresseInfoText']='Geben Sie hier bitte eine etwaige von Ihrer Heimatadresse abweichende Rechnungsadresse an (bitte vollständig ausfüllen)';

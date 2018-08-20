@@ -192,7 +192,10 @@ if(!isset($person_id))
 				<?php echo $p->t('bewerbung/weiblich') ?>: <input type="radio" name="geschlecht"  <?php echo $disabled; ?> value="w" <?php echo $geschl_w ?>>
 			</div>
 		</div>
-		<?php if(isset($prestudent->result[0])): ?>
+		<?php 
+		$prestudent = new prestudent();
+		$prestudent->getPrestudenten($person->person_id);
+		if(isset($prestudent->result[0])): ?>
 		<div class="form-group">
 			<label for="aufmerksamdurch" class="col-sm-3 control-label"><?php echo $p->t('bewerbung/aufmerksamdurch') ?></label>
 			<div class="col-sm-9">

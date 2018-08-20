@@ -21,6 +21,7 @@
 
 require_once('../../../config/global.config.inc.php');
 require_once('../bewerbung.config.inc.php');
+require_once('../../../include/statusgrund.class.php');
 
 if(!isset($person_id))
 {
@@ -39,57 +40,182 @@ $studiensemester_array = array();
 	?>
 
 	<br><br>
+	
+	<!-- Zeige Stati der aktuellen Bewerbungen an -->
 	<p><b><?php echo $p->t('bewerbung/aktuelleBewerbungen'); ?></b></p>
-	<?php
+	<div class="">
+		<table class="table">
+			<tr>
+				<th><?php echo $p->t('global/studiengang'); ?></th>
+				<th><?php echo $p->t('bewerbung/kontakt'); ?></th>
+				<th><?php echo $p->t('bewerbung/status'); ?></th>
+				<th><?php echo $p->t('global/datum'); ?></th>
+				<th><?php echo $p->t('bewerbung/bewerbungsstatus'); ?></th>
+				<th><?php echo $p->t('bewerbung/bewerbungszeitraum'); ?></th>
+				<th><?php echo $p->t('bewerbung/aktion'); ?></th>
+			</tr>
+			<?php
+			$bereits_angemeldet = array();
+			$anzahl_studiengaenge = array();
+			$stsem_bewerbung = array();
+			$studiengaengeBaMa = array(); // Nur Bachelor oder Master Studiengaenge
 
-		// Zeige Stati der aktuellen Bewerbungen an
-		$prestudent = new prestudent();
-		if(!$prestudent->getPrestudenten($person_id))
-		{
-			die($p->t('global/fehlerBeimLadenDesDatensatzes'));
-		} ?>
+			$stsem = new studiensemester();
+			$stsem->getStudiensemesterOnlinebewerbung();
+			foreach ($stsem->studiensemester as $row)
+				$stsem_bewerbung[] = $row->studiensemester_kurzbz;
 
-		<div class="">
-			<table class="table">
-				<tr>
-					<th><?php echo $p->t('global/studiengang'); ?></th>
-					<th><?php echo $p->t('bewerbung/kontakt'); ?></th>
-					<th><?php echo $p->t('bewerbung/status'); ?></th>
-					<th><?php echo $p->t('global/datum'); ?></th>
-					<th><?php echo $p->t('bewerbung/bewerbungsstatus'); ?></th>
-					<th><?php echo $p->t('bewerbung/bewerbungszeitraum'); ?></th>
-				</tr>
-				<?php
-				$bereits_angemeldet = array();
-				$anzahl_studiengaenge = array();
-				$stsem_bewerbung = array();
-				$studiengaengeBaMa = array(); // Nur Bachelor oder Master Studiengaenge
-
-				$stsem = new studiensemester();
-				$stsem->getStudiensemesterOnlinebewerbung();
-				foreach ($stsem->studiensemester as $row)
-					$stsem_bewerbung[] = $row->studiensemester_kurzbz;
-
-				foreach($prestudent->result as $row):
+			if(!$prestudent = getBewerbungen($person_id, true))
+			{
+				echo '<td class="warning" colspan="7">'.$p->t('bewerbung/keinStatus').'</td>';
+			}
+			else 
+			{
+				foreach($prestudent as $row):
 					$stg = new studiengang();
 					if(!$stg->load($row->studiengang_kz))
 						die($p->t('global/fehlerBeimLadenDesDatensatzes'));
-
+	
 					$prestudent_status = new prestudent();
 					$prestatus_help = ($prestudent_status->getLastStatus($row->prestudent_id))?$prestudent_status->status_mehrsprachig[$sprache]:$p->t('bewerbung/keinStatus');
 					
-					// Bewerbungsstatus nicht abgeschickt
+					/* Neuer Versuch Bewerbungsstatus
+					 * 
+					$bewerberstatus = '<ul style="padding-left: 15px">';
+					$bewerberstatus .= '<div class="statusverlauf_top">';
+	
+					// Bewerbungsstatus anzeigen
+					$style = 'style="color: grey"';
+	
+					// Daten unvollständig
+					if ( 
+						$status_person == false || 
+						$status_kontakt == false || 
+						$status_zahlungen == false || 
+						$status_reihungstest == false || 
+						$status_zgv_bak == false || 
+						$status_ausbildung == false
+					)
+					{
+						$bewerberstatus .= '<li>'.$p->t('bewerbung/datenUnvollstaendig').'</li>';
+						$style = 'style="color: grey"';
+					}
+					else 
+					{
+						$bewerberstatus .= '<li>'.$p->t('bewerbung/datenVollstaendig').' <span class="glyphicon glyphicon-ok"></span></li>';
+						$style = '';
+					}
+					$bewerberstatus .= '</div><div>';
+					// Bewerbung abschicken
 					if ($prestudent_status->bewerbung_abgeschicktamum == '')
-						$bewerberstatus = $p->t('bewerbung/nichtAbgeschickt');
-					if ($prestudent_status->bewerbung_abgeschicktamum != '')
-						$bewerberstatus = $p->t('bewerbung/nichtBestaetigt');
-					if ($prestudent_status->bestaetigtam != '' || $prestudent_status->bestaetigtvon != '')
-						$bewerberstatus = $p->t('bewerbung/bestaetigt');
-
+					{
+						$bewerberstatus .= '<li '.$style.'>'.$p->t('bewerbung/nichtAbgeschickt').'</li>';
+						$style = 'style="color: grey"';
+						$bewerberstatus .= '<li '.$style.'>'.$p->t('bewerbung/datenWerdenGeprueft').'</li>';
+					}
+					else
+					{
+						$bewerberstatus .= '<li '.$style.'><nobr>'.$p->t('bewerbung/bewerbungAbgeschickt').' <span class="glyphicon glyphicon-ok"></span></nobr></li>';
+						if ($prestudent_status->bestaetigtam == '' && $prestudent_status->bestaetigtvon == '')
+							$bewerberstatus .= '<li '.$style.'>'.$p->t('bewerbung/datenPruefung').'</li>';
+						else 
+							$bewerberstatus .= '<li '.$style.'><nobr>'.$p->t('bewerbung/datenPruefung').' <span class="glyphicon glyphicon-ok"></span></nobr></li>';
+						$style = 'style="color: grey"';
+					}
+					$bewerberstatus .= '</div><div class="statusverlauf_bottom">';
+					// Status bestätigung
+					if ($prestudent_status->bestaetigtam == '' && $prestudent_status->bestaetigtvon == '')
+					{
+						$bewerberstatus .= '<li '.$style.'>'.$p->t('bewerbung/freigabeAnStudiengang').'</li>';
+						$bewerberstatus .= '<li '.$style.'>'.$p->t('bewerbung/kontaktaufnahmeDurchStudiengang').'</li>';
+					}
+					else 
+					{
+						$style = '';
+						$bewerberstatus .= '<li '.$style.'><nobr>'.$p->t('bewerbung/freigabeAnStudiengang').' <span class="glyphicon glyphicon-ok"></span></nobr></li>';
+						$bewerberstatus .= '<li '.$style.'>'.$p->t('bewerbung/kontaktaufnahmeDurchStudiengang').'</li>';
+					}
+					$bewerberstatus .= '</div>';
+					$bewerberstatus .= '</ul>';
+					
+					
+					$bewerberstatus = '<ul style="padding-left: 15px">';
+					$bewerberstatus .= '<li>Daten vervollständigen</li>';
+					$bewerberstatus .= '<li>Bewerbung abschicken</li>';
+					$bewerberstatus .= '<li>Ihre Daten werden geprüft</li>';
+					$bewerberstatus .= '<li>Bewerbung wurde an den Studiengang weitergegeben</li>';
+					$bewerberstatus .= '</ul>';
+					 */
+					$bewerberstatus = '<ul style="padding-left: 15px">';
+	
+					// Bewerbungsstatus anzeigen
+					$style = 'style="color: grey"';
+	
+					// Daten unvollständig
+					if ( 
+						$status_person == false || 
+						$status_kontakt == false || 
+						$status_zahlungen == false || 
+						$status_reihungstest == false || 
+						$status_zgv_bak == false || 
+						$status_ausbildung == false
+					)
+					{
+						$bewerberstatus .= '<li>'.$p->t('bewerbung/datenUnvollstaendig').'</li>';
+						$style = 'style="color: grey"';
+					}
+					else 
+					{
+						$bewerberstatus .= '<li>'.$p->t('bewerbung/datenVollstaendig').' <span class="glyphicon glyphicon-ok"></span></li>';
+						$style = '';
+					}
+					// Bewerbung abschicken
+					if ($prestudent_status->bewerbung_abgeschicktamum == '')
+					{
+						$bewerberstatus .= '<li '.$style.'>'.$p->t('bewerbung/nichtAbgeschickt').'</li>';
+						$style = 'style="color: grey"';
+						$bewerberstatus .= '<li '.$style.'>'.$p->t('bewerbung/datenWerdenGeprueft').'</li>';
+					}
+					else
+					{
+						$bewerberstatus .= '<li '.$style.'><nobr>'.$p->t('bewerbung/bewerbungAbgeschickt').' <span class="glyphicon glyphicon-ok"></span></nobr></li>';
+						if ($prestudent_status->bestaetigtam == '' && $prestudent_status->bestaetigtvon == '')
+							$bewerberstatus .= '<li '.$style.'>'.$p->t('bewerbung/datenPruefung').'</li>';
+						else 
+							$bewerberstatus .= '<li '.$style.'><nobr>'.$p->t('bewerbung/datenPruefung').' <span class="glyphicon glyphicon-ok"></span></nobr></li>';
+						$style = 'style="color: grey"';
+					}
+					// Status bestätigung
+					if ($prestudent_status->bestaetigtam == '' && $prestudent_status->bestaetigtvon == '')
+					{
+						$bewerberstatus .= '<li '.$style.'>'.$p->t('bewerbung/freigabeAnStudiengang').'</li>';
+						$bewerberstatus .= '<li '.$style.'>'.$p->t('bewerbung/kontaktaufnahmeDurchStudiengang').'</li>';
+					}
+					else 
+					{
+						$style = '';
+						$bewerberstatus .= '<li '.$style.'><nobr>'.$p->t('bewerbung/freigabeAnStudiengang').' <span class="glyphicon glyphicon-ok"></span></nobr></li>';
+						$bewerberstatus .= '<li '.$style.'>'.$p->t('bewerbung/kontaktaufnahmeDurchStudiengang').'</li>';
+					}
+					
+					$bewerberstatus .= '</ul>';
+	// 				if ($prestudent_status->bestaetigtam != '' || $prestudent_status->bestaetigtvon != '')
+	// 					$bewerberstatus .= '<li>'.$p->t('bewerbung/kontaktaufnahmeDurchStudiengang').'</li>';
+	// 				else
+	// 					$bewerberstatus .= '<li style="color: grey">'.$p->t('bewerbung/kontaktaufnahmeDurchStudiengang').'</li>';
+					
+	// 				if ($prestudent_status->bestaetigtam != '' || $prestudent_status->bestaetigtvon != '')
+	// 					$bewerberstatus .= '<li style="color: grey">'.$p->t('bewerbung/bestaetigt').'</li>';
+	// 				else 
+	// 					$bewerberstatus .= '<li>'.$p->t('bewerbung/bestaetigt').'</li>';
+	
 					$bereits_angemeldet[$prestudent_status->studiensemester_kurzbz][]= $stg->studiengang_kz;
-
+	
 					//Zaehlt die Anzahl an Bewerbungen in einem Studiensemester
-					if (in_array($prestudent_status->studiensemester_kurzbz, $stsem_bewerbung))
+					// Wenn ein Status Abgewiesen oder Abbrecher ist, zaehlt er nicht zu der Anzahl an Bewerbungen mit
+					if (in_array($prestudent_status->studiensemester_kurzbz, $stsem_bewerbung) &&
+						$prestudent_status->status_kurzbz != 'Abgewiesener' &&
+						$prestudent_status->status_kurzbz != 'Abbrecher')
 					{
 						if (!array_key_exists($prestudent_status->studiensemester_kurzbz, $anzahl_studiengaenge))
 							$anzahl_studiengaenge[$prestudent_status->studiensemester_kurzbz] = 0;
@@ -99,29 +225,63 @@ $studiensemester_array = array();
 						if ($row->studiengang_kz > 0 && $row->studiengang_kz < 10000)
 							$studiengaengeBaMa[$prestudent_status->studiensemester_kurzbz][] = $row->studiengang_kz;
 					}
-
-					if($sprache!='German' && $stg->english!='')
-						$stg_bezeichnung = $stg->english;
-					else
-						$stg_bezeichnung = $stg->bezeichnung;
-
+	
+					// Bezeichnung des Studiengangs über den Studienplan laden wenn vorhanden
+					if (isset($prestudent_status->studienplan_id) && $prestudent_status->studienplan_id != '')
+					{
+						$studienordnung = new studienordnung();
+						$studienordnung->getStudienordnungFromStudienplan($prestudent_status->studienplan_id);
+						if ($sprache != 'German' && $studienordnung->studiengangbezeichnung_englisch != '')
+							$stg_bezeichnung = $studienordnung->studiengangbezeichnung_englisch;
+						else
+							$stg_bezeichnung = $studienordnung->studiengangbezeichnung;
+					}
+					else 
+					{
+						if($sprache!='German' && $stg->english!='')
+							$stg_bezeichnung = $stg->english;
+						else
+							$stg_bezeichnung = $stg->bezeichnung;
+					}
+	
 					$typ = new studiengang();
 					$typ->getStudiengangTyp($stg->typ);
-
+	
 					$empf_array = array();
 					if(defined('BEWERBERTOOL_BEWERBUNG_EMPFAENGER'))
 						$empf_array = unserialize(BEWERBERTOOL_BEWERBUNG_EMPFAENGER);
-
-					if(defined('BEWERBERTOOL_MAILEMPFANG') && BEWERBERTOOL_MAILEMPFANG!='')
-						$empfaenger = BEWERBERTOOL_MAILEMPFANG;
-					elseif(isset($empf_array[$stg->studiengang_kz]))
-						$empfaenger = $empf_array[$stg->studiengang_kz];
-					else
-						$empfaenger = $stg->email;
-
-					$orgform = new organisationsform();
-					$orgform->load($prestudent_status->orgform_kurzbz);
+	
+					// Organisationsform und Sprache aus Studienplan laden sonst aus prestudentstatus
+					$studienplan_orgform = '';
+						$studienplan_sprache = '';
+					if ($prestudent_status->studienplan_id != '')
+					{
+						$studienplan = new studienplan();
+						$studienplan->loadStudienplan($prestudent_status->studienplan_id);
+						$studienplan_orgform = $studienplan->orgform_kurzbz;
+						$studienplan_sprache = $studienplan->sprache;
+					}
+					else 
+						$studienplan_orgform = $prestudent_status->orgform_kurzbz;
 					
+					// An der FHTW werden alle Mails von Bachelor-Studiengängen an das Infocenter geschickt, solange die Bewerbung noch nicht bestätigt wurde
+					if (CAMPUS_NAME == 'FH Technikum Wien')
+					{
+						if(	defined('BEWERBERTOOL_MAILEMPFANG') && 
+							BEWERBERTOOL_MAILEMPFANG != '' && 
+							$stg->typ == 'b' && 
+							$prestudent_status->bestaetigtam == '')
+						{
+							$empfaenger = BEWERBERTOOL_MAILEMPFANG;
+						}
+						else
+							$empfaenger = getMailEmpfaenger($stg->studiengang_kz, $prestudent_status->studienplan_id);
+					}
+					else 
+					{
+						$empfaenger = getMailEmpfaenger($stg->studiengang_kz);
+					}
+	
 					// Bewerbungsfristen laden
 					$bewerbungszeitraum = '';
 					
@@ -129,15 +289,21 @@ $studiensemester_array = array();
 					$class = '';
 					$bewerbungsfristen = new bewerbungstermin();
 					$bewerbungsfristen->getBewerbungstermine($row->studiengang_kz, $prestudent_status->studiensemester_kurzbz, 'insertamum DESC', $prestudent_status->studienplan_id);
-
+	
 					if (isset($bewerbungsfristen->result[0]))
 					{
 						$bewerbungsfristen = $bewerbungsfristen->result[0];
 						$bewerbungsbeginn = '';
 						if ($bewerbungsfristen->beginn != '')
-							$bewerbungsbeginn = $datum->formatDatum($bewerbungsfristen->beginn, 'd.m.Y');
+							$bewerbungsbeginn = $datum->formatDatum($bewerbungsfristen->beginn, 'd.m.Y').' - ';
 						else
-							$bewerbungsbeginn = $p->t('bewerbung/unbegrenzt');
+						{
+							if (CAMPUS_NAME == 'FH Technikum Wien')
+								$bewerbungsbeginn = '';
+							else 
+								$bewerbungsbeginn = $p->t('bewerbung/unbegrenzt');
+						}
+							
 						// Wenn Nachfrist gesetzt und das Nachfrist-Datum befuellt ist, gilt die Nachfrist
 						// sonst das Endedatum, wenn eines gesetzt ist
 						if ($bewerbungsfristen->nachfrist == true && $bewerbungsfristen->nachfrist_ende != '')
@@ -149,7 +315,7 @@ $studiensemester_array = array();
 							if ($tage_bis_fristablauf <= 0)
 								$class = 'class="alert-danger"';
 							
-							$bewerbungszeitraum = $bewerbungsbeginn.' - <span '.$class.'>'.$datum->formatDatum($bewerbungsfristen->nachfrist_ende, 'd.m.Y').'</span>';
+							$bewerbungszeitraum = $bewerbungsbeginn.'<span '.$class.'>'.$datum->formatDatum($bewerbungsfristen->nachfrist_ende, 'd.m.Y').'</span>';
 						}
 						elseif ($bewerbungsfristen->ende != '')
 						{
@@ -160,26 +326,42 @@ $studiensemester_array = array();
 							if ($tage_bis_fristablauf <= 0)
 								$class = 'class="alert-danger"';
 							
-							$bewerbungszeitraum = $bewerbungsbeginn.' - <span '.$class.'>'.$datum->formatDatum($bewerbungsfristen->ende, 'd.m.Y').'</span>';
+							$bewerbungszeitraum = $bewerbungsbeginn.'<span '.$class.'>'.$datum->formatDatum($bewerbungsfristen->ende, 'd.m.Y').'</span>';
 						}
 						elseif ($bewerbungsfristen->beginn != '')
 						{
-							$bewerbungszeitraum = $bewerbungsbeginn.' - '.$p->t('bewerbung/unbegrenzt');
+							$bewerbungszeitraum = $bewerbungsbeginn.$p->t('bewerbung/unbegrenzt');
 						}
 						else 
 							$bewerbungszeitraum = $p->t('bewerbung/unbegrenzt');
 					}
 					else 
 						$bewerbungszeitraum = $p->t('bewerbung/unbegrenzt');
-
-					// Pfuschloesung, damit bei BIF Dual die Mail an info.bid geht
-					if (CAMPUS_NAME == 'FH Technikum Wien' && $stg->studiengang_kz == 257 && $orgform->orgform_kurzbz == 'DUA')
-						$empfaenger = 'info.bid@technikum-wien.at';
 					?>
-
 					<tr>
 						<td><?php 
-							echo $typ->bezeichnung.' '.$stg_bezeichnung.($orgform->bezeichnung!=''?' ('.$orgform->bezeichnung.')':'');
+							$orgform_alternativ = '';
+							$orgform_alt = '';
+							// Alternative Orgform parsen falls vorhanden und anzeigen
+							if ($prestudent_status->anmerkung != '')
+							{
+								$orgform_alternativ = strstr($prestudent_status->anmerkung, 'Alt: ');
+								if ($orgform_alternativ != '')
+									$orgform_alternativ = substr($orgform_alternativ, 5);
+							}
+
+							echo $typ->bezeichnung.' '.$stg_bezeichnung;
+							if ($studienplan_orgform != '')
+							{
+								echo ' | <i>'.$p->t('bewerbung/orgform/'.$studienplan_orgform);
+								if ($studienplan_sprache != '')
+									echo ' - '.$p->t('bewerbung/'.$studienplan_sprache);
+								echo '</i>';
+								if ($orgform_alternativ != '')
+								{
+									echo '<br> Alternative Organisationform: <i>'.$p->t('bewerbung/orgform/'.$orgform_alternativ).'</i>';
+								}
+							}
 							//Hinweis zum Fristablauf nur anzeigen, wenn die Bewerbung noch nicht abgeschickt wurde
 							if ($prestudent_status->bewerbung_abgeschicktamum == '')
 							{
@@ -196,10 +378,240 @@ $studiensemester_array = array();
 						<td><?php echo $datum->formatDatum($prestudent_status->datum, 'd.m.Y') ?></td>
 						<td><?php echo $bewerberstatus ?></td>
 						<td><?php echo $bewerbungszeitraum ?></td>
+						<td><?php //Stornieren nur moeglich, wenn letzter Status "Interessent" ist oder noch nicht abgeschickt oder bestätigt wurde
+							if ($prestudent_status->status_kurzbz == 'Interessent' 
+								&& $prestudent_status->bewerbung_abgeschicktamum == ''
+								&& $prestudent_status->bestaetigtam == '' 
+								&& $prestudent_status->bestaetigtvon == ''): ?>
+							<button class="btn-nav btn btn-sm btn-warning" 
+									type="button" 
+									name="btn_bewerbung_stornieren" 
+									data-toggle="modal" 
+									data-target="#stornierenModal_<?php echo $row->prestudent_id ?>">
+									<?php echo $p->t('bewerbung/bewerbungStornieren'); ?></button>
+							<div class="modal fade" id="stornierenModal_<?php echo $row->prestudent_id ?>" tabindex="-1"
+								 role="dialog"
+								 aria-labelledby="stornierenModalLabel" aria-hidden="true">
+								<div class="modal-dialog">
+									<div class="modal-content">
+										<div class="modal-header">
+											<button type="button" class="close"
+													data-dismiss="modal"
+													aria-hidden="true">&times;
+											</button>
+											<h4 class="modal-title" id="stornierenModalLabel">
+												<?php echo $p->t('bewerbung/bewerbungStornieren'); ?></h4>
+										</div>
+										<div class="modal-body">
+											<?php echo $p->t('bewerbung/bewerbungStornierenInfotext', array($prestudent_status->studiensemester_kurzbz, $typ->bezeichnung.' '.$stg_bezeichnung)); ?>
+										</div>
+										<div class="modal-footer">
+											<button type="button" class="btn btn-default"
+													data-dismiss="modal"><?php echo $p->t('global/abbrechen') ?>
+											</button>
+											
+												<button type="button"
+														class="btn btn-primary"
+														onclick="bewerbungStornieren('<?php echo $row->prestudent_id ?>','<?php echo $prestudent_status->studiensemester_kurzbz ?>')">
+													<?php echo $p->t('bewerbung/bewerbungStornierenBestaetigen'); ?>
+												</button>
+	
+										</div>
+									</div>
+									<!-- /.modal-content -->
+								</div>
+								<!-- /.modal-dialog -->
+							</div>
+							<?php else: ?>
+							<button class="btn-nav btn btn-sm btn-warning" 
+									disabled	
+									type="button" 
+									title="<?php echo $p->t('bewerbung/buttonStornierenDisabled'); ?>">
+									<?php echo $p->t('bewerbung/bewerbungStornieren'); ?></button>
+							<?php endif ?>
+						</td>
 					</tr>
-				<?php endforeach;?>
-			</table>
-		</div>
+					
+				<?php endforeach;
+			} ?>
+		</table>
+	</div>
+	<?php
+	if($prestudent = getBewerbungen($person_id, false)): ?>
+	
+	<!-- Zeige Stati der abgelaufenen Bewerbungen an -->
+	<p><b><?php echo $p->t('bewerbung/vergangeneBewerbungen'); ?></b></p>
+	<div class="" style="color: grey">
+		<table class="table">
+			<tr>
+				<th><?php echo $p->t('global/studiengang'); ?></th>
+				<th><?php echo $p->t('bewerbung/kontakt'); ?></th>
+				<th><?php echo $p->t('bewerbung/status'); ?></th>
+				<th><?php echo $p->t('global/datum'); ?></th>
+				<th><?php echo $p->t('bewerbung/bewerbungStorniert'); ?></th>
+				<!--<th><?php echo $p->t('bewerbung/bewerbungszeitraum'); ?></th>-->
+			</tr>
+			<?php
+			foreach($prestudent as $row):
+				$stg = new studiengang();
+				if(!$stg->load($row->studiengang_kz))
+					die($p->t('global/fehlerBeimLadenDesDatensatzes'));
+
+				$prestudent_status = new prestudent();
+				$prestatus_help = ($prestudent_status->getLastStatus($row->prestudent_id))?$prestudent_status->status_mehrsprachig[$sprache]:$p->t('bewerbung/keinStatus');
+
+				// Statusgrund anzeigen
+				if ($prestudent_status->statusgrund_id != '')
+				{
+					$statusgrund = new statusgrund($prestudent_status->statusgrund_id);
+					$bewerberstatus = $statusgrund->bezeichnung_mehrsprachig[$sprache];
+				}
+				else 
+					$bewerberstatus = '';
+
+				$bereits_angemeldet[$prestudent_status->studiensemester_kurzbz][]= $stg->studiengang_kz;
+
+				//Zaehlt die Anzahl an Bewerbungen in einem Studiensemester
+				// Wenn ein Status Abgewiesen oder Abbrecher ist, zaehlt er nicht zu der Anzahl an Bewerbungen mit
+				if (in_array($prestudent_status->studiensemester_kurzbz, $stsem_bewerbung) &&
+					$prestudent_status->status_kurzbz != 'Abgewiesener' &&
+					$prestudent_status->status_kurzbz != 'Abbrecher')
+				{
+					if (!array_key_exists($prestudent_status->studiensemester_kurzbz, $anzahl_studiengaenge))
+						$anzahl_studiengaenge[$prestudent_status->studiensemester_kurzbz] = 0;
+					
+					$anzahl_studiengaenge[$prestudent_status->studiensemester_kurzbz] ++;
+					
+					if ($row->studiengang_kz > 0 && $row->studiengang_kz < 10000)
+						$studiengaengeBaMa[$prestudent_status->studiensemester_kurzbz][] = $row->studiengang_kz;
+				}
+
+				// Bezeichnung des Studiengangs über den Studienplan laden wenn vorhanden
+				if (isset($prestudent_status->studienplan_id) && $prestudent_status->studienplan_id != '')
+				{
+					$studienordnung = new studienordnung();
+					$studienordnung->getStudienordnungFromStudienplan($prestudent_status->studienplan_id);
+					if ($sprache != 'German' && $studienordnung->studiengangbezeichnung_englisch != '')
+						$stg_bezeichnung = $studienordnung->studiengangbezeichnung_englisch;
+					else
+						$stg_bezeichnung = $studienordnung->studiengangbezeichnung;
+				}
+				else 
+				{
+					if($sprache!='German' && $stg->english!='')
+						$stg_bezeichnung = $stg->english;
+					else
+						$stg_bezeichnung = $stg->bezeichnung;
+				}
+
+				$typ = new studiengang();
+				$typ->getStudiengangTyp($stg->typ);
+
+				$empf_array = array();
+				if(defined('BEWERBERTOOL_BEWERBUNG_EMPFAENGER'))
+					$empf_array = unserialize(BEWERBERTOOL_BEWERBUNG_EMPFAENGER);
+
+				$orgform = new organisationsform();
+				$orgform->load($prestudent_status->orgform_kurzbz);
+				
+				// An der FHTW werden alle Mails von Bachelor-Studiengängen an das Infocenter geschickt, solange die Bewerbung noch nicht bestätigt wurde
+				if (CAMPUS_NAME == 'FH Technikum Wien')
+				{
+					if(	defined('BEWERBERTOOL_MAILEMPFANG') && 
+						BEWERBERTOOL_MAILEMPFANG != '' && 
+						$stg->typ == 'b' && 
+						$prestudent_status->bestaetigtam == '')
+					{
+						$empfaenger = BEWERBERTOOL_MAILEMPFANG;
+					}
+					else
+						$empfaenger = getMailEmpfaenger($stg->studiengang_kz, $prestudent_status->studienplan_id);
+				}
+				else 
+				{
+					$empfaenger = getMailEmpfaenger($stg->studiengang_kz);
+				}
+
+				// Bewerbungsfristen laden
+				$bewerbungszeitraum = '';
+				
+				$tage_bis_fristablauf = '';
+				$class = '';
+				$bewerbungsfristen = new bewerbungstermin();
+				$bewerbungsfristen->getBewerbungstermine($row->studiengang_kz, $prestudent_status->studiensemester_kurzbz, 'insertamum DESC', $prestudent_status->studienplan_id);
+
+				if (isset($bewerbungsfristen->result[0]))
+				{
+					$bewerbungsfristen = $bewerbungsfristen->result[0];
+					$bewerbungsbeginn = '';
+					if ($bewerbungsfristen->beginn != '')
+						$bewerbungsbeginn = $datum->formatDatum($bewerbungsfristen->beginn, 'd.m.Y');
+					else
+					{
+						if (CAMPUS_NAME == 'FH Technikum Wien')
+							$bewerbungsbeginn = '';
+						else
+							$bewerbungsbeginn = $p->t('bewerbung/unbegrenzt');
+					}
+					// Wenn Nachfrist gesetzt und das Nachfrist-Datum befuellt ist, gilt die Nachfrist
+					// sonst das Endedatum, wenn eines gesetzt ist
+					if ($bewerbungsfristen->nachfrist == true && $bewerbungsfristen->nachfrist_ende != '')
+					{
+						$tage_bis_fristablauf = ((strtotime($bewerbungsfristen->nachfrist_ende) - time())/86400);
+						// Wenn die Frist in weniger als 7 Tagen ablaeuft oder vorbei ist, hervorheben
+						if ($tage_bis_fristablauf <= 7)
+							$class = 'class="alert-warning"';
+						if ($tage_bis_fristablauf <= 0)
+							$class = 'class="alert-danger"';
+						
+						$bewerbungszeitraum = $bewerbungsbeginn.'<span '.$class.'>'.$datum->formatDatum($bewerbungsfristen->nachfrist_ende, 'd.m.Y').'</span>';
+					}
+					elseif ($bewerbungsfristen->ende != '')
+					{
+						$tage_bis_fristablauf = ((strtotime($bewerbungsfristen->ende) - time())/86400);
+						// Wenn die Frist in weniger als 7 Tagen ablaeuft oder vorbei ist, hervorheben
+						if ($tage_bis_fristablauf <= 7)
+							$class = 'class="alert-warning"';
+						if ($tage_bis_fristablauf <= 0)
+							$class = 'class="alert-danger"';
+						
+						$bewerbungszeitraum = $bewerbungsbeginn.'<span '.$class.'>'.$datum->formatDatum($bewerbungsfristen->ende, 'd.m.Y').'</span>';
+					}
+					elseif ($bewerbungsfristen->beginn != '')
+					{
+						$bewerbungszeitraum = $bewerbungsbeginn.$p->t('bewerbung/unbegrenzt');
+					}
+					else 
+						$bewerbungszeitraum = $p->t('bewerbung/unbegrenzt');
+				}
+				else 
+					$bewerbungszeitraum = $p->t('bewerbung/unbegrenzt');
+				?>
+				<tr>
+					<td><?php 
+						echo $typ->bezeichnung.' '.$stg_bezeichnung.($orgform->bezeichnung!=''?' ('.$orgform->bezeichnung.')':'');
+						//Hinweis zum Fristablauf nur anzeigen, wenn die Bewerbung noch nicht abgeschickt wurde
+						if ($prestudent_status->bewerbung_abgeschicktamum == '')
+						{
+							if ($tage_bis_fristablauf !='' && $tage_bis_fristablauf <= 0)
+								echo '<br><div style="display: table-cell" class="label label-danger"><span class="glyphicon glyphicon-warning-sign"></span>&nbsp;&nbsp;'.$p->t('bewerbung/bewerbungsfristAbgelaufen').'</div>';
+							elseif ($tage_bis_fristablauf !='' && $tage_bis_fristablauf <= 7 && $tage_bis_fristablauf >= 1)
+								echo '<br><div style="display: table-cell" class="label label-warning"><span class="glyphicon glyphicon-warning-sign"></span>&nbsp;&nbsp;'.$p->t('bewerbung/bewerbungsfristEndetInXTagen', array(floor($tage_bis_fristablauf))).'</div>';
+							elseif ($tage_bis_fristablauf !='' && $tage_bis_fristablauf <= 1)
+								echo '<br><div style="display: table-cell" class="label label-warning"><span class="glyphicon glyphicon-warning-sign"></span>&nbsp;&nbsp;'.$p->t('bewerbung/bewerbungsfristEndetHeute').'</div>';
+						}
+						?></td>
+					<td><a href="mailto:<?php echo $empfaenger ?>"><span class="glyphicon glyphicon-envelope"></span></a></td>
+					<td><?php echo $prestatus_help.' ('.$prestudent_status->studiensemester_kurzbz.')' ?></td>
+					<td><?php echo $datum->formatDatum($prestudent_status->datum, 'd.m.Y') ?></td>
+					<td><?php echo $bewerberstatus ?></td>
+					<!--<td><?php echo $bewerbungszeitraum ?></td>-->
+				</tr>
+				
+			<?php endforeach;?>
+		</table>
+	</div>
+	<?php endif;?>
 	<br>
 	<?php if (BEWERBERTOOL_MAX_STUDIENGAENGE > 1 || BEWERBERTOOL_MAX_STUDIENGAENGE == ''): ?>
 	<button id="open-modal-studiengaenge-button" class="btn-nav btn btn-success" type="button" data-toggle="modal" data-target="#liste-studiengaenge">
@@ -210,7 +622,6 @@ $studiensemester_array = array();
 		<?php echo $p->t('bewerbung/weiter'); ?>
 	</button>
 	<br/><br/>
-
 	<div class="modal fade" id="liste-studiengaenge"><div class="modal-dialog"><div class="modal-content">
 		<div class="modal-header">
 			<button type="button" class="close cancel-studiengang" data-dismiss="modal" aria-label="Close">
@@ -226,7 +637,7 @@ $studiensemester_array = array();
 				<div class="dropdown">
 					<select id="ausbildungstyp" name="ausbildungstyp" class="form-control">
 						<option value="stg"><?php echo $p->t('global/studiengang') ?></option>
-						<option value="lehrg"><?php echo $p->t('bewerbung/lehrgang') ?></option>
+						<option value="lehrg"><?php echo $p->t('bewerbung/lehrgangZurWeiterbildung') ?></option>
 					</select>
 				</div>
 				<label for="studiensemester_kurzbz" class="control-label">
@@ -353,18 +764,21 @@ $studiensemester_array = array();
 						// Wenn kein gueltiger Studienplan gefunden wird, ist die Registration nicht moeglich und es wird ein Infotext angezeigt
 						$fristAbgelaufen = true;
 						
-						$empf_array = array();
-						if(defined('BEWERBERTOOL_BEWERBUNG_EMPFAENGER'))
-							$empf_array = unserialize(BEWERBERTOOL_BEWERBUNG_EMPFAENGER);
-							
-						if(defined('BEWERBERTOOL_MAILEMPFANG') && BEWERBERTOOL_MAILEMPFANG!='')
-							$empfaenger = BEWERBERTOOL_MAILEMPFANG;
-						elseif(isset($empf_array[$result->studiengang_kz]))
-							$empfaenger = $empf_array[$result->studiengang_kz];
-						else
+						// An der FHTW werden alle Mails von Bachelor-Studiengängen an das Infocenter geschickt, solange die Bewerbung noch nicht bestätigt wurde
+						if (CAMPUS_NAME == 'FH Technikum Wien')
 						{
-							$studiengang = new studiengang($result->studiengang_kz);
-							$empfaenger = $studiengang->email;
+							if(	defined('BEWERBERTOOL_MAILEMPFANG') && 
+								BEWERBERTOOL_MAILEMPFANG != '' && 
+								$result->typ == 'b')
+							{
+								$empfaenger = BEWERBERTOOL_MAILEMPFANG;
+							}
+							else
+								$empfaenger = getMailEmpfaenger($result->studiengang_kz);
+						}
+						else 
+						{
+							$empfaenger = getMailEmpfaenger($stg->studiengang_kz);
 						}
 							
 						$stg_bezeichnung .= '<br><span style="color:orange"><i>'.$p->t('bewerbung/bewerbungDerzeitNichtMoeglich',array($empfaenger)).'</i></span>';
@@ -382,7 +796,7 @@ $studiensemester_array = array();
 					$radioBtn = '';
 					if($result->typ == 'l' && $last_lgtyp != $result->lehrgangsart && $result->lehrgangsart != '')
 					{
-						$radioBtn .= '<p style="padding-top: 20px;"><b>'.$result->lehrgangsart.'</b></p>';
+						$radioBtn .= '<p style="padding-top: 20px;"><b>'.$p->t('bewerbung/lehrgangsArt/'.$result->lgartcode).'</b></p>';
 						$last_lgtyp = $result->lehrgangsart;
 					}
 					if($result->typ != 'l' && $lasttyp != $result->typ)
@@ -397,16 +811,32 @@ $studiensemester_array = array();
 							&& count($studiengaengeBaMa[$std_semester]) >= BEWERBERTOOL_MAX_STUDIENGAENGE
 							&& $result->studiengang_kz > 0
 							&& $result->studiengang_kz < 10000)
-						$disabled = 'disabled="diabled"';
+						$disabled = 'disabled';
 					else
 						$disabled = '';
+					
+					// Wenn es für das gewählte Studiensemester schon eine Bewerbung oder einen Status "Abgewiesen" oder "Abbrecher" gibt,
+					// kann man sich nicht mehr dafür bewerben
+					$disabledExistsPrestudentstatus = '';
+					$prestudent_status = new prestudent();
+					if ($prestudent_status->existsPrestudentstatus($person_id, $result->studiengang_kz, $std_semester))
+						$disabledExistsPrestudentstatus = 'disabled';
+					else 
+						$disabledExistsPrestudentstatus = '';
+					
+					// Wenn disabled Infotext im Titel anzeigen
+					$titel = '';
+					if ($disabled != '' || $disabledExistsPrestudentstatus != '')
+						$titel = 'title="'.$p->t('bewerbung/infotextDisabled', array($std_semester)).'"';
+					else 
+						$titel = '';
 						
 					if (!$fristAbgelaufen)
 					{
 						$radioBtn .= '
-						<div class="radio">
+						<div class="radio '.$disabled.' '.$disabledExistsPrestudentstatus.'" '.$titel.'>
 							<label data-toggle="collapse" data-target="#prio-dropown'.$result->studiengang_kz.'">
-								<input '.$disabled.' type="radio" name="studiengaenge[]" value="'.$result->studiengang_kz.'"
+								<input '.$disabled.' '.$disabledExistsPrestudentstatus.' type="radio" name="studiengaenge[]" value="'.$result->studiengang_kz.'"
 									data-modal="'.$modal.'"
 									data-modal-sprache="'.$spracheSingle.'"
 									data-modal-orgform="'.$orgformSingle.'">
@@ -415,7 +845,7 @@ $studiensemester_array = array();
 							</label>
 						</div>
 						';
-						if ($modal)
+						if ($modal && $disabled == '' && $disabledExistsPrestudentstatus == '')
 						{
 							$radioBtn .= '
 							<div id="prio-dropown'.$result->studiengang_kz.'" class="collapse">
@@ -516,7 +946,7 @@ $studiensemester_array = array();
 						$radioBtn .= '
 						<div class="radio disabled">
 							<label>
-								<input '.$disabled.' type="radio" name="studiengaenge[]" value="'.$result->studiengang_kz.'" disabled
+								<input disabled type="radio" name="studiengaenge[]" value="'.$result->studiengang_kz.'"
 									data-modal="false"
 									data-modal-sprache="'.$spracheSingle.'"
 									data-modal-orgform="'.$orgformSingle.'">
@@ -650,7 +1080,6 @@ $studiensemester_array = array();
 	<?php //require 'modal_sprache_orgform.php'; ?>
 	<script type="text/javascript">
 		$(function() {
-
 			$('#open-modal-studiengaenge-button').on('click', function()
 			{
 				if($('#studiensemester_kurzbz').val() == "")
@@ -772,7 +1201,32 @@ $studiensemester_array = array();
 					alert(data.msg)
 				}
 			});
+		}
+		function bewerbungStornieren(prestudent_id, studiensemester_kurzbz)
+		{
+			data = {
+				prestudent_id: prestudent_id,
+				studiensemester_kurzbz: studiensemester_kurzbz,
+				bewerbungStornieren: true
+			};
 
+			$.ajax({
+				url: basename,
+				data: data,
+				type: 'POST',
+				dataType: "json",
+				success: function(data)
+				{
+					if(data.status!='ok')
+						alert(data.msg);
+					else
+						window.location.href='bewerbung.php?active=allgemein';
+				},
+				error: function(data)
+				{
+					alert(data.msg)
+				}
+			});
 		}
 		
 		function checkPrios(slideDuration, stgkz) 

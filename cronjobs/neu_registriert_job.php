@@ -26,6 +26,20 @@ require_once('../../../include/kontakt.class.php');
 require_once('../include/functions.inc.php');
 require_once('../bewerbung.config.inc.php');
 
+// Wenn das Script ueber die Kommandozeile aufgerufen wird, erfolgt keine Authentifizierung
+if (php_sapi_name() != 'cli')
+{
+	$uid = get_uid();
+	$rechte = new benutzerberechtigung();
+	$rechte->getBerechtigungen($uid);
+
+	if(!$rechte->isBerechtigt('admin'))
+	{
+		exit($rechte->errormsg);
+	}
+}
+
+// An der FHTW werden alle Bachelor-Studiengänge über das Infocenter abgewickelt
 $qry = "
 SELECT 
 	person_id,
@@ -46,12 +60,16 @@ JOIN
 	public.tbl_prestudentstatus USING (prestudent_id)
 JOIN
 	lehre.tbl_studienplan USING (studienplan_id)
+JOIN
+	public.tbl_studiengang USING (studiengang_kz)
 WHERE 
 	tbl_prestudent.insertvon='online' 
 AND (tbl_prestudent.insertamum >= (SELECT (CURRENT_DATE -1||' '||'03:00:00')::timestamp)
 	OR tbl_prestudentstatus.insertamum >= (SELECT (CURRENT_DATE -1||' '||'03:00:00')::timestamp))
 AND tbl_prestudentstatus.status_kurzbz = 'Interessent'
 AND tbl_prestudentstatus.bewerbung_abgeschicktamum IS NULL
+AND tbl_studiengang.typ != 'b'
+AND get_rolle_prestudent (tbl_prestudent.prestudent_id, studiensemester_kurzbz) != 'Abgewiesener'
 ORDER BY studiengang_kz, studiensemester_kurzbz, orgform_kurzbz, nachname, vorname";
 
 $db = new basis_db();
@@ -62,30 +80,36 @@ $mailcontent = '';
 $studiensemester = '';
 $mail_alle = '';
 
-$write_log = true;
-$logfile = 'log/neu_registriert/'.date('Y_m').'_log.html';
-$logcontent = '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-				<h2 style="text-align: center">'.date('Y-m-d').'</h2><hr>';
-
 // Prueft, ob das Logverzeichnis existiert.
 // Wenn nicht, wird versucht, eines anzulegen.
 // Falls dies fehl schlaegt, wird kein Logfile erstellt.
-
-if(!is_dir('log/neu_registriert/'))
+$write_log = true;
+if(!is_dir(LOG_PATH.'bewerbungstool/neu_registriert/'))
 {
-	if (mkdir('/log',0777,true))
+	if (mkdir(LOG_PATH.'bewerbungstool',0777,true))
 	{
-		if(!is_dir('log/neu_registriert/'))
+		if(!is_dir(LOG_PATH.'bewerbungstool/neu_registriert/'))
 		{
-			if (mkdir('/log/neu_registriert',0777,true))
+			if (mkdir(LOG_PATH.'bewerbungstool/neu_registriert',0777,true))
 				$write_log = true;
-			else 
+			else
 				$write_log = false;
 		}
 	}
-	else 
+	else
 		$write_log = false;
 }
+// Aus Datenschutzgründen werden Logfiles älter als 3 Monate gelöscht
+$dateLess3Months = date("Y_m", strtotime("-3 months"));
+
+if (file_exists(LOG_PATH.'bewerbungstool/neu_registriert/'.$dateLess3Months.'_log.html'))
+{
+	unlink(LOG_PATH.'bewerbungstool/neu_registriert/'.$dateLess3Months.'_log.html');
+}
+
+$logfile = LOG_PATH.'bewerbungstool/neu_registriert/'.date('Y_m').'_log.html';
+$logcontent = '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+				<h2 style="text-align: center">'.date('Y-m-d').'</h2><hr>';
 
 $empf_array = array();
 if(defined('BEWERBERTOOL_BEWERBUNG_EMPFAENGER'))
@@ -144,7 +168,7 @@ if($result = $db->db_query($qry))
 					$empfaenger = 'info.bid@technikum-wien.at';
 				
 				$mail = new mail($empfaenger, 'no-reply', 'Neu registriert '.$bezeichnung.' '.$orgform, 'Bitte sehen Sie sich die Nachricht in HTML Sicht an, um den Inhalt vollständig darzustellen.');
-				$mail->setBCCRecievers('kindlm@technikum-wien.at');
+				//$mail->setBCCRecievers('kindlm@technikum-wien.at');
 				$mail->setHTMLContent($mailcontent);
 				$mail->send();
 				
@@ -227,7 +251,7 @@ if($result = $db->db_query($qry))
 			$empfaenger = 'info.bid@technikum-wien.at';
 
 		$mail = new mail($empfaenger, 'no-reply', 'Neu registriert '.$bezeichnung.' '.$orgform, 'Bitte sehen Sie sich die Nachricht in HTML Sicht an, um den Inhalt vollständig darzustellen.');
-		$mail->setBCCRecievers('kindlm@technikum-wien.at');
+		//$mail->setBCCRecievers('kindlm@technikum-wien.at');
 		$mail->setHTMLContent($mailcontent);
 		$mail->send();
 		

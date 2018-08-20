@@ -66,7 +66,7 @@ elseif($save_error_kontakt===true)
 	$gemeinde = isset($adresse->result[0]->gemeinde)?$adresse->result[0]->gemeinde:'';
 	$adr_nation = isset($adresse->result[0]->nation)?$adresse->result[0]->nation:'';
 
-	$disabled='';
+	$disabled = '';
 	if($eingabegesperrt)
 	{
 		$disabled='disabled="disabled"';
@@ -136,8 +136,8 @@ elseif($save_error_kontakt===true)
 			<div class="form-group <?php echo ($ort==''?'has-error':'') ?>">
 				<label for="ort" class="col-sm-2 control-label"><?php echo $p->t('global/ort') ?>*</label>
 				<div class="col-sm-10">
-					<input type="text" name="ort" id="ort_input" maxlength="256" value="<?php echo $ort ?>" <?php echo $disabled.' '.($ort==''?'disabled="disabled"':'') ?> class="form-control">
-					<select id="ort_dropdown" name="ort" class="form-control" <?php echo $disabled.' '.($ort==''?'':'') ?>></select>
+					<input type="text" name="ort" id="ort_input" maxlength="256" value="<?php echo $ort ?>" <?php echo $disabled.' '.($ort == ''?'disabled="disabled"':'') ?> class="form-control">
+					<select id="ort_dropdown" name="ort" class="form-control" <?php echo $disabled.' '.($ort == ''?'':'') ?>></select>
 					<input type="hidden" name="gemeinde" id="gemeinde_input" value="<?php echo $gemeinde ?>" class="form-control">
 				</div>
 			</div>
@@ -174,6 +174,8 @@ elseif($save_error_kontakt===true)
 				{
 					$("#ort_dropdown").hide();
 					$("#ort_input").show();
+					if ($("#ort_input").val() == '')
+						$("#ort_input").prop('disabled', false);
 				}
 			});
 			$('#nation').change(function() 

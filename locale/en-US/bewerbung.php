@@ -1,14 +1,22 @@
 <?php
 $this->phrasen['bewerbung/ungueltigerZugriff']='invalid request';
-$this->phrasen['bewerbung/welcome']='Welcome to the Online Application';
+$this->phrasen['bewerbung/welcome']='Welcome to the Online Application Tool';
 $this->phrasen['bewerbung/registration']='Registration';
 $this->phrasen['bewerbung/registrieren']='Register';
 $this->phrasen['bewerbung/abschicken']='Submit';
 $this->phrasen['bewerbung/registrierenOderZugangscode']='<a href="'.$_SERVER['PHP_SELF'].'?method=registration">Register here</a> or enter access code';
-$this->phrasen['bewerbung/einleitungstext']='Please fill out the form, choose the degree program(s) desired and click "Submit".<br>You will receive an E-Mail with an access code then.
-		Please log in with that access code, complete your data and send your application.';//nur grob uebersetzt
-/*$this->phrasen['bewerbung/einleitungstext']='To apply please fill out the form <u>completely</u> and click on "Register".<br>
-                                                Afterwards you will still have the possibility to enter additional information and upload documents before submitting your application.';*/
+$this->phrasen['bewerbung/einleitungstext']='Please complete the form, select your preferred degree program(s) and click "Submit".<br>
+We will then send you an access code via e-mail to the address specified. You may use this access code at any time to log in, add personal information or degree programs and submit non-binding applications.<br><br>
+If you are interested in more than one degree programs, you may select up to 3 study programs.<br><br>
+Should you require any additional information, please do not hesitate to contact our <a href=\'https://www.technikum-wien.at/en/student-guide/admission-counselors/\' target=\'_blank\'>student counselling team</a> in person, by phone, or via e-mail or WhatsApp.<br><br>
+		Privacy information:<br>
+The data communicated to us by you for the purpose of the application will be used by us exclusively for the processing of the application on the basis of pre-contractual or contractual purposes and will not be passed on to third parties with the exception described below in case of uncertainties regarding the entry requirements. If there is no further contact or enrolment, your data will be deleted after three years.<br><br>
+Information on your data subject rights can be found here: <a href=\'https://www.technikum-wien.at/information-ueber-ihre-rechte-gemaess-datenschutz-grundverordnung/\' target=\'_blank\'>https://www.technikum-wien.at/information-ueber-ihre-rechte-gemaess-datenschutz-grundverordnung/</a><br><br>
+If you have any questions, please contact us at <a href=\'mailto:datenschutz@technikum-wien.at\'>datenschutz@technikum-wien.at</a><br><br>
+Data Processing Office:<br>
+University of Applied Sciences Technikum Wien<br>
+Höchstädtplatz 6<br>
+1200 Wien';
 $this->phrasen['bewerbung/login']='Login';
 $this->phrasen['bewerbung/zugangscode']='Access Code';
 $this->phrasen['bewerbung/fallsVorhanden']='(if available)';
@@ -40,6 +48,7 @@ $this->phrasen['bewerbung/captcha']='Please enter the characters shown in the pi
 $this->phrasen['bewerbung/andereGrafik']='Reload picture';
 $this->phrasen['bewerbung/datumFormat']='dd.mm.yyyy';
 $this->phrasen['bewerbung/datumUngueltig']='Date is invalid or out of range. Please enter a valid date in the format dd.mm.yyyy.';
+$this->phrasen['bewerbung/datumsformatUngueltig']='Date is invalid. Please enter a valid date in the format dd.mm.yyyy.';
 $this->phrasen['bewerbung/egal']='no preference';
 $this->phrasen['bewerbung/orgform']='Organizational structure';
 $this->phrasen['bewerbung/orgform/BB']='Part time';
@@ -63,18 +72,20 @@ $this->phrasen['bewerbung/neuerStudiengang'] = 'Please choose a degree program t
 $this->phrasen['bewerbung/geplanteStudienrichtung']='Planned field of study';
 $this->phrasen['bewerbung/menuAllgemein']='General';
 $this->phrasen['bewerbung/loginmitAccount']='Login with account';
-$this->phrasen['bewerbung/allgemeineErklaerung']='We are pleased that you are applying for one or more of our programs.<br><br>
-	You can only apply for 3 degree programs online. If you are interested in further degree programs or if you need counseling please contact our
-		<a href=\'https://www.technikum-wien.at/en/student-guide/admission-counselors/\' target=\'_blank\'>Admission counselors</a>.<br><br>
-                                                    Please fill out the form in full and then send it off. If all the values are entered correctly, under "Finish" you can send your application to the administrative assistant responsible.';// Mittelteil nur grob uebersetzt
-$this->phrasen['bewerbung/erklaerungStudierende']='We are pleased that you are applying for one or more of our programs.<br><br>
-	Please click "Add new application for a degree program" to add a new application.
-	You may need to complete your data then before you can send your application in the last step.';
+$this->phrasen['bewerbung/allgemeineErklaerung']='We are pleased that you are interested in the study programs we offer.<br><br>
+You may select - online - up to 3 study programs and as many further education courses as you like.<br>
+Click the green button to add a study program or course to your application.<br>
+Should you require any additional information, please do not hesitate to contact our <a href=\'https://www.technikum-wien.at/en/student-guide/admission-counselors/\' target=\'_blank\'>student counselling team</a> in person, by phone, or via e-mail or WhatsApp.<br><br>
+Complete the form in full. Once you have entered all details, send in your application by clicking "Finish".<br><br>
+Application deadlines for third countries (outside the EU) see:<br>
+<a href=\'https://www.technikum-wien.at/bewerbungsfristen\' target=\'_blank\'>https://www.technikum-wien.at/bewerbungsfristen</a><br><br>
+In accordance with the new provisions of the GDPR we want to <a href=\'https://cis.technikum-wien.at/cms/dms.php?id=77605\' target=\'_blank\'>inform you where personal data</a> are collected from you';
+$this->phrasen['bewerbung/erklaerungStudierende']='We are pleased that you are interested in the study programs we offer.<br><br>Click the green button to add a study program or course to your application.';
 $this->phrasen['bewerbung/aktuelleBewerbungen']='Current applications:';
 $this->phrasen['bewerbung/status']='Status';
 $this->phrasen['bewerbung/legende']='Legend';
 $this->phrasen['bewerbung/bewerbungsstatus']='Application Status';
-$this->phrasen['bewerbung/keinStatus']='Still no status available';
+$this->phrasen['bewerbung/keinStatus']='No current application. Click "Add application for degree program" to add a new application';
 $this->phrasen['bewerbung/bestaetigt']='confirmed, in progress';
 $this->phrasen['bewerbung/nichtBestaetigt']='application sent, not yet confirmed';
 $this->phrasen['bewerbung/nichtAbgeschickt']='application not sent';
@@ -98,8 +109,10 @@ $this->phrasen['bewerbung/kontakt']='Contact';
 $this->phrasen['bewerbung/nation']='Nation';
 $this->phrasen['bewerbung/menuDokumente']='Documents';
 $this->phrasen['bewerbung/dokument']='Document';
-$this->phrasen['bewerbung/bitteDokumenteHochladen']='The administrative assistant responsible will instruct you which documents you need to upload for your studies. It is also possible to click on the icon for "document will be submitted later" (hourglass).
-		In this case, you have the option of entering a brief comment and uploading the document later.';
+$this->phrasen['bewerbung/bitteDokumenteHochladen']='In order to be able to send in your application, you need to upload all documents marked as "required". 
+													If the document is not yet available at the respective time, you may submit the same at a later date. 
+													To do so, click the "submit document later" icon (hourglass) and specify when you are going to submit the document as well as the institution issuing the same.<br><br>
+													You may be prompted to upload more documents here in the course of your application.';
 $this->phrasen['bewerbung/linkDokumenteHochladen']='Upload Documents';
 $this->phrasen['bewerbung/dokumenteZumHochladen']='Required documents:';
 $this->phrasen['bewerbung/dokumentName']='Name';
@@ -108,7 +121,7 @@ $this->phrasen['bewerbung/dokumentErforderlich']='Required document';
 $this->phrasen['bewerbung/dokumentOffen']='Document not yet submitted (open)';
 $this->phrasen['bewerbung/dokumentNichtUeberprueft']='Document has been submitted but not yet examined';
 $this->phrasen['bewerbung/dokumentWirdNachgereicht']='Document will be submitted later';
-$this->phrasen['bewerbung/dokumentWurdeUeberprueft']='Document has already been examined';
+$this->phrasen['bewerbung/dokumentWurdeUeberprueft']='Document has been examined';
 $this->phrasen['bewerbung/dokumentHerunterladen']='Download document';
 $this->phrasen['bewerbung/abgegeben']='Submitted';
 $this->phrasen['bewerbung/upload']='Upload';
@@ -128,7 +141,7 @@ $this->phrasen['bewerbung/uhrzeit']='Time';
 $this->phrasen['bewerbung/stornieren']='cancel';
 $this->phrasen['bewerbung/menuBewerbungAbschicken']='Send Application';
 $this->phrasen['bewerbung/erklaerungBewerbungAbschicken']='If you have filled in all the information correctly you can submit your application.<br>
-                                                               The degree program administrative assistant responsible will contact you in the course of the next 10 working days regarding the application.';
+Generally, we will get back to you within 5 working days.';
 $this->phrasen['bewerbung/bewerbungAbschickenFuer']='Send application for';
 $this->phrasen['bewerbung/buttonBewerbungAbschicken']='Send application';
 $this->phrasen['bewerbung/logout']='Logout';
@@ -148,7 +161,7 @@ $this->phrasen['bewerbung/vollstaendig']='complete';
 $this->phrasen['bewerbung/unvollstaendig']='incomplete';
 $this->phrasen['bewerbung/teilweiseVollstaendig']='partially complete';
 $this->phrasen['bewerbung/maxAnzahlTeilnehmer']='Maximum number of participants reached';
-$this->phrasen['bewerbung/erfolgreichBeworben']='You have applied successfully. The administrative assistant responsible will contact you in the course of the next 10 working days.';
+$this->phrasen['bewerbung/erfolgreichBeworben']='You have applied successfully. Generally, we will get back to you within 5 working days.';
 $this->phrasen['bewerbung/fehlerBeimVersendenDerBewerbung']='An error occured while sending the application. Please try again.';
 $this->phrasen['bewerbung/svnrBereitsVorhanden']='Social Security Number already exists.';
 $this->phrasen['bewerbung/menuBewerbungFuerStudiengang']='Application for a degree program';
@@ -177,6 +190,7 @@ $this->phrasen['bewerbung/maennlich']='Male';
 $this->phrasen['bewerbung/weiblich']='Female';
 $this->phrasen['bewerbung/maturazeugnis']='School leaving certificate';
 $this->phrasen['bewerbung/details']='Details';
+$this->phrasen['bewerbung/mehrDetails']='More details...';
 $this->phrasen['bewerbung/codeZuschicken']='Send code';
 $this->phrasen['bewerbung/codeZuschickenAnleitung']='Please enter your e-mail adress and click "Send code"';
 $this->phrasen['bewerbung/keinCodeVorhanden']='There is no access code available yet for this e-mail address. Please register in advance.';
@@ -216,14 +230,62 @@ $this->phrasen['bewerbung/pflichtfelder']='Required';
 $this->phrasen['bewerbung/bitteGueltigeOesterreichischePlzEingeben']='Please enter a valid Austrian postcode';//nur grob uebersetzt
 $this->phrasen['bewerbung/plzMussGueltigSein']='Postcode must be a valid number';//nur grob uebersetzt
 $this->phrasen['bewerbung/plzUnbekannt']='Postcode unknown';//nur grob uebersetzt
-$this->phrasen['bewerbung/bewerbungDerzeitNichtMoeglich']='Application currently not possible. Please contact the <a href="mailto:%s">Degree Program</a>';
+$this->phrasen['bewerbung/dateien']='Files(s)';
+$this->phrasen['bewerbung/dokumentWirdGeprueft']='Document in examination';
+$this->phrasen['bewerbung/dokumentUeberprueft']='Document examined';
+$this->phrasen['bewerbung/keineDateiAusgewaehlt']='No file selected or found';
+$this->phrasen['bewerbung/placeholderAnmerkungNachgereicht']='Please tell us the Name of the school and when you expect to be able to upload the document';//nur grob uebersetzt
+$this->phrasen['bewerbung/bitteAusstellungsnationAuswaehlen']='-- Please select the ausstellungsnation --';//nur grob uebersetzt
+$this->phrasen['bewerbung/sitzungAbgelaufen']='Seesion expired. Please log in again.';
+$this->phrasen['bewerbung/placeholderOrtNachgereicht']='Name of school (e.g.: TGM Wien)';//nur grob uebersetzt
+$this->phrasen['bewerbung/wirdNachgreichtAm']='Submitted till';//nur grob uebersetzt
+$this->phrasen['bewerbung/ausstellendeInstitution']='School';//nur grob uebersetzt
+$this->phrasen['bewerbung/dokumenteVollstaendig']='All required documents have been uploaded';//nur grob uebersetzt
+$this->phrasen['bewerbung/keinDokumententypUebergeben']='Document type is not set';
+$this->phrasen['bewerbung/aktion']='Action';
+$this->phrasen['bewerbung/bewerbungStornieren']='Cancel application';
+$this->phrasen['bewerbung/bewerbungStorniert']='Application cancelled';
+$this->phrasen['bewerbung/bewerbungStornierenInfotext']='If you cancel the application you will not be able to assign again for "%2$s" in %1$s<br><br>Do you want to proceed?';
+$this->phrasen['bewerbung/bewerbungStornierenBestaetigen']='Yes, cancel application';
+$this->phrasen['bewerbung/vergangeneBewerbungen']='Past applications';
+$this->phrasen['bewerbung/buttonStornierenDisabled']='Once the application has been sent or rejected you can not cancel it any more';
+$this->phrasen['bewerbung/infotextDisabled']='An application for %s already exists';
+$this->phrasen['bewerbung/bitteAnmerkungEintragen']='Please enter the name of the institution that will issue the document';//nur grob uebersetzt
+$this->phrasen['bewerbung/nachreichDatumNichtVergangenheit']='The date may not be in the past';//nur grob uebersetzt
+$this->phrasen['bewerbung/infotextVorlaeufigesZgvDokument']='Please upload the last received certificate from your school';//nur grob uebersetzt
+$this->phrasen['bewerbung/bitteDateiAuswaehlen']='Please choose a file';//nur grob uebersetzt
+$this->phrasen['bewerbung/zustimmungDatenuebermittlung']='If in exceptional cases the admission requirements can not be finally clarified by the UAS Technikum Wien, I give my consent that the UAS Technikum Wien can forward the documents to the competent authorities for verification.<br>
+I have been informed that I am under no obligation to consent to the transmission of my data. However, this consent is necessary in order for the application to be considered.';
+$this->phrasen['bewerbung/bitteDatenuebermittlungZustimmen']='You have to consent the transmission of your data to send the application.';
+$this->phrasen['bewerbung/vorlaeufigesDokument']='Temporary document';
+$this->phrasen['bewerbung/lehrgangZurWeiterbildung']='Certificate Program for Further Education';
+$this->phrasen['bewerbung/lehrgangsArt/1']='Post graduate program';
+$this->phrasen['bewerbung/lehrgangsArt/2']='Academic course';
+$this->phrasen['bewerbung/lehrgangsArt/3']='International course';
+$this->phrasen['bewerbung/lehrgangsArt/4']='Certificate program';
+$this->phrasen['bewerbung/lehrgangsArt/5']='Postgradualer Lehrgang';
+
+// Ausbildung
+$this->phrasen['bewerbung/menuAusbildung']='Ausbildung';
+$this->phrasen['bewerbung/ausbildung']='Ausbildung zu Ihrer Zugangsvoraussetzung';
+$this->phrasen['bewerbung/ausbildungSchule']='Name der Schule';
+$this->phrasen['bewerbung/ausbildungSchuleAdresse']='Adresse der Schule';
+$this->phrasen['bewerbung/paymentInfoText']='';
+
+$this->phrasen['bewerbung/bewerbungDerzeitNichtMoeglich']='Application currently not possible. Please contact <a href="mailto:%1$s">%1$s</a>';
 $this->phrasen['bewerbung/bewerbungenFuerAb']='Application for %s starting %s';
-$this->phrasen['bewerbung/erfolgreichBeworbenMail']='You have applied successfully. The administrative assistant responsible will contact you in the course of the next 10 working days.';
+$this->phrasen['bewerbung/erfolgreichBeworbenMail']='Dear %3$s %1$s %2$s,<br><br>
+Your have successfully submitted your application for the degree program %4$s. Generally, we will get back to you within 5 working days. If necessary, you will then be requested to upload additional documents.<br><br>
+You can see the status of your application in the application tool.<br> 
+If you have any questions regarding your application, do not hesitate to contact our Info Center at <a href="mailto:infocenter@technikum-wien.at">infocenter@technikum-wien.at</a>.<br><br>
+Best regards,<br>
+UAS Technikum Wien';
+$this->phrasen['bewerbung/erfolgreichBeworbenMailBetreff']='Application confirmation UAS Technikum Wien';
 $this->phrasen['bewerbung/bewerbungsfrist']='Application deadline';
-$this->phrasen['bewerbung/bewerbungszeitraum']='Application period';
+$this->phrasen['bewerbung/bewerbungszeitraum']='Application period (within the EU)';
 $this->phrasen['bewerbung/bewerbungsfristAbgelaufen']='Application deadline expired';
 $this->phrasen['bewerbung/bewerbungAusserhalbZeitraum']='Your application for this degree program is out of period. Your application has not been sent.';
-$this->phrasen['bewerbung/unbegrenzt']='undefined';
+$this->phrasen['bewerbung/unbegrenzt']='open';
 $this->phrasen['bewerbung/bewerbungszeitraumStartetAm']='Application period starts %s';
 $this->phrasen['bewerbung/bewerbungsfristEndetInXTagen']='Application period ends in %s days';
 $this->phrasen['bewerbung/bewerbungsfristEndetHeute']='Application period ends today';
@@ -241,5 +303,4 @@ $this->phrasen['bewerbung/re_anrede']='Salutation';
 $this->phrasen['bewerbung/re_titel']='Titel';
 $this->phrasen['bewerbung/re_vorname']='Surname';
 $this->phrasen['bewerbung/re_nachname']='Name';
-
 ?>

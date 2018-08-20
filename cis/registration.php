@@ -37,12 +37,17 @@ require_once('../../../include/sprache.class.php');
 require_once('../../../include/benutzer.class.php');
 require_once('../../../include/konto.class.php');
 require_once('../include/functions.inc.php');
+require_once('../../../include/functions.inc.php');
 require_once('../bewerbung.config.inc.php');
+require_once ('../../../include/personlog.class.php');
 
 require_once '../../../include/securimage/securimage.php';
 
+session_cache_limiter('none'); //muss gesetzt werden sonst funktioniert der Download mit IE8 nicht
 session_start();
+
 $lang = filter_input(INPUT_GET, 'lang');
+$log = new personlog();
 
 if(isset($lang))
 {
@@ -74,6 +79,21 @@ $username = trim(filter_input(INPUT_POST, 'username'));
 $password = trim(filter_input(INPUT_POST, 'password'));
 $code = trim(filter_input(INPUT_GET, 'code'));
 
+// Erstellen eines Array mit allen Studiengängen
+$studiengaenge_obj = new studiengang();
+$studiengaenge_obj->getAll();
+$studiengaenge_arr = array();
+
+foreach ($studiengaenge_obj->result as $row)
+{
+	$studiengaenge_arr[$row->studiengang_kz]['kurzbz'] = $row->kurzbz;
+	$studiengaenge_arr[$row->studiengang_kz]['bezeichnung'] = $row->bezeichnung;
+	$studiengaenge_arr[$row->studiengang_kz]['english'] = $row->english;
+	$studiengaenge_arr[$row->studiengang_kz]['typ'] = $row->typ;
+	$studiengaenge_arr[$row->studiengang_kz]['orgform_kurzbz'] = $row->orgform_kurzbz;
+	$studiengaenge_arr[$row->studiengang_kz]['oe_kurzbz'] = $row->oe_kurzbz;
+}
+
 // Login gestartet
 if ($userid)
 {
@@ -86,6 +106,15 @@ if ($userid)
 	{
 		$_SESSION['bewerbung/user'] = $userid;
 		$_SESSION['bewerbung/personId'] = $person_id;
+		
+		$log->log(	$person_id,
+					'Action',
+					array('name'=>'Login with code','success'=>true,'message'=>'Login with access code'),
+					'bewerbung',
+					'bewerbung',
+					null,
+					'online'
+				);
 
 		header('Location: bewerbung.php');
 		exit;
@@ -110,6 +139,15 @@ elseif($username && $password)
 			{
 				$_SESSION['bewerbung/user'] = $userid;
 				$_SESSION['bewerbung/personId'] = $person_id;
+				
+				$log->log($person_id,
+					'Action',
+					array('name'=>'Login with user','success'=>true,'message'=>'Login with username and password'),
+					'bewerbung',
+					'bewerbung',
+					null,
+					'online'
+				);
 
 				header('Location: bewerbung.php');
 				exit;
@@ -134,7 +172,7 @@ elseif($username && $password)
 <!DOCTYPE html>
 <html>
 	<head>
-		<title>Registration für Studiengänge</title>
+		<title><?php echo $p->t('bewerbung/bewerbung') ?></title>
 		<meta http-equiv="X-UA-Compatible" content="chrome=1">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
@@ -244,11 +282,11 @@ elseif($username && $password)
 				if(isset($submit) || isset($resend_code))
 				{
 					// Pruefen, ob schon eine Bewerbung fuer diese Mailadresse existiert->Wenn ja, Code nochmal dorthin schicken
-					$return = check_load_bewerbungen($email);
+					$return = check_load_bewerbungen(trim($email));
 					if($return)
 					{
 						//Wenn es noch keinen Zugangscode für die Person gibt, generiere einen
-						if($return->zugangscode=='')
+						if($return->zugangscode == '')
 						{
 							$person = new person($return->person_id);
 
@@ -263,17 +301,49 @@ elseif($username && $password)
 							{
 								die($p->t('global/fehlerBeimSpeichernDerDaten'));
 							}
+							else 
+							{
+								// Logeintrag schreiben
+								$log->log($return->person_id,
+									'Action',
+									array('name'=>'Access code generated','success'=>true,'message'=>'Access code has been generated because none was present'),
+									'bewerbung',
+									'bewerbung',
+									null,
+									'online'
+								);
+							}
 						}
 						if (isset($resend_code))
 						{
 							$zugangscode = $return->zugangscode;
 							echo '<p class="alert alert-success">'.resendMail($zugangscode, $email).'</p>';
+							// Logeintrag schreiben
+							$log->log($return->person_id,
+								'Action',
+								array('name'=>'Access code requested','success'=>true,'message'=>'User requested for access code'),
+								'bewerbung',
+								'bewerbung',
+								null,
+								'online'
+							);
 							exit();
 						}
 						else
+						{
 							$message = '<p class="alert alert-danger" id="danger-alert">'.$p->t('bewerbung/mailadresseBereitsGenutzt',array($email)).'</p>
 							<button type="submit" class="btn btn-primary" value="Ja" onclick="document.RegistrationLoginForm.action=\''.basename(__FILE__).'?method=registration&ReSendCode\'; document.getElementById(\'RegistrationLoginForm\').submit();">'.$p->t('bewerbung/codeZuschicken').'</button>
 							<button type="submit" class="btn btn-primary" value="Nein" onclick="document.RegistrationLoginForm.email.value=\'\'; document.getElementById(\'RegistrationLoginForm\').submit();">'.$p->t('global/abbrechen').'</button>';
+							// Logeintrag schreiben
+							$log->log($return->person_id,
+								'Action',
+								array('name'=>'Attempt to register with existing mailadress','success'=>false,'message'=>'User tried to register with the existing mail adress '.$email),
+								'bewerbung',
+								'bewerbung',
+								null,
+								'online'
+							);
+						}
 
 					}
 					else
@@ -291,6 +361,10 @@ elseif($username && $password)
 						elseif (BEWERBERTOOL_STUDIENAUSWAHL_ANZEIGEN && defined('BEWERBERTOOL_MAX_STUDIENGAENGE') && BEWERBERTOOL_MAX_STUDIENGAENGE != '' && count($studiengaengeBaMa) > BEWERBERTOOL_MAX_STUDIENGAENGE)
 						{
 							$message = '<p class="bg-danger padding-10">'.$p->t('bewerbung/sieKoennenMaximalXStudiengaengeWaehlen', array(BEWERBERTOOL_MAX_STUDIENGAENGE)).'</p>';
+						}
+						elseif (BEWERBERTOOL_SHOW_ZUSTIMMUNGSERKLAERUNG_REGISTRATION && !isset($_POST['zustimmung_datenuebermittlung']))
+						{
+							$message = '<p class="bg-danger padding-10">'.$p->t('bewerbung/bitteDatenuebermittlungZustimmen').'</p>';
 						}
 						else
 						{
@@ -334,6 +408,15 @@ elseif($username && $password)
 								die($p->t('global/fehlerBeimSpeichernDerDaten'));
 							}
 
+							// Logeintrag schreiben
+							$log->log($person->person_id,
+								'Processstate',
+								array('name'=>'New registration','message'=>'Person registered in application tool'),
+								'bewerbung',
+								'bewerbung',
+								null,
+								'online');
+
 							if(BEWERBERTOOL_STUDIENAUSWAHL_ANZEIGEN && count($studiengaenge) < ANZAHL_PREINTERESSENT)
 							{
 								$anzStg = count($studiengaenge);
@@ -371,10 +454,10 @@ elseif($username && $password)
 									$prestudent_status->status_kurzbz = 'Interessent';
 									$prestudent_status->studiensemester_kurzbz = $std_semester;
 									$prestudent_status->ausbildungssemester = '1';
-									$prestudent_status->datum = date("Y-m-d H:m:s");
-									$prestudent_status->insertamum = date("Y-m-d H:m:s");
+									$prestudent_status->datum = date("Y-m-d H:i:s");
+									$prestudent_status->insertamum = date("Y-m-d H:i:s");
 									$prestudent_status->insertvon = 'online';
-									$prestudent_status->updateamum = date("Y-m-d H:m:s");
+									$prestudent_status->updateamum = date("Y-m-d H:i:s");
 									$prestudent_status->updatevon = 'online';
 									$prestudent_status->new = true;
 									$prestudent_status->anmerkung_status = $anmerkungen[$studiengaenge[$i]];
@@ -384,6 +467,17 @@ elseif($username && $password)
 									if(!$prestudent_status->save_rolle())
 									{
 										die($p->t('global/fehlerBeimSpeichernDerDaten'));
+									}
+									else 
+									{
+										// Logeintrag schreiben
+										$log->log($person->person_id,
+											'Action',
+											array('name'=>'New PreStudent','success'=>true,'message'=>'New PreStudent for '.$studiengaenge_arr[$studiengaenge[$i]]['bezeichnung'].' ('.$orgform[$studiengaenge[$i]].') Studienplan '.$studienplan_id.' saved'),
+											'bewerbung',
+											'bewerbung',
+											$studiengaenge_arr[$studiengaenge[$i]]['oe_kurzbz'],
+											'online');
 									}
 									if (defined('BEWERBERTOOL_KONTOBELASTUNG_BUCHUNGSTYP') && BEWERBERTOOL_KONTOBELASTUNG_BUCHUNGSTYP != '')
 									{
@@ -466,26 +560,6 @@ elseif($username && $password)
 					<p class="infotext">
 						<?php echo $p->t('bewerbung/einleitungstext') ?>
 					</p>
-					<!--
-					<div class="form-group">
-						<label for="zugangscode" class="col-sm-3 control-label">
-							<?php echo $p->t('bewerbung/zugangscode') ?> <?php echo $p->t('bewerbung/fallsVorhanden') ?>
-						</label>
-						<div class="col-sm-4">
-							<div class="input-group">
-								<input type="text" class="form-control" id="zugangscode" name="userid" placeholder="<?php echo $p->t('bewerbung/zugangscode') ?>">
-								<span class="input-group-btn">
-									<button type="submit" class="btn btn-primary" value="Login">
-										<?php echo $p->t('bewerbung/login') ?>
-									</button>
-								</span>
-							</div>
-						</div>
-						<div class="col-sm-4">
-							<a href="<?php echo basename(__FILE__) ?>?method=resendcode">Zugangscode vergessen?</a>
-						</div>
-					</div>-->
-
 					<div class="form-group">
 						<label for="vorname" class="col-sm-3 control-label">
 							<?php echo $p->t('global/vorname') ?>
@@ -567,12 +641,25 @@ elseif($username && $password)
 						</label>
 						<div class="col-sm-7" id="liste-studiengaenge">
 							<?php
+							// Zuerst sollen Bachelor- und Master-Studiengänge angezeigt werden, danach alle Anderen
+							if ($sprache == DEFAULT_LANGUAGE)
+								$order = "	CASE tbl_studiengang.typ
+												WHEN 'b' THEN 1
+												WHEN 'm' THEN 2
+												ELSE 3
+											END, tbl_lgartcode.bezeichnung ASC, studiengangbezeichnung";
+							else
+								$order = "	CASE tbl_studiengang.typ
+												WHEN 'b' THEN 1
+												WHEN 'm' THEN 2
+												ELSE 3
+											END, tbl_lgartcode.bezeichnung ASC, studiengangbezeichnung_englisch";
 							$stg = new studiengang();
-							$stg->getAllForOnlinebewerbung();
+							$stg->getAllForOnlinebewerbung($order);
 
 							$stghlp = new studiengang();
 							$stghlp->getLehrgangstyp();
-							$lgtyparr=array();
+							$lgtyparr = array();
 							foreach($stghlp->result as $row)
 								$lgtyparr[$row->lgartcode]=$row->bezeichnung;
 
@@ -612,7 +699,7 @@ elseif($username && $password)
 									echo '<div class="panel-group"><div class="panel panel-default">';
 									echo '<div class="panel-heading">
 											<a href="#'.$result->typ_bezeichnung.'" data-toggle="collapse">
-												<h4>'.$typ_bezeichung.'  <small><span class="glyphicon glyphicon-collapse-down"></span></small></h4>
+												<h4>'.($result->typ == 'l' ? $p->t('bewerbung/lehrgangZurWeiterbildung') : $result->typ_bezeichnung).'  <small><span class="glyphicon glyphicon-collapse-down"></span></small></h4>
 											</a>
 											</div>';
 									echo '<div id="'.$result->typ_bezeichnung.'" class="panel-collapse '.$collapse.'">';
@@ -622,7 +709,7 @@ elseif($username && $password)
 								}
 								if($last_lgtyp != $result->lehrgangsart && $result->lehrgangsart != '')
 								{
-									echo '<div class="panel-heading"><b>'.$result->lehrgangsart.'</b></div>';
+									echo '<div class="panel-heading"><b>'.$p->t('bewerbung/lehrgangsArt/'.$result->lgartcode).'</b></div>';
 									$last_lgtyp = $result->lehrgangsart;
 								}
 
@@ -700,19 +787,22 @@ elseif($username && $password)
 
 									// Wenn kein gueltiger Studienplan gefunden wird, ist die Registration nicht moeglich und es wird ein Infotext angezeigt
 									$fristAbgelaufen = true;
-
-									$empf_array = array();
-									if(defined('BEWERBERTOOL_BEWERBUNG_EMPFAENGER'))
-										$empf_array = unserialize(BEWERBERTOOL_BEWERBUNG_EMPFAENGER);
-
-									if(defined('BEWERBERTOOL_MAILEMPFANG') && BEWERBERTOOL_MAILEMPFANG!='')
-										$empfaenger = BEWERBERTOOL_MAILEMPFANG;
-									elseif(isset($empf_array[$result->studiengang_kz]))
-										$empfaenger = $empf_array[$result->studiengang_kz];
-									else
+									
+									// An der FHTW werden alle Mails von Bachelor-Studiengängen an das Infocenter geschickt, solange die Bewerbung noch nicht bestätigt wurde
+									if (CAMPUS_NAME == 'FH Technikum Wien')
 									{
-										$studiengang = new studiengang($result->studiengang_kz);
-										$empfaenger = $studiengang->email;
+										if(	defined('BEWERBERTOOL_MAILEMPFANG') && 
+											BEWERBERTOOL_MAILEMPFANG != '' && 
+											$result->typ == 'b')
+										{
+											$empfaenger = BEWERBERTOOL_MAILEMPFANG;
+										}
+										else
+											$empfaenger = getMailEmpfaenger($result->studiengang_kz);
+									}
+									else 
+									{
+										$empfaenger = getMailEmpfaenger($result->studiengang_kz);
 									}
 
 									$stg_bezeichnung .= '<br><span style="color:orange"><i>'.$p->t('bewerbung/bewerbungDerzeitNichtMoeglich',array($empfaenger)).'</i></span>';
@@ -905,12 +995,21 @@ elseif($username && $password)
 					<?php endif; ?>
 
 					<div class="form-group">
-						<div class="col-sm-3">
+						<div class="col-xs-10 col-xs-offset-1 col-sm-9 col-sm-offset-3">
+							<label class="checkbox-inline">
+								<input type="checkbox" name="zustimmung_datenuebermittlung" id="checkbox_zustimmung_datenuebermittlung" value="" required="required">
+								<?php echo $p->t('bewerbung/zustimmungDatenuebermittlung') ?>
+							</label>
+						</div>
+					</div>
+					<div class="form-group">
+						
+						<label for="captcha_code" class="col-sm-3 control-label">
 							<img id="captcha" class="center-block img-responsive" src="<?php echo APP_ROOT ?>include/securimage/securimage_show.php" alt="CAPTCHA Image" />
 							<a href="#" onclick="document.getElementById('captcha').src = '<?php echo APP_ROOT ?>include/securimage/securimage_show.php?' + Math.random(); return false">
 								<?php echo $p->t('bewerbung/andereGrafik') ?>
 							</a>
-						</div>
+						</label>
 						<div class="col-sm-4">
 							<?php echo $p->t('bewerbung/captcha') ?>
 							<input type="text" name="captcha_code" maxlength="6" id="captcha_code" class="form-control">
@@ -932,7 +1031,7 @@ elseif($username && $password)
 				<?php echo $message;
 
 				$email = filter_input(INPUT_POST, 'email');
-				$return = check_load_bewerbungen($email);
+				$return = check_load_bewerbungen(trim($email));
 				$resend_code = filter_input(INPUT_POST, 'resend_code');
 				$orgform_kurzbz = filter_input(INPUT_GET, 'orgform_kurzbz');
 				if($email!='')
@@ -957,17 +1056,38 @@ elseif($username && $password)
 								{
 									die($p->t('global/fehlerBeimSpeichernDerDaten'));
 								}
+								else 
+								{
+									// Logeintrag schreiben
+									$log->log($return->person_id,
+										'Action',
+										array('name'=>'Access code generated','success'=>true,'message'=>'Access code has been generated because none was present'),
+										'bewerbung',
+										'bewerbung',
+										null,
+										'online'
+									);
+								}
 							}
 							if($return)
 							{
 								$zugangscode = $return->zugangscode;
 								echo '<p class="alert alert-success"><button type="button" class="close" data-dismiss="alert">x</button>'.sendMail($zugangscode, $email, $return->person_id).'</p>';
+								// Logeintrag schreiben
+								$log->log($return->person_id,
+									'Action',
+									array('name'=>'Access code sent','success'=>true,'message'=>'User requested his access code'),
+									'bewerbung',
+									'bewerbung',
+									null,
+									'online'
+								);
 							}
 							else
 								echo '<p class="alert alert-danger"><button type="button" class="close" data-dismiss="alert">x</button>'.$p->t('bewerbung/keinCodeVorhanden').'</p>';
 						}
 						else
-							$message = '<p class="alert alert-danger" id="danger-alert">Fehler aufgetreten</p>';//@todo: Phrasenmodul
+							$message = '<p class="alert alert-danger" id="danger-alert">'.$p->t('global/fehleraufgetreten').'</p>';
 					}
 					else
 						echo '<p class="alert alert-danger"><button type="button" class="close" data-dismiss="alert">x</button>'.$p->t('bewerbung/keinCodeVorhanden').'</p>';
@@ -976,10 +1096,16 @@ elseif($username && $password)
 				<div class="row">
 					<div class="col-sm-8 col-sm-offset-2">
 						<form method="post" action="<?php echo basename(__FILE__) ?>?method=resendcode" id="ResendCodeForm" name="ResendCodeForm" class="form-horizontal">
-							<img class="center-block img-responsive" src="../../../skin/styles/<?php echo DEFAULT_STYLE ?>/logo.png">
-							<h1 class="text-center page-header">
-								<?php echo $p->t('bewerbung/welcome') ?>
-							</h1>
+							<div style="border-bottom: 1px solid #eee; margin-bottom: 30px;" class="row">
+								<div class="col-md-4">
+									<div style="text-align: center;">
+										<img style="margin: 30px 10px;" src="../../../skin/styles/<?php echo DEFAULT_STYLE ?>/logo.png"/>
+									</div>
+								</div>
+								<div style="text-align: center;" class="col-md-8">
+									<h1 style="margin: 30px 10px;"><?php echo $p->t('bewerbung/welcome') ?></h1>
+								</div>
+							</div>
 							<p class="text-center"><?php echo $p->t('bewerbung/codeZuschickenAnleitung') ?></p><br>
 							<div class="form-group">
 								<label for="email" class="col-sm-4 control-label">
@@ -1014,19 +1140,25 @@ elseif($username && $password)
 					<!--<div class="col-xs-10 col-xs-offset-1 col-sm-6 col-sm-offset-3">-->
 					<div class="col-sm-8 col-sm-offset-2">
 						<form action ="<?php echo basename(__FILE__) ?>" method="POST" id="lp" class="form-horizontal">
-							<img class="center-block img-responsive" src="../../../skin/styles/<?php echo DEFAULT_STYLE ?>/logo.png">
-							<h1 class="text-center page-header">
-								<?php echo $p->t('bewerbung/welcome') ?>
-							</h1>
+							<div style="border-bottom: 1px solid #eee; margin-bottom: 30px;" class="row">
+								<div class="col-md-4">
+									<div style="text-align: center;">
+										<img style="margin: 30px 10px;" src="../../../skin/styles/<?php echo DEFAULT_STYLE ?>/logo.png"/>
+									</div>
+								</div>
+								<div style="text-align: center;" class="col-md-8">
+									<h1 style="margin: 30px 10px;"><?php echo $p->t('bewerbung/welcome') ?></h1>
+								</div>
+							</div>
 							<div class="panel panel-info">
-							  <div class="panel-heading text-center">
-							    <h3 class="panel-title"><?php echo $p->t('bewerbung/sieHabenNochKeinenZugangscode') ?></h3>
-							  </div>
-							  <div class="panel-body text-center">
-							  	<br>
-							    <a class="btn btn-primary btn-lg" href="<?php echo basename(__FILE__) ?>?method=registration&stg_kz=<?php echo filter_input(INPUT_GET, 'stg_kz') ?>&orgform_kurzbz=<?php echo filter_input(INPUT_GET, 'orgform_kurzbz') ?>" role="button"><?php echo $p->t('bewerbung/hierUnverbindlichAnmelden') ?></a>
-							    <br><br>
-							  </div>
+								<div class="panel-heading text-center">
+									<h3 class="panel-title"><?php echo $p->t('bewerbung/sieHabenNochKeinenZugangscode') ?></h3>
+								</div>
+								<div class="panel-body text-center">
+									<br>
+									<a class="btn btn-primary btn-lg" href="<?php echo basename(__FILE__) ?>?method=registration&stg_kz=<?php echo filter_input(INPUT_GET, 'stg_kz') ?>&orgform_kurzbz=<?php echo filter_input(INPUT_GET, 'orgform_kurzbz') ?>" role="button"><?php echo $p->t('bewerbung/hierUnverbindlichAnmelden') ?></a>
+									<br><br>
+								</div>
 							</div>
 							<div class="panel panel-info">
 								<div class="panel-heading text-center">
@@ -1103,7 +1235,7 @@ elseif($username && $password)
 			//require('views/modal_sprache_orgform.php');
 		?>
 		<script type="text/javascript" src="../../../vendor/jquery/jqueryV1/jquery-1.12.4.min.js"></script>
-+		<script type="text/javascript" src="../../../vendor/twbs/bootstrap/dist/js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="../../../vendor/twbs/bootstrap/dist/js/bootstrap.min.js"></script>
 		<script type="text/javascript">
 
 			function changeSprache(sprache)
@@ -1177,7 +1309,7 @@ elseif($username && $password)
 
 
 				}
-				if((document.getElementById('geschlechtm').checked == false)&&(document.getElementById('geschlechtw').checked == false))
+				if((document.getElementById('geschlechtm').checked == false) && (document.getElementById('geschlechtw').checked == false))
 				{
 					alert("<?php echo $p->t('bewerbung/bitteGeschlechtWaehlen')?>");
 					return false;
@@ -1191,6 +1323,13 @@ elseif($username && $password)
 				if(document.RegistrationLoginForm.studiensemester_kurzbz.value == "")
 				{
 					alert("<?php echo $p->t('bewerbung/bitteStudienbeginnWaehlen')?>");
+					return false;
+				}
+				<?php endif; ?>
+				<?php if(BEWERBERTOOL_SHOW_ZUSTIMMUNGSERKLAERUNG_REGISTRATION): ?>
+				if(document.getElementById('checkbox_zustimmung_datenuebermittlung').checked == false)
+				{
+					alert("<?php echo $p->t('bewerbung/bitteDatenuebermittlungZustimmen')?>");
 					return false;
 				}
 				<?php endif; ?>
