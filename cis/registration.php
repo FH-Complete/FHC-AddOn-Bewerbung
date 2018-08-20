@@ -831,8 +831,8 @@ elseif($username && $password)
 								{
 									echo '<div class="panel-body">
 									<div class="checkbox">
-										<label class="" id="#prio-dropown'.$result->studiengang_kz.'" data-toggle="collapse" data-target="#prio-dropown'.$result->studiengang_kz.'">
-											<input id="#input_prio-dropown'.$result->studiengang_kz.'" class="'.$class.'" type="checkbox" name="studiengaenge[]" value="'.$result->studiengang_kz.'" '.$checked.' '.$disabled.'>
+										<label data-toggle="collapse" data-target="#prio-dropown'.$result->studiengang_kz.'">
+											<input class="'.$class.'" type="checkbox" name="studiengaenge[]" value="'.$result->studiengang_kz.'" '.$checked.' '.$disabled.'>
 											'.$stg_bezeichnung;
 								}
 								else
@@ -887,12 +887,9 @@ elseif($username && $password)
 										<div class="col-sm-12 priogroup">';
 									if(count($orgformen_sprachen) > 0)
 									{
-										$anzahlStudienplaene = 0;
-										$anzahlAbgelaufeneBewerbungen = 0;
 										foreach($studienplan as $row)
 										{
 											$fristAbgelaufen = false;
-											$anzahlStudienplaene++;
 
 											// Bewerbungsfristen laden
 											$bewerbungszeitraum = '';
@@ -921,7 +918,6 @@ elseif($username && $password)
 											}
 											else
 											{
-												$anzahlAbgelaufeneBewerbungen++;
 												echo '<div class="radio disabled">
 												<label>
 													<input type="radio" name="" value="" disabled>
@@ -929,25 +925,6 @@ elseif($username && $password)
 												echo '</label>';
 											}
 											echo '</div>';
-										}
-										// Wenn die Bewerbungsfristen aller OrgFormen abgelaufen ist, Parent-Checkbox deaktivieren
-										if ($anzahlStudienplaene == $anzahlAbgelaufeneBewerbungen)
-										{
-											echo '	<script type="text/javascript">
-													function disableCheckboxFristAbgelaufen(studiengang_kz)
-													{
-														document.getElementById(\'#input_prio-dropown\'+studiengang_kz).checked = false;
-														document.getElementById(\'#input_prio-dropown\'+studiengang_kz).disabled = true;
-														document.getElementById(\'badge\'+studiengang_kz).innerHTML = "";
-														element = document.getElementById(\'#prio-dropown\'+studiengang_kz);
-														element.className += \' text-muted\';
-														innerText = \'<br/><div class="label label-danger">\';
-														innerText += \'<span class="glyphicon glyphicon-warning-sign"></span>\';
-														innerText += \'&nbsp;&nbsp;' . $p->t("bewerbung/bewerbungsfristFuerStudiensemesterXAbgelaufen", array($std_semester)) . '</div>\';
-														element.innerHTML += innerText;
-													}
-													</script>
-													<script>disableCheckboxFristAbgelaufen('.$result->studiengang_kz.')</script>';
 										}
 									}
 									else
