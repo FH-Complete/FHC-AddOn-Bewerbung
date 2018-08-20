@@ -272,6 +272,12 @@ $this->phrasen['bewerbung/zustimmungDatenuebermittlung']='Können in Ausnahmefä
 Ich wurde darüber informiert, dass ich nicht verpflichtet bin, der Übermittlung meiner Daten zuzustimmen. Diese Zustimmung ist allerdings notwendig, um die Bewerbung berücksichtigen zu können.';
 $this->phrasen['bewerbung/bitteDatenuebermittlungZustimmen']='Sie müssen der Datenübermittlung zustimmen, um Ihre Bewerbung abschicken zu können';
 $this->phrasen['bewerbung/vorlaeufigesDokument']='Vorläufiges Dokument';
+$this->phrasen['bewerbung/lehrgangZurWeiterbildung']='Lehrgang zur Weiterbildung';
+$this->phrasen['bewerbung/lehrgangsArt/1']='Master Lehrgang';
+$this->phrasen['bewerbung/lehrgangsArt/2']='Akademischer Lehrgang';
+$this->phrasen['bewerbung/lehrgangsArt/3']='Lehrgang zur Weiterbildung';
+$this->phrasen['bewerbung/lehrgangsArt/4']='Zertifizierungslehrgang';
+$this->phrasen['bewerbung/lehrgangsArt/5']='Postgradualer Lehrgang';
 
 // Ausbildung
 $this->phrasen['bewerbung/menuAusbildung']='Ausbildung';

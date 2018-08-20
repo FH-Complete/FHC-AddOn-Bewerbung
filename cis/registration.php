@@ -692,7 +692,7 @@ elseif($username && $password)
 									echo '<div class="panel-group"><div class="panel panel-default">';
 									echo '<div class="panel-heading">
 											<a href="#'.$result->typ_bezeichnung.'" data-toggle="collapse">
-												<h4>'.$result->typ_bezeichnung.'  <small><span class="glyphicon glyphicon-collapse-down"></span></small></h4>
+												<h4>'.($result->typ == 'l' ? $p->t('bewerbung/lehrgangZurWeiterbildung') : $result->typ_bezeichnung).'  <small><span class="glyphicon glyphicon-collapse-down"></span></small></h4>
 											</a>
 											</div>';
 									echo '<div id="'.$result->typ_bezeichnung.'" class="panel-collapse '.$collapse.'">';
@@ -702,7 +702,7 @@ elseif($username && $password)
 								}
 								if($last_lgtyp != $result->lehrgangsart && $result->lehrgangsart != '')
 								{
-									echo '<div class="panel-heading"><b>'.$result->lehrgangsart.'</b></div>';
+									echo '<div class="panel-heading"><b>'.$p->t('bewerbung/lehrgangsArt/'.$result->lgartcode).'</b></div>';
 									$last_lgtyp = $result->lehrgangsart;
 								}
 

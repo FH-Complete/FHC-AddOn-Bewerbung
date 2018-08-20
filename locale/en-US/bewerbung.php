@@ -258,6 +258,12 @@ $this->phrasen['bewerbung/zustimmungDatenuebermittlung']='If in exceptional case
 I have been informed that I am under no obligation to consent to the transmission of my data. However, this consent is necessary in order for the application to be considered.';
 $this->phrasen['bewerbung/bitteDatenuebermittlungZustimmen']='You have to consent the transmission of your data to send the application.';
 $this->phrasen['bewerbung/vorlaeufigesDokument']='Temporary document';
+$this->phrasen['bewerbung/lehrgangZurWeiterbildung']='Certificate Program for Further Education';
+$this->phrasen['bewerbung/lehrgangsArt/1']='Post graduate program';
+$this->phrasen['bewerbung/lehrgangsArt/2']='Academic course';
+$this->phrasen['bewerbung/lehrgangsArt/3']='International course';
+$this->phrasen['bewerbung/lehrgangsArt/4']='Certificate program';
+$this->phrasen['bewerbung/lehrgangsArt/5']='Postgradualer Lehrgang';
 
 // Ausbildung
 $this->phrasen['bewerbung/menuAusbildung']='Ausbildung';

@@ -637,7 +637,7 @@ $studiensemester_array = array();
 				<div class="dropdown">
 					<select id="ausbildungstyp" name="ausbildungstyp" class="form-control">
 						<option value="stg"><?php echo $p->t('global/studiengang') ?></option>
-						<option value="lehrg"><?php echo $p->t('bewerbung/lehrgang') ?></option>
+						<option value="lehrg"><?php echo $p->t('bewerbung/lehrgangZurWeiterbildung') ?></option>
 					</select>
 				</div>
 				<label for="studiensemester_kurzbz" class="control-label">
@@ -796,7 +796,7 @@ $studiensemester_array = array();
 					$radioBtn = '';
 					if($result->typ == 'l' && $last_lgtyp != $result->lehrgangsart && $result->lehrgangsart != '')
 					{
-						$radioBtn .= '<p style="padding-top: 20px;"><b>'.$result->lehrgangsart.'</b></p>';
+						$radioBtn .= '<p style="padding-top: 20px;"><b>'.$p->t('bewerbung/lehrgangsArt/'.$result->lgartcode).'</b></p>';
 						$last_lgtyp = $result->lehrgangsart;
 					}
 					if($result->typ != 'l' && $lasttyp != $result->typ)
