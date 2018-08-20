@@ -677,11 +677,18 @@ elseif($username && $password)
 							$lasttyp = '';
 							$last_lgtyp = '';
 							$bewerbungszeitraum = '';
+							$typ_bezeichung = '';
 
 							foreach($stg->result as $result)
 							{
 								if($lasttyp != $result->typ)
 								{
+									// Hack um typ_bezeichung mit Phrasen zu überschreiben
+									if ($result->typ_bezeichnung == 'Lehrgang' && $p->t('bewerbung/hackTypBezeichnungLehrgeange') != '')
+										$typ_bezeichung = $p->t('bewerbung/hackTypBezeichnungLehrgeange');
+									else
+										$typ_bezeichung = $result->typ_bezeichnung;
+										
 									if($lasttyp != '')
 										echo '</div></div></div>';
 

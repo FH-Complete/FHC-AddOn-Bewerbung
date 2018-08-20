@@ -278,6 +278,9 @@ $this->phrasen['bewerbung/lehrgangsArt/2']='Akademischer Lehrgang';
 $this->phrasen['bewerbung/lehrgangsArt/3']='Lehrgang zur Weiterbildung';
 $this->phrasen['bewerbung/lehrgangsArt/4']='Zertifizierungslehrgang';
 $this->phrasen['bewerbung/lehrgangsArt/5']='Postgradualer Lehrgang';
+$this->phrasen['bewerbung/hackTypBezeichnungLehrgeange']='Postgraduale Lehrgänge'; // Überschreibt die Typ-Bezeichnung "Lehrgang". Leer lassen, wenn nicht benötigt
+$this->phrasen['bewerbung/hackStufeBezeichnungBachelor']='Bachelor / postgradualer Lehrgang'; // Überschreibt die ZGV Stufen-Bezeichnung "Bachelor". Leer lassen, wenn nicht benötigt
+$this->phrasen['bewerbung/hackStufeBezeichnungMaster']='Master / postgradualer Master Lehrgang'; // Überschreibt die ZGV Stufen-Bezeichnung "Master". Leer lassen, wenn nicht benötigt
 
 // Ausbildung
 $this->phrasen['bewerbung/menuAusbildung']='Ausbildung';
