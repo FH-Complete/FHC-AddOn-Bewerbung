@@ -46,4 +46,8 @@ define('BEWERBERTOOL_STORNIERUNG_STATUSGRUND_ID', '');
 
 // Wenn true, wird bei der Registration die Checkbox mit der (verpflichtenden) Zustimmung zur Datenübermittlung angezeigt 
 define('BEWERBERTOOL_SHOW_ZUSTIMMUNGSERKLAERUNG_REGISTRATION', false);
+
+// Wenn true, wird für jede Bewerbung ein neuer PreStudent-Datensatz angelegt. 
+// Ansonsten wird ein PreStudent des selben Studiengangs ermittelt (wenn vorhanden) und ein neuer Status an diesen angehängt.
+define('BEWERBERTOOL_ALWAYS_CREATE_NEW_PRESTUDENT_FOR_APPLICATION', false);
 ?>

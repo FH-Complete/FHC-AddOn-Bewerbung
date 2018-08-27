@@ -200,12 +200,12 @@ $this->phrasen['bewerbung/adresse']='Adress (principal residence)';
 $this->phrasen['bewerbung/notizVom']='Note from';
 $this->phrasen['bewerbung/anmerkung']='Comment';
 $this->phrasen['bewerbung/anmerkungPlaceholder']='Here you have the opportunity to enter an additional comment (1024 Characters) that you want to tell the assistant';
-$this->phrasen['bewerbung/orgformMussGewaehltWerden']='You have to choose an organization form'; //nur grob uebersetzt
-$this->phrasen['bewerbung/hierUnverbindlichAnmelden']='Subscribe here'; //nur grob uebersetzt
-$this->phrasen['bewerbung/keineOrgformVorhanden']='No organizational form exists for the chosen semester'; //nur grob uebersetzt
-$this->phrasen['bewerbung/bitteOrgformWaehlen']='If you choose a degree program with mutiple organisation forms, you have to tick a priority'; //nur grob uebersetzt
-$this->phrasen['bewerbung/orgformWaehlen']='Choose an organisation form'; //nur grob uebersetzt
-$this->phrasen['bewerbung/orgformBeschreibungstext']='Please check the organisation form(s) in which you are interested in.'; //nur grob uebersetzt
+$this->phrasen['bewerbung/orgformMussGewaehltWerden']='An organization form must be selected';
+$this->phrasen['bewerbung/hierUnverbindlichAnmelden']='Register here without obligation';
+$this->phrasen['bewerbung/keineOrgformVorhanden']='No organization form has been stored for the semester of study selected';
+$this->phrasen['bewerbung/bitteOrgformWaehlen']='If you select a degree program with more than one organization form you must enter a priority';
+$this->phrasen['bewerbung/orgformWaehlen']='Select organization form';
+$this->phrasen['bewerbung/orgformBeschreibungstext']='Please enter the organization form(s) that interests you. If all the places in your chosen organization form have already been allocated, you are free to enter an alternative.';
 $this->phrasen['bewerbung/menuAbschließen']='Finish';
 $this->phrasen['bewerbung/sieHabenNochKeinenZugangscode']='You don\'t have an access code or account at the UAS Technikum Wien?';
 $this->phrasen['bewerbung/habenSieBereitsEinenZugangscode']='You already have an access code?';
@@ -221,15 +221,15 @@ $this->phrasen['bewerbung/vorbehaltlichAkkreditierung']='Subject to official acc
 $this->phrasen['bewerbung/auswahlmöglichkeitenImNaechstenSchritt']='Options in next step';
 $this->phrasen['bewerbung/sieKoennenMaximalXStudiengaengeWaehlen']='You can only apply for 3 degree programs online. If you are interested in further degree programs or if you need counseling please contact our <a href=\'https://www.technikum-wien.at/en/student-guide/admission-counselors/\' target=\'_blank\'>Admission counselors</a>'; //nur grob uebersetzt // Link muss mit einfachen Hochkomma maskiert werden, das es sonst im Bewerbungstool zu Anzeigefehlern kommt
 $this->phrasen['bewerbung/bitteEineStudienrichtungWaehlen']='Please select one field of study.';
-$this->phrasen['bewerbung/beschreibungTitelPre']='Academic title preceded to the name. E.g.: DI, Mag., Dr.';//nur grob uebersetzt
-$this->phrasen['bewerbung/beschreibungTitelPost']='Academic title postpositioned to the name. E.g.: BA, MA, PhD';//nur grob uebersetzt
+$this->phrasen['bewerbung/beschreibungTitelPre']='Academic title e.g. Dr., Prof.';
+$this->phrasen['bewerbung/beschreibungTitelPost']='Academic post-nominal letters (titles) e.g. BA, BSc, PhD';
 $this->phrasen['bewerbung/BilduploadInfotext']='Currently it is possible to upload JPG, PNG or GIF images with a maximum size of 15MB.<br><br><b>Please follow the <a href=\''.APP_ROOT.'cms/content.php?content_id=%s\' target=\'_blank\'>guidelines for uploading images</a></b>';
 $this->phrasen['bewerbung/fotoAuswaehlen']='Click on the image below to upload and crop a photo<br>If the upload fails or your browser does not support image cropping <br>you can upload a photo <a href="dms_akteupload.php?person_id=%s&dokumenttyp=Lichtbil"><b>here</b></a>';
 $this->phrasen['bewerbung/akademischeTitel']='Academic Title(s)';
 $this->phrasen['bewerbung/pflichtfelder']='Required';
-$this->phrasen['bewerbung/bitteGueltigeOesterreichischePlzEingeben']='Please enter a valid Austrian postcode';//nur grob uebersetzt
-$this->phrasen['bewerbung/plzMussGueltigSein']='Postcode must be a valid number';//nur grob uebersetzt
-$this->phrasen['bewerbung/plzUnbekannt']='Postcode unknown';//nur grob uebersetzt
+$this->phrasen['bewerbung/bitteGueltigeOesterreichischePlzEingeben']='Please enter a valid Austrian postcode';
+$this->phrasen['bewerbung/plzMussGueltigSein']='Postcode must be a valid number';
+$this->phrasen['bewerbung/plzUnbekannt']='Postcode unknown';
 $this->phrasen['bewerbung/dateien']='Files(s)';
 $this->phrasen['bewerbung/dokumentWirdGeprueft']='Document in examination';
 $this->phrasen['bewerbung/dokumentUeberprueft']='Document examined';
@@ -253,7 +253,7 @@ $this->phrasen['bewerbung/infotextDisabled']='An application for %s already exis
 $this->phrasen['bewerbung/bitteAnmerkungEintragen']='Please enter the name of the institution that will issue the document';//nur grob uebersetzt
 $this->phrasen['bewerbung/nachreichDatumNichtVergangenheit']='The date may not be in the past';//nur grob uebersetzt
 $this->phrasen['bewerbung/infotextVorlaeufigesZgvDokument']='Please upload the last received certificate from your school';//nur grob uebersetzt
-$this->phrasen['bewerbung/bitteDateiAuswaehlen']='Please choose a file';//nur grob uebersetzt
+$this->phrasen['bewerbung/bitteDateiAuswaehlen']='Please choose a file';
 $this->phrasen['bewerbung/zustimmungDatenuebermittlung']='If in exceptional cases the admission requirements can not be finally clarified by the UAS Technikum Wien, I give my consent that the UAS Technikum Wien can forward the documents to the competent authorities for verification.<br>
 I have been informed that I am under no obligation to consent to the transmission of my data. However, this consent is necessary in order for the application to be considered.';
 $this->phrasen['bewerbung/bitteDatenuebermittlungZustimmen']='You have to consent the transmission of your data to send the application.';
@@ -292,9 +292,6 @@ $this->phrasen['bewerbung/bewerbungszeitraumStartetAm']='Application period star
 $this->phrasen['bewerbung/bewerbungsfristEndetInXTagen']='Application period ends in %s days';
 $this->phrasen['bewerbung/bewerbungsfristEndetHeute']='Application period ends today';
 $this->phrasen['bewerbung/bewerbungsfristFuerStudiensemesterXAbgelaufen']='Application deadline for %s has expired';
-$this->phrasen['bewerbung/hackTypBezeichnungLehrgeange']=''; // Überschreibt die Typ-Bezeichnung "Lehrgang". Leer lassen, wenn nicht benötigt
-$this->phrasen['bewerbung/hackStufeBezeichnungBachelor']=''; // Überschreibt die ZGV Stufen-Bezeichnung "Bachelor". Leer lassen, wenn nicht benötigt
-$this->phrasen['bewerbung/hackStufeBezeichnungMaster']=''; // Überschreibt die ZGV Stufen-Bezeichnung "Master". Leer lassen, wenn nicht benötigt
 
 // Rechnungskontakt
 $this->phrasen['bewerbung/menuRechnungsKontaktinformationen']='Billing Data';
