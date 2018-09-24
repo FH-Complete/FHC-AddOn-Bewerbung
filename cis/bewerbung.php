@@ -1476,11 +1476,44 @@ if ($getGemeinden)
 	exit();
 }
 
-// Abfrage ob ein Punkt schon vollständig ist
-if ($person->vorname && $person->nachname && $person->gebdatum && $person->staatsbuergerschaft && $person->geschlecht)
+$prestudent = new prestudent();
+if (! $prestudent->getPrestudenten($person->person_id))
 {
-	$status_person = true;
-	$status_person_text = $vollstaendig;
+	die($p->t('global/fehlerBeimLadenDesDatensatzes'));
+}
+
+// Abfrage ob persönliche Daten vollständig sind
+if ($person->vorname 
+	&& $person->nachname 
+	&& $person->gebdatum 
+	&& $person->staatsbuergerschaft 
+	&& $person->geschlecht
+	)
+{
+	if (defined('BEWERBERTOOL_AUFMERKSAMDURCH_PFLICHT') && BEWERBERTOOL_AUFMERKSAMDURCH_PFLICHT === true
+		&& isset($prestudent->result[0])
+		&& $prestudent->result[0]->aufmerksamdurch_kurzbz == 'k.A.')
+	{
+		$status_person = false;
+		$status_person_text = $unvollstaendig;
+	}
+	elseif (defined('BEWERBERTOOL_GEBURTSORT_PFLICHT') && BEWERBERTOOL_GEBURTSORT_PFLICHT === true
+		&& $person->gebort == '')
+	{
+		$status_person = false;
+		$status_person_text = $unvollstaendig;
+	}
+	elseif (defined('BEWERBERTOOL_GEBURTSNATION_PFLICHT') && BEWERBERTOOL_GEBURTSNATION_PFLICHT === true
+		&& $person->geburtsnation == '')
+	{
+		$status_person = false;
+		$status_person_text = $unvollstaendig;
+	}
+	else 
+	{
+		$status_person = true;
+		$status_person_text = $vollstaendig;
+	}
 }
 else
 {
@@ -1501,7 +1534,13 @@ $kontakttel->load_persKontakttyp($person->person_id, 'telefon');
 $adresse = new adresse();
 $adresse->load_pers($person->person_id);
 
-if (isset($adresse->result[0]) && count($kontakt->result) && count($adresse->result[0]->strasse) && count($adresse->result[0]->plz) && count($adresse->result[0]->ort) && count($adresse->result[0]->nation) && count($kontakttel->result))
+if (isset($adresse->result[0]) 
+	&& count($kontakt->result) 
+	&& count($adresse->result[0]->strasse) 
+	&& count($adresse->result[0]->plz) 
+	&& count($adresse->result[0]->ort) 
+	&& count($adresse->result[0]->nation) 
+	&& count($kontakttel->result))
 {
 	$status_kontakt = true;
 	$status_kontakt_text = $vollstaendig;
@@ -1516,12 +1555,6 @@ if ($eingabegesperrt == true)
 {
 	$status_kontakt = true;
 	$status_kontakt_text = $vollstaendig;
-}
-
-$prestudent = new prestudent();
-if (! $prestudent->getPrestudenten($person->person_id))
-{
-	die($p->t('global/fehlerBeimLadenDesDatensatzes'));
 }
 
 $master_zgv_done = false;

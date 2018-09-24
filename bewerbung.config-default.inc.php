@@ -50,4 +50,13 @@ define('BEWERBERTOOL_SHOW_ZUSTIMMUNGSERKLAERUNG_REGISTRATION', false);
 // Wenn true, wird für jede Bewerbung ein neuer PreStudent-Datensatz angelegt. 
 // Ansonsten wird ein PreStudent des selben Studiengangs ermittelt (wenn vorhanden) und ein neuer Status an diesen angehängt.
 define('BEWERBERTOOL_ALWAYS_CREATE_NEW_PRESTUDENT_FOR_APPLICATION', false);
+
+// Soll "Aufmerksam durch" ein Pflichtfeld sein um die Bewerbung abschicken zu können? Mögliche Werte: true oder false
+define('BEWERBERTOOL_AUFMERKSAMDURCH_PFLICHT', false);
+
+// Soll "Aufmerksam durch" ein Pflichtfeld sein um die Bewerbung abschicken zu können? Mögliche Werte: true oder false
+define('BEWERBERTOOL_GEBURTSORT_PFLICHT', false);
+
+// Soll "Aufmerksam durch" ein Pflichtfeld sein um die Bewerbung abschicken zu können? Mögliche Werte: true oder false
+define('BEWERBERTOOL_GEBURTSNATION_PFLICHT', false);
 ?>
