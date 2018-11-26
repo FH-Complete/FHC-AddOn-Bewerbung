@@ -45,7 +45,7 @@ elseif($save_error_kontakt===true)
 	$nation->getAll($ohnesperre=true);
 
 	$kontakt = new kontakt();
-	$kontakt->load_persKontakttyp($person->person_id, 'email', 'updateamum DESC');
+	$kontakt->load_persKontakttyp($person->person_id, 'email', 'zustellung DESC, updateamum DESC');
 	$email = isset($kontakt->result[0]->kontakt)?$kontakt->result[0]->kontakt:'';
 
 	$kontakt_t = new kontakt();

@@ -162,9 +162,9 @@ WHERE
 AND (tbl_akte.updateamum >= (SELECT (CURRENT_DATE -1||' '||'03:00:00')::timestamp))
 AND tbl_prestudentstatus.bestaetigtam IS NOT NULL
 AND nachgereicht = FALSE
-AND nachgereicht_am IS NOT NULL
+/*AND nachgereicht_am IS NOT NULL*/
 AND (inhalt IS NOT NULL OR dms_id IS NOT NULL)
-AND studiensemester_kurzbz IN ('WS2018')
+AND studiensemester_kurzbz IN (".$db->implode4SQL($studiensemester_arr).")
 AND (SELECT get_rolle_prestudent(tbl_prestudent.prestudent_id, NULL)) NOT IN ('Abgewiesener', 'Abbrecher', 'Absolvent')
 
 ORDER BY studiengang_kz, orgform_kurzbz, nachname, vorname, person_id";
@@ -312,7 +312,7 @@ if($result = $db->db_query($qry))
 			}
 			
 			$kontakt = new kontakt();
-			$kontakt->load_persKontakttyp($row->person_id, 'email', 'updateamum DESC, insertamum DESC NULLS LAST');
+			$kontakt->load_persKontakttyp($row->person_id, 'email', 'zustellung DESC, updateamum DESC, insertamum DESC NULLS LAST');
 			$mailadresse = isset($kontakt->result[0]->kontakt)?$kontakt->result[0]->kontakt:'';
 			
 			$zeile = '<tr class="hover">';

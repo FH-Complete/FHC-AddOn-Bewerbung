@@ -669,9 +669,9 @@ if ($person_id != '')
 {
 	echo '
 	<form id="documentForm" method="POST" enctype="multipart/form-data" action="' . $PHP_SELF . '?person_id=' . $_GET['person_id'] . '&dokumenttyp=' . $dokumenttyp . '" class="form-horizontal" onsubmit="return checkAusstellungsnation()">
-	<div class="container"> <br />
+	<div class="container-fluid"> <br />
 		<div class="row">
-			<div class="col-md-12">
+			<div class="col-xs-12">
 				<div class="panel panel-default">
 					<div class="panel-heading"><strong>Upload files</strong></div>
 					<div class="panel-body">
@@ -786,7 +786,7 @@ if ($person_id != '')
 	<div id="infotextVollstaendig" style="display: none">
 		<div class="container"> <br />
 			<div class="row">
-				<div class="col-md-12">
+				<div class="col-xs-12">
 					<div class="alert alert-success">
 					<strong>'.$p->t('bewerbung/dokumenteVollstaendig').'</strong>
 					</div>

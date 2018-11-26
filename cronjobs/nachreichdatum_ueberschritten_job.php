@@ -249,7 +249,7 @@ if($result = $db->db_query($qry))
 			}
 			
 			$kontakt = new kontakt();
-			$kontakt->load_persKontakttyp($row->person_id, 'email', 'updateamum DESC, insertamum DESC NULLS LAST');
+			$kontakt->load_persKontakttyp($row->person_id, 'email', 'zustellung DESC, updateamum DESC, insertamum DESC NULLS LAST');
 			$mailadresse = isset($kontakt->result[0]->kontakt)?$kontakt->result[0]->kontakt:'';
 			
 			$zeile = '<tr class="hover">';
