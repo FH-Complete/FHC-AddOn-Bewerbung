@@ -173,7 +173,7 @@ if(!isset($person_id))
 							<div class="row">
 								<div class="col-xs-3 ">'.$p->t('global/datum').'</div>
 								<div class="col-xs-2">'.$p->t('bewerbung/uhrzeit').'</div>
-								<div class="col-xs-3">'.$p->t('bewerbung/anmeldefrist').'</div>
+								<!--<div class="col-xs-3">'.$p->t('bewerbung/anmeldefrist').'</div>-->
 								<div class="col-xs-4"></div>
 							</div>
 						</div>
@@ -205,9 +205,9 @@ if(!isset($person_id))
 				$tageBisFristablauf = ((strtotime($row->anmeldefrist) - time()) / 86400);
 				if ($tageBisFristablauf <= 7)
 				{
-					$anmeldeFristText = '<div class="label label-warning">
+					$anmeldeFristText = '<br><div class="label label-warning">
 											<span class="glyphicon glyphicon-warning-sign"></span>
-											&nbsp;&nbsp;Anmeldefrist endet in ' . floor($tageBisFristablauf) . ' Tagen</div>';
+											&nbsp;&nbsp;Anmeldefrist endet am ' . substr($tagbez[$spracheIndex][$datum->formatDatum($row->anmeldefrist, 'N')], 0, 2).', '.$datum->formatDatum($row->anmeldefrist, 'd.m.Y') . '</div>';
 				}
 				// Anzeigen der Uhrzeit des Tests
 				$uhrzeit = $datum->formatDatum($row->uhrzeit,'H:i');
@@ -215,13 +215,14 @@ if(!isset($person_id))
 						<div class="row">
 							<div class="col-xs-3 ">'.substr($tagbez[$spracheIndex][$datum->formatDatum($row->datum, 'N')], 0, 2).', '.$datum->formatDatum($row->datum, 'd.m.Y').'</div>
 							<div class="col-xs-2 ">'.$uhrzeit.'</div>
-							<div class="col-xs-3 ">'.substr($tagbez[$spracheIndex][$datum->formatDatum($row->anmeldefrist, 'N')], 0, 2).', '.$datum->formatDatum($row->anmeldefrist, 'd.m.Y').' '.$anmeldeFristText.'</div>
+							<!--<div class="col-xs-3 ">'.substr($tagbez[$spracheIndex][$datum->formatDatum($row->anmeldefrist, 'N')], 0, 2).', '.$datum->formatDatum($row->anmeldefrist, 'd.m.Y').' '.$anmeldeFristText.'</div>-->
 							<div class="col-xs-4 ">
 								<button type="button"
 										class="btn btn-primary '.($angemeldet ? 'disabled' : '').'"
 										onclick="aktionReihungstest(\''.$row->reihungstest_id.'\', \''.$studienplanReihungstest.'\', \'save\')">
 									'.$p->t('global/anmelden').'
 								</button>
+								'.$anmeldeFristText.'
 							</div>
 						</div>
 						</li>';
@@ -233,9 +234,10 @@ if(!isset($person_id))
 	<button class="btn-nav btn btn-default" type="button" data-jump-tab="<?php echo $tabs[array_search('aufnahme', $tabs)-1] ?>">
 		<?php echo $p->t('global/zurueck') ?>
 	</button>
+	<?php if (array_key_exists(array_search('aufnahme', $tabs)+1, $tabs)):?>
 	<button class="btn-nav btn btn-default" type="button" data-jump-tab="<?php echo $tabs[array_search('aufnahme', $tabs)+1] ?>">
 		<?php echo $p->t('bewerbung/weiter'); ?>
-	</button><br/><br/>
+	</button><?php endif; ?><br/><br/>
 </div>
 <script type="text/javascript">
 function aktionReihungstest(reihungstest_id, studienplan_id, aktion)

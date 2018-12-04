@@ -709,7 +709,7 @@ elseif($username && $password)
 												</div>';
 										echo '<div id="'.$row->typ_bezeichnung.'" class="panel-collapse '.$collapse.'">';
 										if ($row->typ!='l')
-											echo '<div name="checkboxInfoDiv"></div>';
+											echo '<div name="checkboxInfoDiv" style="position: fixed; top: 0; z-index: 10; left: 5%; padding-right: 15px; padding-left: 15px; right: 5%;"></div>';
 																
 										$lasttyp = $row->typ;
 									}
@@ -722,6 +722,7 @@ elseif($username && $password)
 									
 									$checked = '';
 									$disabled = '';
+									$style = '';
 									
 									// Checkboxen deaktivieren, wenn BEWERBERTOOL_MAX_STUDIENGAENGE gesetzt ist und mehr als oder genau BEWERBERTOOL_MAX_STUDIENGAENGE uebergeben werden.
 									if(defined('BEWERBERTOOL_MAX_STUDIENGAENGE') && BEWERBERTOOL_MAX_STUDIENGAENGE != '')
@@ -758,6 +759,7 @@ elseif($username && $password)
 										$checked = 'checked';
 										$disabled = '';
 										$anchor = '#studiensemester_kurzbz'; // Seite springt nach Submit zum Studiensemester-DropDown
+										$style = 'style="background-color: #D1ECF1"';
 									}
 									// Unterschiedliche Checkbox-Klassen um BEWERBERTOOL_MAX_STUDIENGAENGE richtig zu zählen
 									if ($row->typ != 'l')
@@ -771,7 +773,7 @@ elseif($username && $password)
 									
 									if (!$fristAbgelaufen)
 									{
-										echo '<div class="panel-body">
+										echo '<div class="panel-body" '.$style.'>
 												<div class="checkbox">
 													<label>
 														<input class="'.$class.'" id="checkbox_'.$row->studienplan_id.'" type="checkbox" name="studienplaene[]" value="'.$row->studienplan_id.'" '.$checked.' '.$disabled.'>
@@ -1196,6 +1198,8 @@ elseif($username && $password)
 				var studienplanId = $(this).attr("value");
 				if ($(this).is(':checked'))
 				{
+					// Hintergrundfarbe anpassen, wenn angeklickt
+					$(this).parents(".panel-body").css("background-color", "#D1ECF1");
 					// Prio immer hochzählen
 					$("#prioritaet_"+studienplanId).val(checkedInputs.length);
 					// Badge nur anzeigen, wenn mehr als 1 augewählt
@@ -1211,6 +1215,8 @@ elseif($username && $password)
 				}
 				else
 				{
+					// Hintergrundfarbe anpassen, wenn angeklickt
+					$(this).parents(".panel-body").css("background-color", "unset");
 					var oldValue =  $("#prioritaet_"+studienplanId).val();
 					if(checkedInputs.length >= 0)
 						$("#badge_"+studienplanId).empty();

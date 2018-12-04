@@ -272,11 +272,23 @@ else
 		{
 			$buttonStornierenEnabled = true;
 		}
+		// An der FHTW kann man den Studiengang EQK (Qualifikationskurse) nicht abschicken oder stornieren
+		if (CAMPUS_NAME == 'FH Technikum Wien' && $stg->studiengang_kz == 10002)
+		{
+			$buttonStornierenEnabled = false;
+		}
 		
 		// Abschicken nur möglich, wenn die Frist nicht abgelaufen ist und die Bewerbung noch nicht geschickt wurde
 		$buttonAbschickenEnabled = false;
 		if ($prestudent_status->bewerbung_abgeschicktamum == '' && $fristAbgelaufen == false)
+		{
 			$buttonAbschickenEnabled = true;
+		}
+		// An der FHTW kann man den Studiengang EQK (Qualifikationskurse) nicht abschicken oder stornieren
+		if (CAMPUS_NAME == 'FH Technikum Wien' && $stg->studiengang_kz == 10002)
+		{
+			$buttonAbschickenEnabled = false;
+		}
 
 		echo '					<a 	data-toggle="collapse" 
 									data-parent="#accordionBewerbungen' . $row->laststatus_studiensemester_kurzbz . '" 

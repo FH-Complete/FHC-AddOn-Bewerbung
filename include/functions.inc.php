@@ -302,9 +302,9 @@ function BewerbungPersonAddStudienplan($studienplan_id, $person, $studiensemeste
 		}
 		// Höchste Priorität in diesem Studiensemester laden und ggf. um 1 erhöhen
 		$prestudent = new prestudent();
-		$hoechstePrio = $prestudent->getHoechstePriorisierungPersonStudiensemester($person->person_id, $studiensemester_kurzbz);
-		if ($hoechstePrio == '')
-			$hoechstePrio = 0;
+		$hoechstePrio = $prestudent->getPriorisierungPersonStudiensemester($person->person_id, $studiensemester_kurzbz);
+		if ($hoechstePrio->priorisierung == '')
+			$hoechstePrio->priorisierung = 0;
 		
 		$prestudent->studiengang_kz = $studiengang_kz;
 		$prestudent->person_id = $person->person_id;
@@ -322,7 +322,7 @@ function BewerbungPersonAddStudienplan($studienplan_id, $person, $studiensemeste
 		$prestudent->updateamum = date('Y-m-d H:i:s');
 		$prestudent->updatevon = 'online';
 		$prestudent->reihungstestangetreten = false;
-		$prestudent->priorisierung = $hoechstePrio+1;
+		$prestudent->priorisierung = $hoechstePrio->priorisierung+1;
 		$prestudent->new = true;
 		
 		if (! $prestudent->save())
@@ -1414,7 +1414,7 @@ function hasPersonStatusgrundQualikurs($person_id, $studiensemester_kurzbz)
 	{
 		if ($row = $db->db_fetch_object())
 		{
-			if ($row->anzahl >= 0)
+			if ($row->anzahl > 0)
 			{
 				return true;
 			}

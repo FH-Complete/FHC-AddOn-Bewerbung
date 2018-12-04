@@ -33,8 +33,10 @@ if(defined('BEWERBERTOOL_UEBERSICHT_ANZEIGEN') && BEWERBERTOOL_UEBERSICHT_ANZEIG
 	$tabs[10]='uebersicht';
 if(!defined('BEWERBERTOOL_ALLGEMEIN_ANZEIGEN') || BEWERBERTOOL_ALLGEMEIN_ANZEIGEN)
 	$tabs[11]='allgemein';
+
 $tabs[0]='daten';
 $tabs[1]='kontakt';
+
 if(!defined('BEWERBERTOOL_DOKUMENTE_ANZEIGEN') || BEWERBERTOOL_DOKUMENTE_ANZEIGEN)
 	$tabs[2]='dokumente';
 if(defined('BEWERBERTOOL_AUSBILDUNG_ANZEIGEN') && BEWERBERTOOL_AUSBILDUNG_ANZEIGEN)
@@ -290,12 +292,12 @@ if ($changePriority && isset($_POST['ausgang_prestudent_id'])
 	
 	$prestudent1 = new prestudent($ausgang_prestudent_id);
 	$prestudent2 = new prestudent($ziel_prestudent_id);
-	$hoechstePrio = $prestudent1->getHoechstePriorisierungPersonStudiensemester($prestudent1->person_id, $studiensemester_kurzbz);
+	$hoechstePrio = $prestudent1->getPriorisierungPersonStudiensemester($prestudent1->person_id, $studiensemester_kurzbz);
 	// Wenn $ausgangsPrioritaet NULL ist, höchste Prio ermitteln, diese setzen und $zielPrioritaet +1 setzen
 	if ($ausgangsPrioritaet == '')
 	{
 		// Wenn höchste Prio auch NULL ist, dann Werte direkt setzen
-		if ($hoechstePrio == '')
+		if ($hoechstePrio->priorisierung == '')
 		{
 			$ausgangsPrioritaetNeu = 1;
 			$zielPrioritaetNeu = 2;
@@ -305,13 +307,13 @@ if ($changePriority && isset($_POST['ausgang_prestudent_id'])
 			// Wenn $zielPrioritaet NULL ist, höchste Prio ermitteln und $ausgangsPrioritaet +1 setzen und $zielPrioritaet + 2 setzen
 			if ($zielPrioritaet == '')
 			{
-				$ausgangsPrioritaetNeu = $hoechstePrio + 1;
-				$zielPrioritaetNeu = $hoechstePrio + 2;
+				$ausgangsPrioritaetNeu = $hoechstePrio->priorisierung + 1;
+				$zielPrioritaetNeu = $hoechstePrio->priorisierung + 2;
 			}
 			else 
 			{
 				$ausgangsPrioritaetNeu = $zielPrioritaet;
-				$zielPrioritaetNeu = $hoechstePrio + 1;
+				$zielPrioritaetNeu = $hoechstePrio->priorisierung + 1;
 			}
 		}
 	}
@@ -320,7 +322,7 @@ if ($changePriority && isset($_POST['ausgang_prestudent_id'])
 		// Wenn $zielPrioritaet NULL ist, $ausgangsPrioritaet höchste Prio +1 setzen und $zielPrioritaet gelcih $ausgangsPrioritaet setzen
 		if ($zielPrioritaet == '')
 		{
-			$ausgangsPrioritaetNeu = $hoechstePrio + 1;
+			$ausgangsPrioritaetNeu = $hoechstePrio->priorisierung + 1;
 			$zielPrioritaetNeu = $ausgangsPrioritaet;
 		}
 		else
