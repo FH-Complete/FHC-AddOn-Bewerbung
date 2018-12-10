@@ -38,8 +38,7 @@ if(!isset($person_id))
 	// Angemeldete Termine laden
 	if (count($angemeldeteReihungstests->result) > 0)
 	{
-		echo '<p>Sie haben den folgenden Termin ausgewählt</p>';
-		echo '<p>Sie können den Termin bis zur Anmeldefrist stornieren</p>';
+		echo '<p>'.$p->t('bewerbung/sieHabenFolgendenTerminGewaehlt').'</p>';
 		echo '<div class="row">
 					<div class="col-md-8 col-lg-6">
 					<div class="panel-group ">
@@ -88,7 +87,7 @@ if(!isset($person_id))
 						<div class="row">
 							<div class="col-xs-4 col-sm-3">'.substr($tagbez[$spracheIndex][$datum->formatDatum($row->datum, 'N')], 0, 2).', '.$datum->formatDatum($row->datum, 'd.m.Y').'</div>
 							<div class="col-xs-3 col-sm-2">'.$uhrzeit.'</div>
-							<div class="col-xs-5 col-sm-7">'.($row->ort_kurzbz != '' ? $ort->bezeichnung.' '.$ort->planbezeichnung : 'Raumzuteilung folgt').'</div>
+							<div class="col-xs-5 col-sm-7">'.($row->ort_kurzbz != '' ? $ort->bezeichnung.' '.$ort->planbezeichnung : $p->t('bewerbung/raumzuteilungFolgt')).'</div>
 						</div>
 						</li>';
 			$angemeldeteRtArray[] = $row->reihungstest_id;
@@ -105,18 +104,31 @@ if(!isset($person_id))
 	
 	// Wenn die Person TeilnehmerIn am Qualifikationskurs ist (den Statusgrund "Qualifikationskurs" hat),
 	// Termine verbergen, bis ein Account im EQK vorhanden ist
-	$hasStatusgrundQuali = hasPersonStatusgrundQualikurs($person_id, $nextWinterSemester->studiensemester_kurzbz);
+	if (defined('STATUSGRUND_ID_QUALIFIKATIONKURSTEILNEHMER') || STATUSGRUND_ID_QUALIFIKATIONKURSTEILNEHMER != '')
+	{
+		$hasStatusgrundQuali = hasPersonStatusgrund($person_id, $nextWinterSemester->studiensemester_kurzbz, STATUSGRUND_ID_QUALIFIKATIONKURSTEILNEHMER);
+	}
+	else 
+	{
+		$hasStatusgrundQuali = false;
+	}
+	
+	// Wenn die Person Quereinsteiger ins Sommersemester ist (den Statusgrund "Einstieg Sommersemester" hat), Termine verbergen
+	if (defined('STATUSGRUND_ID_EINSTIEG_SOMMERSEMESTER') || STATUSGRUND_ID_EINSTIEG_SOMMERSEMESTER != '')
+	{
+		$hasStatusgrundEinstiegSS = hasPersonStatusgrund($person_id, $nextWinterSemester->studiensemester_kurzbz, STATUSGRUND_ID_EINSTIEG_SOMMERSEMESTER);
+	}
+	else
+	{
+		$hasStatusgrundEinstiegSS = false;
+	}
+	
 	
 	$nextSummerSemester = new studiensemester();
 	$nextSummerSemester->getNextStudiensemester('SS');
 	$prestudent = new prestudent();
 	$isStudentQuali = $prestudent->existsPrestudentstatus($person_id, STUDIENGANG_KZ_QUALIFIKATIONKURSE, $nextSummerSemester->studiensemester_kurzbz);
-	
-	if ($isStudentQuali)
-	{
-		
-	}
-	
+
 	$reihungstestTermine = '';
 	// Qualifikationskursteilnehmer sehen keine Termine, bis sie einen Studenten-Account im Studiengang EQK haben
 	if ($hasStatusgrundQuali == true)
@@ -140,6 +152,16 @@ if(!isset($person_id))
 					}
 				}				
 			}
+			else
+			{
+				foreach ($studienplanQualikurse->result AS $row)
+				{
+					if ($reihungstestTermine = getReihungstestsForOnlinebewerbung($row->studienplan_id, $nextWinterSemester->studiensemester_kurzbz))
+					{
+						break;
+					}
+				}
+			}
 		}
 	}
 	else 
@@ -148,7 +170,11 @@ if(!isset($person_id))
 		$reihungstestTermine = getReihungstestsForOnlinebewerbung($studienplanReihungstest, $nextWinterSemester->studiensemester_kurzbz);
 	}
 	
-	if($reihungstestTermine == '' && count($angemeldeteRtArray) == 0)
+	if($hasStatusgrundEinstiegSS == true)
+	{
+		echo '<div class="col-xs-12 alert alert-warning">'.$p->t('bewerbung/keineRtTermineZurAuswahl').'</div>';
+	}
+	elseif($reihungstestTermine == '' && count($angemeldeteRtArray) == 0)
 	{
 		if ($isStudentQuali == true)
 		{
