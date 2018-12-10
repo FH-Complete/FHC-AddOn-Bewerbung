@@ -115,7 +115,10 @@ if (! isset($person_id))
 					
 					// Detailbeschreibungen zu Dokumenten holen
 					$details = new dokument();
-					$details->getBeschreibungenDokumente($ben_kz[$dok->dokument_kurzbz], $dok->dokument_kurzbz);
+					if (isset($ben_kz[$dok->dokument_kurzbz]))
+					{
+						$details->getBeschreibungenDokumente($ben_kz[$dok->dokument_kurzbz], $dok->dokument_kurzbz);
+					}
 					$detailstring_short = array();
 					$detailstring_htmlspecialchars = '';
 					$detailstring_original = '';
@@ -176,11 +179,14 @@ if (! isset($person_id))
 					if ($dok->anzahl_akten_vorhanden > 0 || (isset($akten->result[0]) && $akten->result[0]->nachgereicht === true))
 					{
 						// Dokument aus $status_dokumente_arr entfernen, um zu wissen, ob dieser Studiengang abgeschickt werden darf
-						foreach ($ben_kz[$dok->dokument_kurzbz] as $kennzahl)
+						if (isset($ben_kz[$dok->dokument_kurzbz]))
 						{
-							if (array_key_exists($kennzahl, $status_dokumente_arr))
+							foreach ($ben_kz[$dok->dokument_kurzbz] as $kennzahl)
 							{
-								unset($status_dokumente_arr[$kennzahl][array_search($dok->dokument_kurzbz, $status_dokumente_arr[$kennzahl])]);
+								if (array_key_exists($kennzahl, $status_dokumente_arr))
+								{
+									unset($status_dokumente_arr[$kennzahl][array_search($dok->dokument_kurzbz, $status_dokumente_arr[$kennzahl])]);
+								}
 							}
 						}
 						
@@ -241,10 +247,10 @@ if (! isset($person_id))
 							}
 							else
 							{
-								if (akteAkzeptiert($akte->akte_id))
+								// Dokument wurde bereits überprüft oder Dokument ist Invitation Letter an der FHTW. 
+								// Nur Download zur Ansicht oder Upload eines neuen Dokuments (außer Lichtbild) moeglich
+								if (akteAkzeptiert($akte->akte_id) || (CAMPUS_NAME == 'FH Technikum Wien' && $dok->dokument_kurzbz == 'InvitLet'))
 								{
-									// Dokument wurde bereits überprüft. Nur Download zur Ansicht oder Upload eines neuen Dokuments (außer Lichtbild) moeglich
-									
 									// Beim Lichtbild wird aus cis/public/bild.php geladen und nicht aus dem DMS
 									if ($akte->dokument_kurzbz == 'Lichtbil')
 									{
@@ -550,10 +556,13 @@ if (! isset($person_id))
 					else
 					{
 						echo '<td style="vertical-align: top" class="' . $style . '">';
-						foreach ($ben_bezeichnung[getSprache()][$dok->dokument_kurzbz] as $value)
+						if (isset($ben_bezeichnung[getSprache()][$dok->dokument_kurzbz]))
 						{
-							if ($value != '')
-								echo '-&nbsp;' . $value . '<br/>';
+							foreach ($ben_bezeichnung[getSprache()][$dok->dokument_kurzbz] as $value)
+							{
+								if ($value != '')
+									echo '-&nbsp;' . $value . '<br/>';
+							}
 						}
 						echo '</td>';
 					}

@@ -630,6 +630,28 @@ if (isset($_POST['submitfile']))
 }
 
 $dokumente_abzugeben = getAllDokumenteBewerbungstoolForPerson($person_id);
+
+// Sortiert die Dokumente nach Sprache alphabetisch nach bezeichnung_mehrsprachig
+// Pflichtdokumente werden als erstes ausgegeben
+function sortDokumenteAbzugeben($a, $b)
+{	
+	if (CAMPUS_NAME == 'FH Technikum Wien')
+	{
+		if ($a->dokument_kurzbz == 'SprachB2')
+		{
+			$c = $a->pflicht - $b->pflicht;
+		}
+		else 
+		{
+			$c = $b->pflicht - $a->pflicht;
+		}
+	}
+	$c .= strcmp(strtolower($a->bezeichnung_mehrsprachig[getSprache()]), strtolower($b->bezeichnung_mehrsprachig[getSprache()]));
+	return $c;
+}
+if ($dokumente_abzugeben)
+	usort($dokumente_abzugeben, "sortDokumenteAbzugeben");
+
 $akte_vorhanden = array();
 
 if ($dokumente_abzugeben)
@@ -769,7 +791,7 @@ if ($person_id != '')
 				echo '<div class="croppie-container"></div>';
 				echo'
 						<div class="">
-							<input id="fileselect" type="file" name="file" class="file" />
+							<input id="fileselect" type="file" name="file" class="file" accept=".jpg, .jpeg, .pdf"/>
 						</div><br>
 						<input id="submitfile" type="submit" name="submitfile" value="Upload" class="btn btn-labeled btn-primary">
 						<input id="submitimage" type="button" name="submitimage" value="Upload" class="btn btn-labeled btn-primary" style="display: none">

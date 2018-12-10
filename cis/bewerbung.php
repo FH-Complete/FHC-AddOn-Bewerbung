@@ -292,7 +292,8 @@ if ($changePriority && isset($_POST['ausgang_prestudent_id'])
 	
 	$prestudent1 = new prestudent($ausgang_prestudent_id);
 	$prestudent2 = new prestudent($ziel_prestudent_id);
-	$hoechstePrio = $prestudent1->getPriorisierungPersonStudiensemester($prestudent1->person_id, $studiensemester_kurzbz);
+	$hoechstePrio = new prestudent(); 
+	$hoechstePrio->getPriorisierungPersonStudiensemester($prestudent1->person_id, $studiensemester_kurzbz);
 	// Wenn $ausgangsPrioritaet NULL ist, höchste Prio ermitteln, diese setzen und $zielPrioritaet +1 setzen
 	if ($ausgangsPrioritaet == '')
 	{
@@ -1852,6 +1853,23 @@ else
 $studiensemester_bewerbungen =  array_unique($studiensemester_bewerbungen);
 
 $dokumente_abzugeben = getAllDokumenteBewerbungstoolForPerson($person_id, $studiensemester_bewerbungen);
+
+// An der FHTW wird das Dokument "Invitation Letter" zum Download angeboten, wenn bei der Person vorhanden
+if (CAMPUS_NAME == 'FH Technikum Wien')
+{
+	$invLetter = new akte();
+	$invLetter->getAkten($person_id, 'InvitLet');
+	if (count($invLetter->result) > 0)
+	{
+		$invLetterObj = new dokument();
+		$invLetterObj->loadDokumenttyp('InvitLet');
+		$invLetterObj->anzahl_akten_vorhanden = 1;
+		$invLetterObj->anzahl_akten_formal_geprueft = 1;
+		$invLetterObj->anzahl_dokumente_akzeptiert = 1;
+		$invLetterObj->anzahl_akten_nachgereicht = 0;
+		array_push($dokumente_abzugeben, $invLetterObj);
+	}
+}
 
 // $dokumente_abzugeben = new dokument();
 // $dokumente_abzugeben->getAllDokumenteForPerson($person_id, true);
