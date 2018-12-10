@@ -689,9 +689,21 @@ elseif($username && $password)
 									{
 										// Hack um typ_bezeichung mit Phrasen zu überschreiben
 										if ($row->typ == 'l' && $p->t('bewerbung/hackTypBezeichnungLehrgeange') != '')
+										{
 											$typ_bezeichung = $p->t('bewerbung/hackTypBezeichnungLehrgeange');
+										}
+										elseif (($row->typ == 'b' && $p->t('bewerbung/hackTypBezeichnungBachelor') != ''))
+										{
+											$typ_bezeichung = $p->t('bewerbung/hackTypBezeichnungBachelor');
+										}
+										elseif (($row->typ == 'm' && $p->t('bewerbung/hackTypBezeichnungMaster') != ''))
+										{
+											$typ_bezeichung = $p->t('bewerbung/hackTypBezeichnungMaster');
+										}
 										else
+										{
 											$typ_bezeichung = $row->typ_bezeichnung;
+										}
 												
 										if($lasttyp != '')
 											echo '</div></div></div>';
@@ -1293,7 +1305,7 @@ elseif($username && $password)
 					if ($("input[type=checkbox][class=checkbox_stg]:checked").length >= <?php echo BEWERBERTOOL_MAX_STUDIENGAENGE; ?>)
 					{
 						$("div[name=checkboxInfoDiv]").html("<?php echo $p->t('bewerbung/sieKoennenMaximalXStudiengaengeWaehlen',  array(BEWERBERTOOL_MAX_STUDIENGAENGE)) ?>");
-						$("div[name=checkboxInfoDiv]").addClass("alert alert-warning");
+						$("div[name=checkboxInfoDiv]").addClass("alert alert-warning alert-dismissible");
 					}
 					else
 					{
