@@ -203,6 +203,14 @@ function BewerbungPersonAddStudienplan($studienplan_id, $person, $studiensemeste
 	$studienordnung->loadStudienordnung($studienplan->studienordnung_id);
 	$studiengang_kz = $studienordnung->studiengang_kz;
 	
+	// Wenn es für das gewählte Studiensemester schon eine Bewerbung gibt, kann man sich nicht mehr dafür bewerben
+	// Es wird true zurückgegeben aber kein PreStudent erstellt
+	$existPrestudentstatus = new prestudent();
+	if ($existPrestudentstatus->existsPrestudentstatus($person->person_id, $studiengang_kz, $studiensemester_kurzbz, null, $studienplan_id))
+	{
+		return true;
+	}
+	
 	// PreStudent_id des aktuellsten PreStudenten (hoechste ID) ermitteln und Interessentenstatus zu diesem hinzufuegen,
 	// sonst nach irgendeiner prestudent_id suchen, um dessen ZGV uebernehmen zu koennen.
 	$student = new student();
@@ -302,7 +310,9 @@ function BewerbungPersonAddStudienplan($studienplan_id, $person, $studiensemeste
 		}
 		// Höchste Priorität in diesem Studiensemester laden und ggf. um 1 erhöhen
 		$prestudent = new prestudent();
-		$hoechstePrio = $prestudent->getPriorisierungPersonStudiensemester($person->person_id, $studiensemester_kurzbz);
+		$hoechstePrio = new prestudent();
+		$hoechstePrio->getPriorisierungPersonStudiensemester($person->person_id, $studiensemester_kurzbz);
+		
 		if ($hoechstePrio->priorisierung == '')
 			$hoechstePrio->priorisierung = 0;
 		
@@ -324,7 +334,7 @@ function BewerbungPersonAddStudienplan($studienplan_id, $person, $studiensemeste
 		$prestudent->reihungstestangetreten = false;
 		$prestudent->priorisierung = $hoechstePrio->priorisierung+1;
 		$prestudent->new = true;
-		
+
 		if (! $prestudent->save())
 		{
 			return $prestudent->errormsg;
@@ -1115,7 +1125,13 @@ function getMailEmpfaenger($studiengang_kz, $studienplan_id = null, $orgform_kur
 		{
 			if ((isset($studienplan) && $studienplan->orgform_kurzbz == 'DUA') ||
 				($orgform_kurzbz != '' && $orgform_kurzbz == 'DUA'))
-			$empfaenger = 'info.bid@technikum-wien.at';
+			{
+				$empfaenger = 'info.bid@technikum-wien.at';
+			}
+			else 
+			{
+				$empfaenger = 'info.bif@technikum-wien.at';
+			}
 		}
 		else
 			$empfaenger = $empf_array[$studiengang_kz];
@@ -1179,7 +1195,7 @@ function getBewerbungen($person_id, $aktive = null)
 			FROM public.tbl_prestudent 
 			JOIN public.tbl_studiengang USING (studiengang_kz)
 			WHERE person_id=".$db->db_add_param($person_id, FHC_INTEGER)." 
-			ORDER BY priorisierung,tbl_prestudent.insertamum";
+			ORDER BY priorisierung ASC NULLS LAST, tbl_prestudent.insertamum DESC";
 
 	if($db->db_query($qry))
 	{
@@ -1221,6 +1237,7 @@ function getBewerbungen($person_id, $aktive = null)
 
 /**
  * Lädt den Studienplan der Bewerbung mit der höchsten Priorität, der für das übergebene Studiensemester abgeschickt und bestätigt ist.
+ * Wenn keine Prio gesetzt ist, wird nach tbl_prestudent.insertamum absteigend (letzthinzugefügter zuerst) sortiert
  *
  * @param integer $person_id 
  * @param string $studiensemester_kurzbz Studiensemester des Termins
@@ -1252,7 +1269,7 @@ function getPrioStudienplanForReihungstest($person_id, $studiensemester_kurzbz)
 					ORDER BY datum DESC,
 						tbl_prestudentstatus.insertamum DESC LIMIT 1
 					) IN ('Interessent')
-			ORDER BY priorisierung ASC LIMIT 1";
+			ORDER BY priorisierung ASC NULLS LAST, tbl_prestudent.insertamum DESC LIMIT 1";
 
 	if ($db->db_query($qry))
 	{
@@ -1385,29 +1402,23 @@ function sortPrestudents($a, $b)
 }
 
 /**
- * Prüft, ob die Person im übergebenen Studiensemester bei einem PreStudent-Status den Statusgrund "Qualifikationskurs" hat (ID aus Config STATUSGRUND_ID_QUALIFIKATIONKURSTEILNEHMER)
- * Damit ist diese Person als Qualifikationskursteilnehmer gekennzeichnet
+ * Prüft, ob die Person im übergebenen Studiensemester bei einem PreStudent-Status den übergebenen Statusgrund hat
  *
  * @param integer $person_id
  * @param string $studiensemester_kurzbz Studiensemester der Bewerbung
  *
  * @return boolean True wenn Teilnehmer, FALSE wenn nicht
  */
-function hasPersonStatusgrundQualikurs($person_id, $studiensemester_kurzbz)
+function hasPersonStatusgrund($person_id, $studiensemester_kurzbz, $status_grund_id)
 {
 	$db = new basis_db();
-	if (!defined('STATUSGRUND_ID_QUALIFIKATIONKURSTEILNEHMER') || STATUSGRUND_ID_QUALIFIKATIONKURSTEILNEHMER == '')
-	{
-		$db->errormsg = 'Die Konstante STATUSGRUND_ID_QUALIFIKATIONKURSTEILNEHMER ist nicht definiert';
-		return false;
-	}
 	$qry = "
 			SELECT count(*) AS anzahl
 			FROM PUBLIC.tbl_prestudent
 			JOIN PUBLIC.tbl_prestudentstatus USING (prestudent_id)
 			WHERE status_kurzbz = 'Interessent'
 				AND studiensemester_kurzbz = " . $db->db_add_param($studiensemester_kurzbz) . "
-				AND statusgrund_id = " . STATUSGRUND_ID_QUALIFIKATIONKURSTEILNEHMER . "
+				AND statusgrund_id = " . $db->db_add_param($status_grund_id, FHC_INTEGER) . "
 				AND person_id = " . $db->db_add_param($person_id, FHC_INTEGER);
 
 	if ($db->db_query($qry))
