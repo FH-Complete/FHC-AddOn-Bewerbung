@@ -91,6 +91,7 @@ else
 				$prioIndex = 1;
 			}
 			echo '<p><b>' . $p->t('bewerbung/bewerbungenFuerStudiensemesterXX', array($row->laststatus_studiensemester_kurzbz)) . '</b></p>';
+			echo '<div class="row" style="padding: 5px 15px;"><div class="col-xs-2 col-sm-2 col-md-1 text-center">' . $p->t('bewerbung/prioritaet') . '</div><div class="col-xs-10 col-sm-10 col-md-11">&nbsp;</div></div>';
 			echo '<div class="panel-group panel_bewerbungen" id="accordionBewerbungen' . $row->laststatus_studiensemester_kurzbz . '">';
 		}
 		else
@@ -140,7 +141,7 @@ else
 		
 		// Zaehlt die Anzahl an Bewerbungen in einem Studiensemester
 		// Wenn ein Status Abgewiesen oder Abbrecher ist, zaehlt er nicht zu der Anzahl an Bewerbungen mit
-		if (in_array($prestudent_status->studiensemester_kurzbz, $stsem_bewerbung_arr) && $prestudent_status->status_kurzbz != 'Abgewiesener' && $prestudent_status->status_kurzbz != 'Abbrecher')
+		if (in_array($prestudent_status->studiensemester_kurzbz, $stsem_bewerbung_arr) && $prestudent_status->status_kurzbz != 'Abbrecher')
 		{
 			if (! array_key_exists($prestudent_status->studiensemester_kurzbz, $anzahl_studiengaenge))
 				$anzahl_studiengaenge[$prestudent_status->studiensemester_kurzbz] = 0;
@@ -215,6 +216,13 @@ else
 		}
 		
 		$stgBeschriftungPanel = '<p>'.$typ->bezeichnung . ' ' . $stg_bezeichnung.'</p>';
+		
+		// An der FHTW bei den Qualifikationskursen keine typ->bezeichnung anzeigen
+		if (CAMPUS_NAME == 'FH Technikum Wien' && $stg->studiengang_kz == 10002)
+		{
+			$stgBeschriftungPanel = '<p>'.$stg_bezeichnung.'</p>';
+		}
+			
 		if ($studienplan_orgform != '')
 		{
 			$stgBeschriftungPanel .= '<p><i>' . $p->t('bewerbung/orgform/' . $studienplan_orgform);
@@ -229,39 +237,36 @@ else
 		$fristAbgelaufen = $bewerbungszeitraum['frist_abgelaufen'];
 		
 		echo '	<div class="panel panel-default" id="panel_' . $row->prestudent_id . '" data-prestudent_id="' . $row->prestudent_id . '">
-					<div class="panel-heading" ' . ($fristAbgelaufen ? 'style="background-color: white"' : '') . '>
+					<div class="panel-heading" ' . ($prestudent_status->bewerbung_abgeschicktamum == '' && $fristAbgelaufen ? 'style="background-color: white"' : '') . '>
 						<h4 class="panel-title">
 							<div class="row">';
 		// Priorisierung deaktivieren, wenn Bewerbung abgeschickt
-		if (! check_person_bewerbungabgeschickt($person_id, $row->laststatus_studiensemester_kurzbz))
+		//if (! check_person_bewerbungabgeschickt($person_id, $row->laststatus_studiensemester_kurzbz))
 		{
-			echo '				<div class="col-xs-2 col-sm-2 col-md-1 text-center">
+			echo '				
+								<div class="col-xs-2 col-sm-2 col-md-1 text-center">
+									<!--<div class="text-center">Priorisierung</div>-->
 									<label style="padding-right: 2px" class="prioIndex">' . $prioIndex . '</label>
 									<div class="btn-group-vertical">
+										
 										<button class="btn btn-default button_up btn-block" type="button"
-											onclick="changePriority(\'' . $row->prestudent_id . '\', \'' . $row->laststatus_studiensemester_kurzbz . '\', \'up\')">'; ?>
-<!-- 											<span class="glyphicon glyphicon-chevron-up"></span> -->
-<!-- 											<span class="glyphicon glyphicon-arrow-up"></span> -->
+											onclick="changePriority(\'' . $row->prestudent_id . '\', \'' . $row->laststatus_studiensemester_kurzbz . '\', \'up\')">
 											<span class="glyphicon glyphicon-triangle-top"></span>
-<!-- 												<span class="glyphicon glyphicon-menu-up"></span> -->
 										</button>
-<?php echo '							<input type="hidden" class="form-control text-center" value="' . $row->priorisierung . '" disabled="disabled">
+										<input type="hidden" class="form-control text-center" value="' . $row->priorisierung . '" disabled="disabled">
 										<button class="btn btn-default button_down btn-block" type="button"
-											onclick="changePriority(\'' . $row->prestudent_id . '\', \'' . $row->laststatus_studiensemester_kurzbz . '\', \'down\')">'; ?>
-<!-- 											<span class="glyphicon glyphicon-chevron-down"></span> -->
-<!-- 											<span class="glyphicon glyphicon-arrow-down"></span> -->
+											onclick="changePriority(\'' . $row->prestudent_id . '\', \'' . $row->laststatus_studiensemester_kurzbz . '\', \'down\')">
 											<span class="glyphicon glyphicon-triangle-bottom"></span>
-<!-- 												<span class="glyphicon glyphicon-menu-down"></span> -->
-<?php echo '							</button>
+										</button>
 									</div>
 								</div>';
 		}
-		else
+		/*else
 		{
 			echo '				<div class="col-xs-2 col-sm-2 col-md-1 text-center">
 									<b>' . $prioIndex . '</b>
 								</div>';
-		}
+		}*/
 
 		// Stornieren nur moeglich, wenn letzter Status "Interessent" ist oder noch nicht abgeschickt oder bestätigt wurde
 		$buttonStornierenEnabled = false;
@@ -294,26 +299,44 @@ else
 									data-parent="#accordionBewerbungen' . $row->laststatus_studiensemester_kurzbz . '" 
 									href="#panelCollapse' . $row->prestudent_id . '"
 									style="color: inherit">
-									<div class="col-xs-6 col-sm-7 col-md-6 panel-header-stgbez ' . ($fristAbgelaufen ? 'text-muted' : '') . '">
+									<div class="col-xs-6 col-sm-7 col-md-6 panel-header-stgbez ' . ($prestudent_status->bewerbung_abgeschicktamum == '' && $fristAbgelaufen ? 'text-muted' : '') . '">
 										' . $stgBeschriftungPanel . '
 									</div>
 								</a>';
-		echo '					<div class="col-xs-4 col-sm-3 col-md-5 text-right action-buttons">
-									
-										<button class="btn-nav btn btn-sm btn-success ' . ($buttonAbschickenEnabled ? '' : 'disabled hidden') . '" type="button"
-											data-toggle="modal"
-											data-target="#abschickenModal_' . $row->prestudent_id . '">
-											<span class="glyphicon glyphicon-send hidden-md hidden-lg"></span><span
-												class="hidden-sm hidden-xs">' . $p->t('bewerbung/bewerbungAbschicken') . '</span>
-										</button>
-										<button class="btn-nav btn btn-sm btn-warning ' . ($buttonStornierenEnabled ? '' : 'disabled hidden') . '" type="button"
-											data-toggle="modal"
-											data-target="#stornierenModalNeu_' . $row->prestudent_id . '">
-											<span class="glyphicon glyphicon-remove hidden-md hidden-lg"></span><span
-												class="hidden-sm hidden-xs">' . $p->t('bewerbung/bewerbungStornieren') . '</span>
-										</button>
-									
+		// Abschicken nur möglich, wenn die Frist nicht abgelaufen ist und die Bewerbung noch nicht geschickt wurde
+		// Ansonsten Statusinfo anzeigen
+		if ($buttonAbschickenEnabled || $buttonAbschickenEnabled)
+		{
+			echo '				<div class="col-xs-4 col-sm-3 col-md-5 text-right action-buttons">
+									<button class="btn-nav btn btn-sm btn-success ' . ($buttonAbschickenEnabled ? '' : 'disabled hidden') . '" type="button"
+										data-toggle="modal"
+										data-target="#abschickenModal_' . $row->prestudent_id . '">
+										<span class="glyphicon glyphicon-send hidden-md hidden-lg"></span><span
+											class="hidden-sm hidden-xs">' . $p->t('bewerbung/bewerbungAbschicken') . '</span>
+									</button>
+									<button class="btn-nav btn btn-sm btn-warning ' . ($buttonStornierenEnabled ? '' : 'disabled hidden') . '" type="button"
+										data-toggle="modal"
+										data-target="#stornierenModalNeu_' . $row->prestudent_id . '">
+										<span class="glyphicon glyphicon-remove hidden-md hidden-lg"></span><span
+											class="hidden-sm hidden-xs">' . $p->t('bewerbung/bewerbungStornieren') . '</span>
+									</button>
 								</div>';
+		}
+		else 
+		{
+			echo '				<div class="col-xs-4 col-sm-3 col-md-5 text-right action-buttons">';
+						if ($prestudent_status->bewerbung_abgeschicktamum != '' || $prestudent_status->bestaetigtam != '')
+						{
+							echo '	<div class="label label-info hidden-md hidden-lg bg-danger"><span class="glyphicon glyphicon-info-sign hidden-md hidden-lg"></div>';
+							echo '	<div class="label label-info hidden-sm hidden-xs">' . $p->t('bewerbung/BewerbungBereitsVerschickt') . '</div>';
+						}
+						elseif ($bewerbungszeitraum['frist_abgelaufen'] == true)
+						{
+							echo '	<div class="label label-danger hidden-md hidden-lg"><span class="glyphicon glyphicon-alert hidden-md hidden-lg"></div>';
+							echo '	<div class="label label-danger hidden-sm hidden-xs">' . $p->t('bewerbung/bewerbungsfristFuerStudiensemesterXAbgelaufen', array($prestudent_status->studiensemester_kurzbz)) . '</div>';
+						}
+			echo '				</div>';
+		}
 		echo '				</div>
 							<div class="row">
 								<a 	data-toggle="collapse" 
@@ -322,6 +345,7 @@ else
 									style="color: inherit">
 									<div class="col-xs-12 text-center">
 										<span class="glyphicon glyphicon-chevron-down text-muted"></span>
+										<span class="text-muted small">Details</span>
 									</div>
 								</a>
 							</div>
@@ -333,7 +357,7 @@ else
 								<div class="col-xs-12">
 									<form class="form-horizontal">';
 							// Status anzeigen
-							if ($prestudent_status->bewerbung_abgeschicktamum != '')
+							if ($prestudent_status->bewerbung_abgeschicktamum != '' || $prestudent_status->bestaetigtam != '')
 							{
 								echo '	<div class="alert alert-info">' . $p->t('bewerbung/BewerbungBereitsVerschickt') . '</div>';
 							}
@@ -807,9 +831,21 @@ else
 			{
 				// Hack um typ_bezeichung mit Phrasen zu überschreiben
 				if ($row->typ == 'l' && $p->t('bewerbung/hackTypBezeichnungLehrgeange') != '')
+				{
 					$typ_bezeichung = $p->t('bewerbung/hackTypBezeichnungLehrgeange');
+				}
+				elseif (($row->typ == 'b' && $p->t('bewerbung/hackTypBezeichnungBachelor') != ''))
+				{
+					$typ_bezeichung = $p->t('bewerbung/hackTypBezeichnungBachelor');
+				}
+				elseif (($row->typ == 'm' && $p->t('bewerbung/hackTypBezeichnungMaster') != ''))
+				{
+					$typ_bezeichung = $p->t('bewerbung/hackTypBezeichnungMaster');
+				}
 				else
+				{
 					$typ_bezeichung = $row->typ_bezeichnung;
+				}
 						
 				if($lasttyp != '')
 					echo '</div></div></div>';
@@ -855,6 +891,7 @@ else
 			{
 					$disabled = 'disabled';
 			}
+			
 	
 			// Wenn es nur einen gueltigen Studienplan gibt, kommt der Name des Studiengangs aus dem Studienplan
 			// Wenn der Name des Studiengangs aus dem Studienplan leer ist -> Fallback auf Studiengangsname vom Studiengang
@@ -878,6 +915,19 @@ else
 			$bewerbungszeitraum = getBewerbungszeitraum($row->studiengang_kz, $std_semester, $row->studienplan_id);
 			$stg_bezeichnung .= ' '.$bewerbungszeitraum['infoDiv'];
 			$fristAbgelaufen = $bewerbungszeitraum['frist_abgelaufen'];
+			
+			// Wenn es für das gewählte Studiensemester schon eine Bewerbung gibt, kann man sich nicht mehr dafür bewerben
+			$disabledExistsPrestudentstatus = '';
+			$prestudent_status = new prestudent();
+			if ($prestudent_status->existsPrestudentstatus($person_id, $row->studiengang_kz, $std_semester, null, $row->studienplan_id))
+			{
+				$disabledExistsPrestudentstatus = 'disabled';
+				$stg_bezeichnung .= '<div class="alert alert-warning" style="margin-bottom: 0">'.$p->t('bewerbung/infotextDisabled', array($std_semester)).'</div>';
+			}
+			else
+			{
+				$disabledExistsPrestudentstatus = '';
+			}
 	
 			// Unterschiedliche Checkbox-Klassen um BEWERBERTOOL_MAX_STUDIENGAENGE richtig zu zählen
 			if ($row->typ != 'l')
@@ -894,7 +944,7 @@ else
 				echo '<div class="panel-body">
 						<div class="radio">
 							<label>
-								<input class="'.$class.'" id="checkbox_'.$row->studienplan_id.'" type="radio" name="studienplaene[]" value="'.$row->studienplan_id.'" '.$checked.' '.$disabled.'>
+								<input class="'.$class.'" id="checkbox_'.$row->studienplan_id.'" type="radio" name="studienplaene[]" value="'.$row->studienplan_id.'" '.$checked.' '.$disabled.' '.$disabledExistsPrestudentstatus.'>
 								'.$stg_bezeichnung;
 			}
 			else
@@ -1018,7 +1068,9 @@ else
 				success: function(data)
 				{
 					if(data.status!='ok')
-						alert(data.msg);
+					{
+						alert(JSON.stringify(data.msg));
+					}
 					else
 						window.location.href='bewerbung.php?active=uebersicht';
 				},
