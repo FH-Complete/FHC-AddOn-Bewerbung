@@ -1,5 +1,5 @@
 <?php
-/* 
+/*
  * Copyright (C) 2015 fhcomplete.org
  *
  * This program is free software: you can redistribute it and/or modify
@@ -27,14 +27,14 @@ if(!isset($person_id))
 
 <div role="tabpanel" class="tab-pane" id="aufnahme">
 	<h2><?php echo $p->t('bewerbung/menuReihungstest') ?></h2>
-	
+
 	<?php
 	$sprachindex = new sprache();
 	$spracheIndex = $sprachindex->getIndexFromSprache($sprache);
 	// Bachelor-Studienplan mit der höchsten Priorität laden, der abgeschickt und bestätigt ist
 	$studienplanReihungstest = getPrioStudienplanForReihungstest($person_id, $nextWinterSemester->studiensemester_kurzbz);
 	$angemeldeteRtArray = array();
-	
+
 	// Angemeldete Termine laden
 	if (count($angemeldeteReihungstests->result) > 0)
 	{
@@ -52,7 +52,7 @@ if(!isset($person_id))
 						</div>
 						<div id="listeTesttermine" class="panel-collapse collapse-in">
 							<ul class="list-group">';
-		
+
 		foreach($angemeldeteReihungstests->result as $row)
 		{
 			$fristVorbei = false;
@@ -101,20 +101,20 @@ if(!isset($person_id))
 		echo '	</div></div><br><br>';
 		echo $p->t('bewerbung/reihungstestInfoTextAngemeldet');
 	}
-	
+
 	// Wenn die Person TeilnehmerIn am Qualifikationskurs ist (den Statusgrund "Qualifikationskurs" hat),
 	// Termine verbergen, bis ein Account im EQK vorhanden ist
-	if (defined('STATUSGRUND_ID_QUALIFIKATIONKURSTEILNEHMER') || STATUSGRUND_ID_QUALIFIKATIONKURSTEILNEHMER != '')
+	if (defined('STATUSGRUND_ID_QUALIFIKATIONKURSTEILNEHMER') && STATUSGRUND_ID_QUALIFIKATIONKURSTEILNEHMER != '')
 	{
 		$hasStatusgrundQuali = hasPersonStatusgrund($person_id, $nextWinterSemester->studiensemester_kurzbz, STATUSGRUND_ID_QUALIFIKATIONKURSTEILNEHMER);
 	}
-	else 
+	else
 	{
 		$hasStatusgrundQuali = false;
 	}
-	
+
 	// Wenn die Person Quereinsteiger ins Sommersemester ist (den Statusgrund "Einstieg Sommersemester" hat), Termine verbergen
-	if (defined('STATUSGRUND_ID_EINSTIEG_SOMMERSEMESTER') || STATUSGRUND_ID_EINSTIEG_SOMMERSEMESTER != '')
+	if (defined('STATUSGRUND_ID_EINSTIEG_SOMMERSEMESTER') && STATUSGRUND_ID_EINSTIEG_SOMMERSEMESTER != '')
 	{
 		$hasStatusgrundEinstiegSS = hasPersonStatusgrund($person_id, $nextWinterSemester->studiensemester_kurzbz, STATUSGRUND_ID_EINSTIEG_SOMMERSEMESTER);
 	}
@@ -122,8 +122,8 @@ if(!isset($person_id))
 	{
 		$hasStatusgrundEinstiegSS = false;
 	}
-	
-	
+
+
 	$nextSummerSemester = new studiensemester();
 	$nextSummerSemester->getNextStudiensemester('SS');
 	$prestudent = new prestudent();
@@ -150,7 +150,7 @@ if(!isset($person_id))
 							break;
 						}
 					}
-				}				
+				}
 			}
 			else
 			{
@@ -164,12 +164,12 @@ if(!isset($person_id))
 			}
 		}
 	}
-	else 
+	else
 	{
 		// Mögliche Termine zur Anmeldung laden, für die die Person noch nicht angemeldet ist
 		$reihungstestTermine = getReihungstestsForOnlinebewerbung($studienplanReihungstest, $nextWinterSemester->studiensemester_kurzbz);
 	}
-	
+
 	if($hasStatusgrundEinstiegSS == true)
 	{
 		echo '<div class="col-xs-12 alert alert-warning">'.$p->t('bewerbung/keineRtTermineZurAuswahl').'</div>';
@@ -180,7 +180,7 @@ if(!isset($person_id))
 		{
 			echo '<div class="col-xs-12 alert alert-warning">'.$p->t('bewerbung/keineRtTermineZurAuswahl').'</div>';
 		}
-		else 
+		else
 		{
 			echo '<div class="col-xs-12 alert alert-info">'.$p->t('bewerbung/infoVorgemerktFuerQualifikationskurs').'</div>';
 		}
@@ -205,7 +205,7 @@ if(!isset($person_id))
 						</div>
 						<div id="listeTesttermine" class="panel-collapse collapse-in">
 							<ul class="list-group">';
-			
+
 			foreach($reihungstestTermine as $row)
 			{
 				$angemeldet = false;
@@ -216,14 +216,14 @@ if(!isset($person_id))
 				// Wenn alle Plätze vergeben sind, Termin nicht anzeigen
 				if ($row->anzahl_plaetze - $row->anzahl_anmeldungen <= 0)
 					continue;
-				
+
 				$plaetzeText = '';
 				// Hervorheben, sobald weniger als 10% Plätze frei sind
 				if ((($row->anzahl_plaetze / 100) * 10) >= ($row->anzahl_plaetze - $row->anzahl_anmeldungen))
 				{
 					$plaetzeText = 'Noch <span class="text-danger"><b>'.($row->anzahl_plaetze - $row->anzahl_anmeldungen).'</b></span> freie Plätze';
 				}
-				else 
+				else
 				{
 					$plaetzeText = 'Noch '.($row->anzahl_plaetze - $row->anzahl_anmeldungen).' freie Plätze';
 				}
