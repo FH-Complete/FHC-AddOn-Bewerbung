@@ -283,9 +283,12 @@ else
 			$buttonStornierenEnabled = false;
 		}
 		
-		// Abschicken nur möglich, wenn die Frist nicht abgelaufen ist und die Bewerbung noch nicht geschickt wurde
+		// Abschicken nur möglich, wenn die Frist nicht abgelaufen ist und die Bewerbung noch nicht geschickt oder bestätigt wurde
 		$buttonAbschickenEnabled = false;
-		if ($prestudent_status->bewerbung_abgeschicktamum == '' && $fristAbgelaufen == false)
+		if ($prestudent_status->bewerbung_abgeschicktamum == '' 
+			&& $fristAbgelaufen == false
+			&& $prestudent_status->bestaetigtam == ''
+			&& $prestudent_status->bestaetigtvon == '')
 		{
 			$buttonAbschickenEnabled = true;
 		}
