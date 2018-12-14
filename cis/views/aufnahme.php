@@ -174,16 +174,20 @@ if(!isset($person_id))
 	{
 		echo '<div class="col-xs-12 alert alert-warning">'.$p->t('bewerbung/keineRtTermineZurAuswahl').'</div>';
 	}
-	elseif($reihungstestTermine == '' && count($angemeldeteRtArray) == 0)
+	elseif($isStudentQuali == true)
 	{
-		if ($isStudentQuali == true)
+		if ($reihungstestTermine == '' && count($angemeldeteRtArray) == 0)
 		{
 			echo '<div class="col-xs-12 alert alert-warning">'.$p->t('bewerbung/keineRtTermineZurAuswahl').'</div>';
 		}
-		else 
+		else
 		{
 			echo '<div class="col-xs-12 alert alert-info">'.$p->t('bewerbung/infoVorgemerktFuerQualifikationskurs').'</div>';
 		}
+	}
+	elseif($reihungstestTermine == '' && count($angemeldeteRtArray) == 0)
+	{
+		echo '<div class="col-xs-12 alert alert-info">'.$p->t('bewerbung/keineRtTermineZurAuswahl').'</div>';
 	}
 	else
 	{
@@ -260,10 +264,21 @@ if(!isset($person_id))
 	<button class="btn-nav btn btn-default" type="button" data-jump-tab="<?php echo $tabs[array_search('aufnahme', $tabs)-1] ?>">
 		<?php echo $p->t('global/zurueck') ?>
 	</button>
-	<?php if (array_key_exists(array_search('aufnahme', $tabs)+1, $tabs)):?>
-	<button class="btn-nav btn btn-default" type="button" data-jump-tab="<?php echo $tabs[array_search('aufnahme', $tabs)+1] ?>">
-		<?php echo $p->t('bewerbung/weiter'); ?>
-	</button><?php endif; ?><br/><br/>
+	<?php 
+	if (array_key_exists(array_search('aufnahme', $tabs)+1, $tabs))
+	{
+		echo '	<button class="btn-nav btn btn-default" type="button" data-jump-tab="'.$tabs[array_search('aufnahme', $tabs)+1].'">
+					'.$p->t('bewerbung/weiter').'
+				</button>';
+	}
+	else 
+	{
+		echo '	<button class="btn-nav btn btn-default" type="button" data-jump-tab="'.$tabs[0].'">
+					'.$p->t('bewerbung/menuUebersicht').'
+				</button>';
+	}
+	?>
+	<br/><br/>
 </div>
 <script type="text/javascript">
 function aktionReihungstest(reihungstest_id, studienplan_id, aktion)
