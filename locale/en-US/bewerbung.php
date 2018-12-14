@@ -34,7 +34,7 @@ $this->phrasen['bewerbung/mailtext']='Dear %4$s %1$s %2$s.<br><br>
                                         '.CAMPUS_NAME;
 $this->phrasen['bewerbung/zugangsdatenFalsch']='The access code you have entered is incorrect or you have not yet registered.';
 $this->phrasen['bewerbung/fehlerBeimSenden']='An error occured while sending the E-Mail.';
-$this->phrasen['bewerbung/emailgesendetan']='The E-Mail with your access code has successfully been sent to %s.';
+$this->phrasen['bewerbung/emailgesendetan']='The e-mail with your access code has successfully been sent to %s.';
 $this->phrasen['bewerbung/zurueckZurAnmeldung']='Back to registration.';
 $this->phrasen['bewerbung/sicherheitscodeFalsch']='The access code is incorrect.';
 $this->phrasen['bewerbung/geplanterStudienbeginn']='Planned start of study period';
@@ -44,7 +44,7 @@ $this->phrasen['bewerbung/bitteVornameAngeben']='Please enter your first name.';
 $this->phrasen['bewerbung/bitteNachnameAngeben']='Please enter your last name.';
 $this->phrasen['bewerbung/bitteGeburtsdatumEintragen']='Please enter your date of birth.';
 $this->phrasen['bewerbung/bitteGeschlechtWaehlen']='Please enter your gender.';
-$this->phrasen['bewerbung/bitteEmailAngeben']='Please enter a valid E-Mail Adress.';
+$this->phrasen['bewerbung/bitteEmailAngeben']='Please enter a valid E-Mail Address.';
 $this->phrasen['bewerbung/bitteStudienbeginnWaehlen']='Please select the desired start of study period.';
 $this->phrasen['bewerbung/captcha']='Please enter the characters shown in the picture (spam protection).';
 $this->phrasen['bewerbung/andereGrafik']='Reload picture';
@@ -136,7 +136,7 @@ $this->phrasen['bewerbung/zahlungsinformation']='Payment information';
 $this->phrasen['bewerbung/bezahlt']='payed';
 $this->phrasen['bewerbung/zahlungsdetails']='Payment details';
 $this->phrasen['bewerbung/menuReihungstest']='Placement test';
-$this->phrasen['bewerbung/fuerReihungstestAnmelden']='You can register for <b>one</b> of the following placement tests:';
+$this->phrasen['bewerbung/fuerReihungstestAnmelden']='You can register for <b>one</b> of the following placement tests.<br>Please note that you need to take the test only once even if you have seelcted more than one bachelor degree programme';
 $this->phrasen['bewerbung/fehler']='An error occurred';
 $this->phrasen['bewerbung/angemeldetPlaetze']='registered / places';
 $this->phrasen['bewerbung/uhrzeit']='Time';
@@ -167,9 +167,10 @@ $this->phrasen['bewerbung/erfolgreichBeworben']='You have applied successfully. 
 $this->phrasen['bewerbung/fehlerBeimVersendenDerBewerbung']='An error occured while sending the application. Please try again.';
 $this->phrasen['bewerbung/svnrBereitsVorhanden']='Social Security Number already exists.';
 $this->phrasen['bewerbung/menuBewerbungFuerStudiengang']='Application for a degree program';
-$this->phrasen['bewerbung/emailBodyStart']='Es hat sich ein Student für Ihren Studiengang beworben. <br>';//Mail an Assistenz. Nur übersetzen, wenn das Mail in der Sprache der Bewerbung versendet werden soll.
+$this->phrasen['bewerbung/emailBodyStart']='Es gibt eine neue Bewerbung mit folgenden Daten: <br><br>
+											Für mehr Details öffnen Sie bitte den <a href="%s" target="_blank">Personendatensatz</a> im FAS.';//Mail an Assistenz. Nur übersetzen, wenn das Mail in der Sprache der Bewerbung versendet werden soll.
 $this->phrasen['bewerbung/emailDokumentuploadStart']='Das folgende Dokument wurde hochgeladen: <br>';//Mail an Assistenz. Nur übersetzen, wenn das Mail in der Sprache der Bewerbung versendet werden soll.
-$this->phrasen['bewerbung/emailBodyEnde']='Für mehr Details verwenden Sie die Personenansicht im FAS.';//Mail an Assistenz. Nur übersetzen, wenn das Mail in der Sprache der Bewerbung versendet werden soll.
+$this->phrasen['bewerbung/emailBodyEnde']='';//Mail an Assistenz. Nur übersetzen, wenn das Mail in der Sprache der Bewerbung versendet werden soll.
 $this->phrasen['bewerbung/fileUpload']='File-Upload';
 $this->phrasen['bewerbung/fehlerKeinePersonId']='There was no Person_id supplied';
 $this->phrasen['bewerbung/woWurdeUrkundeAusgestellt']='Where was the certificate issued?';
@@ -180,7 +181,7 @@ $this->phrasen['bewerbung/keineLehrgAngeboten']='There are no courses available 
 $this->phrasen['bewerbung/aufmerksamdurch']='How did you hear about us?';
 $this->phrasen['bewerbung/BewerbungBereitsVerschickt']='Application is being processed';
 $this->phrasen['bewerbung/bitteZuerstStudiengangWaehlen']='Please select at least one field of study first (see section "Overview").';
-$this->phrasen['bewerbung/ExtensionInformation']='Maximum filesize per document: 15 MB.<br>Supported File formats:';
+$this->phrasen['bewerbung/ExtensionInformation']='Maximum file size per document: 15 MB.<br>Supported file formats:';
 $this->phrasen['bewerbung/falscherDateityp']='This File format is not supported';
 $this->phrasen['bewerbung/mailadresseBereitsGenutzt']='The e-mail address %s has already been used for an application. Do you want to send the access code to this address again?';
 $this->phrasen['bewerbung/mailadresseBereitsVorhanden']='The e-mail address %s already exists in our system an cannot be saved. Please enter a different e-mail address.';
@@ -194,14 +195,14 @@ $this->phrasen['bewerbung/maturazeugnis']='School leaving certificate';
 $this->phrasen['bewerbung/details']='Details';
 $this->phrasen['bewerbung/mehrDetails']='More details...';
 $this->phrasen['bewerbung/codeZuschicken']='Send code';
-$this->phrasen['bewerbung/codeZuschickenAnleitung']='Please enter your e-mail adress and click "Send code"';
+$this->phrasen['bewerbung/codeZuschickenAnleitung']='Please enter your e-mail address and click "Send code"';
 $this->phrasen['bewerbung/keinCodeVorhanden']='There is no access code available yet for this e-mail address. Please register in advance.';
 $this->phrasen['bewerbung/zgvDatumNichtZukunft']='The date of access requirement may not be in the future. If you intend to provide the access requirement later, please leave the date blank.';
 $this->phrasen['bewerbung/ab']='from';
-$this->phrasen['bewerbung/adresse']='Adress (principal residence)';
+$this->phrasen['bewerbung/adresse']='Address (principal residence)';
 $this->phrasen['bewerbung/notizVom']='Note from';
 $this->phrasen['bewerbung/anmerkung']='Comment';
-$this->phrasen['bewerbung/anmerkungPlaceholder']='Here you have the opportunity to enter an additional comment (1024 Characters) that you want to tell the assistant';
+$this->phrasen['bewerbung/anmerkungPlaceholder']='Here you have the opportunity to enter an additional comment (1024 characters) that you want to tell the assistant';
 $this->phrasen['bewerbung/orgformMussGewaehltWerden']='An organization form must be selected';
 $this->phrasen['bewerbung/hierUnverbindlichAnmelden']='Register here without obligation';
 $this->phrasen['bewerbung/keineOrgformVorhanden']='No organization form has been stored for the semester of study selected';
@@ -213,7 +214,7 @@ $this->phrasen['bewerbung/sieHabenNochKeinenZugangscode']='You don\'t have an ac
 $this->phrasen['bewerbung/habenSieBereitsEinenZugangscode']='You already have an access code?';
 $this->phrasen['bewerbung/studierenOderArbeitenSieBereits']='You already study or work at the UAS Technikum Wien?';
 $this->phrasen['bewerbung/zugangscodeVergessen']='Forgot access code?';
-$this->phrasen['bewerbung/dannHiermitAccountEinloggen']='Then login here with your CIS-account';
+$this->phrasen['bewerbung/dannHiermitAccountEinloggen']='Then login here with your CIS account';
 $this->phrasen['bewerbung/dannHierEinloggen']='Then login here';
 $this->phrasen['bewerbung/dokumentHerunterladen']='Download document';
 $this->phrasen['bewerbung/hinweisZGVdatenaenderung']='<b>Notice:</b> Saved data cannot be changed afterwards due to organisational reasons. If there is incorrect data please use the comment-area under "Finish" or contact your administrative assistant responsible.';
@@ -232,7 +233,7 @@ $this->phrasen['bewerbung/pflichtfelder']='Required';
 $this->phrasen['bewerbung/bitteGueltigeOesterreichischePlzEingeben']='Please enter a valid Austrian postcode';
 $this->phrasen['bewerbung/plzMussGueltigSein']='Postcode must be a valid number';
 $this->phrasen['bewerbung/plzUnbekannt']='Postcode unknown';
-$this->phrasen['bewerbung/dateien']='Files(s)';
+$this->phrasen['bewerbung/dateien']='File(s)';
 $this->phrasen['bewerbung/dokumentWirdGeprueft']='Document in examination';
 $this->phrasen['bewerbung/dokumentUeberprueft']='Document examined';
 $this->phrasen['bewerbung/keineDateiAusgewaehlt']='No file selected or found';
@@ -273,18 +274,109 @@ $this->phrasen['bewerbung/hackStufeBezeichnungMaster']=''; // Überschreibt die 
 $this->phrasen['bewerbung/prioritaet']='Priority';// Nur grob übersetzt
 $this->phrasen['bewerbung/studierendenDaten']='Current student data';// Nur grob übersetzt
 $this->phrasen['bewerbung/keineRtTermineZurAuswahl']='Currently there are no placement tests available';// Nur grob übersetzt
-$this->phrasen['bewerbung/erfolgreichBeworbenMailBachelor']='Dear %3$s %1$s %2$s,<br><br>
-Your have successfully submitted your application for %4$s. Generally, we will get back to you within 5 working days. If necessary, you will then be requested to upload additional documents.<br><br>
-You can see the status of your application in the <a href="'.APP_ROOT.'addons/bewerbung/cis/registration.php">application tool</a>.<br> 
-If you have any questions regarding your application, do not hesitate to contact our Info Center at <a href="mailto:studienberatung@technikum-wien.at">studienberatung@technikum-wien.at</a>.<br><br>
-Best regards,<br>
-UAS Technikum Wien';
-$this->phrasen['bewerbung/erfolgreichBeworbenMail']='Dear %3$s %1$s %2$s,<br><br>
-Your have successfully submitted your application for %4$s. Generally, we will get back to you within 5 working days. If necessary, you will then be requested to upload additional documents.<br><br>
-You can see the status of your application in the application tool.<br>
-If you have any questions regarding your application, do not hesitate to contact us at <a href="mailto:%5$s">%5$s</a>.<br><br>
-Best regards,<br>
-UAS Technikum Wien';
+$this->phrasen['bewerbung/erfolgreichBeworbenMailBachelor']='
+<html>
+	<head>	
+		<title>Sancho Mail</title>
+	</head>
+	<body>
+		<center>
+			<table cellpadding="0" cellspacing="0" style="border: 2px solid #000000; padding: 0px; max-width: 850px; 
+				border-collapse:collapse; mso-table-lspace:0pt; mso-table-rspace:0pt;">  
+				<tr>
+					<td align="center">
+						<table cellpadding="0" cellspacing="0" width="100%%" border="0">
+							<tr>
+								<td>
+									<img src="data:image/jpg;base64,%5$s" alt="sancho_header" width="100%%"/>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+				<tr>
+					<td align="center">
+						<table cellpadding="0" cellspacing="0" width="100%%" style="font-family: courier, verdana, sans-serif; font-size: 0.95em; border-bottom: 2px solid #000000;">
+							<tr>
+								<td style="padding-left: 8%%; padding-right: 8%%; padding-top: 5%%; padding-bottom: 5%%;">
+									Dear %3$s %1$s %2$s,<br><br>
+									Your have successfully submitted your application for %4$s. Generally, we will get back to you within 5 working days. If necessary, you will then be requested to upload additional documents.<br><br>
+									You can see the status of your application in the <a href="'.APP_ROOT.'addons/bewerbung/cis/registration.php">application tool</a>.<br> 
+									If you have any questions regarding your application, do not hesitate to contact our Info Center at <a href="mailto:studienberatung@technikum-wien.at">studienberatung@technikum-wien.at</a>.<br><br>
+									Best regards,<br>
+									UAS Technikum Wien
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+				<tr>
+					<td align="center">
+						<table cellpadding="0" cellspacing="0" width="100%%">
+							<tr>
+								<td>
+									<img src="data:image/jpg;base64,%6$s" alt="sancho_footer" width="100%%"/>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+			</table>
+		</center>
+	</body>
+</html>
+';
+$this->phrasen['bewerbung/erfolgreichBeworbenMail']='
+<html>
+	<head>	
+		<title>Sancho Mail</title>
+	</head>
+	<body>
+		<center>
+			<table cellpadding="0" cellspacing="0" style="border: 2px solid #000000; padding: 0px; max-width: 850px; 
+				border-collapse:collapse; mso-table-lspace:0pt; mso-table-rspace:0pt;">  
+				<tr>
+					<td align="center">
+						<table cellpadding="0" cellspacing="0" width="100%%" border="0">
+							<tr>
+								<td>
+									<img src="data:image/jpg;base64,%5$s" alt="sancho_header" width="100%%"/>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+				<tr>
+					<td align="center">
+						<table cellpadding="0" cellspacing="0" width="100%%" style="font-family: courier, verdana, sans-serif; font-size: 0.95em; border-bottom: 2px solid #000000;">
+							<tr>
+								<td style="padding-left: 8%%; padding-right: 8%%; padding-top: 5%%; padding-bottom: 5%%;">
+									Dear %3$s %1$s %2$s,<br><br>
+									Your have successfully submitted your application for %4$s. Generally, we will get back to you within 5 working days. If necessary, you will then be requested to upload additional documents.<br><br>
+									You can see the status of your application in the <a href="'.APP_ROOT.'addons/bewerbung/cis/registration.php">application tool</a>.<br>
+									If you have any questions regarding your application, do not hesitate to contact us at <a href="mailto:%5$s">%5$s</a>.<br><br>
+									Best regards,<br>
+									UAS Technikum Wien
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+				<tr>
+					<td align="center">
+						<table cellpadding="0" cellspacing="0" width="100%%">
+							<tr>
+								<td>
+									<img src="data:image/jpg;base64,%6$s" alt="sancho_footer" width="100%%"/>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+			</table>
+		</center>
+	</body>
+</html>';
 $this->phrasen['bewerbung/erfolgreichBeworbenMailBetreff']='Application confirmation UAS Technikum Wien';
 $this->phrasen['bewerbung/bewerbungsfrist']='Application deadline';
 $this->phrasen['bewerbung/bewerbungszeitraum']='Application period (within the EU)';
@@ -299,7 +391,7 @@ $this->phrasen['bewerbung/bewerbungDerzeitNichtMoeglich']='Application currently
 $this->phrasen['bewerbung/bewerbungenFuerAb']='Application for %s starting %s';
 $this->phrasen['bewerbung/bewerbungenFuerStudiensemesterXX']='Applications for study semester %s';
 $this->phrasen['bewerbung/bewerbungAbschicken']='Send application';
-$this->phrasen['bewerbung/erklaerungBewerbungAbschickenFuerStudiengang']='If you have filled in all the information correctly you can submit your application for <span style="text-align: center; font-weight: bold; display: block; padding-top: 10px">%s</span>.<br>
+$this->phrasen['bewerbung/erklaerungBewerbungAbschickenFuerStudiengang']='If you have filled in all the information correctly you can submit your application for <span style="text-align: center; font-weight: bold; display: block; padding-top: 10px">%s</span>
 Generally, we will get back to you within 5 working days.';
 $this->phrasen['bewerbung/anmeldungStornieren']='Cancel registration'; // Nur grob übersetzt
 $this->phrasen['bewerbung/anmeldungStornierenBis']='Cancel (until %s)'; // Nur grob übersetzt
@@ -309,8 +401,7 @@ $this->phrasen['bewerbung/erklaerungErgaenzungen']='Here you have the opportunit
 $this->phrasen['bewerbung/keineStudienrichtungenFuerStudiensemesterZurAuswahl']='Currently there are no courses available for the selected study semester'; // Nur grob übersetzt
 $this->phrasen['bewerbung/sieHabenFolgendenTerminGewaehlt']='You registered to the following test'; // Nur grob übersetzt
 
-// Reihungstest ->> Alle nur grob übersetzt
-$this->phrasen['bewerbung/anmeldungReihungstestMailBetreff']='Bestätigung Reihungstestanmeldung Fachhochschule Technikum Wien';
+$this->phrasen['bewerbung/anmeldungReihungstestMailBetreff']='Confirmation of registration to placement test UAS Technikum Wien';
 $this->phrasen['bewerbung/anmeldungReihungstestMail']='Sehr %3$s %1$s %2$s,<br><br>
 Sie haben sich erfolgreich für den Reihungstest am %4$s beworben. Der Test beginnt um %5$s und dauert etwa 3,5 Stunden.<br><br>
 Bitte bringen Sie einen amtlichen Lichtbildausweis zur Überprüfung Ihrer Identität mit.<br>
@@ -319,12 +410,12 @@ Sollten Sie Fragen haben, kontaktieren Sie bitte unser Infocenter <a href="mailt
 Mit freundlichen Grüßen<br>
 Fachhochschule Technikum Wien';
 $this->phrasen['bewerbung/reihungstestInfoTextAngemeldet']='<div class="alert alert-info">
-<p>Bitte finden Sie sich 15 Minuten vor dem gewählten Termin in den Räumlichkeiten der FH Technikum Wien, Höchstädtplatz 6, 1200 Wien ein.</p>
-<p>Zur Feststellung der Identität ist unbedingt ein Lichtbildausweis (Reisepass, Personalausweis) nötig.</p>
+<p>Please make sure that you arrive 15 minutes prior to the placement test at the UAS, 1200 Wien, Höchstädtplatz 6.</p>
+<p>Please bring an official photo ID (passport, identity card, etc.) on the day of your placement test.</p>
 </div><br>';
 $this->phrasen['bewerbung/anmeldefrist']='Term of application';
 $this->phrasen['bewerbung/infoVorgemerktFuerQualifikationskurs']='Sie sind als TeilnehmerIn für die Qualifikationskurse vorgemerkt. Sobald sie dort bestätigt wurden, können Sie hier einen Termin für den Reihungstest wählen.';
-$this->phrasen['bewerbung/raumzuteilungFolgt']='Raumzuteilung folgt spätestens 1 Woche vor Ihrem Termin';
+$this->phrasen['bewerbung/raumzuteilungFolgt']='One week prior to the test you will see here the room-number';
 
 // Ausbildung
 $this->phrasen['bewerbung/menuAusbildung']='Ausbildung';

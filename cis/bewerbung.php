@@ -119,6 +119,21 @@ if (! $person->load($person_id))
 {
 	die($p->t('global/fehlerBeimLadenDesDatensatzes'));
 }
+
+$spracheGet = filter_input(INPUT_GET, 'sprache');
+
+if(isset($spracheGet))
+{
+	$spracheGet = new sprache();
+	if($spracheGet->load($_GET['sprache']))
+	{
+		setSprache($_GET['sprache']);
+	}
+	else
+	{
+		setSprache(DEFAULT_LANGUAGE);
+	}
+}
 // $sprache = DEFAULT_LANGUAGE;
 $sprache = getSprache();
 $sprachindex = new sprache();
@@ -1996,6 +2011,7 @@ if (! defined('BEWERBERTOOL_REIHUNGSTEST_ANZEIGEN') || BEWERBERTOOL_REIHUNGSTEST
 {
 	$angemeldeteReihungstests = new reihungstest();
 	$angemeldeteReihungstests->getReihungstestPerson($person_id, $nextWinterSemester->studiensemester_kurzbz);
+	
 	$reihungstestTermine = getReihungstestsForOnlinebewerbung($studienplanReihungstest, $nextWinterSemester->studiensemester_kurzbz);
 	if (count($angemeldeteReihungstests->result) > 0)
 	{
@@ -2050,6 +2066,7 @@ else
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<title><?php echo $p->t('bewerbung/bewerbung') ?></title>
 		<link rel="stylesheet" type="text/css" href="../../../vendor/twbs/bootstrap/dist/css/bootstrap.min.css">
+		<link rel="stylesheet" type="text/css" href="../include/css/bewerbung.css">
 		<script type="text/javascript" src="../../../vendor/jquery/jqueryV1/jquery-1.12.4.min.js"></script>
 		<script type="text/javascript" src="../../../vendor/twbs/bootstrap/dist/js/bootstrap.min.js"></script>
 		<script src="../include/js/bewerbung.js"></script>
@@ -2064,6 +2081,11 @@ else
 				rest = max_length - length;
 				document.getElementById('countdown_'+id).innerHTML = rest;
 			};
+
+			function changeSprache(sprache)
+			{
+				window.location.href = "<?php echo $_SERVER['PHP_SELF'].'?active='.$active ?>&sprache=" + sprache;
+			}
 
 			window.setTimeout(function() {
 				$("#success-alert").fadeTo(500, 0).slideUp(500, function(){
@@ -2083,87 +2105,13 @@ else
 			$(document).ready(function(){
 				$('[data-toggle="popover"]').popover({html:true});
 				$('[data-toggle="tooltip"]').tooltip();
+				$('#sprache-dropdown-content a').on('click', function() 
+				{
+					var sprache = $(this).attr('data-sprache');
+					changeSprache(sprache);
+				});
 			});
 		</script>
-		<style type="text/css">
-		dokument a:hover
-		{
-			text-decoration:none;
-		}
-		.glyphicon
-		{
-/* 			font-size: 16px; */
-		}
-		.navbar-default .navbar-nav>.active>a,
-		.navbar-default .navbar-nav>.active>a:focus,
-		.navbar-default .navbar-nav>.active>a:hover
-		{
-			font-weight: bold
-		}
-		.popover
-		{
-			max-width: 500px;
-		}
-		.list-unstyled li
-		{
-			margin-bottom: 10px;
-		}
-		.list-unstyled
-		{
-			margin-top: 10px;
-		}
-		.statusverlauf_top
-		{
-			max-height: 20px;
-			overflow: hidden;
-			text-overflow: ellipsis;
-			content: "";
-			position: relative;
-		}
-		.statusverlauf_top:before
-		{
-			content: '';
-			width: 100%;
-			height: 100%;
-			position: absolute;
-			left: 0;
-			top: 0;
-			background: linear-gradient(white , transparent);
-		}
-		.statusverlauf_bottom
-		{
-			max-height: 20px;
-			overflow: hidden;
-			text-overflow: ellipsis;
-			content: "";
-			position: relative;
-		}
-		.statusverlauf_bottom:before
-		{
-			content: '';
-			width: 100%;
-			height: 100%;
-			position: absolute;
-			left: 0;
-			top: 0;
-			background: linear-gradient(transparent , white );
-		}
-		/* Animiertes Icon für Ladezeiten */
-		.loaderIcon 
-		{
-			border: 8px solid #f3f3f3; /* Light grey */
-			border-top: 8px solid #3498db; /* Blue */
-			border-radius: 50%;
-			width: 40px;
-			height: 40px;
-			animation: spin 2s linear infinite;
-		}
-		@keyframes spin 
-		{
-			0% { transform: rotate(0deg); }
-			100% { transform: rotate(360deg); }
-		}
-		</style>
 	</head>
 	<body class="bewerbung">
 		<?php
@@ -2309,6 +2257,8 @@ else
 						<?php endif; ?>
 
 						<?php
+						
+						$display = '';
 						if(!defined('BEWERBERTOOL_REIHUNGSTEST_ANZEIGEN') || BEWERBERTOOL_REIHUNGSTEST_ANZEIGEN)
 						{
 							// An der FHTW wird der Punkt "Reihungstest" erst angezeigt, wenn der Status einer Bewerbung bestätigt wurde
@@ -2316,24 +2266,21 @@ else
 							{
 								if (check_person_statusbestaetigt($person_id, 'Interessent', $nextWinterSemester->studiensemester_kurzbz))
 								{
-									echo '
-									<li>
-										<a href="#aufnahme" aria-controls="aufnahme" role="tab" data-toggle="tab" '.($status_reihungstest_text == $unvollstaendig ? 'style="background-color: #F2DEDE !important"': ($status_reihungstest_text == $teilvollstaendig ? 'style="background-color: #FCF8E3 !important"' : 'style="background-color: #DFF0D8 !important"')).'>
-											'.$p->t('bewerbung/menuReihungstest').'<br>'.$status_reihungstest_text.'
-										</a>
-									</li>';
+									$display = '';
+								}
+								else
+								{
+									$display = 'style="display: none"';
 								}
 							}
-							else 
-							{
-								echo '
-								<li>
+						} 
+						echo '	<li id="tab_aufnahme" '.$display.'>
 									<a href="#aufnahme" aria-controls="aufnahme" role="tab" data-toggle="tab" '.($status_reihungstest_text == $unvollstaendig ? 'style="background-color: #F2DEDE !important"': ($status_reihungstest_text == $teilvollstaendig ? 'style="background-color: #FCF8E3 !important"' : 'style="background-color: #DFF0D8 !important"')).'>
 										'.$p->t('bewerbung/menuReihungstest').'<br>'.$status_reihungstest_text.'
 									</a>
 								</li>';
-							}
-						} ?>
+						
+						?>
 						<?php if(!defined('BEWERBERTOOL_ABSCHICKEN_ANZEIGEN') || BEWERBERTOOL_ABSCHICKEN_ANZEIGEN):	?>
 						<li>
 							<a href="#abschicken" aria-controls="abschicken" role="tab" data-toggle="tab" <?php echo ($status_abschicken_text == $unvollstaendig ? 'style="background-color: #F2DEDE !important"': ($status_abschicken_text == $teilvollstaendig ? 'style="background-color: #FCF8E3 !important"' : 'style="background-color: #DFF0D8 !important"'));?>>
@@ -2352,6 +2299,26 @@ else
 							<a href="bewerbung.php?logout=true">
 								<?php echo $p->t('bewerbung/logout') ?> <br> <span class="glyphicon glyphicon-log-out"></span>
 							</a>
+						</li>
+						<?php
+							$spracheSelect = new sprache();
+							$spracheSelect->getAll(true);
+						?>
+						<li>
+							<div class="sprache-dropdown">
+								<button class="dropbtn">
+									<?php echo $spracheSelect->getBezeichnung(getSprache(), getSprache()) ?>
+									 <br> <span class="glyphicon glyphicon-triangle-bottom"></span>
+								</button>
+								<div id="sprache-dropdown-content" class="sprache-dropdown-content">
+									<?php foreach($spracheSelect->result as $row): ?>
+										<a href="#" tabindex="-1" data-sprache="<?php echo $row->sprache ?>">
+											<?php echo $row->bezeichnung_arr[getSprache()] ?>
+										</a>
+									<?php endforeach; ?>
+								</div>
+							</div>
+							
 						</li>
 					</ul>
 				</div>
@@ -2439,7 +2406,8 @@ function sendBewerbung($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz,
 			}
 		}
 
-		$email = $p->t('bewerbung/emailBodyStart');
+		$email = $p->t('bewerbung/emailBodyStart', array(VILESCI_ROOT . 'vilesci/personen/personendetails.php?id='.$person_id));
+		
 		// Wenn MAIL_DEBUG aktiv ist, zeige auch den Empfänger an
 		if(defined('MAIL_DEBUG') && MAIL_DEBUG != '')
 			$email .= '<br><br>Empfänger: '.$empfaenger.'<br><br>';
@@ -2450,18 +2418,18 @@ function sendBewerbung($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz,
 			$email.= '<tr><td><b>'.$p->t('studienplan/studienplan').'</b></td><td>'.$studienplan_bezeichnung.'</td></tr>';
 		else
 			$email.= '<tr><td><b>'.$p->t('studienplan/studienplan').'</b></td><td><span style="color: red">Es konnte kein passender Studienplan ermittelt werden</span></td></tr>';
-		$email.= '<tr><td><b>'.$p->t('global/geschlecht').'</b></td><td>'.($person->geschlecht=='m'?$p->t('bewerbung/maennlich'):$p->t('bewerbung/weiblich')).'</td></tr>';
-		$email.= '<tr><td><b>'.$p->t('global/titel').'</b></td><td>'.$person->titelpre.'</td></tr>';
-		$email.= '<tr><td><b>'.$p->t('global/postnomen').'</b></td><td>'.$person->titelpost.'</td></tr>';
+		//$email.= '<tr><td><b>'.$p->t('global/geschlecht').'</b></td><td>'.($person->geschlecht=='m'?$p->t('bewerbung/maennlich'):$p->t('bewerbung/weiblich')).'</td></tr>';
+		//$email.= '<tr><td><b>'.$p->t('global/titel').'</b></td><td>'.$person->titelpre.'</td></tr>';
+		//$email.= '<tr><td><b>'.$p->t('global/postnomen').'</b></td><td>'.$person->titelpost.'</td></tr>';
 		$email.= '<tr><td><b>'.$p->t('global/vorname').'</b></td><td>'.$person->vorname.'</td></tr>';
 		$email.= '<tr><td><b>'.$p->t('global/nachname').'</b></td><td>'.$person->nachname.'</td></tr>';
-		$email.= '<tr><td><b>'.$p->t('global/geburtsdatum').'</b></td><td>'.date('d.m.Y', strtotime($person->gebdatum)).'</td></tr>';
-		$email.= '<tr><td><b>'.$p->t('global/adresse').'</b></td><td>'.$strasse.'</td></tr>';
-		$email.= '<tr><td><b>'.$p->t('global/plz').'</b></td><td>'.$plz.'</td></tr>';
-		$email.= '<tr><td><b>'.$p->t('global/ort').'</b></td><td>'.$ort.'</td></tr>';
-		$email.= '<tr><td><b>'.$p->t('incoming/nation').'</b></td><td>'.$nation->langtext.'</td></tr>';
-		$email.= '<tr><td><b>'.$p->t('global/emailAdresse').'</b></td><td>'.$mailadresse.'</td></tr>';
-		$email.= '<tr><td><b>'.$p->t('global/telefon').'</b></td><td>'.$telefon.'</td></tr>';
+		//$email.= '<tr><td><b>'.$p->t('global/geburtsdatum').'</b></td><td>'.date('d.m.Y', strtotime($person->gebdatum)).'</td></tr>';
+		//$email.= '<tr><td><b>'.$p->t('global/adresse').'</b></td><td>'.$strasse.'</td></tr>';
+		//$email.= '<tr><td><b>'.$p->t('global/plz').'</b></td><td>'.$plz.'</td></tr>';
+		//$email.= '<tr><td><b>'.$p->t('global/ort').'</b></td><td>'.$ort.'</td></tr>';
+		//$email.= '<tr><td><b>'.$p->t('incoming/nation').'</b></td><td>'.$nation->langtext.'</td></tr>';
+		//$email.= '<tr><td><b>'.$p->t('global/emailAdresse').'</b></td><td>'.$mailadresse.'</td></tr>';
+		//$email.= '<tr><td><b>'.$p->t('global/telefon').'</b></td><td>'.$telefon.'</td></tr>';
 		$email.= '<tr><td style="vertical-align:top"><b>'.$p->t('global/anmerkungen').'</b></td><td>'.$anmerkungen.'</td></tr>';
 		$email.= '<tr><td><b>'.$p->t('bewerbung/prestudentID').'</b></td><td>'.$prestudent_id.'</td></tr>';
 		$email.= '<tr><td style="vertical-align:top"><b>'.$p->t('tools/dokumente').'</b></td><td>';
@@ -2477,7 +2445,7 @@ function sendBewerbung($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz,
 				if ($row->nachgereicht == true)
 					$email .= '- ' . $dokument->bezeichnung_mehrsprachig[DEFAULT_LANGUAGE] . ' -> ' . $p->t('bewerbung/dokumentWirdNachgereicht') . '<br>';
 				else
-					$email .= '- <a href="' . APP_ROOT . 'cms/dms.php?id=' . $row->dms_id . '">' . $dokument->bezeichnung_mehrsprachig[DEFAULT_LANGUAGE] . '_' . $row->bezeichnung . '</a><br>';
+					$email .= '- <a href="' . VILESCI_ROOT . '/content/akte.php?akte_id=' . $row->akte_id . '">' . $dokument->bezeichnung_mehrsprachig[DEFAULT_LANGUAGE] . '</a><br>';
 			}
 		}
 		$email .= '</td></tr></tbody></table>';
@@ -2494,7 +2462,7 @@ function sendBewerbung($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz,
 	}
 	else
 	{
-		$email = $p->t('bewerbung/emailBodyStart');
+		$email = $p->t('bewerbung/emailBodyStart', array(VILESCI_ROOT . 'vilesci/personen/personendetails.php?id='.$person_id));
 		$email .= '<br>';
 		$email .= $p->t('global/studiengang') . ': ' . $typ->bezeichnung . ' ' . $studiengang->bezeichnung . ($orgform_kurzbz != '' ? ' (' . $orgform_kurzbz . ')' : '') . ' <br>';
 		$email .= $p->t('global/studiensemester') . ': ' . $studiensemester_kurzbz . '<br>';
@@ -2537,12 +2505,18 @@ function sendBewerbung($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz,
 
 		$mail_bewerber = new mail($mailadresse, 'no-reply', $p->t('bewerbung/erfolgreichBeworbenMailBetreff'), 'Bitte sehen Sie sich die Nachricht in HTML Sicht an, um den Inhalt vollständig darzustellen.');
 		// Unterschiedliche Ansprechpersonen für Bachelor und Master
+		$sanchoMailHeader = base64_encode(file_get_contents('../../../skin/images/sancho/sancho_header_DEFAULT.jpg'));
+		$sanchoMailFooter = base64_encode(file_get_contents('../../../skin/images/sancho/sancho_footer.jpg'));
 		if ($studiengang->typ == 'b')
-			$email_bewerber = $p->t('bewerbung/erfolgreichBeworbenMailBachelor', array($person->vorname, $person->nachname, $anrede, $studiengang->bezeichnung));
-		else 
-			$email_bewerber = $p->t('bewerbung/erfolgreichBeworbenMail', array($person->vorname, $person->nachname, $anrede, $studiengang->bezeichnung, $empfaenger));
+		{
+			$email_bewerber_content = $p->t('bewerbung/erfolgreichBeworbenMailBachelor', array($person->vorname, $person->nachname, $anrede, $studiengang->bezeichnung, $sanchoMailHeader, $sanchoMailFooter));
+		}
+		else
+		{
+			$email_bewerber_content = $p->t('bewerbung/erfolgreichBeworbenMail', array($person->vorname, $person->nachname, $anrede, $studiengang->bezeichnung, $empfaenger, $sanchoMailHeader, $sanchoMailFooter));
+		}
 		
-		$mail_bewerber->setHTMLContent($email_bewerber);
+		$mail_bewerber->setHTMLContent($email_bewerber_content);
 		if (! $mail_bewerber->send())
 			return false;
 	}

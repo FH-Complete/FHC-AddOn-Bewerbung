@@ -153,7 +153,7 @@ $this->phrasen['bewerbung/zahlungsinformation']='Zahlungsinformation';
 $this->phrasen['bewerbung/bezahlt']='bezahlt';
 $this->phrasen['bewerbung/zahlungsdetails']='Zahlungsdetails';
 $this->phrasen['bewerbung/menuReihungstest']='Reihungstest';
-$this->phrasen['bewerbung/fuerReihungstestAnmelden']='Sie können sich für <b>einen</b> der folgenden Reihungstests anmelden:';
+$this->phrasen['bewerbung/fuerReihungstestAnmelden']='Sie können sich für <b>einen</b> der folgenden Reihungstests anmelden.<br>Unabhängig von der Anzahl Ihrer Bachelor-Bewerbungen brauchen Sie den Reihungstest nur einmal an der FHTW absolvieren.';
 $this->phrasen['bewerbung/fehler']='Es ist ein Fehler aufgetreten';
 $this->phrasen['bewerbung/angemeldetPlaetze']='angemeldet / Plätze';
 $this->phrasen['bewerbung/uhrzeit']='Uhrzeit';
@@ -185,9 +185,10 @@ $this->phrasen['bewerbung/erfolgreichBeworben']='Sie haben sich erfolgreich für
 $this->phrasen['bewerbung/fehlerBeimVersendenDerBewerbung']='Es ist ein Fehler beim Versenden der Bewerbung aufgetreten. Bitte versuchen Sie es nocheinmal.';
 $this->phrasen['bewerbung/svnrBereitsVorhanden']='SVNR bereits vorhanden';
 $this->phrasen['bewerbung/menuBewerbungFuerStudiengang']='Bewerbung für einen Studiengang';
-$this->phrasen['bewerbung/emailBodyStart']='Es gibt eine neue Bewerbung mit folgenden Daten: <br>';
+$this->phrasen['bewerbung/emailBodyStart']='Es gibt eine neue Bewerbung mit folgenden Daten: <br><br>
+											Für mehr Details öffnen Sie bitte den <a href="%s" target="_blank">Personendatensatz</a> im FAS.';
 $this->phrasen['bewerbung/emailDokumentuploadStart']='Das folgende Dokument wurde hochgeladen: <br>';
-$this->phrasen['bewerbung/emailBodyEnde']='Für mehr Details öffnen Sie bitte den Personendatensatz im FAS.';
+$this->phrasen['bewerbung/emailBodyEnde']='';
 $this->phrasen['bewerbung/fileUpload']='File-Upload';
 $this->phrasen['bewerbung/fehlerKeinePersonId']='Es wurde keine Person_id angegeben';
 $this->phrasen['bewerbung/woWurdeUrkundeAusgestellt']='Wo wurde die Urkunde ausgestellt?';
@@ -291,18 +292,109 @@ $this->phrasen['bewerbung/hackStufeBezeichnungMaster']=''; // Überschreibt die 
 $this->phrasen['bewerbung/prioritaet']='Priorität';
 $this->phrasen['bewerbung/studierendenDaten']='Aktuelle Studierendendaten';
 $this->phrasen['bewerbung/keineRtTermineZurAuswahl']='Derzeit stehen keine Reihungstesttermine zur Auswahl';
-$this->phrasen['bewerbung/erfolgreichBeworbenMailBachelor']='Sehr %3$s %1$s %2$s,<br><br>
-Sie haben sich erfolgreich für %4$s beworben. In der Regel werden Sie innerhalb von 5 Werktagen kontaktiert. Gegebenenfalls werden Sie dann aufgefordert, weitere Dokumente hochzuladen.<br><br>
-Den Status Ihrer Bewerbung können Sie jederzeit im <a href="'.APP_ROOT.'addons/bewerbung/cis/registration.php">Bewerbungstool</a> verfolgen.<br>
-Sollten Sie Fragen zur Bewerbung haben, kontaktieren Sie bitte unser Infocenter <a href="mailto:studienberatung@technikum-wien.at">studienberatung@technikum-wien.at</a>.<br><br>
-Mit freundlichen Grüßen<br>
-Fachhochschule Technikum Wien';
-$this->phrasen['bewerbung/erfolgreichBeworbenMail']='Sehr %3$s %1$s %2$s,<br><br>
-Sie haben sich erfolgreich für %4$s beworben. In der Regel werden Sie innerhalb von 5 Werktagen kontaktiert. Gegebenenfalls werden Sie dann aufgefordert, weitere Dokumente hochzuladen.<br><br>
-Den Status Ihrer Bewerbung können Sie jederzeit im Bewerbungstool verfolgen.<br>
-Sollten Sie Fragen zur Bewerbung haben, kontaktieren Sie uns bitte unter <a href="mailto:%5$s">%5$s</a>.<br><br>
-Mit freundlichen Grüßen<br>
-Fachhochschule Technikum Wien';
+$this->phrasen['bewerbung/erfolgreichBeworbenMailBachelor']='
+<html>
+	<head>	
+		<title>Sancho Mail</title>
+	</head>
+	<body>
+		<center>
+			<table cellpadding="0" cellspacing="0" style="border: 2px solid #000000; padding: 0px; max-width: 850px; 
+				border-collapse:collapse; mso-table-lspace:0pt; mso-table-rspace:0pt;">  
+				<tr>
+					<td align="center">
+						<table cellpadding="0" cellspacing="0" width="100%%" border="0">
+							<tr>
+								<td>
+									<img src="data:image/jpg;base64,%5$s" alt="sancho_header" width="100%%"/>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+				<tr>
+					<td align="center">
+						<table cellpadding="0" cellspacing="0" width="100%%" style="font-family: courier, verdana, sans-serif; font-size: 0.95em; border-bottom: 2px solid #000000;">
+							<tr>
+								<td style="padding-left: 8%%; padding-right: 8%%; padding-top: 5%%; padding-bottom: 5%%;">
+									Sehr %3$s %1$s %2$s,<br><br>
+									Sie haben sich erfolgreich für %4$s beworben. In der Regel werden Sie innerhalb von 5 Werktagen kontaktiert. Gegebenenfalls werden Sie dann aufgefordert, weitere Dokumente hochzuladen.<br><br>
+									Den Status Ihrer Bewerbung können Sie jederzeit im <a href="'.APP_ROOT.'addons/bewerbung/cis/registration.php">Bewerbungstool</a> verfolgen.<br>
+									Sollten Sie Fragen zur Bewerbung haben, kontaktieren Sie bitte unser Infocenter <a href="mailto:studienberatung@technikum-wien.at">studienberatung@technikum-wien.at</a>.<br><br>
+									Mit freundlichen Grüßen<br>
+									Fachhochschule Technikum Wien
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+				<tr>
+					<td align="center">
+						<table cellpadding="0" cellspacing="0" width="100%%">
+							<tr>
+								<td>
+									<img src="data:image/jpg;base64,%6$s" alt="sancho_footer" width="100%%"/>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+			</table>
+		</center>
+	</body>
+</html>
+';
+$this->phrasen['bewerbung/erfolgreichBeworbenMail']='
+<html>
+	<head>	
+		<title>Sancho Mail</title>
+	</head>
+	<body>
+		<center>
+			<table cellpadding="0" cellspacing="0" style="border: 2px solid #000000; padding: 0px; max-width: 850px; 
+				border-collapse:collapse; mso-table-lspace:0pt; mso-table-rspace:0pt;">  
+				<tr>
+					<td align="center">
+						<table cellpadding="0" cellspacing="0" width="100%%" border="0">
+							<tr>
+								<td>
+									<img src="data:image/jpg;base64,%5$s" alt="sancho_header" width="100%%"/>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+				<tr>
+					<td align="center">
+						<table cellpadding="0" cellspacing="0" width="100%%" style="font-family: courier, verdana, sans-serif; font-size: 0.95em; border-bottom: 2px solid #000000;">
+							<tr>
+								<td style="padding-left: 8%%; padding-right: 8%%; padding-top: 5%%; padding-bottom: 5%%;">
+									Sehr %3$s %1$s %2$s,<br><br>
+									Sie haben sich erfolgreich für %4$s beworben. In der Regel werden Sie innerhalb von 5 Werktagen kontaktiert. Gegebenenfalls werden Sie dann aufgefordert, weitere Dokumente hochzuladen.<br><br>
+									Den Status Ihrer Bewerbung können Sie jederzeit im <a href="'.APP_ROOT.'addons/bewerbung/cis/registration.php">Bewerbungstool</a> verfolgen.<br>
+									Sollten Sie Fragen zur Bewerbung haben, kontaktieren Sie uns bitte unter <a href="mailto:%5$s">%5$s</a>.<br><br>
+									Mit freundlichen Grüßen<br>
+									Fachhochschule Technikum Wien
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+				<tr>
+					<td align="center">
+						<table cellpadding="0" cellspacing="0" width="100%%">
+							<tr>
+								<td>
+									<img src="data:image/jpg;base64,%6$s" alt="sancho_footer" width="100%%"/>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+			</table>
+		</center>
+	</body>
+</html>';
 $this->phrasen['bewerbung/erfolgreichBeworbenMailBetreff']='Bewerbungsbestätigung Fachhochschule Technikum Wien';
 $this->phrasen['bewerbung/bewerbungsfrist']='Bewerbungsfrist';
 $this->phrasen['bewerbung/bewerbungszeitraum']='Bewerbungszeitraum (innerhalb der EU)';
