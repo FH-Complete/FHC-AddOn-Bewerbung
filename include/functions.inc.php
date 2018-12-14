@@ -240,46 +240,53 @@ function BewerbungPersonAddStudienplan($studienplan_id, $person, $studiensemeste
 		$studiengaenge_arr[$row->studiengang_kz]['oe_kurzbz'] = $row->oe_kurzbz;
 	}
 	
-	// Wenn BEWERBERTOOL_ALWAYS_CREATE_NEW_PRESTUDENT_FOR_APPLICATION nicht definiert oder false ist,
-	// wird ein bestehender PreStudent gesucht und ein neuer Status an diesen angefügt
-	// Ansonsten wird immer ein neuer PreStudent-Datensatz erzeugt
-	if(!defined('BEWERBERTOOL_ALWAYS_CREATE_NEW_PRESTUDENT_FOR_APPLICATION') || BEWERBERTOOL_ALWAYS_CREATE_NEW_PRESTUDENT_FOR_APPLICATION == false)
+	// Höchsten PreStudenten ermitteln, um ggf ZGV übernehmen zu können
+	$pre = new prestudent();
+	$pre->getPrestudenten($person->person_id); // Alle Prestudenten der Person laden
+	foreach ($pre->result as $row)
 	{
-		$pre = new prestudent();
-		$pre->getPrestudenten($person->person_id); // Alle Prestudenten der Person laden
+		// Wenn Person schon Prestudent in dem Studiengang war, hoechste prestudent_id ermitteln (die nicht jene des Studenten-Datensatzes war) und bei diesem spaeter einen neuen Status hinzufuegen
+		if ($row->studiengang_kz == $studiengang_kz && $row->prestudent_id > $prestudent_id && $row->prestudent_id != $student->prestudent_id)
+			$prestudent_id = $row->prestudent_id;
+	}
+	// Wenn die Person noch kein Student in diesem Studiengang war, 
+	// nach der höchsten prestudent_id mit ZGV suchen, um dessen ZGV uebernehmen zu koennen
+	if ($prestudent_id == 0)
+	{
 		foreach ($pre->result as $row)
 		{
-			// Wenn Person schon Prestudent in dem Studiengang war, hoechste prestudent_id ermitteln (die nicht jene des Studenten-Datensatzes war) und bei diesem spaeter einen neuen Status hinzufuegen
-			if ($row->studiengang_kz == $studiengang_kz && $row->prestudent_id > $prestudent_id && $row->prestudent_id != $student->prestudent_id)
-				$prestudent_id = $row->prestudent_id;
-		}
-		// Wenn die Person noch kein Student in diesem Studiengang war, nach irgendeiner prestudent_id suchen, um dessen ZGV uebernehmen zu koennen
-		if ($prestudent_id == 0 && isset($pre->result[0]))
-		{
-			if ($pre->result[0]->prestudent_id != '')
+			if ($row->prestudent_id > $prestudent_id
+				&& $row->zgv_code != '')
 			{
-				$prestudent_help = $pre->result[0]->prestudent_id;
-				
-				$prestudent_zgv = new prestudent();
-				$prestudent_zgv->load($prestudent_help);
-				
-				$zgv_code = $prestudent_zgv->zgv_code;
-				$zgvort = $prestudent_zgv->zgvort;
-				$zgvdatum = $prestudent_zgv->zgvdatum;
-				$zgvnation = $prestudent_zgv->zgvnation;
-				$zgvmas_code = $prestudent_zgv->zgvmas_code;
-				$zgvmaort = $prestudent_zgv->zgvmaort;
-				$zgvmadatum = $prestudent_zgv->zgvmadatum;
-				$zgvmanation = $prestudent_zgv->zgvmanation;
+				$prestudent_id = $row->prestudent_id;
 			}
 		}
+		if ($prestudent_id != 0)
+		{
+			$prestudent_help = $prestudent_id;
+			
+			$prestudent_zgv = new prestudent();
+			$prestudent_zgv->load($prestudent_help);
+			
+			$zgv_code = $prestudent_zgv->zgv_code;
+			$zgvort = $prestudent_zgv->zgvort;
+			$zgvdatum = $prestudent_zgv->zgvdatum;
+			$zgvnation = $prestudent_zgv->zgvnation;
+			$zgvmas_code = $prestudent_zgv->zgvmas_code;
+			$zgvmaort = $prestudent_zgv->zgvmaort;
+			$zgvmadatum = $prestudent_zgv->zgvmadatum;
+			$zgvmanation = $prestudent_zgv->zgvmanation;
+		}
 	}
-	else
+	
+	// Wenn BEWERBERTOOL_ALWAYS_CREATE_NEW_PRESTUDENT_FOR_APPLICATION definiert und true ist,
+	// wird ein neuer PreStudent-Datensatz erzeugt
+	// Ansonsten wird ein bestehender PreStudent gesucht und ein neuer Status an diesen angefügt
+	if(defined('BEWERBERTOOL_ALWAYS_CREATE_NEW_PRESTUDENT_FOR_APPLICATION') && BEWERBERTOOL_ALWAYS_CREATE_NEW_PRESTUDENT_FOR_APPLICATION == true)
 	{
 		$prestudent_id = 0;
 	}
-	
-	
+
 	if ($prestudent_id == 0) // Wenn kein PreStudent-Datensatz gefunden wurde, neuen Prestudenten anlegen
 	{
 		if ($std) // Wenn Person schon Student war, ZGV-Daten von dort holen
