@@ -168,6 +168,7 @@ elseif($save_error_kontakt===true)
 					$("#ort_input").hide();
 					$("#ort_dropdown").show();
 					var plz = $("#plz").val();
+					plz = plz.trim();
 					loadOrtData(plz, $("#ort_dropdown"));
 				}
 				else
@@ -210,6 +211,7 @@ elseif($save_error_kontakt===true)
 				if ($('#nation').val() == "A")
 				{
 					var plz = $("#plz").val();
+					plz = plz.trim();
 					if ($.isNumeric(plz))
 						loadOrtData(plz, $("#ort_dropdown"));
 					else

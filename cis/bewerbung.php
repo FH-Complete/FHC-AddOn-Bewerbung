@@ -1173,7 +1173,7 @@ if (isset($_POST['btn_kontakt']) && ! $eingabegesperrt)
 				if (isset($_POST['nation']) && $_POST['nation'] == 'A' && isset($_POST['ort']) && $_POST['ort'] != '' && isset($_POST['plz']) && $_POST['plz'] != '')
 				{
 					$gemeinde_obj = new gemeinde();
-					$gemeinde_obj->getGemeinde($_POST['ort'], '', $_POST['plz']);
+					$gemeinde_obj->getGemeinde(trim($_POST['ort']), '', trim($_POST['plz']));
 					$gemeinde = $gemeinde_obj->result[0]->name;
 				}
 				// gibt es schon eine adresse, wird die erste adresse genommen und upgedatet
@@ -1227,8 +1227,8 @@ if (isset($_POST['btn_kontakt']) && ! $eingabegesperrt)
 				// adresse neu anlegen
 				$adresse->typ = 'h';
 				$adresse->strasse = $_POST['strasse'];
-				$adresse->plz = $_POST['plz'];
-				$adresse->ort = $_POST['ort'];
+				$adresse->plz = trim($_POST['plz']);
+				$adresse->ort = trim($_POST['ort']);
 				$adresse->gemeinde = $_POST['gemeinde'];
 				$adresse->nation = $_POST['nation'];
 				$adresse->insertamum = date('Y-m-d H:i:s');
@@ -1440,7 +1440,7 @@ if (isset($_POST['btn_rechnungskontakt']))
 				if (isset($_POST['re_nation']) && $_POST['re_nation'] == 'A' && isset($_POST['re_ort']) && $_POST['re_ort'] != '' && isset($_POST['re_plz']) && $_POST['re_plz'] != '')
 				{
 					$gemeinde_obj = new gemeinde();
-					$gemeinde_obj->getGemeinde($_POST['re_ort'], '', $_POST['re_plz']);
+					$gemeinde_obj->getGemeinde($_POST['re_ort'], '', trim($_POST['re_plz']));
 					$gemeinde = $gemeinde_obj->result[0]->name;
 				}
 				// gibt es schon eine adresse, wird die erste adresse genommen und upgedatet
@@ -1470,7 +1470,7 @@ if (isset($_POST['btn_rechnungskontakt']))
 				// adresse neu anlegen
 				$adresse->typ = 'r';
 				$adresse->strasse = $_POST['re_strasse'];
-				$adresse->plz = $_POST['re_plz'];
+				$adresse->plz = trim($_POST['re_plz']);
 				$adresse->ort = $_POST['re_ort'];
 				$adresse->gemeinde = $_POST['re_gemeinde'];
 				$adresse->nation = $_POST['re_nation'];

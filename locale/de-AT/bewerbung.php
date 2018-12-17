@@ -358,7 +358,7 @@ $this->phrasen['bewerbung/erfolgreichBeworbenMail']='
 						<table cellpadding="0" cellspacing="0" width="100%%" border="0">
 							<tr>
 								<td>
-									<img src="data:image/jpg;base64,%5$s" alt="sancho_header" width="100%%"/>
+									<img src="data:image/jpg;base64,%6$s" alt="sancho_header" width="100%%"/>
 								</td>
 							</tr>
 						</table>
@@ -385,7 +385,7 @@ $this->phrasen['bewerbung/erfolgreichBeworbenMail']='
 						<table cellpadding="0" cellspacing="0" width="100%%">
 							<tr>
 								<td>
-									<img src="data:image/jpg;base64,%6$s" alt="sancho_footer" width="100%%"/>
+									<img src="data:image/jpg;base64,%7$s" alt="sancho_footer" width="100%%"/>
 								</td>
 							</tr>
 						</table>
