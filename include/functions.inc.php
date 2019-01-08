@@ -1310,6 +1310,7 @@ function getPrioStudienplanForReihungstest($person_id, $studiensemester_kurzbz)
 function getReihungstestsForOnlinebewerbung($studienplan_id, $studiensemester_kurzbz, $stufe = 1)
 {
 	$db = new basis_db();
+	
 	$qry = "
 			SELECT (
 					CASE 
@@ -1323,12 +1324,30 @@ function getReihungstestsForOnlinebewerbung($studienplan_id, $studiensemester_ku
 									FROM PUBLIC.tbl_reihungstest
 									WHERE reihungstest_id = rt.reihungstest_id
 									)
-						ELSE (
-								SELECT sum(arbeitsplaetze) - (round((sum(arbeitsplaetze)::FLOAT / 100)::FLOAT * 5)) AS arbeitsplaetze
+						ELSE (	";
+				if (defined('REIHUNGSTEST_ARBEITSPLAETZE_SCHWUND') && is_numeric(REIHUNGSTEST_ARBEITSPLAETZE_SCHWUND))
+				{
+					$qry .= "	SELECT sum(arbeitsplaetze)
+								FROM (
+									SELECT (
+											SELECT arbeitsplaetze - ceil((arbeitsplaetze::FLOAT / 100) * ".REIHUNGSTEST_ARBEITSPLAETZE_SCHWUND.")
+											FROM PUBLIC.tbl_ort
+											WHERE ort_kurzbz = rt_ort.ort_kurzbz
+											) AS arbeitsplaetze
+									FROM PUBLIC.tbl_rt_ort rt_ort
+									JOIN PUBLIC.tbl_ort USING (ort_kurzbz)
+									WHERE rt_id = rt.reihungstest_id
+									) plaetze";
+				}
+				else 
+				{
+					$qry .= "	SELECT sum(arbeitsplaetze) AS arbeitsplaetze
 								FROM PUBLIC.tbl_rt_ort
 								JOIN PUBLIC.tbl_ort USING (ort_kurzbz)
-								WHERE rt_id = rt.reihungstest_id
-								)
+								WHERE rt_id = rt.reihungstest_id";
+				}
+								
+				$qry .= "	)
 						END
 					) AS anzahl_plaetze,
 				(
