@@ -51,8 +51,8 @@ if(!defined('BEWERBERTOOL_REIHUNGSTEST_ANZEIGEN') || BEWERBERTOOL_REIHUNGSTEST_A
 	$tabs[7]='aufnahme';
 if(!defined('BEWERBERTOOL_ABSCHICKEN_ANZEIGEN') || BEWERBERTOOL_ABSCHICKEN_ANZEIGEN)
 	$tabs[8]='abschicken';
-if(defined('BEWERBERTOOL_ERGAENZUNGEN_ANZEIGEN') && BEWERBERTOOL_ERGAENZUNGEN_ANZEIGEN)
-	$tabs[9]='ergaenzungen';
+if(defined('BEWERBERTOOL_SICHERHEIT_ANZEIGEN') && BEWERBERTOOL_SICHERHEIT_ANZEIGEN)
+	$tabs[9]='sicherheit';
 
 $tabLadefolge = $tabs;
 ksort($tabLadefolge);
@@ -1633,6 +1633,40 @@ if (isset($_POST['btn_notiz']))
 		), 'bewerbung', 'bewerbung', null, 'online');
 	}
 }
+$save_error_zugangscode = '';
+// Neuen Zugangscode generieren
+if (isset($_POST['btn_new_accesscode']))
+{
+	$save_error_zugangscode = false;
+	$person = new person($person_id);
+	$zugangscode = substr(md5(openssl_random_pseudo_bytes(20)), 0, 15);
+	
+	$person->zugangscode = $zugangscode;
+	$person->updateamum = date('Y-m-d H:i:s');
+	$person->updatevon = 'online';
+	$person->new = false;
+	
+	if(!$person->save())
+	{
+		$message = $p->t('global/fehlerBeimSpeichernDerDaten');
+		$save_error_zugangscode = true;
+	}
+	else
+	{
+		// Geparkten Logeintrag löschen
+		$log->deleteParked($person_id);
+		// Logeintrag schreiben
+		$log->log($person_id,
+			'Action',
+			array('name'=>'New access code','success'=>true,'message'=>'User generated a new access code.'),
+			'bewerbung',
+			'bewerbung',
+			null,
+			'online'
+			);
+		$message = $p->t('bewerbung/erfolgsMessageNeuerZugangscode', array($zugangscode));
+	}
+}
 
 $addStudiengang = filter_input(INPUT_POST, 'addStudiengang', FILTER_VALIDATE_BOOLEAN);
 
@@ -2288,10 +2322,10 @@ else
 							</a>
 						</li>
 						<?php endif; ?>
-						<?php if(defined('BEWERBERTOOL_ERGAENZUNGEN_ANZEIGEN') && BEWERBERTOOL_ERGAENZUNGEN_ANZEIGEN):	?>
+						<?php if(defined('BEWERBERTOOL_SICHERHEIT_ANZEIGEN') && BEWERBERTOOL_SICHERHEIT_ANZEIGEN):	?>
 						<li>
-							<a href="#ergaenzungen" aria-controls="ergaenzungen" role="tab" data-toggle="tab">
-								<?php echo $p->t('bewerbung/menuErgaenzungen') ?> <br> &nbsp;
+							<a href="#sicherheit" aria-controls="sicherheit" role="tab" data-toggle="tab">
+								<?php echo $p->t('bewerbung/menuSicherheit') ?> <br> &nbsp;
 							</a>
 						</li>
 						<?php endif; ?>
@@ -2304,6 +2338,10 @@ else
 							$spracheSelect = new sprache();
 							$spracheSelect->getAll(true);
 						?>
+						<li>
+							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+						</li>
 						<li>
 							<div class="sprache-dropdown">
 								<button class="dropbtn">
@@ -2405,8 +2443,9 @@ function sendBewerbung($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz,
 				$anmerkungen .= '- ' . htmlspecialchars($note->text);
 			}
 		}
-
-		$email = $p->t('bewerbung/emailBodyStart', array(VILESCI_ROOT . 'vilesci/personen/personendetails.php?id='.$person_id));
+		$sanchoMailHeader = base64_encode(file_get_contents('../../../skin/images/sancho/sancho_header_min_bw.jpg'));
+		$sanchoMailFooter = base64_encode(file_get_contents('../../../skin/images/sancho/sancho_footer_min_bw.jpg'));
+		$email = $p->t('bewerbung/emailBodyStart', array(VILESCI_ROOT . 'vilesci/personen/personendetails.php?id='.$person_id, $sanchoMailHeader));
 		
 		// Wenn MAIL_DEBUG aktiv ist, zeige auch den Empfänger an
 		if(defined('MAIL_DEBUG') && MAIL_DEBUG != '')
@@ -2428,7 +2467,7 @@ function sendBewerbung($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz,
 		//$email.= '<tr><td><b>'.$p->t('global/plz').'</b></td><td>'.$plz.'</td></tr>';
 		//$email.= '<tr><td><b>'.$p->t('global/ort').'</b></td><td>'.$ort.'</td></tr>';
 		//$email.= '<tr><td><b>'.$p->t('incoming/nation').'</b></td><td>'.$nation->langtext.'</td></tr>';
-		//$email.= '<tr><td><b>'.$p->t('global/emailAdresse').'</b></td><td>'.$mailadresse.'</td></tr>';
+		$email.= '<tr><td><b>'.$p->t('global/emailAdresse').'</b></td><td><a href="mailto:'.$mailadresse.'">'.$mailadresse.'</a></td></tr>';
 		//$email.= '<tr><td><b>'.$p->t('global/telefon').'</b></td><td>'.$telefon.'</td></tr>';
 		$email.= '<tr><td style="vertical-align:top"><b>'.$p->t('global/anmerkungen').'</b></td><td>'.$anmerkungen.'</td></tr>';
 		$email.= '<tr><td><b>'.$p->t('bewerbung/prestudentID').'</b></td><td>'.$prestudent_id.'</td></tr>';
@@ -2458,7 +2497,7 @@ function sendBewerbung($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz,
 					</td></tr>
 					</table>';
 		$email .= '<br>';
-		$email .= $p->t('bewerbung/emailBodyEnde');
+		$email .= $p->t('bewerbung/emailBodyEnde', array($sanchoMailFooter));
 	}
 	else
 	{
@@ -2468,7 +2507,7 @@ function sendBewerbung($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz,
 		$email .= $p->t('global/studiensemester') . ': ' . $studiensemester_kurzbz . '<br>';
 		$email .= $p->t('global/name') . ': ' . $person->vorname . ' ' . $person->nachname . '<br>';
 		$email .= $p->t('bewerbung/prestudentID') . ': ' . $prestudent_id . '<br><br>';
-		$email .= $p->t('bewerbung/emailBodyEnde');
+		$email .= $p->t('bewerbung/emailBodyEnde', array());
 	}
 
 	// An der FHTW werden alle Bachelor-Studiengänge vom Infocenter abgearbeitet und deshalb keine Mail verschickt
@@ -2616,7 +2655,7 @@ function sendAddStudiengang($prestudent_id, $studiensemester_kurzbz, $orgform_ku
 	$email .= '<tr><td><b>' . $p->t('bewerbung/prestudentID') . '</b></td><td>' . $prestudent_id . '</td></tr>';
 	$email .= '</td></tr></tbody></table>';
 	$email .= '<br>';
-	$email .= $p->t('bewerbung/emailBodyEnde');
+	$email .= $p->t('bewerbung/emailBodyEnde', array());
 
 	$email = wordwrap($email, 70); // Bricht den Code um, da es sonst zu Anzeigefehlern im Mail kommen kann
 

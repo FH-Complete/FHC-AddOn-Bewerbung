@@ -76,9 +76,11 @@ $sprache = getSprache();
 $p = new phrasen($sprache);
 $db = new basis_db();
 $userid = trim(filter_input(INPUT_POST, 'userid'));
+$mailadresse = trim(filter_input(INPUT_POST, 'mailadresse'));
 $username = trim(filter_input(INPUT_POST, 'username'));
 $password = trim(filter_input(INPUT_POST, 'password'));
-$code = trim(filter_input(INPUT_GET, 'code'));
+$codeGet = trim(filter_input(INPUT_GET, 'code'));
+$emailAdresseGet = trim(filter_input(INPUT_GET, 'emailAdresse'));
 
 // Erstellen eines Array mit allen Studiengängen
 $studiengaenge_obj = new studiengang();
@@ -94,20 +96,40 @@ if ($userid)
 	//Zugangscode wird überprüft
 	if($person_id != false)
 	{
-		$_SESSION['bewerbung/user'] = $userid;
-		$_SESSION['bewerbung/personId'] = $person_id;
+		$validMail = false;
+		// Wenn eine Mailadresse der Person mit der eingegebenen Mailadresse übereinstimmt, ist die Anmeldung gültig
+		$kontakte = new kontakt();
+		$kontakte->load_persKontakttyp($person_id, 'email');
+		foreach ($kontakte->result AS $kontakt)
+		{
+			if (strtolower($kontakt->kontakt) == strtolower($mailadresse))
+			{
+				$validMail = true;
+				break;
+			}
+		}
 		
-		$log->log(	$person_id,
-					'Action',
-					array('name'=>'Login with code','success'=>true,'message'=>'Login with access code'),
-					'bewerbung',
-					'bewerbung',
-					null,
-					'online'
+		if ($validMail)
+		{
+			$_SESSION['bewerbung/user'] = $userid;
+			$_SESSION['bewerbung/personId'] = $person_id;
+			
+			$log->log(	$person_id,
+				'Action',
+				array('name'=>'Login with code','success'=>true,'message'=>'Login with access code'),
+				'bewerbung',
+				'bewerbung',
+				null,
+				'online'
 				);
-
-		header('Location: bewerbung.php?active='.filter_input(INPUT_POST, 'active'));
-		exit;
+			
+			header('Location: bewerbung.php?active='.filter_input(INPUT_POST, 'active'));
+			exit;
+		}
+		else 
+		{
+			$message = '<script type="text/javascript">alert("'.$p->t('bewerbung/mailFalsch').'")</script>';
+		}
 	}
 	else
 	{
@@ -338,7 +360,7 @@ elseif($username && $password)
 						{
 							$person = new person($return->person_id);
 
-							$zugangscode = substr(md5(openssl_random_pseudo_bytes(20)), 0, 10);
+							$zugangscode = substr(md5(openssl_random_pseudo_bytes(20)), 0, 15);
 
 							$person->zugangscode = $zugangscode;
 							$person->updateamum = date('Y-m-d H:i:s');
@@ -362,20 +384,36 @@ elseif($username && $password)
 								);
 							}
 						}
+						// Beim erneuten Zuschicken des Zugangscodes, wird aus Sicherheitsgründen ein Neuer generiert
 						if (isset($resend_code))
 						{
-							$zugangscode = $return->zugangscode;
-							echo '<p class="alert alert-success">'.resendMail($zugangscode, $email).'</p>';
-							// Logeintrag schreiben
-							$log->log($return->person_id,
-								'Action',
-								array('name'=>'Access code requested','success'=>true,'message'=>'User requested for access code'),
-								'bewerbung',
-								'bewerbung',
-								null,
-								'online'
-							);
-							exit();
+							$person = new person($return->person_id);
+							
+							$zugangscode = substr(md5(openssl_random_pseudo_bytes(20)), 0, 15);
+							
+							$person->zugangscode = $zugangscode;
+							$person->updateamum = date('Y-m-d H:i:s');
+							$person->updatevon = 'online';
+							$person->new = false;
+							
+							if(!$person->save())
+							{
+								die($p->t('global/fehlerBeimSpeichernDerDaten'));
+							}
+							else
+							{
+								// Logeintrag schreiben
+								$log->log($return->person_id,
+									'Action',
+									array('name'=>'Access code requested','success'=>true,'message'=>'User requested for access code. New access code was generated'),
+									'bewerbung',
+									'bewerbung',
+									null,
+									'online'
+									);
+								echo '<p class="alert alert-success">'.resendMail($zugangscode, $email).'</p>';
+								exit();
+							}
 						}
 						else
 						{
@@ -419,7 +457,7 @@ elseif($username && $password)
 							// Person anlegen
 							$person = new person();
 
-							$zugangscode = substr(md5(openssl_random_pseudo_bytes(20)), 0, 10);
+							$zugangscode = substr(md5(openssl_random_pseudo_bytes(20)), 0, 15);
 
 							$person->nachname = $nachname;
 							$person->vorname = $vorname;
@@ -871,18 +909,18 @@ elseif($username && $password)
 				$return = check_load_bewerbungen(trim($email));
 				$resend_code = filter_input(INPUT_POST, 'resend_code');
 				$orgform_kurzbz = filter_input(INPUT_GET, 'orgform_kurzbz');
-				if($email!='')
+				if($email != '')
 				{
 					if ($return)
 					{
 						if (isset($resend_code))
 						{
 							//Wenn es noch keinen Zugangscode für die Person gibt, generiere einen
-							if($return->zugangscode=='')
+							if($return->zugangscode == '')
 							{
 								$person = new person($return->person_id);
 
-								$zugangscode = substr(md5(openssl_random_pseudo_bytes(20)), 0, 10);
+								$zugangscode = substr(md5(openssl_random_pseudo_bytes(20)), 0, 15);
 
 								$person->zugangscode = $zugangscode;
 								$person->updateamum = date('Y-m-d H:i:s');
@@ -906,19 +944,35 @@ elseif($username && $password)
 									);
 								}
 							}
+							// Beim erneuten Zuschicken des Zugangscodes, wird aus Sicherheitsgründen ein Neuer generiert
 							if($return)
 							{
-								$zugangscode = $return->zugangscode;
-								echo '<p class="alert alert-success"><button type="button" class="close" data-dismiss="alert">x</button>'.sendMail($zugangscode, $email, $return->person_id).'</p>';
-								// Logeintrag schreiben
-								$log->log($return->person_id,
-									'Action',
-									array('name'=>'Access code sent','success'=>true,'message'=>'User requested his access code'),
-									'bewerbung',
-									'bewerbung',
-									null,
-									'online'
-								);
+								$person = new person($return->person_id);
+								
+								$zugangscode = substr(md5(openssl_random_pseudo_bytes(20)), 0, 15);
+								
+								$person->zugangscode = $zugangscode;
+								$person->updateamum = date('Y-m-d H:i:s');
+								$person->updatevon = 'online';
+								$person->new = false;
+								
+								if(!$person->save())
+								{
+									die($p->t('global/fehlerBeimSpeichernDerDaten'));
+								}
+								else
+								{
+									// Logeintrag schreiben
+									$log->log($return->person_id,
+										'Action',
+										array('name'=>'Access code sent','success'=>true,'message'=>'User requested his access code. New code was generated and sent.'),
+										'bewerbung',
+										'bewerbung',
+										null,
+										'online'
+										);
+									echo '<p class="alert alert-success"><button type="button" class="close" data-dismiss="alert">x</button>'.sendMail($zugangscode, $email, $return->person_id).'</p>';
+								}
 							}
 							else
 								echo '<p class="alert alert-danger"><button type="button" class="close" data-dismiss="alert">x</button>'.$p->t('bewerbung/keinCodeVorhanden').'</p>';
@@ -1008,23 +1062,41 @@ elseif($username && $password)
 								</div>
 								<div class="panel-body text-center">
 									<p><?php echo $p->t('bewerbung/dannHierEinloggen') ?></p>
-								<div class="form-group">
-									<div class="input-group col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
-										<p class="text-center"><input class="form-control" type="text" placeholder="<?php echo $p->t('bewerbung/zugangscode') ?>" name="userid" autofocus="autofocus" value="<?php echo $code ?>"></p>
-										<span class="input-group-btn">
-											<button class="btn btn-primary" type="submit" name="submit_btn">
-												<?php echo $p->t('bewerbung/login') ?>
-											</button>
-										</span>
-										<input type="hidden" name="active" value="<?php echo filter_input(INPUT_GET, 'active') ?>">
+									<div class="form-group">
+										<label for="mailadresse" class="col-sm-3 control-label">
+											<?php echo $p->t('global/emailAdresse') ?>
+										</label>
+										<div class="col-sm-8">
+											<input class="form-control" 
+													type="text" 
+													placeholder="<?php echo $p->t('global/emailAdresse') ?>" 
+													name="mailadresse"
+													autofocus="autofocus" 
+													value="<?php echo $emailAdresseGet ?>">
+										</div>
 									</div>
-									<br>
+									<div class="form-group">
+										<label for="userid" class="col-sm-3 control-label">
+											<?php echo $p->t('bewerbung/zugangscode') ?>
+										</label>
+										<div class="col-sm-8">
+											<input class="form-control" 
+													type="text" 
+													placeholder="<?php echo $p->t('bewerbung/zugangscode') ?>" 
+													name="userid" 
+													autofocus="autofocus" 
+													value="<?php echo $codeGet ?>">
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="col-sm-offset-2 col-sm-8">
+											<button type="submit" class="btn btn-primary" name="submit_btn"><?php echo $p->t('bewerbung/login') ?></button>
+										</div>
+									</div>
 									<div class="col-sm-4 col-sm-offset-4">
 										<a href="<?php echo basename(__FILE__) ?>?method=resendcode"><?php echo $p->t('bewerbung/zugangscodeVergessen') ?></a>
 									</div>
 								</div>
-
-							  </div>
 							</div>
 							<div class="panel panel-info">
 								<div class="panel-heading text-center">
@@ -1050,7 +1122,7 @@ elseif($username && $password)
 								</div>
 								<div class="form-group">
 									<span class="col-sm-4 col-sm-offset-4">
-										<button class="btn btn-primary btn-lg" type="submit" name="submit_btn">
+										<button class="btn btn-primary" type="submit" name="submit_btn">
 											<?php echo $p->t('bewerbung/login') ?>
 										</button>
 									</span>
@@ -1201,6 +1273,12 @@ elseif($username && $password)
 				changeSprache(sprache);
 			});
 
+			//Scrollt nach oben, wenn ein Fehler-Div angezeigt wird
+			if($("#danger-alert").length != 0) 
+			{
+				window.scrollTo(0, 0);
+			}
+
 			//Zeigt das Prio-Badge, wenn mehr als ein Bachelor- oder Master-Studiengang gewählt wird
 			// Und zaehlt in der Reihenfolge hoch, in der die Checkbox angeklickt wird
 			$("input[type=checkbox][class=checkbox_stg]").click(function()
@@ -1346,7 +1424,7 @@ function sendMail($zugangscode, $email, $person_id=null)
 		$anrede=$p->t('bewerbung/anredeWeiblich');
 
 	$mail = new mail($email, 'no-reply', $p->t('bewerbung/registration'), $p->t('bewerbung/mailtextHtml'));
-	$text = $p->t('bewerbung/mailtext',array($vorname, $nachname, $zugangscode, $anrede));
+	$text = $p->t('bewerbung/mailtext',array($vorname, $nachname, $zugangscode, $anrede, $email));
 	$mail->setHTMLContent($text);
 	if(!$mail->send())
 		$msg = '<span class="error">'.$p->t('bewerbung/fehlerBeimSenden').'</span><br /><a href='.$_SERVER['PHP_SELF'].'?method=registration>'.$p->t('bewerbung/zurueckZurAnmeldung').'</a>';
@@ -1375,7 +1453,7 @@ function resendMail($zugangscode, $email, $person_id=null)
 		$anrede=$p->t('bewerbung/anredeWeiblich');
 
 	$mail = new mail($email, 'no-reply', $p->t('bewerbung/registration'), $p->t('bewerbung/mailtextHtml'));
-	$text = $p->t('bewerbung/mailtext',array($vorname, $nachname, $zugangscode, $anrede));
+	$text = $p->t('bewerbung/mailtext',array($vorname, $nachname, $zugangscode, $anrede, $email));
 	$mail->setHTMLContent($text);
 	if(!$mail->send())
 		$msg= '<span class="error">'.$p->t('bewerbung/fehlerBeimSenden').'</span><br /><a href='.$_SERVER['PHP_SELF'].'?method=registration>'.$p->t('bewerbung/zurueckZurAnmeldung').'</a>';

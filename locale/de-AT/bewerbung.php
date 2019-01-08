@@ -33,11 +33,12 @@ $this->phrasen['bewerbung/anredeWeiblich']='geehrte Frau';
 $this->phrasen['bewerbung/mailtext']='Sehr %4$s %1$s %2$s!<br><br>
         Vielen Dank für Ihr Interesse an einem Studiengang oder Lehrgang der '.CAMPUS_NAME.'. <br>
         Verwenden Sie für Ihre Bewerbung bitte folgenden Link und Zugangscode: <br><br>
-        <a href="'.APP_ROOT.'addons/bewerbung/cis/registration.php?code=%3$s">Link zur Bewerbung</a><br>
+        <a href="'.APP_ROOT.'addons/bewerbung/cis/registration.php?code=%3$s&emailAdresse=%5$s">Link zur Bewerbung</a><br>
         Zugangscode: %3$s<br><br>
         Mit freundlichen Grüßen, <br>
         '.CAMPUS_NAME;
 $this->phrasen['bewerbung/zugangsdatenFalsch']='Der eingegebene Zugangscode ist falsch oder Sie haben sich noch nicht registriert.';
+$this->phrasen['bewerbung/mailFalsch']='Die eingegebene E-Mailadresse ist falsch oder Sie haben sich noch nicht registriert.';
 $this->phrasen['bewerbung/fehlerBeimSenden']='Beim Senden der E-Mail ist ein Fehler aufgetreten.';
 $this->phrasen['bewerbung/emailgesendetan']='Die E-Mail mit Ihrem Zugangscode wurde erfolgreich an %s verschickt.';
 $this->phrasen['bewerbung/zurueckZurAnmeldung']='Zurück zur Login-Seite.';
@@ -81,7 +82,7 @@ $this->phrasen['bewerbung/menuAllgemein']='Allgemein';
 $this->phrasen['bewerbung/loginmitAccount']='Wenn Sie bereits einen Account haben, können sie sich mit Ihrem Usernamen / Passwort anmelden';
 $this->phrasen['bewerbung/allgemeineErklaerung']='Wir freuen uns, dass Sie sich für unser Bildungsangebot interessieren.<br>
 	Sie können online bis zu '.(defined('BEWERBERTOOL_MAX_STUDIENGAENGE') && BEWERBERTOOL_MAX_STUDIENGAENGE != ''?BEWERBERTOOL_MAX_STUDIENGAENGE:'').' Studienrichtungen und beliebig viele Lehrgänge zur Weiterbildung auswählen.<br>
-	Klicken Sie auf den grünen Button, um Ihrer Bewerbung einen Studiengang oder Lehrgang hinzuzufügen. Bitte beachten Sie, dass Sie bei der Auwahl Ihrer Studiengänge eine Priorität abgeben müssen und diese nach dem Abschicken nicht mehr geändert werden kann.
+	Klicken Sie auf den grünen Button, um Ihrer Bewerbung einen Studiengang oder Lehrgang hinzuzufügen. Bitte beachten Sie, dass Sie bei der Auswahl Ihrer Studiengänge eine Priorität abgeben müssen und diese nach dem Abschicken nicht mehr geändert werden kann.
 	<br><br>
 	Sind alle Daten eingetragen und alle Dokumente vollständig hochgeladen, können Sie durch einen Klick auf "Bewerbung abschicken", Ihre Bewerbung an uns übermitteln.
 	<br><br>
@@ -185,10 +186,50 @@ $this->phrasen['bewerbung/erfolgreichBeworben']='Sie haben sich erfolgreich für
 $this->phrasen['bewerbung/fehlerBeimVersendenDerBewerbung']='Es ist ein Fehler beim Versenden der Bewerbung aufgetreten. Bitte versuchen Sie es nocheinmal.';
 $this->phrasen['bewerbung/svnrBereitsVorhanden']='SVNR bereits vorhanden';
 $this->phrasen['bewerbung/menuBewerbungFuerStudiengang']='Bewerbung für einen Studiengang';
-$this->phrasen['bewerbung/emailBodyStart']='Es gibt eine neue Bewerbung mit folgenden Daten: <br><br>
-											Für mehr Details öffnen Sie bitte den <a href="%s" target="_blank">Personendatensatz</a> im FAS.';
+$this->phrasen['bewerbung/emailBodyStart']='
+<html>
+	<head>	
+		<title>Sancho Mail</title>
+	</head>
+	<body>
+		<center>
+			<table cellpadding="0" cellspacing="0" style="border: 2px solid #000000; padding: 0px; max-width: 850px; 
+				border-collapse:collapse; mso-table-lspace:0pt; mso-table-rspace:0pt;">  
+				<tr>
+					<td align="center">
+						<table cellpadding="0" cellspacing="0" width="100%%" border="0">
+							<tr>
+								<td>
+									<img src="data:image/jpg;base64,%2$s" alt="sancho_header" width="100%%"/>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+				<tr>
+					<td style="padding-left: 8%%; padding-right: 8%%; padding-top: 5%%; padding-bottom: 5%%; font-family: courier, verdana, sans-serif; font-size: 0.95em; border-bottom: 2px solid #000000;">
+						Es gibt eine neue Bewerbung.<br>
+						Für mehr Details öffnen Sie bitte den <a href="%1$s" target="_blank">Personendatensatz</a> im FAS.';
 $this->phrasen['bewerbung/emailDokumentuploadStart']='Das folgende Dokument wurde hochgeladen: <br>';
-$this->phrasen['bewerbung/emailBodyEnde']='';
+$this->phrasen['bewerbung/emailBodyEnde']='
+					</td>
+				</tr>
+				<tr>
+					<td align="center">
+						<table cellpadding="0" cellspacing="0" width="100%%">
+							<tr>
+								<td>
+									<img src="data:image/jpg;base64,%1$s" alt="sancho_footer" width="100%%"/>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+			</table>
+		</center>
+	</body>
+</html>
+';
 $this->phrasen['bewerbung/fileUpload']='File-Upload';
 $this->phrasen['bewerbung/fehlerKeinePersonId']='Es wurde keine Person_id angegeben';
 $this->phrasen['bewerbung/woWurdeUrkundeAusgestellt']='Wo wurde die Urkunde ausgestellt?';
@@ -201,7 +242,7 @@ $this->phrasen['bewerbung/BewerbungBereitsVerschickt']='Ihre Bewerbung wird bear
 $this->phrasen['bewerbung/bitteZuerstStudiengangWaehlen']='Bitte wählen Sie zuerst den gewünschten Studiengang im Bereich "Übersicht" aus.';
 $this->phrasen['bewerbung/ExtensionInformation']='Maximale Dateigröße je Dokument: 15 MB.<br>Unterstützte Dateiformate:';
 $this->phrasen['bewerbung/falscherDateityp']='Dieses Dateiformat wird nicht unterstützt';
-$this->phrasen['bewerbung/mailadresseBereitsGenutzt']='Die E-Mail Adresse %s wurde bereits für eine Bewerbung genutzt und es ist ein Zugangscode vorhanden. Sie können sich den Zugangscode noch einmal an diese Adresse schicken lassen und nach dem Login weitere Bewerbungen hinzufügen.';
+$this->phrasen['bewerbung/mailadresseBereitsGenutzt']='Die E-Mail Adresse %s wurde bereits für eine Bewerbung genutzt. Sie können sich einen neuen Zugangscode an diese Adresse schicken lassen und nach dem Login weitere Bewerbungen hinzufügen.';
 $this->phrasen['bewerbung/mailadresseBereitsVorhanden']='Die E-Mail Adresse %s ist bereits im System vorhanden und kann nicht gespeichert werden. Bitte geben Sie eine andere E-Mail Adresse ein.';
 $this->phrasen['bewerbung/buttonBewerbungUnvollstaendig']='Pflichtfelder unvollständig';
 $this->phrasen['bewerbung/prestudentID']='Prestudent ID';
@@ -212,7 +253,7 @@ $this->phrasen['bewerbung/weiblich']='Weiblich';
 $this->phrasen['bewerbung/maturazeugnis']='Maturazeugnis';
 $this->phrasen['bewerbung/details']='Details';
 $this->phrasen['bewerbung/mehrDetails']='Mehr Details...';
-$this->phrasen['bewerbung/codeZuschicken']='Code zuschicken';
+$this->phrasen['bewerbung/codeZuschicken']='Neuen Code zuschicken';
 $this->phrasen['bewerbung/codeZuschickenAnleitung']='Wenn Sie sich schon einmal registriert aber den Zugangscode verloren oder vergessen haben, können Sie sich hier den Zugangscode erneut zuschicken lassen. Bitte geben Sie dazu Ihre Mailadresse ein und drücken Sie auf "Code zuschicken"';
 $this->phrasen['bewerbung/keinCodeVorhanden']='Für diese E-Mail Adresse ist noch kein Zugangscode vorhanden. Bitte <a href="'.$_SERVER['PHP_SELF'].'?method=registration">melden Sie sich vorher an</a>.';
 $this->phrasen['bewerbung/zgvDatumNichtZukunft']='Das Datum der Zugangsvoraussetzung darf nicht in der Zukunft liegen. Wenn Sie die Zugangsvoraussetzung erst später erbringen, lassen Sie das Datum bitte leer.';
@@ -413,8 +454,12 @@ $this->phrasen['bewerbung/erklaerungBewerbungAbschickenFuerStudiengang']='Wenn S
 $this->phrasen['bewerbung/anmeldungStornieren']='Anmeldung stornieren';
 $this->phrasen['bewerbung/anmeldungStornierenBis']='Stornieren (bis %s)';
 $this->phrasen['bewerbung/menuUebersicht']='Übersicht';
-$this->phrasen['bewerbung/menuErgaenzungen']='Ergänzungen';
-$this->phrasen['bewerbung/erklaerungErgaenzungen']='Hier haben Sie die Möglichkeit, eine Anmerkung (1024 Zeichen) einzutragen, die Sie der Assistenz mitteilen möchten';
+$this->phrasen['bewerbung/menuSicherheit']='Sicherheit';
+$this->phrasen['bewerbung/erklaerungSicherheit']='Aus Datenschutzgründen empfehlen wir Ihnen, sich einen neuen Zugangscode generieren zu lassen.<br>
+													Klicken Sie dazu einfach auf den Button und notieren Sie sich den neu generierten Code.<br><br>
+													Falls Sie den Code vergessen, klicken Sie auf der Login-Seite auf "Zugangscode vergessen?"';
+$this->phrasen['bewerbung/buttonNeuerZugangscode']='Neuen Zugangscode generieren';
+$this->phrasen['bewerbung/erfolgsMessageNeuerZugangscode']='<p>Ihr neuer Zugangscode lautet:</p><p>%s</p><p>Bitte notieren Sie sich den neuen Zugangscode.</p>';
 $this->phrasen['bewerbung/keineStudienrichtungenFuerStudiensemesterZurAuswahl']='Für das gewählte Studiensemester stehen derzeit keine Studienrichtungen zur Auswahl';
 $this->phrasen['bewerbung/sieHabenFolgendenTerminGewaehlt']='Sie haben sich zu folgendem Reihungstesttermin angemeldet';
 

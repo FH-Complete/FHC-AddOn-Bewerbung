@@ -28,11 +28,12 @@ $this->phrasen['bewerbung/anredeWeiblich']='Ms';
 $this->phrasen['bewerbung/mailtext']='Dear %4$s %1$s %2$s.<br><br>
                                         Thank you for your interest in a degree program at '.CAMPUS_NAME.'. <br>
                                         To apply for a course, please use the following link and access code:<br><br>
-                                        <a href="'.APP_ROOT.'addons/bewerbung/cis/registration.php?code=%3$s">Link to registration</a><br>
+                                        <a href="'.APP_ROOT.'addons/bewerbung/cis/registration.php?code=%3$s&emailAdresse=%5$s">Link to registration</a><br>
                                         Access code: %3$s <br><br>
                                         Best regards, <br>
                                         '.CAMPUS_NAME;
 $this->phrasen['bewerbung/zugangsdatenFalsch']='The access code you have entered is incorrect or you have not yet registered.';
+$this->phrasen['bewerbung/mailFalsch']='The e-mail address you have entered is incorrect or you have not yet registered.';
 $this->phrasen['bewerbung/fehlerBeimSenden']='An error occured while sending the E-Mail.';
 $this->phrasen['bewerbung/emailgesendetan']='The e-mail with your access code has successfully been sent to %s.';
 $this->phrasen['bewerbung/zurueckZurAnmeldung']='Back to registration.';
@@ -183,7 +184,7 @@ $this->phrasen['bewerbung/BewerbungBereitsVerschickt']='Application is being pro
 $this->phrasen['bewerbung/bitteZuerstStudiengangWaehlen']='Please select at least one field of study first (see section "Overview").';
 $this->phrasen['bewerbung/ExtensionInformation']='Maximum file size per document: 15 MB.<br>Supported file formats:';
 $this->phrasen['bewerbung/falscherDateityp']='This File format is not supported';
-$this->phrasen['bewerbung/mailadresseBereitsGenutzt']='The e-mail address %s has already been used for an application. Do you want to send the access code to this address again?';
+$this->phrasen['bewerbung/mailadresseBereitsGenutzt']='The e-mail address %s has already been used for an application. Do you want to send a new access code to this address?';
 $this->phrasen['bewerbung/mailadresseBereitsVorhanden']='The e-mail address %s already exists in our system an cannot be saved. Please enter a different e-mail address.';
 $this->phrasen['bewerbung/buttonBewerbungUnvollstaendig']='Required fields incomplete';
 $this->phrasen['bewerbung/prestudentID']='Prestudent ID';
@@ -194,7 +195,7 @@ $this->phrasen['bewerbung/weiblich']='Female';
 $this->phrasen['bewerbung/maturazeugnis']='School leaving certificate';
 $this->phrasen['bewerbung/details']='Details';
 $this->phrasen['bewerbung/mehrDetails']='More details...';
-$this->phrasen['bewerbung/codeZuschicken']='Send code';
+$this->phrasen['bewerbung/codeZuschicken']='Send new code';
 $this->phrasen['bewerbung/codeZuschickenAnleitung']='Please enter your e-mail address and click "Send code"';
 $this->phrasen['bewerbung/keinCodeVorhanden']='There is no access code available yet for this e-mail address. Please register in advance.';
 $this->phrasen['bewerbung/zgvDatumNichtZukunft']='The date of access requirement may not be in the future. If you intend to provide the access requirement later, please leave the date blank.';
@@ -222,7 +223,7 @@ $this->phrasen['bewerbung/statusBestaetigen']='Confirm status directly';
 $this->phrasen['bewerbung/footerText']='';
 $this->phrasen['bewerbung/vorbehaltlichAkkreditierung']='Subject to official accreditation by AQ Austria';
 $this->phrasen['bewerbung/auswahlmöglichkeitenImNaechstenSchritt']='Options in next step';
-$this->phrasen['bewerbung/sieKoennenMaximalXStudiengaengeWaehlen']='You can only apply for 3 degree programs in the same study semester online. If you are interested in further degree programs or if you need counseling please contact our <a href=\'https://www.technikum-wien.at/en/student-guide/admission-counselors/\' target=\'_blank\'>Admission counselors</a><br><br><a href=\'#\' class=\'alert-link\' data-dismiss=\'alert\' aria-label=\'close\'>Close</a>'; //nur grob uebersetzt // Link muss mit einfachen Hochkomma maskiert werden, das es sonst im Bewerbungstool zu Anzeigefehlern kommt
+$this->phrasen['bewerbung/sieKoennenMaximalXStudiengaengeWaehlen']='You can apply online for a maximum of %s degree programs in the same study semester. If you need more information, our <a href=\'https://www.technikum-wien.at/en/student-guide/admission-counselors/\' target=\'_blank\'>student advisory service</a> is available to you.<br><br><a href=\'#\' class=\'alert-link\' data-dismiss=\'alert\' aria-label=\'close\'>Close</a>'; // Link muss mit einfachen Hochkomma maskiert werden, das es sonst im Bewerbungstool zu Anzeigefehlern kommt
 $this->phrasen['bewerbung/bitteEineStudienrichtungWaehlen']='Please select one field of study.';
 $this->phrasen['bewerbung/beschreibungTitelPre']='Academic title e.g. Dr., Prof.';
 $this->phrasen['bewerbung/beschreibungTitelPost']='Academic post-nominal letters (titles) e.g. BA, BSc, PhD';
@@ -271,7 +272,7 @@ $this->phrasen['bewerbung/hackTypBezeichnungBachelor']='Bachelor\'s Degree Progr
 $this->phrasen['bewerbung/hackTypBezeichnungMaster']='Master\'s Degree Programs'; // Überschreibt die Typ-Bezeichnung "Master". Leer lassen, wenn nicht benötigt
 $this->phrasen['bewerbung/hackStufeBezeichnungBachelor']=''; // Überschreibt die ZGV Stufen-Bezeichnung "Bachelor". Leer lassen, wenn nicht benötigt
 $this->phrasen['bewerbung/hackStufeBezeichnungMaster']=''; // Überschreibt die ZGV Stufen-Bezeichnung "Master". Leer lassen, wenn nicht benötigt
-$this->phrasen['bewerbung/prioritaet']='Priority';// Nur grob übersetzt
+$this->phrasen['bewerbung/prioritaet']='Priority';
 $this->phrasen['bewerbung/studierendenDaten']='Current student data';// Nur grob übersetzt
 $this->phrasen['bewerbung/keineRtTermineZurAuswahl']='Currently there are no placement tests available';// Nur grob übersetzt
 $this->phrasen['bewerbung/erfolgreichBeworbenMailBachelor']='
@@ -395,9 +396,13 @@ $this->phrasen['bewerbung/erklaerungBewerbungAbschickenFuerStudiengang']='If you
 Generally, we will get back to you within 5 working days.';
 $this->phrasen['bewerbung/anmeldungStornieren']='Cancel registration'; // Nur grob übersetzt
 $this->phrasen['bewerbung/anmeldungStornierenBis']='Cancel (until %s)'; // Nur grob übersetzt
-$this->phrasen['bewerbung/menuUebersicht']='Overview'; // Nur grob übersetzt
-$this->phrasen['bewerbung/menuErgaenzungen']='Supplementations'; // Nur grob übersetzt
-$this->phrasen['bewerbung/erklaerungErgaenzungen']='Here you have the opportunity to enter an additional comment (1024 Characters) that you want to tell the assistant';
+$this->phrasen['bewerbung/menuUebersicht']='Overview';
+$this->phrasen['bewerbung/menuSicherheit']='Security';
+$this->phrasen['bewerbung/erklaerungSicherheit']='For data security reasons we recommend you to generate a new access code here.<br>
+													Just click the button to generate a new code.<br><br>
+													If you forget your new code, click "Forgot access code?" on the login page.'; // Nur grob übersetzt
+$this->phrasen['bewerbung/buttonNeuerZugangscode']='Generate new access code'; // Nur grob übersetzt
+$this->phrasen['bewerbung/erfolgsMessageNeuerZugangscode']='<p>Your new access code is:</p><p>%s</p><p>Please make a note of your new access code</p>'; // Nur grob übersetzt
 $this->phrasen['bewerbung/keineStudienrichtungenFuerStudiensemesterZurAuswahl']='Currently there are no courses available for the selected study semester'; // Nur grob übersetzt
 $this->phrasen['bewerbung/sieHabenFolgendenTerminGewaehlt']='You registered to the following test'; // Nur grob übersetzt
 
