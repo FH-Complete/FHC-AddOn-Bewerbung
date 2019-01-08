@@ -646,8 +646,8 @@ if (! isset($person_id))
 		}
 		else
 		{
-			echo '	<button class="btn-nav btn btn-default" type="button" data-jump-tab="'.$tabs[0].'">
-						'.$p->t('bewerbung/menuUebersicht').'
+			echo '	<button class="btn-nav btn btn-default" type="button" data-jump-tab="'.$tabs[array_search('dokumente', $tabs)+2].'">
+						'.$p->t('bewerbung/weiter').'
 					</button>';
 		}
 	}
