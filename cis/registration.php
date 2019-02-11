@@ -514,7 +514,7 @@ elseif($username && $password)
 									$prestudent = new prestudent();
 									$prestudent->person_id = $person->person_id;
 									$prestudent->studiengang_kz = $studienordnung->studiengang_kz;
-									$prestudent->aufmerksamdurch_kurzbz = 'k.A.';
+									$prestudent->aufmerksamdurch_kurzbz = '';
 									$prestudent->insertamum = date('Y-m-d H:i:s');
 									$prestudent->insertvon = 'online';
 									$prestudent->updateamum = date('Y-m-d H:i:s');
@@ -1425,6 +1425,8 @@ function sendMail($zugangscode, $email, $person_id=null)
 
 	$mail = new mail($email, 'no-reply', $p->t('bewerbung/registration'), $p->t('bewerbung/mailtextHtml'));
 	$text = $p->t('bewerbung/mailtext',array($vorname, $nachname, $zugangscode, $anrede, $email));
+	$mail->addEmbeddedImage('../../../skin/images/sancho/sancho_header_DEFAULT.jpg', 'image/jpg', 'header_image', 'sancho_header');
+	$mail->addEmbeddedImage('../../../skin/images/sancho/sancho_footer.jpg', 'image/jpg', 'footer_image', 'sancho_footer');
 	$mail->setHTMLContent($text);
 	if(!$mail->send())
 		$msg = '<span class="error">'.$p->t('bewerbung/fehlerBeimSenden').'</span><br /><a href='.$_SERVER['PHP_SELF'].'?method=registration>'.$p->t('bewerbung/zurueckZurAnmeldung').'</a>';
@@ -1454,6 +1456,8 @@ function resendMail($zugangscode, $email, $person_id=null)
 
 	$mail = new mail($email, 'no-reply', $p->t('bewerbung/registration'), $p->t('bewerbung/mailtextHtml'));
 	$text = $p->t('bewerbung/mailtext',array($vorname, $nachname, $zugangscode, $anrede, $email));
+	$mail->addEmbeddedImage('../../../skin/images/sancho/sancho_header_DEFAULT.jpg', 'image/jpg', 'header_image', 'sancho_header');
+	$mail->addEmbeddedImage('../../../skin/images/sancho/sancho_footer.jpg', 'image/jpg', 'footer_image', 'sancho_footer');
 	$mail->setHTMLContent($text);
 	if(!$mail->send())
 		$msg= '<span class="error">'.$p->t('bewerbung/fehlerBeimSenden').'</span><br /><a href='.$_SERVER['PHP_SELF'].'?method=registration>'.$p->t('bewerbung/zurueckZurAnmeldung').'</a>';

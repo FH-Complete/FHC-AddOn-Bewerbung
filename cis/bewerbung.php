@@ -1742,7 +1742,7 @@ if ($person->vorname
 {
 	if (defined('BEWERBERTOOL_AUFMERKSAMDURCH_PFLICHT') && BEWERBERTOOL_AUFMERKSAMDURCH_PFLICHT === true
 		&& isset($prestudent->result[0])
-		&& $prestudent->result[0]->aufmerksamdurch_kurzbz == 'k.A.')
+		&& $prestudent->result[0]->aufmerksamdurch_kurzbz == '')
 	{
 		$status_person = false;
 		$status_person_text = $unvollstaendig;
@@ -2040,12 +2040,15 @@ $status_reihungstest = false;
 $status_reihungstest_text = $unvollstaendig;
 $nextWinterSemester = new studiensemester();
 $nextWinterSemester->getNextStudiensemester('WS');
+$nextSommerSemester = new studiensemester();
+$nextSommerSemester->getNextStudiensemester('SS');
 $studienplanReihungstest = getPrioStudienplanForReihungstest($person_id, $nextWinterSemester->studiensemester_kurzbz);
 if (! defined('BEWERBERTOOL_REIHUNGSTEST_ANZEIGEN') || BEWERBERTOOL_REIHUNGSTEST_ANZEIGEN == true)
 {
 	$angemeldeteReihungstests = new reihungstest();
 	$angemeldeteReihungstests->getReihungstestPerson($person_id, $nextWinterSemester->studiensemester_kurzbz);
-	
+	$angemeldeteReihungstests->getReihungstestPerson($person_id, $nextSommerSemester->studiensemester_kurzbz);
+
 	$reihungstestTermine = getReihungstestsForOnlinebewerbung($studienplanReihungstest, $nextWinterSemester->studiensemester_kurzbz);
 	if (count($angemeldeteReihungstests->result) > 0)
 	{
@@ -2457,7 +2460,7 @@ function sendBewerbung($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz,
 			$email.= '<tr><td><b>'.$p->t('studienplan/studienplan').'</b></td><td>'.$studienplan_bezeichnung.'</td></tr>';
 		else
 			$email.= '<tr><td><b>'.$p->t('studienplan/studienplan').'</b></td><td><span style="color: red">Es konnte kein passender Studienplan ermittelt werden</span></td></tr>';
-		//$email.= '<tr><td><b>'.$p->t('global/geschlecht').'</b></td><td>'.($person->geschlecht=='m'?$p->t('bewerbung/maennlich'):$p->t('bewerbung/weiblich')).'</td></tr>';
+		$email.= '<tr><td><b>'.$p->t('global/geschlecht').'</b></td><td>'.($person->geschlecht=='m'?$p->t('bewerbung/maennlich'):$p->t('bewerbung/weiblich')).'</td></tr>';
 		//$email.= '<tr><td><b>'.$p->t('global/titel').'</b></td><td>'.$person->titelpre.'</td></tr>';
 		//$email.= '<tr><td><b>'.$p->t('global/postnomen').'</b></td><td>'.$person->titelpost.'</td></tr>';
 		$email.= '<tr><td><b>'.$p->t('global/vorname').'</b></td><td>'.$person->vorname.'</td></tr>';
@@ -2501,13 +2504,15 @@ function sendBewerbung($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz,
 	}
 	else
 	{
-		$email = $p->t('bewerbung/emailBodyStart', array(VILESCI_ROOT . 'vilesci/personen/personendetails.php?id='.$person_id));
+		$sanchoMailHeader = base64_encode(file_get_contents('../../../skin/images/sancho/sancho_header_min_bw.jpg'));
+		$sanchoMailFooter = base64_encode(file_get_contents('../../../skin/images/sancho/sancho_footer_min_bw.jpg'));
+		$email = $p->t('bewerbung/emailBodyStart', array(VILESCI_ROOT . 'vilesci/personen/personendetails.php?id='.$person_id, $sanchoMailHeader));
 		$email .= '<br>';
 		$email .= $p->t('global/studiengang') . ': ' . $typ->bezeichnung . ' ' . $studiengang->bezeichnung . ($orgform_kurzbz != '' ? ' (' . $orgform_kurzbz . ')' : '') . ' <br>';
 		$email .= $p->t('global/studiensemester') . ': ' . $studiensemester_kurzbz . '<br>';
 		$email .= $p->t('global/name') . ': ' . $person->vorname . ' ' . $person->nachname . '<br>';
 		$email .= $p->t('bewerbung/prestudentID') . ': ' . $prestudent_id . '<br><br>';
-		$email .= $p->t('bewerbung/emailBodyEnde', array());
+		$email .= $p->t('bewerbung/emailBodyEnde', array($sanchoMailFooter));
 	}
 
 	// An der FHTW werden alle Bachelor-Studiengänge vom Infocenter abgearbeitet und deshalb keine Mail verschickt
@@ -2556,6 +2561,8 @@ function sendBewerbung($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz,
 		}
 		
 		$mail_bewerber->setHTMLContent($email_bewerber_content);
+		$mail_bewerber->addEmbeddedImage('../../../skin/images/sancho/sancho_header_DEFAULT.jpg', 'image/jpg', 'header_image', 'sancho_header');
+		$mail_bewerber->addEmbeddedImage('../../../skin/images/sancho/sancho_footer.jpg', 'image/jpg', 'footer_image', 'sancho_footer');
 		if (! $mail_bewerber->send())
 			return false;
 	}
@@ -2655,7 +2662,7 @@ function sendAddStudiengang($prestudent_id, $studiensemester_kurzbz, $orgform_ku
 	$email .= '<tr><td><b>' . $p->t('bewerbung/prestudentID') . '</b></td><td>' . $prestudent_id . '</td></tr>';
 	$email .= '</td></tr></tbody></table>';
 	$email .= '<br>';
-	$email .= $p->t('bewerbung/emailBodyEnde', array());
+	$email .= $p->t('bewerbung/emailBodyEnde', array(null));
 
 	$email = wordwrap($email, 70); // Bricht den Code um, da es sonst zu Anzeigefehlern im Mail kommen kann
 

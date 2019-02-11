@@ -30,13 +30,59 @@ $this->phrasen['bewerbung/fallsVorhanden']='(falls vorhanden)';
 $this->phrasen['bewerbung/mailtextHtml']='Bitte sehen Sie sich die Nachricht in der HTML-Ansicht an um den Link vollständig darzustellen.';
 $this->phrasen['bewerbung/anredeMaennlich']='geehrter Herr';
 $this->phrasen['bewerbung/anredeWeiblich']='geehrte Frau';
-$this->phrasen['bewerbung/mailtext']='Sehr %4$s %1$s %2$s!<br><br>
-        Vielen Dank für Ihr Interesse an einem Studiengang oder Lehrgang der '.CAMPUS_NAME.'. <br>
-        Verwenden Sie für Ihre Bewerbung bitte folgenden Link und Zugangscode: <br><br>
-        <a href="'.APP_ROOT.'addons/bewerbung/cis/registration.php?code=%3$s&emailAdresse=%5$s">Link zur Bewerbung</a><br>
-        Zugangscode: %3$s<br><br>
-        Mit freundlichen Grüßen, <br>
-        '.CAMPUS_NAME;
+$this->phrasen['bewerbung/mailtext']='
+<html>
+	<head>	
+		<title>Sancho Mail</title>
+	</head>
+	<body>
+		<center>
+			<table cellpadding="0" cellspacing="0" style="border: 2px solid #000000; padding: 0px; max-width: 850px; 
+				border-collapse:collapse; mso-table-lspace:0pt; mso-table-rspace:0pt;">  
+				<tr>
+					<td align="center">
+						<table cellpadding="0" cellspacing="0" width="100%%" border="0">
+							<tr>
+								<td>
+									<img src="cid:sancho_header" alt="header_image" width="100%%"/>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+				<tr>
+					<td align="center">
+						<table cellpadding="0" cellspacing="0" width="100%%" style="font-family: courier, verdana, sans-serif; font-size: 0.95em; border-bottom: 2px solid #000000;">
+							<tr>
+								<td style="padding-left: 8%%; padding-right: 8%%; padding-top: 5%%; padding-bottom: 5%%;">
+									Sehr %4$s %1$s %2$s!<br><br>
+									Vielen Dank für Ihr Interesse an einem Studiengang oder Lehrgang der '.CAMPUS_NAME.'. <br>
+									Verwenden Sie für Ihre Bewerbung bitte folgenden Link und Zugangscode: <br><br>
+									<a href="'.APP_ROOT.'addons/bewerbung/cis/registration.php?code=%3$s&emailAdresse=%5$s">Link zur Bewerbung</a><br>
+									Zugangscode: %3$s<br><br>
+									Wir empfehlen Ihnen aus Sicherheitsgründen, sich einen neuen Zugangscode nach dem Login generieren zu lassen (Menüpunkt "Sicherheit").<br><br>
+									Mit freundlichen Grüßen, <br>
+									'.CAMPUS_NAME.'
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+				<tr>
+					<td align="center">
+						<table cellpadding="0" cellspacing="0" width="100%%">
+							<tr>
+								<td>
+									<img src="cid:sancho_footer" alt="footer_image" width="100%%"/>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+			</table>
+		</center>
+	</body>
+</html>';
 $this->phrasen['bewerbung/zugangsdatenFalsch']='Der eingegebene Zugangscode ist falsch oder Sie haben sich noch nicht registriert.';
 $this->phrasen['bewerbung/mailFalsch']='Die eingegebene E-Mailadresse ist falsch oder Sie haben sich noch nicht registriert.';
 $this->phrasen['bewerbung/fehlerBeimSenden']='Beim Senden der E-Mail ist ein Fehler aufgetreten.';
@@ -154,7 +200,7 @@ $this->phrasen['bewerbung/zahlungsinformation']='Zahlungsinformation';
 $this->phrasen['bewerbung/bezahlt']='bezahlt';
 $this->phrasen['bewerbung/zahlungsdetails']='Zahlungsdetails';
 $this->phrasen['bewerbung/menuReihungstest']='Reihungstest';
-$this->phrasen['bewerbung/fuerReihungstestAnmelden']='Sie können sich für <b>einen</b> der folgenden Reihungstests anmelden.<br>Unabhängig von der Anzahl Ihrer Bachelor-Bewerbungen brauchen Sie den Reihungstest nur einmal an der FHTW absolvieren.';
+$this->phrasen['bewerbung/fuerReihungstestAnmelden']='Es werden Ihnen die nächsten verfügbaren Reihungstesttermine angezeigt. Bitte melden Sie sich für <b>einen</b> dieser an.<br>Unabhängig von der Anzahl Ihrer Bachelor-Bewerbungen brauchen Sie den Reihungstest nur <b>einmal</b> an der FHTW absolvieren.';
 $this->phrasen['bewerbung/fehler']='Es ist ein Fehler aufgetreten';
 $this->phrasen['bewerbung/angemeldetPlaetze']='angemeldet / Plätze';
 $this->phrasen['bewerbung/uhrzeit']='Uhrzeit';
@@ -347,7 +393,8 @@ $this->phrasen['bewerbung/erfolgreichBeworbenMailBachelor']='
 						<table cellpadding="0" cellspacing="0" width="100%%" border="0">
 							<tr>
 								<td>
-									<img src="data:image/jpg;base64,%5$s" alt="sancho_header" width="100%%"/>
+									<!--<img src="data:image/jpg;base64,%5$s" alt="header_image" width="100%%"/>-->
+									<img src="cid:sancho_header" alt="header_image" width="100%%"/>
 								</td>
 							</tr>
 						</table>
@@ -374,7 +421,8 @@ $this->phrasen['bewerbung/erfolgreichBeworbenMailBachelor']='
 						<table cellpadding="0" cellspacing="0" width="100%%">
 							<tr>
 								<td>
-									<img src="data:image/jpg;base64,%6$s" alt="sancho_footer" width="100%%"/>
+									<!--<img src="data:image/jpg;base64,%6$s" alt="footer_image" width="100%%"/>-->
+									<img src="cid:sancho_footer" alt="footer_image" width="100%%"/>
 								</td>
 							</tr>
 						</table>
@@ -399,7 +447,8 @@ $this->phrasen['bewerbung/erfolgreichBeworbenMail']='
 						<table cellpadding="0" cellspacing="0" width="100%%" border="0">
 							<tr>
 								<td>
-									<img src="data:image/jpg;base64,%6$s" alt="sancho_header" width="100%%"/>
+									<!--<img src="data:image/jpg;base64,%5$s" alt="header_image" width="100%%"/>-->
+									<img src="cid:sancho_header" alt="header_image" width="100%%"/>
 								</td>
 							</tr>
 						</table>
@@ -426,7 +475,8 @@ $this->phrasen['bewerbung/erfolgreichBeworbenMail']='
 						<table cellpadding="0" cellspacing="0" width="100%%">
 							<tr>
 								<td>
-									<img src="data:image/jpg;base64,%7$s" alt="sancho_footer" width="100%%"/>
+									<!--<img src="data:image/jpg;base64,%6$s" alt="footer_image" width="100%%"/>-->
+									<img src="cid:sancho_footer" alt="footer_image" width="100%%"/>
 								</td>
 							</tr>
 						</table>

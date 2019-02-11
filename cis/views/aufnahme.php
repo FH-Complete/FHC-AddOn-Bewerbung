@@ -125,10 +125,11 @@ if(!isset($person_id))
 
 
 	$nextSummerSemester = new studiensemester();
-	$nextSummerSemester->getNextStudiensemester('SS');
-	$prestudent = new prestudent();
-	$isStudentQuali = $prestudent->existsPrestudentstatus($person_id, STUDIENGANG_KZ_QUALIFIKATIONKURSE, $nextSummerSemester->studiensemester_kurzbz);
+	$nextSummerSemester = $nextSummerSemester->getaktorNext('SS');
 
+	$prestudent = new prestudent();
+	$isStudentQuali = $prestudent->existsPrestudentstatus($person_id, STUDIENGANG_KZ_QUALIFIKATIONKURSE, $nextSummerSemester);
+	
 	$reihungstestTermine = '';
 	// Qualifikationskursteilnehmer sehen keine Termine, bis sie einen Studenten-Account im Studiengang EQK haben
 	if ($hasStatusgrundQuali == true)
@@ -137,6 +138,7 @@ if(!isset($person_id))
 		{
 			$studienplanQualikurse = new studienplan();
 			$studienplanQualikurse->getStudienplaeneFromSem(STUDIENGANG_KZ_QUALIFIKATIONKURSE, $nextWinterSemester->studiensemester_kurzbz);
+			
 			// Wenn für das übergbene Studiensemester kein Studienplan gefunden wird, wird nochmal ohne Studiensemester gesucht
 			if (count($studienplanQualikurse->result) == 0)
 			{
@@ -169,27 +171,33 @@ if(!isset($person_id))
 		// Mögliche Termine zur Anmeldung laden, für die die Person noch nicht angemeldet ist
 		$reihungstestTermine = getReihungstestsForOnlinebewerbung($studienplanReihungstest, $nextWinterSemester->studiensemester_kurzbz);
 	}
-
+	
+	$terminauswahl = true;
 	if($hasStatusgrundEinstiegSS == true)
 	{
 		echo '<div class="col-xs-12 alert alert-warning">'.$p->t('bewerbung/keineRtTermineZurAuswahl').'</div>';
+		$terminauswahl = false;
 	}
-	elseif($isStudentQuali == true)
+	elseif($hasStatusgrundQuali == true)
 	{
-		if ($reihungstestTermine == '' && count($angemeldeteRtArray) == 0)
-		{
-			echo '<div class="col-xs-12 alert alert-warning">'.$p->t('bewerbung/keineRtTermineZurAuswahl').'</div>';
-		}
-		else
+		if ($isStudentQuali == false)
 		{
 			echo '<div class="col-xs-12 alert alert-info">'.$p->t('bewerbung/infoVorgemerktFuerQualifikationskurs').'</div>';
+			$terminauswahl = false;
+		}
+		elseif ($reihungstestTermine == '' && count($angemeldeteRtArray) == 0)
+		{
+			echo '<div class="col-xs-12 alert alert-warning">'.$p->t('bewerbung/keineRtTermineZurAuswahl').'</div>';
+			$terminauswahl = false;
 		}
 	}
 	elseif($reihungstestTermine == '' && count($angemeldeteRtArray) == 0)
 	{
 		echo '<div class="col-xs-12 alert alert-info">'.$p->t('bewerbung/keineRtTermineZurAuswahl').'</div>';
+		$terminauswahl = false;
 	}
-	else
+	
+	if ($terminauswahl == true)
 	{
 		//Wenn bereits eine Anmeldung existiert, keine Terminauswahl anzeigen
 		if (count($angemeldeteRtArray) == 0)

@@ -196,7 +196,7 @@ if(!isset($person_id))
 		$prestudent = new prestudent();
 		$prestudent->getPrestudenten($person->person_id);
 		if(isset($prestudent->result[0])): ?>
-		<div class="form-group <?php echo (defined('BEWERBERTOOL_AUFMERKSAMDURCH_PFLICHT') && BEWERBERTOOL_AUFMERKSAMDURCH_PFLICHT === true && $prestudent->result[0]->aufmerksamdurch_kurzbz == 'k.A.'?'has-error':'') ?>">
+		<div class="form-group <?php echo (defined('BEWERBERTOOL_AUFMERKSAMDURCH_PFLICHT') && BEWERBERTOOL_AUFMERKSAMDURCH_PFLICHT === true && $prestudent->result[0]->aufmerksamdurch_kurzbz == ''?'has-error':'') ?>">
 			<label for="aufmerksamdurch" class="col-sm-3 control-label"><?php echo $p->t('bewerbung/aufmerksamdurch');echo (defined('BEWERBERTOOL_AUFMERKSAMDURCH_PFLICHT') && BEWERBERTOOL_AUFMERKSAMDURCH_PFLICHT === true?'*':''); ?></label>
 			<div class="col-sm-9">
 				<select name="aufmerksamdurch" id="aufmerksamdurch"  <?php echo $disabled; ?> class="form-control">
@@ -216,8 +216,11 @@ if(!isset($person_id))
 					if(isset($prestudent->result[0]) && $prestudent->result[0]->aufmerksamdurch_kurzbz!='')
 						$aufmerksamdurch_kurzbz = $prestudent->result[0]->aufmerksamdurch_kurzbz;
 					else
-						$aufmerksamdurch_kurzbz ='';
+						$aufmerksamdurch_kurzbz ='';?>
+						
+					<option value=""><?php echo $p->t('bewerbung/bitteAuswaehlen');?></option>
 
+					<?php 
 					foreach($aufmerksamdurch->result as $row_aufm):
 						if($row_aufm->aktiv):
 						$selected = ($aufmerksamdurch_kurzbz == $row_aufm->aufmerksamdurch_kurzbz) ? 'selected' : ''; ?>

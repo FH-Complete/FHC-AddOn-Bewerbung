@@ -105,7 +105,7 @@ $this->phrasen['bewerbung/artDerTaetigkeit']='Type of Occupation';
 $this->phrasen['bewerbung/weiter']='Next';
 $this->phrasen['bewerbung/eintragVom']='Date of record:';
 $this->phrasen['bewerbung/menuPersDaten']='Personal Data';
-$this->phrasen['bewerbung/accountVorhanden']='Since your status as applicant has already been confirmed or you already have an account at the UASTW, you can no longer change your basic data. If there are some incorrect details here, please contact the administrative assistant responsible.';//Satz 1 nur grob uebersetzt
+$this->phrasen['bewerbung/accountVorhanden']='Since you have already been confirmed as an interested party or you already have an account at the UASTW, you can no longer change your master data. If there are some incorrect details here, please contact the administrative assistant responsible.';
 $this->phrasen['bewerbung/bitteAuswaehlen']='-- please select --';
 $this->phrasen['bewerbung/menuKontaktinformationen']='Contact Details';
 $this->phrasen['bewerbung/kontakt']='Contact';
@@ -137,7 +137,7 @@ $this->phrasen['bewerbung/zahlungsinformation']='Payment information';
 $this->phrasen['bewerbung/bezahlt']='payed';
 $this->phrasen['bewerbung/zahlungsdetails']='Payment details';
 $this->phrasen['bewerbung/menuReihungstest']='Placement test';
-$this->phrasen['bewerbung/fuerReihungstestAnmelden']='You can register for <b>one</b> of the following placement tests.<br>Please note that you need to take the test only once even if you have seelcted more than one bachelor degree programme';
+$this->phrasen['bewerbung/fuerReihungstestAnmelden']='Here are the next available placement tests. Please register for <b>one</b> and note that you need to take the test only once even if you have selected more than one bachelor degree programme.';
 $this->phrasen['bewerbung/fehler']='An error occurred';
 $this->phrasen['bewerbung/angemeldetPlaetze']='registered / places';
 $this->phrasen['bewerbung/uhrzeit']='Time';
@@ -168,10 +168,48 @@ $this->phrasen['bewerbung/erfolgreichBeworben']='You have applied successfully. 
 $this->phrasen['bewerbung/fehlerBeimVersendenDerBewerbung']='An error occured while sending the application. Please try again.';
 $this->phrasen['bewerbung/svnrBereitsVorhanden']='Social Security Number already exists.';
 $this->phrasen['bewerbung/menuBewerbungFuerStudiengang']='Application for a degree program';
-$this->phrasen['bewerbung/emailBodyStart']='Es gibt eine neue Bewerbung mit folgenden Daten: <br><br>
-											Für mehr Details öffnen Sie bitte den <a href="%s" target="_blank">Personendatensatz</a> im FAS.';//Mail an Assistenz. Nur übersetzen, wenn das Mail in der Sprache der Bewerbung versendet werden soll.
+$this->phrasen['bewerbung/emailBodyStart']='<html>
+	<head>	
+		<title>Sancho Mail</title>
+	</head>
+	<body>
+		<center>
+			<table cellpadding="0" cellspacing="0" style="border: 2px solid #000000; padding: 0px; max-width: 850px; 
+				border-collapse:collapse; mso-table-lspace:0pt; mso-table-rspace:0pt;">  
+				<tr>
+					<td align="center">
+						<table cellpadding="0" cellspacing="0" width="100%%" border="0">
+							<tr>
+								<td>
+									<img src="data:image/jpg;base64,%2$s" alt="sancho_header" width="100%%"/>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+				<tr>
+					<td style="padding-left: 8%%; padding-right: 8%%; padding-top: 5%%; padding-bottom: 5%%; font-family: courier, verdana, sans-serif; font-size: 0.95em; border-bottom: 2px solid #000000;">
+						Es gibt eine neue Bewerbung.<br>
+						Für mehr Details öffnen Sie bitte den <a href="%1$s" target="_blank">Personendatensatz</a> im FAS.';//Mail an Assistenz. Nur übersetzen, wenn das Mail in der Sprache der Bewerbung versendet werden soll.
 $this->phrasen['bewerbung/emailDokumentuploadStart']='Das folgende Dokument wurde hochgeladen: <br>';//Mail an Assistenz. Nur übersetzen, wenn das Mail in der Sprache der Bewerbung versendet werden soll.
-$this->phrasen['bewerbung/emailBodyEnde']='';//Mail an Assistenz. Nur übersetzen, wenn das Mail in der Sprache der Bewerbung versendet werden soll.
+$this->phrasen['bewerbung/emailBodyEnde']='
+					</td>
+				</tr>
+				<tr>
+					<td align="center">
+						<table cellpadding="0" cellspacing="0" width="100%%">
+							<tr>
+								<td>
+									<img src="data:image/jpg;base64,%1$s" alt="sancho_footer" width="100%%"/>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+			</table>
+		</center>
+	</body>
+</html>';//Mail an Assistenz. Nur übersetzen, wenn das Mail in der Sprache der Bewerbung versendet werden soll.
 $this->phrasen['bewerbung/fileUpload']='File-Upload';
 $this->phrasen['bewerbung/fehlerKeinePersonId']='There was no Person_id supplied';
 $this->phrasen['bewerbung/woWurdeUrkundeAusgestellt']='Where was the certificate issued?';
@@ -253,7 +291,7 @@ $this->phrasen['bewerbung/bewerbungStornierenInfotext']='If you cancel the appli
 $this->phrasen['bewerbung/bewerbungStornierenBestaetigen']='Yes, cancel application';
 $this->phrasen['bewerbung/vergangeneBewerbungen']='Past applications';
 $this->phrasen['bewerbung/buttonStornierenDisabled']='Once the application has been sent or rejected you can not cancel it any more';
-$this->phrasen['bewerbung/infotextDisabled']='You can not apply as an application for %s already exists'; // Nur grob übersetzt
+$this->phrasen['bewerbung/infotextDisabled']='Since an application already exists or existed, you can no longer apply in %s for this degree program';
 $this->phrasen['bewerbung/bitteAnmerkungEintragen']='Please enter the name of the institution that will issue the document';
 $this->phrasen['bewerbung/nachreichDatumNichtVergangenheit']='The date of submission may not be in the past ';
 $this->phrasen['bewerbung/infotextVorlaeufigesZgvDokument']='Please upload the last semester certificate of your education';
@@ -273,8 +311,8 @@ $this->phrasen['bewerbung/hackTypBezeichnungMaster']='Master\'s Degree Programs'
 $this->phrasen['bewerbung/hackStufeBezeichnungBachelor']=''; // Überschreibt die ZGV Stufen-Bezeichnung "Bachelor". Leer lassen, wenn nicht benötigt
 $this->phrasen['bewerbung/hackStufeBezeichnungMaster']=''; // Überschreibt die ZGV Stufen-Bezeichnung "Master". Leer lassen, wenn nicht benötigt
 $this->phrasen['bewerbung/prioritaet']='Priority';
-$this->phrasen['bewerbung/studierendenDaten']='Current student data';// Nur grob übersetzt
-$this->phrasen['bewerbung/keineRtTermineZurAuswahl']='Currently there are no placement tests available';// Nur grob übersetzt
+$this->phrasen['bewerbung/studierendenDaten']='Student’s current data';
+$this->phrasen['bewerbung/keineRtTermineZurAuswahl']='At the moment there are no placement test dates available';
 $this->phrasen['bewerbung/erfolgreichBeworbenMailBachelor']='
 <html>
 	<head>	
@@ -289,7 +327,8 @@ $this->phrasen['bewerbung/erfolgreichBeworbenMailBachelor']='
 						<table cellpadding="0" cellspacing="0" width="100%%" border="0">
 							<tr>
 								<td>
-									<img src="data:image/jpg;base64,%5$s" alt="sancho_header" width="100%%"/>
+									<!--<img src="data:image/jpg;base64,%5$s" alt="header_image" width="100%%"/>-->
+									<img src="cid:sancho_header" alt="header_image" width="100%%"/>
 								</td>
 							</tr>
 						</table>
@@ -316,7 +355,8 @@ $this->phrasen['bewerbung/erfolgreichBeworbenMailBachelor']='
 						<table cellpadding="0" cellspacing="0" width="100%%">
 							<tr>
 								<td>
-									<img src="data:image/jpg;base64,%6$s" alt="sancho_footer" width="100%%"/>
+									<!--<img src="data:image/jpg;base64,%6$s" alt="footer_image" width="100%%"/>-->
+									<img src="cid:sancho_footer" alt="footer_image" width="100%%"/>
 								</td>
 							</tr>
 						</table>
@@ -341,7 +381,8 @@ $this->phrasen['bewerbung/erfolgreichBeworbenMail']='
 						<table cellpadding="0" cellspacing="0" width="100%%" border="0">
 							<tr>
 								<td>
-									<img src="data:image/jpg;base64,%6$s" alt="sancho_header" width="100%%"/>
+									<!--<img src="data:image/jpg;base64,%5$s" alt="header_image" width="100%%"/>-->
+									<img src="cid:sancho_header" alt="header_image" width="100%%"/>
 								</td>
 							</tr>
 						</table>
@@ -368,7 +409,8 @@ $this->phrasen['bewerbung/erfolgreichBeworbenMail']='
 						<table cellpadding="0" cellspacing="0" width="100%%">
 							<tr>
 								<td>
-									<img src="data:image/jpg;base64,%7$s" alt="sancho_footer" width="100%%"/>
+									<!--<img src="data:image/jpg;base64,%6$s" alt="footer_image" width="100%%"/>-->
+									<img src="cid:sancho_footer" alt="footer_image" width="100%%"/>
 								</td>
 							</tr>
 						</table>
@@ -394,17 +436,17 @@ $this->phrasen['bewerbung/bewerbungenFuerStudiensemesterXX']='Applications for s
 $this->phrasen['bewerbung/bewerbungAbschicken']='Send application';
 $this->phrasen['bewerbung/erklaerungBewerbungAbschickenFuerStudiengang']='If you have filled in all the information correctly you can submit your application for <span style="text-align: center; font-weight: bold; display: block; padding-top: 10px">%s</span>
 Generally, we will get back to you within 5 working days.';
-$this->phrasen['bewerbung/anmeldungStornieren']='Cancel registration'; // Nur grob übersetzt
-$this->phrasen['bewerbung/anmeldungStornierenBis']='Cancel (until %s)'; // Nur grob übersetzt
+$this->phrasen['bewerbung/anmeldungStornieren']='Cancel registration';
+$this->phrasen['bewerbung/anmeldungStornierenBis']='Cancel (until %s)';
 $this->phrasen['bewerbung/menuUebersicht']='Overview';
 $this->phrasen['bewerbung/menuSicherheit']='Security';
-$this->phrasen['bewerbung/erklaerungSicherheit']='For data security reasons we recommend you to generate a new access code here.<br>
-													Just click the button to generate a new code.<br><br>
-													If you forget your new code, click "Forgot access code?" on the login page.'; // Nur grob übersetzt
-$this->phrasen['bewerbung/buttonNeuerZugangscode']='Generate new access code'; // Nur grob übersetzt
-$this->phrasen['bewerbung/erfolgsMessageNeuerZugangscode']='<p>Your new access code is:</p><p>%s</p><p>Please make a note of your new access code</p>'; // Nur grob übersetzt
-$this->phrasen['bewerbung/keineStudienrichtungenFuerStudiensemesterZurAuswahl']='Currently there are no courses available for the selected study semester'; // Nur grob übersetzt
-$this->phrasen['bewerbung/sieHabenFolgendenTerminGewaehlt']='You registered to the following test'; // Nur grob übersetzt
+$this->phrasen['bewerbung/erklaerungSicherheit']='For reasons of privacy, we recommend that you generate a new access code.<br>
+													Simply click on the button and make a note of the newly generated code.<br><br>
+													If you forget the code, click on the login page on "Forgot access code?"';
+$this->phrasen['bewerbung/buttonNeuerZugangscode']='Generate new access code';
+$this->phrasen['bewerbung/erfolgsMessageNeuerZugangscode']='<p>Your new access code is:</p><p>%s</p><p>Please make a note of the new access code</p>';
+$this->phrasen['bewerbung/keineStudienrichtungenFuerStudiensemesterZurAuswahl']='There are currently no courses of study available for the selected semester';
+$this->phrasen['bewerbung/sieHabenFolgendenTerminGewaehlt']='You have registered for the following placement test date';
 
 $this->phrasen['bewerbung/anmeldungReihungstestMailBetreff']='Confirmation of registration to placement test UAS Technikum Wien';
 $this->phrasen['bewerbung/anmeldungReihungstestMail']='Sehr %3$s %1$s %2$s,<br><br>
