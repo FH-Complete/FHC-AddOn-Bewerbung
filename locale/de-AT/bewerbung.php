@@ -1,6 +1,32 @@
 <?php
 $this->phrasen['bewerbung/ungueltigerZugriff']='ungültiger Zugriff';
 $this->phrasen['bewerbung/welcome']='Willkommen bei der Online Bewerbung';
+$this->phrasen['bewerbung/welcomeHeaderLogin']='<div class="col-md-3">
+									<div style="text-align: center;">
+										<img style="margin: 30px 10px; width: 100%%" src="' . APP_ROOT . 'skin/styles/' . DEFAULT_STYLE . '/logo_academy.png"/>
+									</div>
+								</div>
+								<div style="text-align: center;" class="col-md-6">
+									<h1 style="margin: 30px 10px;">Willkommen bei der Online Bewerbung</h1>
+								</div>
+								<div class="col-md-3">
+									<div style="text-align: center;">
+										<img style="margin: 30px 10px; width: 100%%" src="' . APP_ROOT . 'skin/styles/' . DEFAULT_STYLE . '/logo.png"/>
+									</div>
+								</div>';
+$this->phrasen['bewerbung/welcomeHeaderRegistration']='
+					<div class="row">
+						<div class="col-xs-2">
+							<img style="width:150px;" class="center-block img-responsive" src="' . APP_ROOT . 'skin/styles/' . DEFAULT_STYLE . '/logo_academy.png">
+						</div>
+						<div class="col-xs-8">
+							<h2 class="text-center">Willkommen bei der Online Bewerbung</h2>
+						</div>
+						<div class="col-xs-2">
+							<img style="width:150px;" class="center-block img-responsive" src="' . APP_ROOT . 'skin/styles/' . DEFAULT_STYLE . '/logo.png">
+						</div>
+					</div>
+					';
 $this->phrasen['bewerbung/registration']='Zugangscode für Ihre Bewerbung';
 $this->phrasen['bewerbung/registrieren']='Anmelden';
 $this->phrasen['bewerbung/abschicken']='Abschicken';
@@ -41,13 +67,7 @@ $this->phrasen['bewerbung/mailtext']='
 				border-collapse:collapse; mso-table-lspace:0pt; mso-table-rspace:0pt;">  
 				<tr>
 					<td align="center">
-						<table cellpadding="0" cellspacing="0" width="100%%" border="0">
-							<tr>
-								<td>
-									<img src="cid:sancho_header" alt="header_image" width="100%%"/>
-								</td>
-							</tr>
-						</table>
+						<img src="cid:sancho_header" alt="header_image" style="width: 100%%; display: block"/>
 					</td>
 				</tr>
 				<tr>
@@ -70,13 +90,7 @@ $this->phrasen['bewerbung/mailtext']='
 				</tr>
 				<tr>
 					<td align="center">
-						<table cellpadding="0" cellspacing="0" width="100%%">
-							<tr>
-								<td>
-									<img src="cid:sancho_footer" alt="footer_image" width="100%%"/>
-								</td>
-							</tr>
-						</table>
+						<img src="cid:sancho_footer" alt="footer_image" style="width: 100%%; display: block"/>
 					</td>
 				</tr>
 			</table>
@@ -368,7 +382,7 @@ $this->phrasen['bewerbung/bitteDatenuebermittlungZustimmen']='Sie müssen der Da
 $this->phrasen['bewerbung/vorlaeufigesDokument']='Vorläufiges Dokument';
 $this->phrasen['bewerbung/lehrgangsArt/1']='Master Lehrgang';
 $this->phrasen['bewerbung/lehrgangsArt/2']='Akademischer Lehrgang';
-$this->phrasen['bewerbung/lehrgangsArt/3']='Lehrgang zur Weiterbildung';
+$this->phrasen['bewerbung/lehrgangsArt/3']='International Programs';
 $this->phrasen['bewerbung/lehrgangsArt/4']='Zertifizierungslehrgang';
 $this->phrasen['bewerbung/lehrgangsArt/5']='Postgradualer Lehrgang';
 $this->phrasen['bewerbung/hackTypBezeichnungLehrgeange']='Lehrgänge zur Weiterbildung'; // Überschreibt die Typ-Bezeichnung "Lehrgang". Leer lassen, wenn nicht benötigt
@@ -390,14 +404,8 @@ $this->phrasen['bewerbung/erfolgreichBeworbenMailBachelor']='
 				border-collapse:collapse; mso-table-lspace:0pt; mso-table-rspace:0pt;">  
 				<tr>
 					<td align="center">
-						<table cellpadding="0" cellspacing="0" width="100%%" border="0">
-							<tr>
-								<td>
-									<!--<img src="data:image/jpg;base64,%5$s" alt="header_image" width="100%%"/>-->
-									<img src="cid:sancho_header" alt="header_image" width="100%%"/>
-								</td>
-							</tr>
-						</table>
+						<img src="cid:sancho_header" alt="header_image" style="width: 100%%; display: block"/>
+								
 					</td>
 				</tr>
 				<tr>
@@ -418,14 +426,7 @@ $this->phrasen['bewerbung/erfolgreichBeworbenMailBachelor']='
 				</tr>
 				<tr>
 					<td align="center">
-						<table cellpadding="0" cellspacing="0" width="100%%">
-							<tr>
-								<td>
-									<!--<img src="data:image/jpg;base64,%6$s" alt="footer_image" width="100%%"/>-->
-									<img src="cid:sancho_footer" alt="footer_image" width="100%%"/>
-								</td>
-							</tr>
-						</table>
+						<img src="cid:sancho_footer" alt="footer_image" style="width: 100%%; display: block"/>
 					</td>
 				</tr>
 			</table>
@@ -444,14 +445,7 @@ $this->phrasen['bewerbung/erfolgreichBeworbenMail']='
 				border-collapse:collapse; mso-table-lspace:0pt; mso-table-rspace:0pt;">  
 				<tr>
 					<td align="center">
-						<table cellpadding="0" cellspacing="0" width="100%%" border="0">
-							<tr>
-								<td>
-									<!--<img src="data:image/jpg;base64,%5$s" alt="header_image" width="100%%"/>-->
-									<img src="cid:sancho_header" alt="header_image" width="100%%"/>
-								</td>
-							</tr>
-						</table>
+						<img src="cid:sancho_header" alt="header_image" style="width: 100%%; display: block"/>
 					</td>
 				</tr>
 				<tr>
@@ -472,14 +466,7 @@ $this->phrasen['bewerbung/erfolgreichBeworbenMail']='
 				</tr>
 				<tr>
 					<td align="center">
-						<table cellpadding="0" cellspacing="0" width="100%%">
-							<tr>
-								<td>
-									<!--<img src="data:image/jpg;base64,%6$s" alt="footer_image" width="100%%"/>-->
-									<img src="cid:sancho_footer" alt="footer_image" width="100%%"/>
-								</td>
-							</tr>
-						</table>
+						<img src="cid:sancho_footer" alt="footer_image" style="width: 100%%; display: block"/>
 					</td>
 				</tr>
 			</table>

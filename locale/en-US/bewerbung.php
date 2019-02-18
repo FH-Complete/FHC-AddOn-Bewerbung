@@ -1,6 +1,32 @@
 <?php
 $this->phrasen['bewerbung/ungueltigerZugriff']='invalid request';
 $this->phrasen['bewerbung/welcome']='Welcome to the Online Application Tool';
+$this->phrasen['bewerbung/welcomeHeaderLogin']='<div class="col-md-3">
+									<div style="text-align: center;">
+										<img style="margin: 30px 10px; width: 100%%" src="' . APP_ROOT . 'skin/styles/' . DEFAULT_STYLE . '/logo_academy.png"/>
+									</div>
+								</div>
+								<div style="text-align: center;" class="col-md-6">
+									<h1 style="margin: 30px 10px;">Welcome to the Online Application Tool</h1>
+								</div>
+								<div class="col-md-3">
+									<div style="text-align: center;">
+										<img style="margin: 30px 10px; width: 100%%" src="' . APP_ROOT . 'skin/styles/' . DEFAULT_STYLE . '/logo.png"/>
+									</div>
+								</div>';
+$this->phrasen['bewerbung/welcomeHeaderRegistration']='
+					<div class="row">
+						<div class="col-xs-2">
+							<img style="width:150px;" class="center-block img-responsive" src="' . APP_ROOT . 'skin/styles/' . DEFAULT_STYLE . '/logo_academy.png">
+						</div>
+						<div class="col-xs-8">
+							<h2 class="text-center">Welcome to the Online Application Tool</h2>
+						</div>
+						<div class="col-xs-2">
+							<img style="width:150px;" class="center-block img-responsive" src="' . APP_ROOT . 'skin/styles/' . DEFAULT_STYLE . '/logo.png">
+						</div>
+					</div>
+					';
 $this->phrasen['bewerbung/registration']='Registration';
 $this->phrasen['bewerbung/registrieren']='Register';
 $this->phrasen['bewerbung/abschicken']='Submit';
@@ -302,7 +328,7 @@ $this->phrasen['bewerbung/bitteDatenuebermittlungZustimmen']='You have to consen
 $this->phrasen['bewerbung/vorlaeufigesDokument']='Temporary document';
 $this->phrasen['bewerbung/lehrgangsArt/1']='Post graduate program';
 $this->phrasen['bewerbung/lehrgangsArt/2']='Academic course';
-$this->phrasen['bewerbung/lehrgangsArt/3']='International course';
+$this->phrasen['bewerbung/lehrgangsArt/3']='International programs';
 $this->phrasen['bewerbung/lehrgangsArt/4']='Certificate program';
 $this->phrasen['bewerbung/lehrgangsArt/5']='Postgradualer Lehrgang';
 $this->phrasen['bewerbung/hackTypBezeichnungLehrgeange']='Certificate Program for Further Education'; // Überschreibt die Typ-Bezeichnung "Lehrgang". Leer lassen, wenn nicht benötigt
@@ -324,14 +350,7 @@ $this->phrasen['bewerbung/erfolgreichBeworbenMailBachelor']='
 				border-collapse:collapse; mso-table-lspace:0pt; mso-table-rspace:0pt;">  
 				<tr>
 					<td align="center">
-						<table cellpadding="0" cellspacing="0" width="100%%" border="0">
-							<tr>
-								<td>
-									<!--<img src="data:image/jpg;base64,%5$s" alt="header_image" width="100%%"/>-->
-									<img src="cid:sancho_header" alt="header_image" width="100%%"/>
-								</td>
-							</tr>
-						</table>
+						<img src="cid:sancho_header" alt="header_image" style="width: 100%%; display: block"/>
 					</td>
 				</tr>
 				<tr>
@@ -352,14 +371,7 @@ $this->phrasen['bewerbung/erfolgreichBeworbenMailBachelor']='
 				</tr>
 				<tr>
 					<td align="center">
-						<table cellpadding="0" cellspacing="0" width="100%%">
-							<tr>
-								<td>
-									<!--<img src="data:image/jpg;base64,%6$s" alt="footer_image" width="100%%"/>-->
-									<img src="cid:sancho_footer" alt="footer_image" width="100%%"/>
-								</td>
-							</tr>
-						</table>
+						<img src="cid:sancho_footer" alt="footer_image" style="width: 100%%; display: block"/>
 					</td>
 				</tr>
 			</table>
@@ -378,14 +390,7 @@ $this->phrasen['bewerbung/erfolgreichBeworbenMail']='
 				border-collapse:collapse; mso-table-lspace:0pt; mso-table-rspace:0pt;">  
 				<tr>
 					<td align="center">
-						<table cellpadding="0" cellspacing="0" width="100%%" border="0">
-							<tr>
-								<td>
-									<!--<img src="data:image/jpg;base64,%5$s" alt="header_image" width="100%%"/>-->
-									<img src="cid:sancho_header" alt="header_image" width="100%%"/>
-								</td>
-							</tr>
-						</table>
+						<img src="cid:sancho_header" alt="header_image" style="width: 100%%; display: block"/>
 					</td>
 				</tr>
 				<tr>
@@ -406,14 +411,7 @@ $this->phrasen['bewerbung/erfolgreichBeworbenMail']='
 				</tr>
 				<tr>
 					<td align="center">
-						<table cellpadding="0" cellspacing="0" width="100%%">
-							<tr>
-								<td>
-									<!--<img src="data:image/jpg;base64,%6$s" alt="footer_image" width="100%%"/>-->
-									<img src="cid:sancho_footer" alt="footer_image" width="100%%"/>
-								</td>
-							</tr>
-						</table>
+						<img src="cid:sancho_footer" alt="footer_image" style="width: 100%%; display: block"/>
 					</td>
 				</tr>
 			</table>
