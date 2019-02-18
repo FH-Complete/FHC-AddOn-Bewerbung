@@ -238,6 +238,7 @@ elseif($username && $password)
 			if($method == 'registration'):
 				// Falls Sicherheitscode falsch ist - übergebene Werte speichern und vorausfüllen
 				$date = new datum();
+
 				$stsem = new studiensemester();
 				$stsem->getStudiensemesterOnlinebewerbung();
 
@@ -253,6 +254,7 @@ elseif($username && $password)
 				$anmerkungen = filter_input(INPUT_POST, 'anmerkung', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY);
 				$orgform_get = filter_input(INPUT_GET, 'orgform_kurzbz');
 				$studiengang_get = filter_input(INPUT_GET, 'stg_kz');
+				$studiensemester_get = filter_input(INPUT_GET, 'studiensemester'); // WS oder SS. Daraus wird das näheste passende Studiensemester ermittelt
 				$prioritaeten = filter_input(INPUT_POST, 'prioritaet', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY);
 				$studienplaene = filter_input(INPUT_POST, 'studienplaene', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY);
 				$std_semester = filter_input(INPUT_POST, 'studiensemester_kurzbz');
@@ -281,9 +283,17 @@ elseif($username && $password)
 
 				if(BEWERBERTOOL_STUDIENAUSWAHL_ANZEIGEN)
 				{
-					// Wenn kein Studiensemester uebergeben wird, das erste Wintersemester aus getStudiensemesterOnlinebewerbung nehmen, wenn vorhanden, 
+					// Wenn ein Studiensemester als _GET übergeben wird, dieses verwenden,
+					// ansonsten prüfen, ob ein Studiensemester als _POST uebergeben wird,
+					// sonst das erste Wintersemester aus getStudiensemesterOnlinebewerbung nehmen, wenn vorhanden,
 					// sonst das Erste, das zurück kommt
-					if ($std_semester == '' && isset($stsem->studiensemester[0]))
+					if ($studiensemester_get != '')
+					{
+						$stsem_get = new studiensemester();
+						$stsem_get->getStudiensemesterOnlinebewerbung($studiensemester_get);
+						$std_semester = $stsem_get->studiensemester[0]->studiensemester_kurzbz;
+					}
+					elseif ($std_semester == '' && isset($stsem->studiensemester[0]))
 					{
 						$std_semester = $stsem->studiensemester[0]->studiensemester_kurzbz;
 						foreach ($stsem->studiensemester AS $row)
@@ -598,10 +608,7 @@ elseif($username && $password)
 
 				<?php echo $message ?>
 				<form method="post" action="<?php echo basename(__FILE__) ?>?method=registration#label_studiensemester_kurzbz" id="RegistrationLoginForm" name="RegistrationLoginForm" class="form-horizontal">
-					<img style="width:150px;" class="center-block img-responsive" src="../../../skin/styles/<?php echo DEFAULT_STYLE ?>/logo.png">
-					<h2 class="text-center">
-						<?php echo $p->t('bewerbung/welcome') ?>
-					</h2>
+					<?php echo $p->t('bewerbung/welcomeHeaderRegistration') ?>
 					<p class="infotext">
 						<?php echo $p->t('bewerbung/einleitungstext') ?>
 					</p>
@@ -696,7 +703,17 @@ elseif($username && $password)
 												WHEN 'b' THEN 1
 												WHEN 'm' THEN 2
 												ELSE 3
-											END, tbl_lgartcode.bezeichnung ASC, studiengangbezeichnung";
+											END, 
+											CASE lgartcode
+											WHEN '1'
+												THEN 1
+											WHEN '2'
+												THEN 2
+											WHEN '4'
+												THEN 3
+											ELSE 4
+											END,
+											studiengangbezeichnung";
 							}
 							else
 							{
@@ -704,7 +721,17 @@ elseif($username && $password)
 												WHEN 'b' THEN 1
 												WHEN 'm' THEN 2
 												ELSE 3
-											END, tbl_lgartcode.bezeichnung ASC, studiengangbezeichnung_englisch";
+											END,
+											CASE lgartcode
+											WHEN '1'
+												THEN 1
+											WHEN '2'
+												THEN 2
+											WHEN '4'
+												THEN 3
+											ELSE 4
+											END,
+											studiengangbezeichnung_englisch";
 							}
 							
 							$studienplan = getStudienplaeneForOnlinebewerbung($studiensemester_array, '1', '', $order); //@todo: ausbildungssemester dynamisch
@@ -988,14 +1015,7 @@ elseif($username && $password)
 					<div class="col-sm-8 col-sm-offset-2">
 						<form method="post" action="<?php echo basename(__FILE__) ?>?method=resendcode" id="ResendCodeForm" name="ResendCodeForm" class="form-horizontal">
 							<div style="border-bottom: 1px solid #eee; margin-bottom: 30px;" class="row">
-								<div class="col-md-4">
-									<div style="text-align: center;">
-										<img style="margin: 30px 10px;" src="../../../skin/styles/<?php echo DEFAULT_STYLE ?>/logo.png"/>
-									</div>
-								</div>
-								<div style="text-align: center;" class="col-md-8">
-									<h1 style="margin: 30px 10px;"><?php echo $p->t('bewerbung/welcome') ?></h1>
-								</div>
+								<?php echo $p->t('bewerbung/welcomeHeaderLogin') ?>
 							</div>
 							<p class="text-center"><?php echo $p->t('bewerbung/codeZuschickenAnleitung') ?></p><br>
 							<div class="form-group">
@@ -1032,14 +1052,7 @@ elseif($username && $password)
 					<div class="col-sm-8 col-sm-offset-2">
 						<form action="<?php echo basename(__FILE__);?>" method="POST" id="lp" class="form-horizontal">
 							<div style="border-bottom: 1px solid #eee; margin-bottom: 30px;" class="row">
-								<div class="col-md-4">
-									<div style="text-align: center;">
-										<img style="margin: 30px 10px;" src="../../../skin/styles/<?php echo DEFAULT_STYLE ?>/logo.png"/>
-									</div>
-								</div>
-								<div style="text-align: center;" class="col-md-8">
-									<h1 style="margin: 30px 10px;"><?php echo $p->t('bewerbung/welcome'); ?></h1>
-								</div>
+								<?php echo $p->t('bewerbung/welcomeHeaderLogin') ?>
 							</div>
 							<div class="panel panel-info">
 								<div class="panel-heading text-center">
@@ -1425,8 +1438,8 @@ function sendMail($zugangscode, $email, $person_id=null)
 
 	$mail = new mail($email, 'no-reply', $p->t('bewerbung/registration'), $p->t('bewerbung/mailtextHtml'));
 	$text = $p->t('bewerbung/mailtext',array($vorname, $nachname, $zugangscode, $anrede, $email));
-	$mail->addEmbeddedImage('../../../skin/images/sancho/sancho_header_DEFAULT.jpg', 'image/jpg', 'header_image', 'sancho_header');
-	$mail->addEmbeddedImage('../../../skin/images/sancho/sancho_footer.jpg', 'image/jpg', 'footer_image', 'sancho_footer');
+	$mail->addEmbeddedImage(APP_ROOT.'skin/images/sancho/sancho_header_DEFAULT.jpg', 'image/jpg', 'header_image', 'sancho_header');
+	$mail->addEmbeddedImage(APP_ROOT.'skin/images/sancho/sancho_footer.jpg', 'image/jpg', 'footer_image', 'sancho_footer');
 	$mail->setHTMLContent($text);
 	if(!$mail->send())
 		$msg = '<span class="error">'.$p->t('bewerbung/fehlerBeimSenden').'</span><br /><a href='.$_SERVER['PHP_SELF'].'?method=registration>'.$p->t('bewerbung/zurueckZurAnmeldung').'</a>';
@@ -1456,8 +1469,8 @@ function resendMail($zugangscode, $email, $person_id=null)
 
 	$mail = new mail($email, 'no-reply', $p->t('bewerbung/registration'), $p->t('bewerbung/mailtextHtml'));
 	$text = $p->t('bewerbung/mailtext',array($vorname, $nachname, $zugangscode, $anrede, $email));
-	$mail->addEmbeddedImage('../../../skin/images/sancho/sancho_header_DEFAULT.jpg', 'image/jpg', 'header_image', 'sancho_header');
-	$mail->addEmbeddedImage('../../../skin/images/sancho/sancho_footer.jpg', 'image/jpg', 'footer_image', 'sancho_footer');
+	$mail->addEmbeddedImage(APP_ROOT.'skin/images/sancho/sancho_header_DEFAULT.jpg', 'image/jpg', 'header_image', 'sancho_header');
+	$mail->addEmbeddedImage(APP_ROOT.'skin/images/sancho/sancho_footer.jpg', 'image/jpg', 'footer_image', 'sancho_footer');
 	$mail->setHTMLContent($text);
 	if(!$mail->send())
 		$msg= '<span class="error">'.$p->t('bewerbung/fehlerBeimSenden').'</span><br /><a href='.$_SERVER['PHP_SELF'].'?method=registration>'.$p->t('bewerbung/zurueckZurAnmeldung').'</a>';
