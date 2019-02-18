@@ -241,7 +241,7 @@ else
 						<h4 class="panel-title">
 							<div class="row">';
 		// Priorisierung deaktivieren, wenn Bewerbung abgeschickt
-		//if (! check_person_bewerbungabgeschickt($person_id, $row->laststatus_studiensemester_kurzbz))
+		if (! check_person_bewerbungabgeschickt($person_id, $row->laststatus_studiensemester_kurzbz))
 		{
 			echo '				
 								<div class="col-xs-2 col-sm-2 col-md-1 text-center">
