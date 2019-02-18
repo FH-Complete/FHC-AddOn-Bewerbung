@@ -2446,8 +2446,8 @@ function sendBewerbung($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz,
 				$anmerkungen .= '- ' . htmlspecialchars($note->text);
 			}
 		}
-		$sanchoMailHeader = base64_encode(file_get_contents('../../../skin/images/sancho/sancho_header_min_bw.jpg'));
-		$sanchoMailFooter = base64_encode(file_get_contents('../../../skin/images/sancho/sancho_footer_min_bw.jpg'));
+		$sanchoMailHeader = base64_encode(file_get_contents(APP_ROOT . 'skin/images/sancho/sancho_header_min_bw.jpg'));
+		$sanchoMailFooter = base64_encode(file_get_contents(APP_ROOT . 'skin/images/sancho/sancho_footer_min_bw.jpg'));
 		$email = $p->t('bewerbung/emailBodyStart', array(VILESCI_ROOT . 'vilesci/personen/personendetails.php?id='.$person_id, $sanchoMailHeader));
 		
 		// Wenn MAIL_DEBUG aktiv ist, zeige auch den Empfänger an
@@ -2504,8 +2504,8 @@ function sendBewerbung($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz,
 	}
 	else
 	{
-		$sanchoMailHeader = base64_encode(file_get_contents('../../../skin/images/sancho/sancho_header_min_bw.jpg'));
-		$sanchoMailFooter = base64_encode(file_get_contents('../../../skin/images/sancho/sancho_footer_min_bw.jpg'));
+		$sanchoMailHeader = base64_encode(file_get_contents(APP_ROOT . 'skin/images/sancho/sancho_header_min_bw.jpg'));
+		$sanchoMailFooter = base64_encode(file_get_contents(APP_ROOT . 'skin/images/sancho/sancho_footer_min_bw.jpg'));
 		$email = $p->t('bewerbung/emailBodyStart', array(VILESCI_ROOT . 'vilesci/personen/personendetails.php?id='.$person_id, $sanchoMailHeader));
 		$email .= '<br>';
 		$email .= $p->t('global/studiengang') . ': ' . $typ->bezeichnung . ' ' . $studiengang->bezeichnung . ($orgform_kurzbz != '' ? ' (' . $orgform_kurzbz . ')' : '') . ' <br>';
@@ -2516,9 +2516,10 @@ function sendBewerbung($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz,
 	}
 
 	// An der FHTW werden alle Bachelor-Studiengänge vom Infocenter abgearbeitet und deshalb keine Mail verschickt
+	// Die FIT-Studiengänge erhalten auch kein Mail
 	if (CAMPUS_NAME == 'FH Technikum Wien')
 	{
-		if ($studiengang->typ != 'b')
+		if ($studiengang->typ != 'b' && $studiengang->studiengang_kz != 10021 && $studiengang->studiengang_kz != 10027)
 		{
 			$email = wordwrap($email, 70); // Bricht den Code um, da es sonst zu Anzeigefehlern im Mail kommen kann
 
@@ -2549,8 +2550,8 @@ function sendBewerbung($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz,
 
 		$mail_bewerber = new mail($mailadresse, 'no-reply', $p->t('bewerbung/erfolgreichBeworbenMailBetreff'), 'Bitte sehen Sie sich die Nachricht in HTML Sicht an, um den Inhalt vollständig darzustellen.');
 		// Unterschiedliche Ansprechpersonen für Bachelor und Master
-		$sanchoMailHeader = base64_encode(file_get_contents('../../../skin/images/sancho/sancho_header_DEFAULT.jpg'));
-		$sanchoMailFooter = base64_encode(file_get_contents('../../../skin/images/sancho/sancho_footer.jpg'));
+		$sanchoMailHeader = base64_encode(file_get_contents(APP_ROOT . 'skin/images/sancho/sancho_header_DEFAULT.jpg'));
+		$sanchoMailFooter = base64_encode(file_get_contents(APP_ROOT . 'skin/images/sancho/sancho_footer.jpg'));
 		if ($studiengang->typ == 'b')
 		{
 			$email_bewerber_content = $p->t('bewerbung/erfolgreichBeworbenMailBachelor', array($person->vorname, $person->nachname, $anrede, $studiengang->bezeichnung, $sanchoMailHeader, $sanchoMailFooter));
@@ -2561,8 +2562,8 @@ function sendBewerbung($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz,
 		}
 		
 		$mail_bewerber->setHTMLContent($email_bewerber_content);
-		$mail_bewerber->addEmbeddedImage('../../../skin/images/sancho/sancho_header_DEFAULT.jpg', 'image/jpg', 'header_image', 'sancho_header');
-		$mail_bewerber->addEmbeddedImage('../../../skin/images/sancho/sancho_footer.jpg', 'image/jpg', 'footer_image', 'sancho_footer');
+		$mail_bewerber->addEmbeddedImage(APP_ROOT . 'skin/images/sancho/sancho_header_DEFAULT.jpg', 'image/jpg', 'header_image', 'sancho_header');
+		$mail_bewerber->addEmbeddedImage(APP_ROOT . 'skin/images/sancho/sancho_footer.jpg', 'image/jpg', 'footer_image', 'sancho_footer');
 		if (! $mail_bewerber->send())
 			return false;
 	}
@@ -2570,7 +2571,7 @@ function sendBewerbung($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz,
 	// An der FHTW werden alle Bachelor-Studiengänge vom Infocenter abgearbeitet und deshalb keine Mail verschickt
 	if (CAMPUS_NAME == 'FH Technikum Wien')
 	{
-		if ($studiengang->typ != 'b')
+		if ($studiengang->typ != 'b' && $studiengang->studiengang_kz != 10021 && $studiengang->studiengang_kz != 10027)
 		{
 			if (! $mail->send())
 				return false;
