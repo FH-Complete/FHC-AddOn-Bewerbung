@@ -1,15 +1,15 @@
 <?php
 $this->phrasen['bewerbung/ungueltigerZugriff']='invalid request';
 $this->phrasen['bewerbung/welcome']='Welcome to the Online Application Tool';
-$this->phrasen['bewerbung/welcomeHeaderLogin']='<div class="col-md-3">
+$this->phrasen['bewerbung/welcomeHeaderLogin']='<div class="col-xs-3">
 									<div style="text-align: center;">
 										<img style="margin: 30px 10px; width: 100%%" src="' . APP_ROOT . 'skin/styles/' . DEFAULT_STYLE . '/logo_academy.png"/>
 									</div>
 								</div>
-								<div style="text-align: center;" class="col-md-6">
+								<div style="text-align: center;" class="col-xs-6">
 									<h1 style="margin: 30px 10px;">Welcome to the Online Application Tool</h1>
 								</div>
-								<div class="col-md-3">
+								<div class="col-xs-3">
 									<div style="text-align: center;">
 										<img style="margin: 30px 10px; width: 100%%" src="' . APP_ROOT . 'skin/styles/' . DEFAULT_STYLE . '/logo.png"/>
 									</div>
@@ -31,7 +31,7 @@ $this->phrasen['bewerbung/registration']='Registration';
 $this->phrasen['bewerbung/registrieren']='Register';
 $this->phrasen['bewerbung/abschicken']='Submit';
 $this->phrasen['bewerbung/registrierenOderZugangscode']='<a href="'.$_SERVER['PHP_SELF'].'?method=registration">Register here</a> or enter access code';
-$this->phrasen['bewerbung/einleitungstext']='Please complete the form, select your preferred degree program(s) and click "Submit".<br>
+$this->phrasen['bewerbung/einleitungstext']='Please complete the form, select your preferred degree or certificate program(s) and click "Submit".<br>
 We will then send you an access code via e-mail to the address specified. You may use this access code at any time to log in, add personal information or degree programs and submit non-binding applications.<br><br>
 If you are interested in more than one degree programs, you may select up to 3 study programs.<br><br>
 Should you require any additional information, please do not hesitate to contact our <a href=\'https://www.technikum-wien.at/en/student-guide/admission-counselors/\' target=\'_blank\'>student counselling team</a> in person, by phone, or via e-mail or WhatsApp.<br><br>

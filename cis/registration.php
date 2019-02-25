@@ -313,20 +313,25 @@ elseif($username && $password)
 					// Richtigen Studienplan ermitteln, wenn Studiengang und Orgform als GET-Parameter übergeben werden
 					if($studiengang_get != '')
 					{
-						$studienplan = new studienplan();
-						if($orgform_get != '')
-						{
-							$studienplan->getStudienplaeneFromSem($studiengang_get, $std_semester, '1', $orgform_get);
-						}
-						else
-						{
-							$studienplan->getStudienplaeneFromSem($studiengang_get, $std_semester, '1');
-						}
+						$studiengang_get = explode(',', $studiengang_get);
 
-						// Wenn kein passender Studienplan gefunden wird, wird er NULL gesetzt
-						foreach ($studienplan->result AS $row)
+						foreach ($studiengang_get AS $stg)
 						{
-							$studienplaene[] = $row->studienplan_id;
+							$studienplan = new studienplan();
+							if($orgform_get != '')
+							{
+								$studienplan->getStudienplaeneFromSem($stg, $std_semester, '1', $orgform_get);
+							}
+							else
+							{
+								$studienplan->getStudienplaeneFromSem($stg, $std_semester, '1');
+							}
+
+							// Wenn kein passender Studienplan gefunden wird, wird er NULL gesetzt
+							foreach ($studienplan->result AS $row)
+							{
+								$studienplaene[] = $row->studienplan_id;
+							}
 						}
 					}
 					
@@ -1385,6 +1390,21 @@ elseif($username && $password)
 					$("div[name=checkboxInfoDiv]").html("");
 					$("div[name=checkboxInfoDiv]").removeClass();
 				}*/
+			});
+
+			// Hintergrundfarbe auch bei angeklicketen Lehrgängen
+			$("input[type=checkbox][class=checkbox_lg]").click(function()
+			{
+				if ($(this).is(':checked'))
+				{
+					// Hintergrundfarbe anpassen, wenn angeklickt
+					$(this).parents(".panel-body").css("background-color", "#D1ECF1");
+				}
+				else
+				{
+					// Hintergrundfarbe anpassen, wenn angeklickt
+					$(this).parents(".panel-body").css("background-color", "unset");
+				}
 			});
 
 			<?php if (defined('BEWERBERTOOL_MAX_STUDIENGAENGE') && BEWERBERTOOL_MAX_STUDIENGAENGE != ''): ?>

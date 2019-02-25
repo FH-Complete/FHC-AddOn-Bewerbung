@@ -1,15 +1,16 @@
 <?php
 $this->phrasen['bewerbung/ungueltigerZugriff']='ungültiger Zugriff';
 $this->phrasen['bewerbung/welcome']='Willkommen bei der Online Bewerbung';
-$this->phrasen['bewerbung/welcomeHeaderLogin']='<div class="col-md-3">
+$this->phrasen['bewerbung/welcomeHeaderLogin']='
+								<div class="col-xs-3">
 									<div style="text-align: center;">
 										<img style="margin: 30px 10px; width: 100%%" src="' . APP_ROOT . 'skin/styles/' . DEFAULT_STYLE . '/logo_academy.png"/>
 									</div>
 								</div>
-								<div style="text-align: center;" class="col-md-6">
+								<div style="text-align: center;" class="col-xs-6">
 									<h1 style="margin: 30px 10px;">Willkommen bei der Online Bewerbung</h1>
 								</div>
-								<div class="col-md-3">
+								<div class="col-xs-3">
 									<div style="text-align: center;">
 										<img style="margin: 30px 10px; width: 100%%" src="' . APP_ROOT . 'skin/styles/' . DEFAULT_STYLE . '/logo.png"/>
 									</div>
@@ -31,7 +32,7 @@ $this->phrasen['bewerbung/registration']='Zugangscode für Ihre Bewerbung';
 $this->phrasen['bewerbung/registrieren']='Anmelden';
 $this->phrasen['bewerbung/abschicken']='Abschicken';
 $this->phrasen['bewerbung/registrierenOderZugangscode']='<a href="'.$_SERVER['PHP_SELF'].'?method=registration">Hier registrieren</a> oder Zugangscode eingeben';
-$this->phrasen['bewerbung/einleitungstext']='Bitte füllen Sie das Formular aus, wählen Sie Ihren bevorzugten Studiengang und klicken Sie auf "Abschicken". <br>
+$this->phrasen['bewerbung/einleitungstext']='Bitte füllen Sie das Formular aus, wählen Sie Ihren bevorzugten Studiengang oder Lehrgang und klicken Sie auf "Abschicken". <br>
 		Danach erhalten Sie eine E-Mail mit Zugangscode an die angegebene Adresse.
 		Mit dem Zugangscode können Sie sich jederzeit einloggen, Ihre Daten vervollständigen, Studienrichtungen hinzufügen und sich unverbindlich bewerben.<br><br>
 		Falls Sie Interesse an mehreren Studiengängen haben, können Sie bis zu
