@@ -278,7 +278,7 @@ function BewerbungPersonAddStudienplan($studienplan_id, $person, $studiensemeste
 			$zgvmanation = $prestudent_zgv->zgvmanation;
 		}
 	}
-	
+
 	// Wenn BEWERBERTOOL_ALWAYS_CREATE_NEW_PRESTUDENT_FOR_APPLICATION definiert und true ist,
 	// wird ein neuer PreStudent-Datensatz erzeugt
 	// Ansonsten wird ein bestehender PreStudent gesucht und ein neuer Status an diesen angefügt
@@ -289,11 +289,25 @@ function BewerbungPersonAddStudienplan($studienplan_id, $person, $studiensemeste
 
 	if ($prestudent_id == 0) // Wenn kein PreStudent-Datensatz gefunden wurde, neuen Prestudenten anlegen
 	{
-		if ($std) // Wenn Person schon Student war, ZGV-Daten von dort holen
+		if ($std) // Wenn Person schon Student in diesem Studiengang war, ZGV-Daten von dort holen
 		{
 			$prestudent_zgv = new prestudent();
 			$prestudent_zgv->load($student->prestudent_id);
-			
+
+			$zgv_code = $prestudent_zgv->zgv_code;
+			$zgvort = $prestudent_zgv->zgvort;
+			$zgvdatum = $prestudent_zgv->zgvdatum;
+			$zgvnation = $prestudent_zgv->zgvnation;
+			$zgvmas_code = $prestudent_zgv->zgvmas_code;
+			$zgvmaort = $prestudent_zgv->zgvmaort;
+			$zgvmadatum = $prestudent_zgv->zgvmadatum;
+			$zgvmanation = $prestudent_zgv->zgvmanation;
+		}
+		elseif($student->load_person($person->person_id)) // Sonst prüfen, ob Person schon irgendwo Student war und ZGV-Daten von dort holen
+		{
+			$prestudent_zgv = new prestudent();
+			$prestudent_zgv->load($student->prestudent_id);
+
 			$zgv_code = $prestudent_zgv->zgv_code;
 			$zgvort = $prestudent_zgv->zgvort;
 			$zgvdatum = $prestudent_zgv->zgvdatum;
