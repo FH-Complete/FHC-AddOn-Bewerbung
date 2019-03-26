@@ -88,10 +88,10 @@ $PHP_SELF = $_SERVER['PHP_SELF']; ?>
 		<script src="../include/js/croppie.js"></script>
 
 		<script type="text/javascript">
+        var extinfo = "";
 		function showExtensionInfo()
 		{
 			var typ = $("#dokumenttyp").val();
-			var extinfo = "";
 			var fileReaderSupport = true;
 			if(typ=="Lichtbil")
 				extinfo = "jpg";
@@ -154,6 +154,10 @@ $PHP_SELF = $_SERVER['PHP_SELF']; ?>
 			$("#fileselect").on("change", function () { readFile(this); });
 			$("#submitimage").on("click", function (ev)
 			{
+                //  * file-Extension ermitteln
+                var path = $('input[type=file]').val();
+                var ext = path.split('.').pop();
+
 				// Check ob File gewählt wurde
 				if ($('input[type=file]').val() == '')
 				{
@@ -163,6 +167,17 @@ $PHP_SELF = $_SERVER['PHP_SELF']; ?>
 											'<strong>No file selected</strong>'+
 											'</div>');
 				}
+				//  * wenn kein Bildformat (jpg), dann abbrechen
+				else if(ext != extinfo)
+                {
+                    $("#messages").empty();
+                    $("#messages").html(
+                        '<div class="alert alert-danger" id="danger-alert_dms_akteupload">'+
+                        '<button type="button" class="close" data-dismiss="alert">x</button>'+
+                        '<strong><?php echo $p->t('bewerbung/falscherDateityp') ?></strong>'+
+                        '</div>'
+                    );
+                }
 				else
 				{
 					$uploadCrop.croppie("result", {
@@ -234,7 +249,6 @@ $PHP_SELF = $_SERVER['PHP_SELF']; ?>
 				{
 					var image = new Image();
 					image.src = e.target.result;
-
 					image.onload = function () {
 						// Check auf Filetype
 						var splittedSource = this.src.split(';'); // base64 String splitten
@@ -770,6 +784,15 @@ if ($person_id != '')
 		$style = 'style="margin-top: 1em; display: block;" required="required"';
 	else
 		$style = 'style="display: none;" disabled="disabled"';
+
+	// Upload-Dateitypen im Datei-Browser einschränken
+	$accept_type = '.jpg, .jpeg, .pdf';
+	//  * für Fotos nur jpg/jpeg
+	if ($dokumenttypObj->dokument_kurzbz == 'Lichtbil')
+    {
+        $accept_type = '.jpg, .jpeg';
+    }
+
 	echo'	<select name="ausstellungsnation" id="ausstellungsnation" class="form-control" '.$style.'>
 				<option value="">'. $p->t('bewerbung/bitteAusstellungsnationAuswaehlen') .'</option>
 				<option value="A">'.	($sprache=='German'? 'Österreich':'Austria') .'</option>';
@@ -791,7 +814,7 @@ if ($person_id != '')
 				echo '<div class="croppie-container"></div>';
 				echo'
 						<div class="">
-							<input id="fileselect" type="file" name="file" class="file" accept=".jpg, .jpeg, .pdf"/>
+							<input id="fileselect" type="file" name="file" class="file" accept="' . $accept_type. '"/>
 						</div><br>
 						<input id="submitfile" type="submit" name="submitfile" value="Upload" class="btn btn-labeled btn-primary">
 						<input id="submitimage" type="button" name="submitimage" value="Upload" class="btn btn-labeled btn-primary" style="display: none">
