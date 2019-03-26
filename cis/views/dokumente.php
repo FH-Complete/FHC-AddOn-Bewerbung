@@ -111,10 +111,13 @@ if (! isset($person_id))
 					$aktenliste = '';
 					$aktion = '';
 					$div = '';
-					// $zeilenumbruch = '<br>';
 					
 					// Detailbeschreibungen zu Dokumenten holen
 					$details = new dokument();
+
+					$dokument_akzeptiert = false;   // prüft Eintrag in der dokumentenprestudent tabelle, d.h. auch die Dokumente, die ohne Upload akzeptiert wurden
+					$dokument_akzeptiert = $details->akzeptiert($dok->dokument_kurzbz, $person_id);
+
 					if (isset($ben_kz[$dok->dokument_kurzbz]))
 					{
 						$details->getBeschreibungenDokumente($ben_kz[$dok->dokument_kurzbz], $dok->dokument_kurzbz);
@@ -123,7 +126,7 @@ if (! isset($person_id))
 					$detailstring_htmlspecialchars = '';
 					$detailstring_original = '';
 					$zaehlerBeschreibungAllg = 0;
-					
+
 					foreach ($details->result as $row)
 					{
 						$stg = new studiengang();
@@ -209,7 +212,7 @@ if (! isset($person_id))
 								$aktenliste = '<table id="nachgereicht_' . $akte->dokument_kurzbz . '" style="border: 0; display:true;">
 									<tr><td style="vertical-align: top" nowrap>' . $p->t('bewerbung/wirdNachgreichtAm') . ': </td><td style="vertical-align: top; padding-left: 5px;"	 >' . $datum->formatDatum($akte->nachgereicht_am, 'd.m.Y') . '</td></tr>
 									<tr><td style="vertical-align: top" nowrap>' . $p->t('bewerbung/ausstellendeInstitution') . ': </td><td style="vertical-align: top; padding-left: 5px;"	 >' . $akte->anmerkung . '</td></tr>';
-								
+
 								// An der FHTW wird beim Dokument "zgv_bakk" das vorläufiges ZGV-Dokument angezeigt, wenn eines vorhanden ist
 								if (CAMPUS_NAME == 'FH Technikum Wien' && $dok->dokument_kurzbz == 'zgv_bakk')
 								{
@@ -236,7 +239,7 @@ if (! isset($person_id))
 												$aktenliste .= '<span class="label label-success">' . $p->t('bewerbung/dokumentUeberprueft') . '</span>';
 											else
 												$aktenliste .= '<span class="label label-warning">' . $p->t('bewerbung/dokumentWirdGeprueft') . '</span>';
-											
+
 												$aktenliste .= '</td></tr>';
 										}
 										else
@@ -377,9 +380,13 @@ if (! isset($person_id))
 						}
 						$aktenliste .= '</ul>';
 					}
-					// Fuer FHTW deaktiviert, damit Bewerber auch im Akzeptiert-Status Dokumente hochladen koennen, wenn noch keines hochgeladen war
-					// Wenn kein Dokument hochgeladen ist und trotzdem akzeptiert wurde
-					elseif (CAMPUS_NAME != 'FH Technikum Wien' && $dok->anzahl_dokumente_akzeptiert > 0)
+					/**
+                     * Fuer FHTW deaktiviert, damit Bewerber auch im Akzeptiert-Status Dokumente hochladen koennen, wenn noch keines hochgeladen war
+                     * Wenn kein Dokument hochgeladen ist und trotzdem akzeptiert wurde:
+                     * $dokument_akzeptiert: true, wenn aktuelles $dok akzeptiert ist
+                     * $dok->anzahl_dokumente_akzeptiert: Gesamtzahl aller akzeptierten Dokumente der Person
+					*/
+					elseif ($dokument_akzeptiert || (CAMPUS_NAME != 'FH Technikum Wien' && $dok->anzahl_dokumente_akzeptiert > 0))
 					{
 						// $status = "<span class='glyphicon glyphicon-ok' aria-hidden='true' title='".$p->t("bewerbung/abgegeben")."'></span>";
 						/*$div = '<form method="POST" action="' . $_SERVER["PHP_SELF"] . '&active=dokumente">
@@ -395,7 +402,8 @@ if (! isset($person_id))
 						</form>';*/
 // 						$div = '';
 						$aktion = '';
-						$aktenliste .= '<ul id="leerSymbol_' . $dok->dokument_kurzbz . '" class="list-unstyled" style="display: inline;"><li>-</li></ul>';
+						$aktenliste .= '<span id="leerSymbol_' . $dok->dokument_kurzbz . '" style="display: inline;">' . $p->t('bewerbung/dokumentOhneUploadGeprueft') . '</span><br>';
+						$aktenliste .= '<span class="label label-success">' . $p->t('bewerbung/dokumentUeberprueft') . '</span>';
 					}
 					else
 					{

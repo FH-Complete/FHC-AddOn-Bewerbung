@@ -247,6 +247,7 @@ $this->phrasen['bewerbung/erfolgreichBeworben']='Sie haben sich erfolgreich für
 $this->phrasen['bewerbung/fehlerBeimVersendenDerBewerbung']='Es ist ein Fehler beim Versenden der Bewerbung aufgetreten. Bitte versuchen Sie es nocheinmal.';
 $this->phrasen['bewerbung/svnrBereitsVorhanden']='SVNR bereits vorhanden';
 $this->phrasen['bewerbung/menuBewerbungFuerStudiengang']='Bewerbung für einen Studiengang';
+$this->phrasen['bewerbung/dokumentOhneUploadGeprueft'] = 'Dokument ohne Upload überprüft.';
 $this->phrasen['bewerbung/emailBodyStart']='
 <html>
 	<head>	

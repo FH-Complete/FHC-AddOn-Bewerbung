@@ -101,6 +101,7 @@ $this->phrasen['bewerbung/neuerStudiengang'] = 'Please choose a degree program t
 $this->phrasen['bewerbung/geplanteStudienrichtung']='Planned field of study';
 $this->phrasen['bewerbung/menuAllgemein']='General';
 $this->phrasen['bewerbung/loginmitAccount']='Login with account';
+$this->phrasen['bewerbung/dokumentOhneUploadGeprueft'] = 'Approved without upload.';
 $this->phrasen['bewerbung/allgemeineErklaerung']='We are pleased that you are interested in the study programs we offer.<br><br>
 You may select - online - up to 3 study programs and as many further education courses as you like.<br>
 Click the green button to add a study program or course to your application.<br>
