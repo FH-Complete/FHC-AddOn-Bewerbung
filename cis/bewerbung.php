@@ -2175,7 +2175,7 @@ else
 							</a>
 						</li>
 						<?php endif; ?>
-						<?php if(!defined('BEWERBERTOOL_ALLGEMEIN_ANZEIGEN') || BEWERBERTOOL_AUSBILDUNG_ANZEIGEN): ?>
+						<?php if(!defined('BEWERBERTOOL_ALLGEMEIN_ANZEIGEN') || BEWERBERTOOL_ALLGEMEIN_ANZEIGEN): ?>
 						<li>
 							<a href="#allgemein" aria-controls="allgemein" role="tab" data-toggle="tab">
 								<?php echo $p->t('bewerbung/menuAllgemein') ?><br> &nbsp;
