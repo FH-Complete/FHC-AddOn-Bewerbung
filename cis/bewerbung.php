@@ -2391,11 +2391,24 @@ function sendBewerbung($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz,
 	$person->load($person_id);
 
 	$studienplan_bezeichnung = '';
+	$studiengangsbezeichnung = '';
+
 	if ($studienplan_id != '')
 	{
 		$studienplan = new studienplan();
 		$studienplan->loadStudienplan($studienplan_id);
 		$studienplan_bezeichnung = $studienplan->bezeichnung;
+
+		$studienordnung = new studienordnung();
+		$studienordnung->getStudienordnungFromStudienplan($studienplan_id);
+		if ($sprache == 'English')
+		{
+			$studiengangsbezeichnung = $studienordnung->studiengangbezeichnung_englisch;
+		}
+		else
+		{
+			$studiengangsbezeichnung = $studienordnung->studiengangbezeichnung;
+		}
 	}
 
 	$prestudent = new prestudent();
@@ -2405,6 +2418,11 @@ function sendBewerbung($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz,
 	$studiengang = new studiengang();
 	if (! $studiengang->load($prestudent->studiengang_kz))
 		die($p->t('global/fehlerBeimLadenDesDatensatzes'));
+
+	if ($studiengangsbezeichnung == '')
+	{
+		$studiengangsbezeichnung = $studiengang->bezeichnung_arr[$sprache];
+	}
 
 	$typ = new studiengang();
 	$typ->getStudiengangTyp($studiengang->typ);
@@ -2454,7 +2472,7 @@ function sendBewerbung($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz,
 		if(defined('MAIL_DEBUG') && MAIL_DEBUG != '')
 			$email .= '<br><br>Empfänger: '.$empfaenger.'<br><br>';
 		$email .= '<br><table style="font-size:small"><tbody>';
-		$email .= '<tr><td><b>' . $p->t('global/studiengang') . '</b></td><td>' . $typ->bezeichnung . ' ' . $studiengang->bezeichnung . ($orgform_kurzbz != '' ? ' (' . $orgform_kurzbz . ')' : '') . '</td></tr>';
+		$email .= '<tr><td><b>' . $p->t('global/studiengang') . '</b></td><td>' . $typ->bezeichnung . ' ' . $studiengangsbezeichnung . ($orgform_kurzbz != '' ? ' (' . $orgform_kurzbz . ')' : '') . '</td></tr>';
 		$email .= '<tr><td><b>' . $p->t('global/studiensemester') . '</b></td><td>' . $studiensemester_kurzbz . '</td></tr>';
 		if ($studienplan_bezeichnung != '')
 			$email.= '<tr><td><b>'.$p->t('studienplan/studienplan').'</b></td><td>'.$studienplan_bezeichnung.'</td></tr>';
@@ -2508,7 +2526,7 @@ function sendBewerbung($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz,
 		$sanchoMailFooter = base64_encode(file_get_contents(APP_ROOT . 'skin/images/sancho/sancho_footer_min_bw.jpg'));
 		$email = $p->t('bewerbung/emailBodyStart', array(VILESCI_ROOT . 'vilesci/personen/personendetails.php?id='.$person_id, $sanchoMailHeader));
 		$email .= '<br>';
-		$email .= $p->t('global/studiengang') . ': ' . $typ->bezeichnung . ' ' . $studiengang->bezeichnung . ($orgform_kurzbz != '' ? ' (' . $orgform_kurzbz . ')' : '') . ' <br>';
+		$email .= $p->t('global/studiengang') . ': ' . $typ->bezeichnung . ' ' . $studiengangsbezeichnung . ($orgform_kurzbz != '' ? ' (' . $orgform_kurzbz . ')' : '') . ' <br>';
 		$email .= $p->t('global/studiensemester') . ': ' . $studiensemester_kurzbz . '<br>';
 		$email .= $p->t('global/name') . ': ' . $person->vorname . ' ' . $person->nachname . '<br>';
 		$email .= $p->t('bewerbung/prestudentID') . ': ' . $prestudent_id . '<br><br>';
@@ -2554,11 +2572,11 @@ function sendBewerbung($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz,
 		$sanchoMailFooter = base64_encode(file_get_contents(APP_ROOT . 'skin/images/sancho/sancho_footer.jpg'));
 		if ($studiengang->typ == 'b')
 		{
-			$email_bewerber_content = $p->t('bewerbung/erfolgreichBeworbenMailBachelor', array($person->vorname, $person->nachname, $anrede, $studiengang->bezeichnung, $sanchoMailHeader, $sanchoMailFooter));
+			$email_bewerber_content = $p->t('bewerbung/erfolgreichBeworbenMailBachelor', array($person->vorname, $person->nachname, $anrede, $studiengangsbezeichnung, $sanchoMailHeader, $sanchoMailFooter));
 		}
 		else
 		{
-			$email_bewerber_content = $p->t('bewerbung/erfolgreichBeworbenMail', array($person->vorname, $person->nachname, $anrede, $studiengang->bezeichnung, $empfaenger, $sanchoMailHeader, $sanchoMailFooter));
+			$email_bewerber_content = $p->t('bewerbung/erfolgreichBeworbenMail', array($person->vorname, $person->nachname, $anrede, $studiengangsbezeichnung, $empfaenger, $sanchoMailHeader, $sanchoMailFooter));
 		}
 		
 		$mail_bewerber->setHTMLContent($email_bewerber_content);
