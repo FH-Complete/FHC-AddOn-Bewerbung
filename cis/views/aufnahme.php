@@ -40,7 +40,7 @@ if(!isset($person_id))
 	{
 		echo '<p>'.$p->t('bewerbung/sieHabenFolgendenTerminGewaehlt').'</p>';
 		echo '<div class="row">
-					<div class="col-md-8 col-lg-6">
+					<div class="col-xs-12 col-sm-12 col-md-12 col-lg-8">
 					<div class="panel-group ">
 					<div class="panel panel-default">
 						<div class="panel-heading">
@@ -83,11 +83,16 @@ if(!isset($person_id))
 				$buttonBeschriftungStornieren = $p->t('bewerbung/anmeldungStornierenBis', array($wochentag.', '.$datumStornierenBis));
 			}
 			$ort = new ort($row->ort_kurzbz);
+			$raumbezeichnung = $ort->bezeichnung.' '.$ort->planbezeichnung;
+			if ($ort->lageplan != '')
+			{
+				$raumbezeichnung .= '<p>'.$ort->lageplan.'</p>';
+			}
 			echo '	<li class="list-group-item">
 						<div class="row">
 							<div class="col-xs-4 col-sm-3">'.substr($tagbez[$spracheIndex][$datum->formatDatum($row->datum, 'N')], 0, 2).', '.$datum->formatDatum($row->datum, 'd.m.Y').'</div>
 							<div class="col-xs-3 col-sm-2">'.$uhrzeit.'</div>
-							<div class="col-xs-5 col-sm-7">'.($row->ort_kurzbz != '' ? $ort->bezeichnung.' '.$ort->planbezeichnung : $p->t('bewerbung/raumzuteilungFolgt')).'</div>
+							<div class="col-xs-5 col-sm-7">'.($row->ort_kurzbz != '' ? $raumbezeichnung : $p->t('bewerbung/raumzuteilungFolgt')).'</div>
 						</div>
 						</li>';
 			$angemeldeteRtArray[] = $row->reihungstest_id;
@@ -131,30 +136,26 @@ if(!isset($person_id))
 	$isStudentQuali = $prestudent->existsPrestudentstatus($person_id, STUDIENGANG_KZ_QUALIFIKATIONKURSE, $nextSummerSemester);
 	
 	$reihungstestTermine = '';
+
+	//Reihungstesttermine der Qualifikationskurse laden
+	$studienplanQualikurse = new studienplan();
+	$studienplanQualikurse->getStudienplaeneFromSem(STUDIENGANG_KZ_QUALIFIKATIONKURSE, $nextWinterSemester->studiensemester_kurzbz);
+	// Wenn für das übergbene Studiensemester kein Studienplan gefunden wird, wird nochmal ohne Studiensemester gesucht
+	if (count($studienplanQualikurse->result) == 0)
+	{
+		$studienplanQualikurse->getStudienplaeneFromSem(STUDIENGANG_KZ_QUALIFIKATIONKURSE);
+	}
+	$studienplanQualikurse_arr = array();
+	foreach ($studienplanQualikurse->result AS $row)
+	{
+		$studienplanQualikurse_arr[] = $row->studienplan_id;
+	}
 	// Qualifikationskursteilnehmer sehen keine Termine, bis sie einen Studenten-Account im Studiengang EQK haben
 	if ($hasStatusgrundQuali == true)
 	{
 		if ($isStudentQuali == true)
 		{
-			$studienplanQualikurse = new studienplan();
-			$studienplanQualikurse->getStudienplaeneFromSem(STUDIENGANG_KZ_QUALIFIKATIONKURSE, $nextWinterSemester->studiensemester_kurzbz);
-			
-			// Wenn für das übergbene Studiensemester kein Studienplan gefunden wird, wird nochmal ohne Studiensemester gesucht
-			if (count($studienplanQualikurse->result) == 0)
-			{
-				$studienplanQualikurse->getStudienplaeneFromSem(STUDIENGANG_KZ_QUALIFIKATIONKURSE);
-				if (count($studienplanQualikurse->result) > 0)
-				{
-					foreach ($studienplanQualikurse->result AS $row)
-					{
-						if ($reihungstestTermine = getReihungstestsForOnlinebewerbung($row->studienplan_id, $nextWinterSemester->studiensemester_kurzbz))
-						{
-							break;
-						}
-					}
-				}
-			}
-			else
+			if (count($studienplanQualikurse->result) > 0)
 			{
 				foreach ($studienplanQualikurse->result AS $row)
 				{
@@ -169,9 +170,10 @@ if(!isset($person_id))
 	else
 	{
 		// Mögliche Termine zur Anmeldung laden, für die die Person noch nicht angemeldet ist
-		$reihungstestTermine = getReihungstestsForOnlinebewerbung($studienplanReihungstest, $nextWinterSemester->studiensemester_kurzbz);
+		// Studienpläne der Qualifikationskurse werden ausgenommen
+		$reihungstestTermine = getReihungstestsForOnlinebewerbung($studienplanReihungstest, $nextWinterSemester->studiensemester_kurzbz, 1, $studienplanQualikurse_arr);
 	}
-	
+
 	$terminauswahl = true;
 	if($hasStatusgrundEinstiegSS == true)
 	{
