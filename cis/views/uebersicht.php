@@ -240,33 +240,27 @@ else
 					<div class="panel-heading" ' . ($prestudent_status->bewerbung_abgeschicktamum == '' && $fristAbgelaufen ? 'style="background-color: white"' : '') . '>
 						<h4 class="panel-title">
 							<div class="row">';
+
+		echo '				<div class="col-xs-2 col-sm-2 col-md-1 text-center">
+								<!--<div class="text-center">Priorisierung</div>-->
+								<label style="padding-right: 2px" class="prioIndex">' . $prioIndex . '</label>';
 		// Priorisierung deaktivieren, wenn Bewerbung abgeschickt
 		if (! check_person_bewerbungabgeschickt($person_id, $row->laststatus_studiensemester_kurzbz))
 		{
-			echo '				
-								<div class="col-xs-2 col-sm-2 col-md-1 text-center">
-									<!--<div class="text-center">Priorisierung</div>-->
-									<label style="padding-right: 2px" class="prioIndex">' . $prioIndex . '</label>
-									<div class="btn-group-vertical">
-										
-										<button class="btn btn-default button_up btn-block" type="button"
-											onclick="changePriority(\'' . $row->prestudent_id . '\', \'' . $row->laststatus_studiensemester_kurzbz . '\', \'up\')">
-											<span class="glyphicon glyphicon-triangle-top"></span>
-										</button>
-										<input type="hidden" class="form-control text-center" value="' . $row->priorisierung . '" disabled="disabled">
-										<button class="btn btn-default button_down btn-block" type="button"
-											onclick="changePriority(\'' . $row->prestudent_id . '\', \'' . $row->laststatus_studiensemester_kurzbz . '\', \'down\')">
-											<span class="glyphicon glyphicon-triangle-bottom"></span>
-										</button>
-									</div>
+			echo '				<div class="btn-group-vertical">
+									
+									<button class="btn btn-default button_up btn-block" type="button"
+										onclick="changePriority(\'' . $row->prestudent_id . '\', \'' . $row->laststatus_studiensemester_kurzbz . '\', \'up\')">
+										<span class="glyphicon glyphicon-triangle-top"></span>
+									</button>
+									<input type="hidden" class="form-control text-center" value="' . $row->priorisierung . '" disabled="disabled">
+									<button class="btn btn-default button_down btn-block" type="button"
+										onclick="changePriority(\'' . $row->prestudent_id . '\', \'' . $row->laststatus_studiensemester_kurzbz . '\', \'down\')">
+										<span class="glyphicon glyphicon-triangle-bottom"></span>
+									</button>
 								</div>';
 		}
-		/*else
-		{
-			echo '				<div class="col-xs-2 col-sm-2 col-md-1 text-center">
-									<b>' . $prioIndex . '</b>
-								</div>';
-		}*/
+		echo '				</div>';
 
 		// Stornieren nur moeglich, wenn letzter Status "Interessent" ist oder noch nicht abgeschickt oder bestätigt wurde
 		$buttonStornierenEnabled = false;
