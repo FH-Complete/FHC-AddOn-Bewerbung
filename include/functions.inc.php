@@ -1318,13 +1318,19 @@ function getPrioStudienplanForReihungstest($person_id, $studiensemester_kurzbz)
  * @param integer $studienplan_id Studienplan ID eines zugeteilten Studienplans.
  * @param string $studiensemester_kurzbz Studiensemester des Termins
  * @param string $stufe Optional. Default 1. Stufe, die der Termin haben soll.
+ * @param array $excludedStudienplans. Array mit Studienplan_ids, deren Reihungstests von der Abfrage ausgenommen werden sollen
  * 
  * @return TRUE, FALSE im Fehlerfall
  */
-function getReihungstestsForOnlinebewerbung($studienplan_id, $studiensemester_kurzbz, $stufe = 1)
+function getReihungstestsForOnlinebewerbung($studienplan_id, $studiensemester_kurzbz, $stufe = 1, $excludedStudienplans = null)
 {
 	$db = new basis_db();
-	
+	if ($excludedStudienplans != '' && !is_array($excludedStudienplans))
+	{
+		$db->errormsg='$excludedStudienplans ist kein Array';
+		return false;
+	}
+
 	$qry = "
 			SELECT (
 					CASE 
@@ -1384,6 +1390,18 @@ function getReihungstestsForOnlinebewerbung($studienplan_id, $studiensemester_ku
 				$qry .= " 	AND (
 								stufe = 1
 								OR stufe IS NULL
+								)";
+			}
+
+			if ($excludedStudienplans != '')
+			{
+				$excludedStudienplans = $db->implode4SQL($excludedStudienplans);
+				$qry .= "	AND rt.reihungstest_id NOT IN (
+								SELECT reihungstest_id
+								FROM PUBLIC.tbl_reihungstest
+								JOIN PUBLIC.tbl_rt_studienplan USING (reihungstest_id)
+								WHERE studiensemester_kurzbz = " . $db->db_add_param($studiensemester_kurzbz) . "
+									AND studienplan_id IN (" . $excludedStudienplans . ")
 								)";
 			}
 	$qry .= "	AND oeffentlich = true
