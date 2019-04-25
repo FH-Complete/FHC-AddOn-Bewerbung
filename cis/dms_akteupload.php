@@ -32,6 +32,7 @@ require_once ('../../../include/fotostatus.class.php');
 require_once ('../../../include/studiensemester.class.php');
 require_once ('../../../include/nation.class.php');
 require_once ('../../../include/personlog.class.php');
+require_once ('../../../include/studiengang.class.php');
 require_once ('../bewerbung.config.inc.php');
 require_once ('../include/functions.inc.php');
 
@@ -70,9 +71,33 @@ $error = '';
 $message = '';
 $dokumenttyp_upload = '';
 $detailDiv = '';
+$zgv_nation = '';
 
 $nation = new nation();
 $nation->getAll($ohnesperre = true);
+
+// Ausstellungsnation vorausfüllen, wenn in ZGV Nation vorhanden
+// Prestudenten laden
+$prestudent = new prestudent();
+$prestudent->getPrestudenten($person_id);
+
+foreach ($prestudent->result as $prest)
+{
+	$studiengang = new studiengang($prest->studiengang_kz);
+	if ($studiengang->typ == 'b' && $prest->zgvnation != '')
+	{
+		$zgv_nation = $prest->zgvnation;
+	}
+	elseif ($studiengang->typ == 'm' && $prest->zgvmanation != '')
+	{
+		$zgv_nation = $prest->zgvmanation;
+	}
+}
+
+if ($ausstellungsnation == '' && $zgv_nation != '')
+{
+	$ausstellungsnation = $zgv_nation;
+}
 
 $PHP_SELF = $_SERVER['PHP_SELF']; ?>
 <!DOCTYPE HTML>
@@ -88,10 +113,10 @@ $PHP_SELF = $_SERVER['PHP_SELF']; ?>
 		<script src="../include/js/croppie.js"></script>
 
 		<script type="text/javascript">
+        var extinfo = "";
 		function showExtensionInfo()
 		{
 			var typ = $("#dokumenttyp").val();
-			var extinfo = "";
 			var fileReaderSupport = true;
 			if(typ=="Lichtbil")
 				extinfo = "jpg";
@@ -154,6 +179,10 @@ $PHP_SELF = $_SERVER['PHP_SELF']; ?>
 			$("#fileselect").on("change", function () { readFile(this); });
 			$("#submitimage").on("click", function (ev)
 			{
+                //  * file-Extension ermitteln
+                var path = $('input[type=file]').val();
+                var ext = path.split('.').pop();
+
 				// Check ob File gewählt wurde
 				if ($('input[type=file]').val() == '')
 				{
@@ -163,6 +192,17 @@ $PHP_SELF = $_SERVER['PHP_SELF']; ?>
 											'<strong>No file selected</strong>'+
 											'</div>');
 				}
+				//  * wenn kein Bildformat (jpg), dann abbrechen
+				else if(ext != extinfo)
+                {
+                    $("#messages").empty();
+                    $("#messages").html(
+                        '<div class="alert alert-danger" id="danger-alert_dms_akteupload">'+
+                        '<button type="button" class="close" data-dismiss="alert">x</button>'+
+                        '<strong><?php echo $p->t('bewerbung/falscherDateityp') ?></strong>'+
+                        '</div>'
+                    );
+                }
 				else
 				{
 					$uploadCrop.croppie("result", {
@@ -234,7 +274,6 @@ $PHP_SELF = $_SERVER['PHP_SELF']; ?>
 				{
 					var image = new Image();
 					image.src = e.target.result;
-
 					image.onload = function () {
 						// Check auf Filetype
 						var splittedSource = this.src.split(';'); // base64 String splitten
@@ -630,6 +669,29 @@ if (isset($_POST['submitfile']))
 }
 
 $dokumente_abzugeben = getAllDokumenteBewerbungstoolForPerson($person_id);
+
+// Sortiert die Dokumente nach Sprache alphabetisch nach bezeichnung_mehrsprachig
+// Pflichtdokumente werden als erstes ausgegeben
+function sortDokumenteAbzugeben($a, $b)
+{
+	$c = 0;
+	if (CAMPUS_NAME == 'FH Technikum Wien')
+	{
+		if ($a->dokument_kurzbz == 'SprachB2' || $b->dokument_kurzbz == 'SprachB2')
+		{
+			//$c = strcmp(strtolower($a->bezeichnung_mehrsprachig[getSprache()]), strtolower($b->bezeichnung_mehrsprachig[getSprache()]));
+		}
+		else
+		{
+			$c = $b->pflicht - $a->pflicht;
+		}
+	}
+	$c .= strcmp(strtolower($a->bezeichnung_mehrsprachig[getSprache()]), strtolower($b->bezeichnung_mehrsprachig[getSprache()]));
+	return $c;
+}
+if ($dokumente_abzugeben)
+	usort($dokumente_abzugeben, "sortDokumenteAbzugeben");
+
 $akte_vorhanden = array();
 
 if ($dokumente_abzugeben)
@@ -669,9 +731,9 @@ if ($person_id != '')
 {
 	echo '
 	<form id="documentForm" method="POST" enctype="multipart/form-data" action="' . $PHP_SELF . '?person_id=' . $_GET['person_id'] . '&dokumenttyp=' . $dokumenttyp . '" class="form-horizontal" onsubmit="return checkAusstellungsnation()">
-	<div class="container"> <br />
+	<div class="container-fluid"> <br />
 		<div class="row">
-			<div class="col-md-12">
+			<div class="col-xs-12">
 				<div class="panel panel-default">
 					<div class="panel-heading"><strong>Upload files</strong></div>
 					<div class="panel-body">
@@ -748,6 +810,15 @@ if ($person_id != '')
 		$style = 'style="margin-top: 1em; display: block;" required="required"';
 	else
 		$style = 'style="display: none;" disabled="disabled"';
+
+	// Upload-Dateitypen im Datei-Browser einschränken
+	$accept_type = '.jpg, .jpeg, .pdf';
+	//  * für Fotos nur jpg/jpeg
+	if ($dokumenttypObj->dokument_kurzbz == 'Lichtbil')
+    {
+        $accept_type = '.jpg, .jpeg';
+    }
+
 	echo'	<select name="ausstellungsnation" id="ausstellungsnation" class="form-control" '.$style.'>
 				<option value="">'. $p->t('bewerbung/bitteAusstellungsnationAuswaehlen') .'</option>
 				<option value="A">'.	($sprache=='German'? 'Österreich':'Austria') .'</option>';
@@ -769,7 +840,7 @@ if ($person_id != '')
 				echo '<div class="croppie-container"></div>';
 				echo'
 						<div class="">
-							<input id="fileselect" type="file" name="file" class="file" />
+							<input id="fileselect" type="file" name="file" class="file" accept="' . $accept_type. '"/>
 						</div><br>
 						<input id="submitfile" type="submit" name="submitfile" value="Upload" class="btn btn-labeled btn-primary">
 						<input id="submitimage" type="button" name="submitimage" value="Upload" class="btn btn-labeled btn-primary" style="display: none">
@@ -786,7 +857,7 @@ if ($person_id != '')
 	<div id="infotextVollstaendig" style="display: none">
 		<div class="container"> <br />
 			<div class="row">
-				<div class="col-md-12">
+				<div class="col-xs-12">
 					<div class="alert alert-success">
 					<strong>'.$p->t('bewerbung/dokumenteVollstaendig').'</strong>
 					</div>

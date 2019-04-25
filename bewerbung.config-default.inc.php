@@ -7,6 +7,14 @@ define('BEWERBERTOOL_ZAHLUNGEN_ANZEIGEN', true);
 define('BEWERBERTOOL_DOKUMENTE_ANZEIGEN', true);
 define('BEWERBERTOOL_ZGV_ANZEIGEN', true);
 define('BEWERBERTOOL_BERUFSTAETIGKEIT_ANZEIGEN', true);
+define('BEWERBERTOOL_AUSBILDUNG_ANZEIGEN', true);
+define('BEWERBERTOOL_PAYMENT_ANZEIGEN', true);
+define('BEWERBERTOOL_ALLGEMEIN_ANZEIGEN', true);
+define('BEWERBERTOOL_UEBERSICHT_ANZEIGEN', true);
+define('BEWERBERTOOL_ABSCHICKEN_ANZEIGEN', true);
+define('BEWERBERTOOL_SICHERHEIT_ANZEIGEN', false);
+// Initialbelastung auf das Konto des Interessenten. Buchungstyp_kurzbz aus public.tbl_buchungstyp
+define('BEWERBERTOOL_KONTOBELASTUNG_BUCHUNGSTYP', '');
 // Wenn hier eine Mailadresse angegeben ist, werden die Bewerbungen aus der Onlinebwerbung an diese Adresse gesendet.
 // Wenn leer dann wird an BEWERBERTOOL_BEWERBUNG_EMPFAENGER geschickt, sonst an die Studiengangsadresse.
 define('BEWERBERTOOL_MAILEMPFANG', '');
@@ -59,4 +67,15 @@ define('BEWERBERTOOL_GEBURTSORT_PFLICHT', false);
 
 // Soll "Aufmerksam durch" ein Pflichtfeld sein um die Bewerbung abschicken zu können? Mögliche Werte: true oder false
 define('BEWERBERTOOL_GEBURTSNATION_PFLICHT', false);
+
+// Anzahl Tage vor dem Datum des Tests, bis wann der Termin storniert werden kann (Uhrzeit ist immer 23:59:59).
+// Wenn nicht gesetzt, wird die Anmeldefrist als Stornierfrist verwendet.
+// zB: Testdatum ist 15.01.2018. BEWERBERTOOL_REIHUNGSTEST_STORNIERBAR_TAGE ist 3, dann kann bis 12.01.2018 23:59:59 storniert werden.
+define('BEWERBERTOOL_REIHUNGSTEST_STORNIERBAR_TAGE', '');
+
+// Soll ein Notizfeld (Anmerkung zur Bewerbung) angezeigt werden?
+define('BEWERBERTOOL_ABSCHICKEN_ANMERKUNG', true);
+
+// Soll das DropDown zur ZGV-Nation bei der Registration angezeigt werden?
+define('BEWERBERTOOL_SHOW_REGISTRATION_ZGVNATION', false);
 ?>

@@ -105,17 +105,17 @@ if(!isset($person_id))
 		if(!defined('BEWERBERTOOL_DATEN_TITEL_ANZEIGEN') || BEWERBERTOOL_DATEN_TITEL_ANZEIGEN):
 		?>
 		<div class="form-group">
-			<label for="titel_post" class="col-sm-3 control-label"><?php echo $p->t('global/postnomen') ?>
+			<label for="titelPost" class="col-sm-3 control-label"><?php echo $p->t('global/postnomen') ?>
 				<a href="#" data-toggle="tooltip" data-placement="auto" title="" data-original-title="<?php echo $p->t('bewerbung/beschreibungTitelPost') ?>">
 					<span style="font-size: 1em;" class="glyphicon glyphicon-info-sign glyph" aria-hidden="true"></span>
 				</a>
 			</label>
 			<div class="col-sm-9">
-				<input type="text" name="titel_post" id="titel_post"  <?php echo $disabled; ?> value="<?php echo $titelpost ?>" class="form-control">
+				<input type="text" name="titelPost" id="titelPost"  <?php echo $disabled; ?> value="<?php echo $titelpost ?>" class="form-control">
 			</div>
 		</div>
 		<?php else: ?>
-			<input type="hidden" name="titel_post" id="titel_post">
+			<input type="hidden" name="titelPost" id="titelPost">
 		<?php endif; ?>
 		<div class="form-group <?php echo ($geburtstag==''?'has-error':'') ?>">
 			<label for="gebdatum" class="col-sm-3 control-label"><?php echo $p->t('global/geburtsdatum') ?>* (<?php echo $p->t('bewerbung/datumFormat') ?>)</label>
@@ -196,7 +196,7 @@ if(!isset($person_id))
 		$prestudent = new prestudent();
 		$prestudent->getPrestudenten($person->person_id);
 		if(isset($prestudent->result[0])): ?>
-		<div class="form-group <?php echo (defined('BEWERBERTOOL_AUFMERKSAMDURCH_PFLICHT') && BEWERBERTOOL_AUFMERKSAMDURCH_PFLICHT === true && $prestudent->result[0]->aufmerksamdurch_kurzbz == 'k.A.'?'has-error':'') ?>">
+		<div class="form-group <?php echo (defined('BEWERBERTOOL_AUFMERKSAMDURCH_PFLICHT') && BEWERBERTOOL_AUFMERKSAMDURCH_PFLICHT === true && $prestudent->result[0]->aufmerksamdurch_kurzbz == ''?'has-error':'') ?>">
 			<label for="aufmerksamdurch" class="col-sm-3 control-label"><?php echo $p->t('bewerbung/aufmerksamdurch');echo (defined('BEWERBERTOOL_AUFMERKSAMDURCH_PFLICHT') && BEWERBERTOOL_AUFMERKSAMDURCH_PFLICHT === true?'*':''); ?></label>
 			<div class="col-sm-9">
 				<select name="aufmerksamdurch" id="aufmerksamdurch"  <?php echo $disabled; ?> class="form-control">
@@ -216,8 +216,11 @@ if(!isset($person_id))
 					if(isset($prestudent->result[0]) && $prestudent->result[0]->aufmerksamdurch_kurzbz!='')
 						$aufmerksamdurch_kurzbz = $prestudent->result[0]->aufmerksamdurch_kurzbz;
 					else
-						$aufmerksamdurch_kurzbz ='';
+						$aufmerksamdurch_kurzbz ='';?>
+						
+					<option value=""><?php echo $p->t('bewerbung/bitteAuswaehlen');?></option>
 
+					<?php 
 					foreach($aufmerksamdurch->result as $row_aufm):
 						if($row_aufm->aktiv):
 						$selected = ($aufmerksamdurch_kurzbz == $row_aufm->aufmerksamdurch_kurzbz) ? 'selected' : ''; ?>

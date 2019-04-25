@@ -200,7 +200,6 @@ if($result = $db->db_query($qry))
 	
 				$person = '';
 				$dokument = '';
-				$mailcontent = wordwrap($mailcontent,70);
 				
 				$studiengang = new studiengang();
 				if(!$studiengang->load($stg_kz))
@@ -213,6 +212,23 @@ if($result = $db->db_query($qry))
 					$empfaenger = $empf_array[$stg_kz];
 				else
 					$empfaenger = $studiengang->email;
+
+				if ($empfaenger == '')
+				{
+					if (defined('MAIL_ADMIN') && MAIL_ADMIN != '')
+					{
+						$empfaenger = MAIL_ADMIN;
+						$mailcontentWithWarning = '<p style="color: red; font-weight: bold; padding: 10px 0">Kein Empfänger für diese Mail gefunden</p>';
+						$mailcontentWithWarning .= $mailcontent;
+						$mailcontent = $mailcontentWithWarning;
+					}
+					else
+					{
+						continue;
+					}
+				}
+
+				$mailcontent = wordwrap($mailcontent,70);
 				
 				//Pfuschloesung fur BIF Dual
 				if (CAMPUS_NAME=='FH Technikum Wien' && $stg_kz == 257 && $orgform == 'DUA')
@@ -249,7 +265,7 @@ if($result = $db->db_query($qry))
 			}
 			
 			$kontakt = new kontakt();
-			$kontakt->load_persKontakttyp($row->person_id, 'email', 'updateamum DESC, insertamum DESC NULLS LAST');
+			$kontakt->load_persKontakttyp($row->person_id, 'email', 'zustellung DESC, updateamum DESC, insertamum DESC NULLS LAST');
 			$mailadresse = isset($kontakt->result[0]->kontakt)?$kontakt->result[0]->kontakt:'';
 			
 			$zeile = '<tr class="hover">';
@@ -282,6 +298,21 @@ if($result = $db->db_query($qry))
 			$empfaenger = $empf_array[$stg_kz];
 		else
 			$empfaenger = $studiengang->email;
+
+		if ($empfaenger == '')
+		{
+			if (defined('MAIL_ADMIN') && MAIL_ADMIN != '')
+			{
+				$empfaenger = MAIL_ADMIN;
+				$mailcontentWithWarning = '<p style="color: red; font-weight: bold; padding: 10px 0">Kein Empfänger für diese Mail gefunden</p>';
+				$mailcontentWithWarning .= $mailcontent;
+				$mailcontent = $mailcontentWithWarning;
+			}
+			else
+			{
+				exit();
+			}
+		}
 
 		//Pfuschloesung fur BIF Dual
 		if (CAMPUS_NAME=='FH Technikum Wien' && $stg_kz == 257 && $orgform == 'DUA')

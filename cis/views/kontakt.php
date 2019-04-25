@@ -45,7 +45,7 @@ elseif($save_error_kontakt===true)
 	$nation->getAll($ohnesperre=true);
 
 	$kontakt = new kontakt();
-	$kontakt->load_persKontakttyp($person->person_id, 'email', 'updateamum DESC');
+	$kontakt->load_persKontakttyp($person->person_id, 'email', 'zustellung DESC, updateamum DESC');
 	$email = isset($kontakt->result[0]->kontakt)?$kontakt->result[0]->kontakt:'';
 
 	$kontakt_t = new kontakt();
@@ -168,6 +168,7 @@ elseif($save_error_kontakt===true)
 					$("#ort_input").hide();
 					$("#ort_dropdown").show();
 					var plz = $("#plz").val();
+					plz = plz.trim();
 					loadOrtData(plz, $("#ort_dropdown"));
 				}
 				else
@@ -210,6 +211,7 @@ elseif($save_error_kontakt===true)
 				if ($('#nation').val() == "A")
 				{
 					var plz = $("#plz").val();
+					plz = plz.trim();
 					if ($.isNumeric(plz))
 						loadOrtData(plz, $("#ort_dropdown"));
 					else

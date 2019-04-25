@@ -1,11 +1,58 @@
 <?php
 $this->phrasen['bewerbung/ungueltigerZugriff']='ungültiger Zugriff';
 $this->phrasen['bewerbung/welcome']='Willkommen bei der Online Bewerbung';
+$this->phrasen['bewerbung/welcomeHeaderLogin']='
+								<div class="col-xs-3">
+									<div style="text-align: center;">
+										<img style="margin: 30px 10px; width: 100%%" src="' . APP_ROOT . 'skin/styles/' . DEFAULT_STYLE . '/logo_academy.png"/>
+									</div>
+								</div>
+								<div style="text-align: center;" class="col-xs-6">
+									<h1 style="margin: 30px 10px;">Willkommen bei der Online Bewerbung</h1>
+								</div>
+								<div class="col-xs-3">
+									<div style="text-align: center;">
+										<img style="margin: 30px 10px; width: 100%%" src="' . APP_ROOT . 'skin/styles/' . DEFAULT_STYLE . '/logo.png"/>
+									</div>
+								</div>';
+$this->phrasen['bewerbung/welcomeHeaderRegistration']='
+					<div class="row hidden-md hidden-lg">
+						<div class="col-xs-5">
+							<img style="width:150px;" class="center-block img-responsive" src="' . APP_ROOT . 'skin/styles/' . DEFAULT_STYLE . '/logo_academy.png">
+						</div>
+						<div class="col-xs-2">
+							
+						</div>
+						<div class="col-xs-5">
+							<img style="width:150px;" class="center-block img-responsive" src="' . APP_ROOT . 'skin/styles/' . DEFAULT_STYLE . '/logo.png">
+						</div>
+					</div>
+					<div class="row hidden-md hidden-lg">
+						<div class="col-xs-12">
+							<h2 class="text-center">Willkommen bei der Online Bewerbung</h2>
+						</div>
+					</div>
+					<div class="row hidden-xs hidden-sm">
+						<div class="col-xs-2">
+							<div style="text-align: center;">
+								<img style="margin: 30px 10px; width: 100%%" src="' . APP_ROOT . 'skin/styles/' . DEFAULT_STYLE . '/logo_academy.png"/>
+							</div>
+						</div>
+						<div style="text-align: center;" class="col-xs-8">
+							<h1 style="margin: 30px 10px;">Willkommen bei der Online Bewerbung</h1>
+						</div>
+						<div class="col-xs-2">
+							<div style="text-align: center;">
+								<img style="margin: 30px 10px; width: 100%%" src="' . APP_ROOT . 'skin/styles/' . DEFAULT_STYLE . '/logo.png"/>
+							</div>
+						</div>
+					</div>
+					';
 $this->phrasen['bewerbung/registration']='Zugangscode für Ihre Bewerbung';
 $this->phrasen['bewerbung/registrieren']='Anmelden';
 $this->phrasen['bewerbung/abschicken']='Abschicken';
 $this->phrasen['bewerbung/registrierenOderZugangscode']='<a href="'.$_SERVER['PHP_SELF'].'?method=registration">Hier registrieren</a> oder Zugangscode eingeben';
-$this->phrasen['bewerbung/einleitungstext']='Bitte füllen Sie das Formular aus, wählen Sie Ihren bevorzugten Studiengang und klicken Sie auf "Abschicken". <br>
+$this->phrasen['bewerbung/einleitungstext']='Bitte füllen Sie das Formular aus, wählen Sie Ihren bevorzugten Studiengang oder Lehrgang und klicken Sie auf "Abschicken". <br>
 		Danach erhalten Sie eine E-Mail mit Zugangscode an die angegebene Adresse.
 		Mit dem Zugangscode können Sie sich jederzeit einloggen, Ihre Daten vervollständigen, Studienrichtungen hinzufügen und sich unverbindlich bewerben.<br><br>
 		Falls Sie Interesse an mehreren Studiengängen haben, können Sie bis zu
@@ -13,28 +60,66 @@ $this->phrasen['bewerbung/einleitungstext']='Bitte füllen Sie das Formular aus,
 		Studienrichtungen auswählen. <br>Wenn Sie mehr Informationen benötigen,
 		steht Ihnen unsere <a href=\'https://www.technikum-wien.at/studieninformationen/studienberatung-kontaktieren/\' target=\'_blank\'>Studienberatung</a>
 		gerne persönlich, telefonisch, per E-Mail oder WhatsApp zur Verfügung.<br><br>
-		Datenschutz-Hinweis:<br>
-Die uns von Ihnen zum Zwecke der Bewerbung bekanntgegebenen Daten werden von uns ausschließlich zur Abwicklung der Bewerbung auf der Grundlage von vor- bzw vertraglichen Zwecken verarbeitet und mit der unten beschriebenen Ausnahme bei Unklarheiten betreffend die Zugangsvoraussetzungen nicht an Dritte weitergegeben. Kommt es zu keinem weiteren Kontakt bzw zu keiner Aufnahme, löschen wir Ihre Daten nach drei Jahren.<br><br>
-Informationen zu Ihren Betroffenenrechten finden Sie hier: <a href=\'https://www.technikum-wien.at/information-ueber-ihre-rechte-gemaess-datenschutz-grundverordnung/\' target=\'_blank\'>https://www.technikum-wien.at/information-ueber-ihre-rechte-gemaess-datenschutz-grundverordnung/</a><br><br>
-Bei Fragen stehen wir Ihnen jederzeit unter <a href=\'mailto:datenschutz@technikum-wien.at\'>datenschutz@technikum-wien.at</a> zur Verfügung.<br><br>
-Verantwortlich für die Datenverarbeitung:<br>
-Fachhochschule Technikum Wien<br>
-Höchstädtplatz 6<br>
-1200 Wien';
+		<a href="#datenschutzText" data-toggle="collapse">Datenschutz-Hinweis: <span class="glyphicon glyphicon-collapse-down"></span></a>
+
+		<div id="datenschutzText" class="collapse">
+		Die uns von Ihnen zum Zwecke der Bewerbung bekanntgegebenen Daten werden von uns ausschließlich zur Abwicklung der Bewerbung auf der Grundlage von vor- bzw vertraglichen Zwecken verarbeitet und mit der unten beschriebenen Ausnahme bei Unklarheiten betreffend die Zugangsvoraussetzungen nicht an Dritte weitergegeben. Kommt es zu keinem weiteren Kontakt bzw zu keiner Aufnahme, löschen wir Ihre Daten nach drei Jahren.<br><br>
+		Informationen zu Ihren Betroffenenrechten finden Sie hier: <a href=\'https://www.technikum-wien.at/information-ueber-ihre-rechte-gemaess-datenschutz-grundverordnung/\' target=\'_blank\'>https://www.technikum-wien.at/information-ueber-ihre-rechte-gemaess-datenschutz-grundverordnung/</a><br><br>
+		Bei Fragen stehen wir Ihnen jederzeit unter <a href=\'mailto:datenschutz@technikum-wien.at\'>datenschutz@technikum-wien.at</a> zur Verfügung.<br><br>
+		Verantwortlich für die Datenverarbeitung:<br>
+		Fachhochschule Technikum Wien<br>
+		Höchstädtplatz 6<br>
+		1200 Wien
+		</div> ';
 $this->phrasen['bewerbung/login']='Login';
 $this->phrasen['bewerbung/zugangscode']='Zugangscode';
 $this->phrasen['bewerbung/fallsVorhanden']='(falls vorhanden)';
 $this->phrasen['bewerbung/mailtextHtml']='Bitte sehen Sie sich die Nachricht in der HTML-Ansicht an um den Link vollständig darzustellen.';
 $this->phrasen['bewerbung/anredeMaennlich']='geehrter Herr';
 $this->phrasen['bewerbung/anredeWeiblich']='geehrte Frau';
-$this->phrasen['bewerbung/mailtext']='Sehr %4$s %1$s %2$s!<br><br>
-        Vielen Dank für Ihr Interesse an einem Studiengang oder Lehrgang der '.CAMPUS_NAME.'. <br>
-        Verwenden Sie für Ihre Bewerbung bitte folgenden Link und Zugangscode: <br><br>
-        <a href="'.APP_ROOT.'addons/bewerbung/cis/registration.php?code=%3$s">Link zur Bewerbung</a><br>
-        Zugangscode: %3$s<br><br>
-        Mit freundlichen Grüßen, <br>
-        '.CAMPUS_NAME;
+$this->phrasen['bewerbung/mailtext']='
+<html>
+	<head>	
+		<title>Sancho Mail</title>
+	</head>
+	<body>
+		<center>
+			<table cellpadding="0" cellspacing="0" style="border: 2px solid #000000; padding: 0px; max-width: 850px; 
+				border-collapse:collapse; mso-table-lspace:0pt; mso-table-rspace:0pt;">  
+				<tr>
+					<td align="center">
+						<img src="cid:sancho_header" alt="header_image" style="width: 100%%; display: block"/>
+					</td>
+				</tr>
+				<tr>
+					<td align="center">
+						<table cellpadding="0" cellspacing="0" width="100%%" style="font-family: courier, verdana, sans-serif; font-size: 0.95em; border-bottom: 2px solid #000000;">
+							<tr>
+								<td style="padding-left: 8%%; padding-right: 8%%; padding-top: 5%%; padding-bottom: 5%%;">
+									Sehr %4$s %1$s %2$s!<br><br>
+									Vielen Dank für Ihr Interesse an einem Studiengang oder Lehrgang der '.CAMPUS_NAME.'. <br>
+									Verwenden Sie für Ihre Bewerbung bitte folgenden Link und Zugangscode: <br><br>
+									<a href="'.APP_ROOT.'addons/bewerbung/cis/registration.php?code=%3$s&emailAdresse=%5$s">Link zur Bewerbung</a><br>
+									Zugangscode: %3$s<br><br>
+									Wir empfehlen Ihnen aus Sicherheitsgründen, sich einen neuen Zugangscode nach dem Login generieren zu lassen (Menüpunkt "Sicherheit").<br><br>
+									Mit freundlichen Grüßen, <br>
+									'.CAMPUS_NAME.'
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+				<tr>
+					<td align="center">
+						<img src="cid:sancho_footer" alt="footer_image" style="width: 100%%; display: block"/>
+					</td>
+				</tr>
+			</table>
+		</center>
+	</body>
+</html>';
 $this->phrasen['bewerbung/zugangsdatenFalsch']='Der eingegebene Zugangscode ist falsch oder Sie haben sich noch nicht registriert.';
+$this->phrasen['bewerbung/mailFalsch']='Die eingegebene E-Mailadresse ist falsch oder Sie haben sich noch nicht registriert.';
 $this->phrasen['bewerbung/fehlerBeimSenden']='Beim Senden der E-Mail ist ein Fehler aufgetreten.';
 $this->phrasen['bewerbung/emailgesendetan']='Die E-Mail mit Ihrem Zugangscode wurde erfolgreich an %s verschickt.';
 $this->phrasen['bewerbung/zurueckZurAnmeldung']='Zurück zur Login-Seite.';
@@ -78,19 +163,22 @@ $this->phrasen['bewerbung/menuAllgemein']='Allgemein';
 $this->phrasen['bewerbung/loginmitAccount']='Wenn Sie bereits einen Account haben, können sie sich mit Ihrem Usernamen / Passwort anmelden';
 $this->phrasen['bewerbung/allgemeineErklaerung']='Wir freuen uns, dass Sie sich für unser Bildungsangebot interessieren.<br>
 	Sie können online bis zu '.(defined('BEWERBERTOOL_MAX_STUDIENGAENGE') && BEWERBERTOOL_MAX_STUDIENGAENGE != ''?BEWERBERTOOL_MAX_STUDIENGAENGE:'').' Studienrichtungen und beliebig viele Lehrgänge zur Weiterbildung auswählen.<br>
-	Klicken Sie auf den grünen Button, um Ihrer Bewerbung einen Studiengang oder Lehrgang hinzuzufügen.<br><br>
-	Wenn Sie mehr Informationen benötigen, steht Ihnen unsere <a href=\'https://www.technikum-wien.at/studieninformationen/studienberatung-kontaktieren/\' target=\'_blank\'>Studienberatung</a> gerne persönlich, telefonisch, per E-Mail oder WhatsApp zur Verfügung.<br><br>
-	Bitte füllen Sie das Formular vollständig aus. Sind alle Werte eingetragen, können Sie unter "Abschließen" Ihre Bewerbung abschicken.<br><br>
+	Klicken Sie auf den grünen Button, um Ihrer Bewerbung einen Studiengang oder Lehrgang hinzuzufügen. Bitte beachten Sie, dass Sie bei der Auswahl Ihrer Studiengänge eine Priorität abgeben müssen und diese nach dem Abschicken nicht mehr geändert werden kann.
+	<br><br>
+	Sind alle Daten eingetragen und alle Dokumente vollständig hochgeladen, können Sie durch einen Klick auf "Bewerbung abschicken", Ihre Bewerbung an uns übermitteln.
+	<br><br>
+	Wenn Sie mehr Informationen benötigen, steht Ihnen unsere <a href=\'https://www.technikum-wien.at/studieninformationen/studienberatung-kontaktieren/\' target=\'_blank\'>Studienberatung</a> gerne persönlich, telefonisch, per E-Mail oder WhatsApp zur Verfügung.
+	<br><br>
 	Bewerbungsfristen für Drittstaatenbewerbungen (außerhalb der EU) siehe:<br>
 	<a href=\'https://www.technikum-wien.at/bewerbungsfristen\' target=\'_blank\'>https://www.technikum-wien.at/bewerbungsfristen</a><br><br>
-	An dieser Stelle möchten wir Sie auf unsere <a href=\'https://cis.technikum-wien.at/cms/dms.php?id=77605\' target=\'_blank\'>Information über die Verwendung personenbezogener Daten von BewerberInnen</a> hinweisen.';
+	An dieser Stelle möchten wir Sie auf unsere <a href=\'https://cis.technikum-wien.at/cms/dms.php?id=77605\' target=\'_blank\'><span class="glyphicon glyphicon-file"></span> Information über die Verwendung personenbezogener Daten von BewerberInnen</a> hinweisen.';
 $this->phrasen['bewerbung/erklaerungStudierende']='Wir freuen uns über Ihr Interesse an unserem Bildungsangebot.<br>
 	Klicken Sie auf den grünen Button, um Ihrer Bewerbung einen Studiengang oder Lehrgang hinzuzufügen.';
 $this->phrasen['bewerbung/aktuelleBewerbungen']='Aktuelle Bewerbungen:';
 $this->phrasen['bewerbung/status']='Status';
 $this->phrasen['bewerbung/legende']='Legende';
 $this->phrasen['bewerbung/bewerbungsstatus']='Bewerbungsstatus';
-$this->phrasen['bewerbung/keinStatus']='Keine aktuelle Bewerbung vorhanden. Klicken Sie auf "Neue Bewerbung für Studiengang/Lehrgang hinzufügen" um eine Bewerbung hinzuzufügen';
+$this->phrasen['bewerbung/keinStatus']='Keine aktuelle Bewerbung vorhanden. Klicken Sie auf "<i>Neue Bewerbung für Studiengang/Lehrgang hinzufügen</i>" um eine Bewerbung hinzuzufügen';
 $this->phrasen['bewerbung/bestaetigt']='Bestätigt, in Bearbeitung';
 $this->phrasen['bewerbung/nichtBestaetigt']='Abgeschickt, in Bearbeitung';
 $this->phrasen['bewerbung/nichtAbgeschickt']='Bewerbung abschicken zur weiteren Bearbeitung';
@@ -147,7 +235,7 @@ $this->phrasen['bewerbung/zahlungsinformation']='Zahlungsinformation';
 $this->phrasen['bewerbung/bezahlt']='bezahlt';
 $this->phrasen['bewerbung/zahlungsdetails']='Zahlungsdetails';
 $this->phrasen['bewerbung/menuReihungstest']='Reihungstest';
-$this->phrasen['bewerbung/fuerReihungstestAnmelden']='Sie können sich für folgende Reihungstests anmelden:';
+$this->phrasen['bewerbung/fuerReihungstestAnmelden']='Es werden Ihnen die nächsten verfügbaren Reihungstesttermine angezeigt. Bitte melden Sie sich für <b>einen</b> dieser an.<br>Unabhängig von der Anzahl Ihrer Bachelor-Bewerbungen brauchen Sie den Reihungstest nur <b>einmal</b> an der FHTW absolvieren.';
 $this->phrasen['bewerbung/fehler']='Es ist ein Fehler aufgetreten';
 $this->phrasen['bewerbung/angemeldetPlaetze']='angemeldet / Plätze';
 $this->phrasen['bewerbung/uhrzeit']='Uhrzeit';
@@ -179,9 +267,51 @@ $this->phrasen['bewerbung/erfolgreichBeworben']='Sie haben sich erfolgreich für
 $this->phrasen['bewerbung/fehlerBeimVersendenDerBewerbung']='Es ist ein Fehler beim Versenden der Bewerbung aufgetreten. Bitte versuchen Sie es nocheinmal.';
 $this->phrasen['bewerbung/svnrBereitsVorhanden']='SVNR bereits vorhanden';
 $this->phrasen['bewerbung/menuBewerbungFuerStudiengang']='Bewerbung für einen Studiengang';
-$this->phrasen['bewerbung/emailBodyStart']='Es gibt eine neue Bewerbung mit folgenden Daten: <br>';
+$this->phrasen['bewerbung/dokumentOhneUploadGeprueft'] = 'Dokument ohne Upload überprüft.';
+$this->phrasen['bewerbung/emailBodyStart']='
+<html>
+	<head>	
+		<title>Sancho Mail</title>
+	</head>
+	<body>
+		<center>
+			<table cellpadding="0" cellspacing="0" style="border: 2px solid #000000; padding: 0px; max-width: 850px; 
+				border-collapse:collapse; mso-table-lspace:0pt; mso-table-rspace:0pt;">  
+				<tr>
+					<td align="center">
+						<table cellpadding="0" cellspacing="0" width="100%%" border="0">
+							<tr>
+								<td>
+									<img src="data:image/jpg;base64,%2$s" alt="sancho_header" width="100%%"/>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+				<tr>
+					<td style="padding-left: 8%%; padding-right: 8%%; padding-top: 5%%; padding-bottom: 5%%; font-family: courier, verdana, sans-serif; font-size: 0.95em; border-bottom: 2px solid #000000;">
+						Es gibt eine neue Bewerbung.<br>
+						Für mehr Details öffnen Sie bitte den <a href="%1$s" target="_blank">Personendatensatz</a> im FAS.';
 $this->phrasen['bewerbung/emailDokumentuploadStart']='Das folgende Dokument wurde hochgeladen: <br>';
-$this->phrasen['bewerbung/emailBodyEnde']='Für mehr Details öffnen Sie bitte den Personendatensatz im FAS.';
+$this->phrasen['bewerbung/emailBodyEnde']='
+					</td>
+				</tr>
+				<tr>
+					<td align="center">
+						<table cellpadding="0" cellspacing="0" width="100%%">
+							<tr>
+								<td>
+									<img src="data:image/jpg;base64,%1$s" alt="sancho_footer" width="100%%"/>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+			</table>
+		</center>
+	</body>
+</html>
+';
 $this->phrasen['bewerbung/fileUpload']='File-Upload';
 $this->phrasen['bewerbung/fehlerKeinePersonId']='Es wurde keine Person_id angegeben';
 $this->phrasen['bewerbung/woWurdeUrkundeAusgestellt']='Wo wurde die Urkunde ausgestellt?';
@@ -191,10 +321,10 @@ $this->phrasen['bewerbung/keineStgAngeboten']='Es werden derzeit keine Studieng�
 $this->phrasen['bewerbung/keineLehrgAngeboten']='Es werden derzeit keine Lehrgänge angeboten';
 $this->phrasen['bewerbung/aufmerksamdurch']='Wie sind Sie auf uns aufmerksam geworden?';
 $this->phrasen['bewerbung/BewerbungBereitsVerschickt']='Ihre Bewerbung wird bearbeitet';
-$this->phrasen['bewerbung/bitteZuerstStudiengangWaehlen']='Bitte wählen Sie zuerst den gewünschten Studiengang im Bereich "Allgemein" aus.';
+$this->phrasen['bewerbung/bitteZuerstStudiengangWaehlen']='Bitte wählen Sie zuerst den gewünschten Studiengang im Bereich "Übersicht" aus.';
 $this->phrasen['bewerbung/ExtensionInformation']='Maximale Dateigröße je Dokument: 15 MB.<br>Unterstützte Dateiformate:';
 $this->phrasen['bewerbung/falscherDateityp']='Dieses Dateiformat wird nicht unterstützt';
-$this->phrasen['bewerbung/mailadresseBereitsGenutzt']='Die E-Mail Adresse %s wurde bereits für eine Bewerbung genutzt und es ist ein Zugangscode vorhanden. Sie können sich den Zugangscode noch einmal an diese Adresse schicken lassen und nach dem Login weitere Bewerbungen hinzufügen.';
+$this->phrasen['bewerbung/mailadresseBereitsGenutzt']='Die E-Mail Adresse %s wurde bereits für eine Bewerbung genutzt. Sie können sich einen neuen Zugangscode an diese Adresse schicken lassen und nach dem Login weitere Bewerbungen hinzufügen.';
 $this->phrasen['bewerbung/mailadresseBereitsVorhanden']='Die E-Mail Adresse %s ist bereits im System vorhanden und kann nicht gespeichert werden. Bitte geben Sie eine andere E-Mail Adresse ein.';
 $this->phrasen['bewerbung/buttonBewerbungUnvollstaendig']='Pflichtfelder unvollständig';
 $this->phrasen['bewerbung/prestudentID']='Prestudent ID';
@@ -205,7 +335,7 @@ $this->phrasen['bewerbung/weiblich']='Weiblich';
 $this->phrasen['bewerbung/maturazeugnis']='Maturazeugnis';
 $this->phrasen['bewerbung/details']='Details';
 $this->phrasen['bewerbung/mehrDetails']='Mehr Details...';
-$this->phrasen['bewerbung/codeZuschicken']='Code zuschicken';
+$this->phrasen['bewerbung/codeZuschicken']='Neuen Code zuschicken';
 $this->phrasen['bewerbung/codeZuschickenAnleitung']='Wenn Sie sich schon einmal registriert aber den Zugangscode verloren oder vergessen haben, können Sie sich hier den Zugangscode erneut zuschicken lassen. Bitte geben Sie dazu Ihre Mailadresse ein und drücken Sie auf "Code zuschicken"';
 $this->phrasen['bewerbung/keinCodeVorhanden']='Für diese E-Mail Adresse ist noch kein Zugangscode vorhanden. Bitte <a href="'.$_SERVER['PHP_SELF'].'?method=registration">melden Sie sich vorher an</a>.';
 $this->phrasen['bewerbung/zgvDatumNichtZukunft']='Das Datum der Zugangsvoraussetzung darf nicht in der Zukunft liegen. Wenn Sie die Zugangsvoraussetzung erst später erbringen, lassen Sie das Datum bitte leer.';
@@ -213,7 +343,7 @@ $this->phrasen['bewerbung/ab']='ab';
 $this->phrasen['bewerbung/adresse']='Adresse (Hauptwohnsitz)';
 $this->phrasen['bewerbung/notizVom']='Notiz vom';
 $this->phrasen['bewerbung/anmerkung']='Anmerkung';
-$this->phrasen['bewerbung/anmerkungPlaceholder']='Hier haben Sie die Möglichkeit, eine Anmerkung (1024 Zeichen) einzutragen, die Sie der Assistenz mitteilen möchten';
+$this->phrasen['bewerbung/anmerkungPlaceholder']='Anmerkungen zu Ihrer Bewerbung bitte hier eintragen und speichern. (1 Anmerkung pro Bewerbung, 1024 Zeichen)';
 $this->phrasen['bewerbung/orgformMussGewaehltWerden']='Es muss eine Organisationsform gewählt werden';
 $this->phrasen['bewerbung/hierUnverbindlichAnmelden']='Hier unverbindlich anmelden';
 $this->phrasen['bewerbung/keineOrgformVorhanden']='Für das gewähle Studiensemester ist noch keine Organisationsform hinterlegt';
@@ -233,7 +363,7 @@ $this->phrasen['bewerbung/statusBestaetigen']='Status direkt bestätigen';
 $this->phrasen['bewerbung/footerText']='';
 $this->phrasen['bewerbung/vorbehaltlichAkkreditierung']='Vorbehaltlich der Akkreditierung durch die AQ Austria';
 $this->phrasen['bewerbung/auswahlmöglichkeitenImNaechstenSchritt']='Auswahlmöglichkeiten im nächsten Schritt';
-$this->phrasen['bewerbung/sieKoennenMaximalXStudiengaengeWaehlen']='Sie können sich online für maximal %s Studiengänge gleichzeitig bewerben. Wenn Sie mehr Informationen benötigen, steht Ihnen unsere <a href=\'https://www.technikum-wien.at/studieninformationen/studienberatung-kontaktieren/\' target=\'_blank\'>Studienberatung</a> gerne persönlich, telefonisch oder per E-Mail zur Verfügung.'; // Link muss mit einfachen Hochkomma maskiert werden, das es sonst im Bewerbungstool zu Anzeigefehlern kommt
+$this->phrasen['bewerbung/sieKoennenMaximalXStudiengaengeWaehlen']='Sie können sich online für maximal %s Studiengänge im gleichen Studiensemester bewerben. Wenn Sie mehr Informationen benötigen, steht Ihnen unsere <a href=\'https://www.technikum-wien.at/studieninformationen/studienberatung-kontaktieren/\' target=\'_blank\'>Studienberatung</a> gerne persönlich, telefonisch oder per E-Mail zur Verfügung.<br><br><a href=\'#\' class=\'alert-link\' data-dismiss=\'alert\' aria-label=\'close\'>Schließen</a>'; // Link muss mit einfachen Hochkomma maskiert werden, das es sonst im Bewerbungstool zu Anzeigefehlern kommt
 $this->phrasen['bewerbung/bitteEineStudienrichtungWaehlen']='Bitte eine Studienrichtung auswählen.';
 $this->phrasen['bewerbung/beschreibungTitelPre']='Akademische Titel, die dem Namen vorangestellt werden. ZB.: DI, Mag., Dr.';
 $this->phrasen['bewerbung/beschreibungTitelPost']='Akademische Titel, die dem Namen nachgestellt werden. ZB.: BA, MA, PhD';
@@ -245,7 +375,7 @@ $this->phrasen['bewerbung/bitteGueltigeOesterreichischePlzEingeben']='Bitte gebe
 $this->phrasen['bewerbung/plzMussGueltigSein']='Postleitzahl muss eine gültige Nummer sein';
 $this->phrasen['bewerbung/plzUnbekannt']='Postleitzahl unbekannt';
 $this->phrasen['bewerbung/dateien']='Datei(en)';
-$this->phrasen['bewerbung/dokumentWirdGeprueft']='Dokument wird überprüft';
+$this->phrasen['bewerbung/dokumentWirdGeprueft']='Dokument vorhanden';
 $this->phrasen['bewerbung/dokumentUeberprueft']='Dokument überprüft';
 $this->phrasen['bewerbung/keineDateiAusgewaehlt']='Keine Datei zum Hochladen ausgewählt oder gefunden';
 $this->phrasen['bewerbung/placeholderAnmerkungNachgereicht']='Bitte geben Sie an, welche Institution das Dokument ausstellen wird und bis wann Sie das Dokument voraussichtlich nachreichen können';
@@ -259,11 +389,11 @@ $this->phrasen['bewerbung/keinDokumententypUebergeben']='Es wurde kein Dokumentt
 $this->phrasen['bewerbung/aktion']='Aktion';
 $this->phrasen['bewerbung/bewerbungStornieren']='Bewerbung stornieren';
 $this->phrasen['bewerbung/bewerbungStorniert']='Bewerbung storniert';
-$this->phrasen['bewerbung/bewerbungStornierenInfotext']='Wenn Sie die Bewerbung stornieren, können Sie sich im %1$s nicht wieder für %2$s bewerben.<br><br>Möchten Sie fortfahren?';
+$this->phrasen['bewerbung/bewerbungStornierenInfotext']='Wenn Sie die Bewerbung stornieren, können Sie sich im %1$s nicht wieder für <span style="text-align: center; font-weight: bold; display: block; padding-top: 10px">%2$s</span> bewerben.<br><br>Möchten Sie fortfahren?';
 $this->phrasen['bewerbung/bewerbungStornierenBestaetigen']='Ja, Bewerbung stornieren';
 $this->phrasen['bewerbung/vergangeneBewerbungen']='Vergangene Bewerbungen';
 $this->phrasen['bewerbung/buttonStornierenDisabled']='Wenn die Bewerbung abgeschickt oder abgewiesen wurde, können Sie diese nicht mehr stornieren';
-$this->phrasen['bewerbung/infotextDisabled']='Es ist bereits eine Bewerbung für das %s vorhanden';
+$this->phrasen['bewerbung/infotextDisabled']='Da bereits eine Bewerbung vorhanden ist oder war, können Sie sich im %s nicht mehr für diesen Studiengang bewerben';
 $this->phrasen['bewerbung/bitteAnmerkungEintragen']='Bitte geben Sie den Namen der Institution ein, die das Dokument ausstellen wird';
 $this->phrasen['bewerbung/nachreichDatumNichtVergangenheit']='Das Datum der Nachreichung darf nicht in der Vergangenheit liegen';
 $this->phrasen['bewerbung/infotextVorlaeufigesZgvDokument']='Bitte laden Sie das letzte erhaltene Semesterzeugnis Ihrer Ausbildung hoch';
@@ -274,26 +404,97 @@ $this->phrasen['bewerbung/bitteDatenuebermittlungZustimmen']='Sie müssen der Da
 $this->phrasen['bewerbung/vorlaeufigesDokument']='Vorläufiges Dokument';
 $this->phrasen['bewerbung/lehrgangsArt/1']='Master Lehrgang';
 $this->phrasen['bewerbung/lehrgangsArt/2']='Akademischer Lehrgang';
-$this->phrasen['bewerbung/lehrgangsArt/3']='Lehrgang zur Weiterbildung';
-$this->phrasen['bewerbung/lehrgangsArt/4']='Zertifizierungslehrgang';
+$this->phrasen['bewerbung/lehrgangsArt/3']='International Programs';
+$this->phrasen['bewerbung/lehrgangsArt/4']='Zertifikatslehrgang';
 $this->phrasen['bewerbung/lehrgangsArt/5']='Postgradualer Lehrgang';
-$this->phrasen['bewerbung/hackTypBezeichnungLehrgeange']='Lehrgang zur Weiterbildung'; // Überschreibt die Typ-Bezeichnung "Lehrgang". Leer lassen, wenn nicht benötigt
+$this->phrasen['bewerbung/hackTypBezeichnungLehrgeange']='Lehrgänge zur Weiterbildung'; // Überschreibt die Typ-Bezeichnung "Lehrgang". Leer lassen, wenn nicht benötigt
+$this->phrasen['bewerbung/hackTypBezeichnungBachelor']='Bachelor Studiengänge'; // Überschreibt die Typ-Bezeichnung "Bachelor". Leer lassen, wenn nicht benötigt
+$this->phrasen['bewerbung/hackTypBezeichnungMaster']='Master Studiengänge'; // Überschreibt die Typ-Bezeichnung "Master". Leer lassen, wenn nicht benötigt
 $this->phrasen['bewerbung/hackStufeBezeichnungBachelor']=''; // Überschreibt die ZGV Stufen-Bezeichnung "Bachelor". Leer lassen, wenn nicht benötigt
 $this->phrasen['bewerbung/hackStufeBezeichnungMaster']=''; // Überschreibt die ZGV Stufen-Bezeichnung "Master". Leer lassen, wenn nicht benötigt
-
-// Ausbildung
-$this->phrasen['bewerbung/menuAusbildung']='Ausbildung';
-$this->phrasen['bewerbung/ausbildung']='Ausbildung zu Ihrer Zugangsvoraussetzung';
-$this->phrasen['bewerbung/ausbildungSchule']='Name der Schule';
-$this->phrasen['bewerbung/ausbildungSchuleAdresse']='Adresse der Schule';
-$this->phrasen['bewerbung/paymentInfoText']='';
-
-$this->phrasen['bewerbung/erfolgreichBeworbenMail']='Sehr %3$s %1$s %2$s,<br><br>
-Sie haben sich erfolgreich für den Studiengang %4$s beworben. In der Regel werden Sie innerhalb von 5 Werktagen kontaktiert. Gegebenenfalls werden Sie dann aufgefordert, weitere Dokumente hochzuladen.<br><br>
-Den Status Ihrer Bewerbung können Sie jederzeit im Bewerbungstool verfolgen.<br>
-Sollten Sie Fragen zur Bewerbung haben, kontaktieren Sie bitte unser Infocenter <a href="mailto:infocenter@technikum-wien.at">infocenter@technikum-wien.at</a>.<br><br>
-Mit freundlichen Grüßen<br>
-Fachhochschule Technikum Wien';
+$this->phrasen['bewerbung/prioritaet']='Priorität';
+$this->phrasen['bewerbung/studierendenDaten']='Aktuelle Studierendendaten';
+$this->phrasen['bewerbung/keineRtTermineZurAuswahl']='Derzeit stehen keine Reihungstesttermine zur Auswahl';
+$this->phrasen['bewerbung/erfolgreichBeworbenMailBachelor']='
+<html>
+	<head>	
+		<title>Sancho Mail</title>
+	</head>
+	<body>
+		<center>
+			<table cellpadding="0" cellspacing="0" style="border: 2px solid #000000; padding: 0px; max-width: 850px; 
+				border-collapse:collapse; mso-table-lspace:0pt; mso-table-rspace:0pt;">  
+				<tr>
+					<td align="center">
+						<img src="cid:sancho_header" alt="header_image" style="width: 100%%; display: block"/>
+								
+					</td>
+				</tr>
+				<tr>
+					<td align="center">
+						<table cellpadding="0" cellspacing="0" width="100%%" style="font-family: courier, verdana, sans-serif; font-size: 0.95em; border-bottom: 2px solid #000000;">
+							<tr>
+								<td style="padding-left: 8%%; padding-right: 8%%; padding-top: 5%%; padding-bottom: 5%%;">
+									Sehr %3$s %1$s %2$s,<br><br>
+									Sie haben sich erfolgreich für %4$s beworben. In der Regel werden Sie innerhalb von 5 Werktagen kontaktiert. Gegebenenfalls werden Sie dann aufgefordert, weitere Dokumente hochzuladen.<br><br>
+									Den Status Ihrer Bewerbung können Sie jederzeit im <a href="'.APP_ROOT.'addons/bewerbung/cis/registration.php">Bewerbungstool</a> verfolgen.<br>
+									Sollten Sie Fragen zur Bewerbung haben, kontaktieren Sie bitte unser Infocenter <a href="mailto:studienberatung@technikum-wien.at">studienberatung@technikum-wien.at</a>.<br><br>
+									Mit freundlichen Grüßen<br>
+									Fachhochschule Technikum Wien
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+				<tr>
+					<td align="center">
+						<img src="cid:sancho_footer" alt="footer_image" style="width: 100%%; display: block"/>
+					</td>
+				</tr>
+			</table>
+		</center>
+	</body>
+</html>
+';
+$this->phrasen['bewerbung/erfolgreichBeworbenMail']='
+<html>
+	<head>	
+		<title>Sancho Mail</title>
+	</head>
+	<body>
+		<center>
+			<table cellpadding="0" cellspacing="0" style="border: 2px solid #000000; padding: 0px; max-width: 850px; 
+				border-collapse:collapse; mso-table-lspace:0pt; mso-table-rspace:0pt;">  
+				<tr>
+					<td align="center">
+						<img src="cid:sancho_header" alt="header_image" style="width: 100%%; display: block"/>
+					</td>
+				</tr>
+				<tr>
+					<td align="center">
+						<table cellpadding="0" cellspacing="0" width="100%%" style="font-family: courier, verdana, sans-serif; font-size: 0.95em; border-bottom: 2px solid #000000;">
+							<tr>
+								<td style="padding-left: 8%%; padding-right: 8%%; padding-top: 5%%; padding-bottom: 5%%;">
+									Sehr %3$s %1$s %2$s,<br><br>
+									Sie haben sich erfolgreich für %4$s beworben. In der Regel werden Sie innerhalb von 5 Werktagen kontaktiert. Gegebenenfalls werden Sie dann aufgefordert, weitere Dokumente hochzuladen.<br><br>
+									Den Status Ihrer Bewerbung können Sie jederzeit im <a href="'.APP_ROOT.'addons/bewerbung/cis/registration.php">Bewerbungstool</a> verfolgen.<br>
+									Sollten Sie Fragen zur Bewerbung haben, kontaktieren Sie uns bitte unter <a href="mailto:%5$s">%5$s</a>.<br><br>
+									Mit freundlichen Grüßen<br>
+									Fachhochschule Technikum Wien
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+				<tr>
+					<td align="center">
+						<img src="cid:sancho_footer" alt="footer_image" style="width: 100%%; display: block"/>
+					</td>
+				</tr>
+			</table>
+		</center>
+	</body>
+</html>';
 $this->phrasen['bewerbung/erfolgreichBeworbenMailBetreff']='Bewerbungsbestätigung Fachhochschule Technikum Wien';
 $this->phrasen['bewerbung/bewerbungsfrist']='Bewerbungsfrist';
 $this->phrasen['bewerbung/bewerbungszeitraum']='Bewerbungszeitraum (innerhalb der EU)';
@@ -306,6 +507,50 @@ $this->phrasen['bewerbung/bewerbungsfristEndetHeute']='Bewerbungsfrist endet heu
 $this->phrasen['bewerbung/bewerbungsfristFuerStudiensemesterXAbgelaufen']='Bewerbungsfrist für das %s ist abgelaufen';
 $this->phrasen['bewerbung/bewerbungDerzeitNichtMoeglich']='Bewerbung derzeit nicht möglich. Bitte kontaktieren Sie <a href="mailto:%1$s">%1$s</a>';
 $this->phrasen['bewerbung/bewerbungenFuerAb']='Bewerbungen fürs %s ab %s';
+$this->phrasen['bewerbung/bewerbungenFuerStudiensemesterXX']='Bewerbungen für das Studiensemester %s';
+$this->phrasen['bewerbung/bewerbungAbschicken']='Bewerbung abschicken';
+$this->phrasen['bewerbung/erklaerungBewerbungAbschickenFuerStudiengang']='Wenn Sie alle Daten vervollständigt haben, können Sie Ihre Bewerbung für <span style="text-align: center; font-weight: bold; display: block; padding-top: 10px">%s</span> hier abschicken. Sie werden in der Regel innerhalb von 5 Werktagen kontaktiert.';
+$this->phrasen['bewerbung/anmeldungStornieren']='Anmeldung stornieren';
+$this->phrasen['bewerbung/anmeldungStornierenBis']='Stornieren (bis %s)';
+$this->phrasen['bewerbung/menuUebersicht']='Übersicht';
+$this->phrasen['bewerbung/menuSicherheit']='Sicherheit';
+$this->phrasen['bewerbung/erklaerungSicherheit']='Aus Datenschutzgründen empfehlen wir Ihnen, sich einen neuen Zugangscode generieren zu lassen.<br>
+													Klicken Sie dazu einfach auf den Button und notieren Sie sich den neu generierten Code.<br><br>
+													Falls Sie den Code vergessen, klicken Sie auf der Login-Seite auf "Zugangscode vergessen?"';
+$this->phrasen['bewerbung/buttonNeuerZugangscode']='Neuen Zugangscode generieren';
+$this->phrasen['bewerbung/erfolgsMessageNeuerZugangscode']='<p>Ihr neuer Zugangscode lautet:</p><p>%s</p><p>Bitte notieren Sie sich den neuen Zugangscode.</p>';
+$this->phrasen['bewerbung/keineStudienrichtungenFuerStudiensemesterZurAuswahl']='Für das gewählte Studiensemester stehen derzeit keine Studienrichtungen zur Auswahl';
+$this->phrasen['bewerbung/studienberechtigungErlangtIn']='Studienberechtigung erlangt in';
+$this->phrasen['bewerbung/studienberechtigungErlangtInErklaerung']='Hier ist jene Nation zu wählen, in der Sie Ihren Abschluss erlangt haben/erlangen werden, der Sie zu einem Studium berechtigt (optional für Lehrgänge)';
+$this->phrasen['bewerbung/StatusSeitDatum']='%1$s seit %2$s';
+$this->phrasen['bewerbung/bewerbungszeitraumFuer']='Bewerbungszeitraum für %1$s';
+$this->phrasen['bewerbung/bitteAuswaehlenBaMa']='-- Für Bachelor und Master bitte auswählen --';
+$this->phrasen['bewerbung/bitteZGVausweahlen']='Wenn Sie sich für einen Bachelor- oder Master-Studiengang bewerben, wählen Sie bitte das Land aus, in dem Sie die Studienberechtigung erlangt haben';
+
+// Reihungstest
+$this->phrasen['bewerbung/anmeldungReihungstestMailBetreff']='Bestätigung Reihungstestanmeldung Fachhochschule Technikum Wien';
+$this->phrasen['bewerbung/anmeldungReihungstestMail']='Sehr %3$s %1$s %2$s,<br><br>
+Sie haben sich erfolgreich für den Reihungstest am %4$s beworben. Der Test beginnt um %5$s und dauert etwa 3,5 Stunden.<br><br>
+Bitte bringen Sie einen amtlichen Lichtbildausweis zur Überprüfung Ihrer Identität mit.<br>
+Den Raum können Sie etwa eine Woche vor Testbeginn im Bewerbungstool sehen<br>
+Sollten Sie Fragen haben, kontaktieren Sie bitte unser Infocenter <a href="mailto:studienberatung@technikum-wien.at">studienberatung@technikum-wien.at</a>.<br><br>
+Mit freundlichen Grüßen<br>
+Fachhochschule Technikum Wien';
+$this->phrasen['bewerbung/reihungstestInfoTextAngemeldet']='<div class="alert alert-info">
+<p>Bitte finden Sie sich 15 Minuten vor dem gewählten Termin in den Räumlichkeiten der FH Technikum Wien, Höchstädtplatz 6, 1200 Wien ein.</p>
+<p>Zur Feststellung der Identität ist unbedingt ein Lichtbildausweis (Reisepass, Personalausweis) nötig.</p>
+</div><br>';
+$this->phrasen['bewerbung/anmeldefrist']='Anmeldefrist';
+$this->phrasen['bewerbung/infoVorgemerktFuerQualifikationskurs']='Sie sind als TeilnehmerIn für die Qualifikationskurse vorgemerkt. Sobald sie dort bestätigt wurden, können Sie hier einen Termin für den Reihungstest wählen.';
+$this->phrasen['bewerbung/raumzuteilungFolgt']='Raumzuteilung folgt spätestens 1 Woche vor Ihrem Termin';
+$this->phrasen['bewerbung/sieHabenFolgendenTerminGewaehlt']='Sie haben sich zu folgendem Reihungstesttermin angemeldet';
+
+// Ausbildung
+$this->phrasen['bewerbung/menuAusbildung']='Ausbildung';
+$this->phrasen['bewerbung/ausbildung']='Ausbildung zu Ihrer Zugangsvoraussetzung';
+$this->phrasen['bewerbung/ausbildungSchule']='Name der Schule';
+$this->phrasen['bewerbung/ausbildungSchuleAdresse']='Adresse der Schule';
+$this->phrasen['bewerbung/paymentInfoText']='';
 
 // Rechnungskontakt
 $this->phrasen['bewerbung/menuRechnungsKontaktinformationen']='Rechnungsdaten';

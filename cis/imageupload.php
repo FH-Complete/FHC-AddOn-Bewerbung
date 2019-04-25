@@ -133,33 +133,47 @@ if (fclose($newfile))
 		}
 	}
 
-	$dms = new dms();
-	$dms->setPermission($filename_path);
-	
-	$dms->dms_id = $dms_id;
-	$dms->version = $version;
-	$dms->kategorie_kurzbz = 'Akte';
+	// file extension ermitteln
+	$pathinfo = pathinfo($img_type);
+	$ext = $pathinfo['basename'];
 
-	$dms->insertamum = date('Y-m-d H:i:s');
-	$dms->insertvon = 'online';
-	$dms->mimetype = cutString($img_type, 256);
-	$dms->filename = $dms_filename;
-	$dms->name = cutString($img_filename, 256, '~', true);
-
-	if ($dms->save(true))
+	// nur Bildformat jpg/jpeg zulassen
+	if ($ext == 'jpg' || $ext == 'jpeg')
 	{
-		$dms_id = $dms->dms_id;
+		$dms = new dms();
+		$dms->setPermission($filename_path);
 
-		$akte = new akte();
+		$dms->dms_id = $dms_id;
+		$dms->version = $version;
+		$dms->kategorie_kurzbz = 'Akte';
 
-		if ($akte->getAkten($person_id, 'Lichtbil'))
+		$dms->insertamum = date('Y-m-d H:i:s');
+		$dms->insertvon = 'online';
+		$dms->mimetype = cutString($img_type, 256);
+		$dms->filename = $dms_filename;
+		$dms->name = cutString($img_filename, 256, '~', true);
+
+		if ($dms->save(true))
 		{
-			if (count($akte->result) > 0)
+			$dms_id = $dms->dms_id;
+
+			$akte = new akte();
+
+			if ($akte->getAkten($person_id, 'Lichtbil'))
 			{
-				$akte = $akte->result[0];
-				$akte->new = false;
-				$akte->updateamum = date('Y-m-d H:i:s');
-				$akte->updatevon = 'online';
+				if (count($akte->result) > 0)
+				{
+					$akte = $akte->result[0];
+					$akte->new = false;
+					$akte->updateamum = date('Y-m-d H:i:s');
+					$akte->updatevon = 'online';
+				}
+				else
+				{
+					$akte->new = true;
+					$akte->insertamum = date('Y-m-d H:i:s');
+					$akte->insertvon = 'online';
+				}
 			}
 			else
 			{
@@ -167,38 +181,38 @@ if (fclose($newfile))
 				$akte->insertamum = date('Y-m-d H:i:s');
 				$akte->insertvon = 'online';
 			}
+
+			$akte->dokument_kurzbz = 'Lichtbil';
+			$akte->person_id = $person_id;
+			//$akte->inhalt = base64_encode($content); Fotos werden nur als DMS und in tbl_person gespeichert
+			$akte->mimetype = $img_type;
+			$akte->erstelltam = date('Y-m-d H:i:s');
+			$akte->gedruckt = false;
+			$akte->titel = cutString($img_filename, 32, '~', true); // Filename
+			$akte->bezeichnung = "Lichtbild gross";
+			$akte->uid = '';
+			$akte->nachgereicht = false;
+	// 		$akte->anmerkung = ''; Auch bei nachträglichem Upload bleibt die Anmerkung erhalten
+			$akte->dms_id = $dms_id;
+
+			if (! $akte->save())
+			{
+				$result_obj['type'] = "error";
+				$result_obj['msg'] = "<b>Fehler: $akte->errormsg</b>";
+				echo json_encode($result_obj);
+			}
 		}
 		else
 		{
-			$akte->new = true;
-			$akte->insertamum = date('Y-m-d H:i:s');
-			$akte->insertvon = 'online';
-		}
-
-		$akte->dokument_kurzbz = 'Lichtbil';
-		$akte->person_id = $person_id;
-		//$akte->inhalt = base64_encode($content); Fotos werden nur als DMS und in tbl_person gespeichert
-		$akte->mimetype = $img_type;
-		$akte->erstelltam = date('Y-m-d H:i:s');
-		$akte->gedruckt = false;
-		$akte->titel = cutString($img_filename, 32, '~', true); // Filename
-		$akte->bezeichnung = "Lichtbild gross";
-		$akte->uid = '';
- 		$akte->nachgereicht = false;
-// 		$akte->anmerkung = ''; Auch bei nachträglichem Upload bleibt die Anmerkung erhalten
-		$akte->dms_id = $dms_id;
-
-		if (! $akte->save())
-		{
 			$result_obj['type'] = "error";
-			$result_obj['msg'] = "<b>Fehler: $akte->errormsg</b>";
+			$result_obj['msg'] = $p->t('global/fehlerBeimSpeichernDerDaten');
 			echo json_encode($result_obj);
 		}
 	}
 	else
 	{
 		$result_obj['type'] = "error";
-		$result_obj['msg'] = $p->t('global/fehlerBeimSpeichernDerDaten');
+		$result_obj['msg'] = $p->t('bewerbung/falscherDateityp');
 		echo json_encode($result_obj);
 	}
 }

@@ -93,16 +93,26 @@ if(!$prestudent_help = getBewerbungen($person_id, true))
 }
 else 
 {
+	usort($prestudent_help, "sortPrestudents");
 	foreach($prestudent_help as $prest)
 	{
 		$disabled = 'disabled';
 		if(	$status_person == true && 
 			$status_kontakt == true && 
 			$status_zahlungen == true && 
-			$status_reihungstest == true && 
 			$status_zgv_bak == true && 
 			$status_ausbildung == true)
+		{
+			// An der FHTW ist das Abschicken der Bewerbung nicht abhängig vom Reihungstest
+			if (CAMPUS_NAME == 'FH Technikum Wien')
+			{
 				$disabled = '';
+			}
+			elseif ($status_reihungstest == true)
+			{
+				$disabled = '';
+			}
+		}
 		
 		$stg->load($prest->studiengang_kz);
 		$typ->getStudiengangTyp($stg->typ);

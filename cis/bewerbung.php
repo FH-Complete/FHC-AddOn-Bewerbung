@@ -26,46 +26,82 @@ require_once ('../bewerbung.config.inc.php');
 session_cache_limiter('none'); // muss gesetzt werden sonst funktioniert der Download mit IE8 nicht
 session_start();
 
+// Definiert die verwendeten views (Tabreiter)
+// Die Tabs werden in der definierten Reihenfolge ausgegeben aber in der Indexreihenfolge geladen
+$tabs = array();
+if(defined('BEWERBERTOOL_UEBERSICHT_ANZEIGEN') && BEWERBERTOOL_UEBERSICHT_ANZEIGEN)
+	$tabs[10]='uebersicht';
+if(!defined('BEWERBERTOOL_ALLGEMEIN_ANZEIGEN') || BEWERBERTOOL_ALLGEMEIN_ANZEIGEN)
+	$tabs[11]='allgemein';
+
+$tabs[0]='daten';
+$tabs[1]='kontakt';
+
+if(!defined('BEWERBERTOOL_DOKUMENTE_ANZEIGEN') || BEWERBERTOOL_DOKUMENTE_ANZEIGEN)
+	$tabs[2]='dokumente';
+if(defined('BEWERBERTOOL_AUSBILDUNG_ANZEIGEN') && BEWERBERTOOL_AUSBILDUNG_ANZEIGEN)
+	$tabs[3]='ausbildung';
+if(!defined('BEWERBERTOOL_ZGV_ANZEIGEN') || BEWERBERTOOL_ZGV_ANZEIGEN)
+	$tabs[4]='zgv';
+if(!defined('BEWERBERTOOL_ZAHLUNGEN_ANZEIGEN') || BEWERBERTOOL_ZAHLUNGEN_ANZEIGEN)
+	$tabs[5]='zahlungen';
+if(defined('BEWERBERTOOL_RECHNUNGSKONTAKT_ANZEIGEN') && BEWERBERTOOL_RECHNUNGSKONTAKT_ANZEIGEN)
+	$tabs[6]='rechnungskontakt';
+if(!defined('BEWERBERTOOL_REIHUNGSTEST_ANZEIGEN') || BEWERBERTOOL_REIHUNGSTEST_ANZEIGEN)
+	$tabs[7]='aufnahme';
+if(!defined('BEWERBERTOOL_ABSCHICKEN_ANZEIGEN') || BEWERBERTOOL_ABSCHICKEN_ANZEIGEN)
+	$tabs[8]='abschicken';
+if(defined('BEWERBERTOOL_SICHERHEIT_ANZEIGEN') && BEWERBERTOOL_SICHERHEIT_ANZEIGEN)
+	$tabs[9]='sicherheit';
+
+$tabLadefolge = $tabs;
+ksort($tabLadefolge);
+$tabLadefolge = array_values($tabLadefolge);
+$tabs = array_values($tabs);
+
 if (! isset($_SESSION['bewerbung/user']) || $_SESSION['bewerbung/user'] == '')
 {
 	$_SESSION['request_uri'] = $_SERVER['REQUEST_URI'];
 
-	header('Location: registration.php?method=allgemein');
+	header('Location: registration.php?method='.$tabs[0]);
 	exit();
 }
 
-require_once ('../../../include/konto.class.php');
-require_once ('../../../include/benutzer.class.php');
-require_once ('../../../include/phrasen.class.php');
-require_once ('../../../include/benutzerberechtigung.class.php');
-require_once ('../../../include/nation.class.php');
-require_once ('../../../include/gemeinde.class.php');
-require_once ('../../../include/person.class.php');
-require_once ('../../../include/datum.class.php');
-require_once ('../../../include/kontakt.class.php');
 require_once ('../../../include/adresse.class.php');
-require_once ('../../../include/prestudent.class.php');
-require_once ('../../../include/studiengang.class.php');
-require_once ('../../../include/zgv.class.php');
+require_once ('../../../include/akte.class.php');
+require_once ('../../../include/aufmerksamdurch.class.php');
+require_once ('../../../include/basis_db.class.php');
+require_once ('../../../include/benutzer.class.php');
+require_once ('../../../include/benutzerberechtigung.class.php');
+require_once ('../../../include/bewerbungstermin.class.php');
+require_once ('../../../include/bisberufstaetigkeit.class.php');
+require_once ('../../../include/datum.class.php');
 require_once ('../../../include/dms.class.php');
 require_once ('../../../include/dokument.class.php');
-require_once ('../../../include/akte.class.php');
+require_once ('../../../include/functions.inc.php');
+require_once ('../../../include/gemeinde.class.php');
+require_once ('../../../include/kontakt.class.php');
+require_once ('../../../include/konto.class.php');
 require_once ('../../../include/mail.class.php');
-require_once ('../../../include/studiensemester.class.php');
-require_once ('../../../include/studienplan.class.php');
-require_once ('../../../include/studienordnung.class.php');
-require_once ('../../../include/basis_db.class.php');
-require_once ('../../../include/reihungstest.class.php');
-require_once ('../../../include/preinteressent.class.php');
+require_once ('../../../include/nation.class.php');
 require_once ('../../../include/notiz.class.php');
 require_once ('../../../include/organisationseinheit.class.php');
 require_once ('../../../include/organisationsform.class.php');
-require_once ('../include/functions.inc.php');
-require_once ('../../../include/functions.inc.php');
-require_once ('../../../include/aufmerksamdurch.class.php');
-require_once ('../../../include/bisberufstaetigkeit.class.php');
-require_once ('../../../include/bewerbungstermin.class.php');
+require_once ('../../../include/ort.class.php');
+require_once ('../../../include/person.class.php');
 require_once ('../../../include/personlog.class.php');
+require_once ('../../../include/phrasen.class.php');
+require_once ('../../../include/preinteressent.class.php');
+require_once ('../../../include/prestudent.class.php');
+require_once ('../../../include/reihungstest.class.php');
+require_once ('../../../include/sprache.class.php');
+require_once ('../../../include/studiengang.class.php');
+require_once ('../../../include/studienordnung.class.php');
+require_once ('../../../include/studienplan.class.php');
+require_once ('../../../include/studiensemester.class.php');
+require_once ('../../../include/zgv.class.php');
+require_once ('../include/functions.inc.php');
+
 
 if (isset($_GET['logout']))
 {
@@ -83,8 +119,25 @@ if (! $person->load($person_id))
 {
 	die($p->t('global/fehlerBeimLadenDesDatensatzes'));
 }
+
+$spracheGet = filter_input(INPUT_GET, 'sprache');
+
+if(isset($spracheGet))
+{
+	$spracheGet = new sprache();
+	if($spracheGet->load($_GET['sprache']))
+	{
+		setSprache($_GET['sprache']);
+	}
+	else
+	{
+		setSprache(DEFAULT_LANGUAGE);
+	}
+}
 // $sprache = DEFAULT_LANGUAGE;
 $sprache = getSprache();
+$sprachindex = new sprache();
+$spracheIndex = $sprachindex->getIndexFromSprache($sprache);
 $p = new phrasen($sprache);
 $log = new personlog();
 
@@ -116,18 +169,9 @@ if ($benutzer->getBenutzerFromPerson($person->person_id, false))
 	}
 }
 
-if (CAMPUS_NAME == 'FH Technikum Wien')
-{
-	// Wenn der Status bestaetigt wurde, duerfen die Stammdaten nicht mehr geaendert werden
-	if (check_person_statusbestaetigt($person_id, 'Interessent'))
-		$eingabegesperrt = true;
-}
-else
-{
-	// Wenn bereits eine Bewerbung abgeschickt wurde, duerfen die Stammdaten nicht mehr geaendert werden
-	if (check_person_bewerbungabgeschickt($person_id))
-		$eingabegesperrt = true;
-}
+// Wenn bereits eine Bewerbung abgeschickt wurde, duerfen die Stammdaten nicht mehr geaendert werden
+if (check_person_bewerbungabgeschickt($person_id))
+	$eingabegesperrt = true;
 
 $message = '&nbsp;';
 
@@ -247,75 +291,252 @@ if ($bewerbungStornieren && isset($_POST['prestudent_id']))
 	}
 }
 
-
-if (isset($_GET['rt_id']))
+$changePriority = filter_input(INPUT_POST, 'changePriority', FILTER_VALIDATE_BOOLEAN);
+// Ändern der Priorität von Bewerbungen
+if ($changePriority && isset($_POST['ausgang_prestudent_id']) 
+	&& isset($_POST['ziel_prestudent_id'])
+	&& isset($_POST['ausgang_prioritaet'])
+	&& isset($_POST['ziel_prioritaet'])
+	&& isset($_POST['studiensemester_kurzbz']))
 {
-
-	$rt_id = filter_input(INPUT_GET, 'rt_id', FILTER_VALIDATE_INT);
-	$pre_id = filter_input(INPUT_GET, 'pre', FILTER_VALIDATE_INT);
-
-	if (isset($_GET['delete']))
+	$ausgang_prestudent_id = filter_input(INPUT_POST, 'ausgang_prestudent_id', FILTER_VALIDATE_INT);
+	$ziel_prestudent_id = filter_input(INPUT_POST, 'ziel_prestudent_id', FILTER_VALIDATE_INT);
+	$ausgangsPrioritaet = filter_input(INPUT_POST, 'ausgang_prioritaet');
+	$zielPrioritaet = filter_input(INPUT_POST, 'ziel_prioritaet');
+	$studiensemester_kurzbz = filter_input(INPUT_POST, 'studiensemester_kurzbz');
+	
+	$prestudent1 = new prestudent($ausgang_prestudent_id);
+	$prestudent2 = new prestudent($ziel_prestudent_id);
+	$hoechstePrio = new prestudent(); 
+	$hoechstePrio->getPriorisierungPersonStudiensemester($prestudent1->person_id, $studiensemester_kurzbz);
+	// Wenn $ausgangsPrioritaet NULL ist, höchste Prio ermitteln, diese setzen und $zielPrioritaet +1 setzen
+	if ($ausgangsPrioritaet == '')
 	{
-		$prestudent = new prestudent();
-		if (! $prestudent->getPrestudenten($person_id))
+		// Wenn höchste Prio auch NULL ist, dann Werte direkt setzen
+		if ($hoechstePrio->priorisierung == '')
 		{
-			die($p->t('global/fehlerBeimLadenDesDatensatzes'));
+			$ausgangsPrioritaetNeu = 1;
+			$zielPrioritaetNeu = 2;
 		}
-
-		foreach ($prestudent->result as $row)
+		else 
 		{
-			if ($row->prestudent_id == $pre_id)
+			// Wenn $zielPrioritaet NULL ist, höchste Prio ermitteln und $ausgangsPrioritaet +1 setzen und $zielPrioritaet + 2 setzen
+			if ($zielPrioritaet == '')
 			{
-				$prest = new prestudent();
-				$prest->load($pre_id);
-				$prest->reihungstest_id = '';
-				$prest->anmeldungreihungstest = '';
-				$prest->updateamum = date("Y-m-d H:i:s");
-				$prest->updatevon = 'online';
-				$prest->new = false;
-
-				if (! $prest->save())
-				{
-					echo $p->t('global/fehlerBeimSpeichernDerDaten');
-				}
+				$ausgangsPrioritaetNeu = $hoechstePrio->priorisierung + 1;
+				$zielPrioritaetNeu = $hoechstePrio->priorisierung + 2;
+			}
+			else 
+			{
+				$ausgangsPrioritaetNeu = $zielPrioritaet;
+				$zielPrioritaetNeu = $hoechstePrio->priorisierung + 1;
 			}
 		}
 	}
+	else 
+	{
+		// Wenn $zielPrioritaet NULL ist, $ausgangsPrioritaet höchste Prio +1 setzen und $zielPrioritaet gelcih $ausgangsPrioritaet setzen
+		if ($zielPrioritaet == '')
+		{
+			$ausgangsPrioritaetNeu = $hoechstePrio->priorisierung + 1;
+			$zielPrioritaetNeu = $ausgangsPrioritaet;
+		}
+		else
+		{
+			$ausgangsPrioritaetNeu = $zielPrioritaet;
+			$zielPrioritaetNeu = $ausgangsPrioritaet;
+		}
+	}
+
+	$prestudent1->priorisierung = $ausgangsPrioritaetNeu;
+	if (!$prestudent1->save())
+	{
+		echo json_encode(array(
+			'status' => 'fehler',
+			'msg' => $prestudent1->errormsg
+		));
+		exit();
+	}
 	else
 	{
+		$prestudent2->priorisierung = $zielPrioritaetNeu;
+		if (!$prestudent2->save())
+		{
+			echo json_encode(array(
+				'status' => 'fehler',
+				'msg' => $prestudent2->errormsg
+			));
+			exit();
+		}
+		else 
+		{
+			echo json_encode(array(
+				'status' => 'ok'
+			));
+			exit();
+		}
+	}
+}
+
+$aktionReihungstest = filter_input(INPUT_POST, 'aktionReihungstest', FILTER_VALIDATE_BOOLEAN);
+// An- oder Abmelden von Reihungstests
+if ($aktionReihungstest)
+{
+	$rt_id = filter_input(INPUT_POST, 'reihungstest_id', FILTER_VALIDATE_INT);
+	$studienplan_id = filter_input(INPUT_POST, 'studienplan_id', FILTER_VALIDATE_INT);
+	$aktion = filter_input(INPUT_POST, 'aktion');
+
+	if (defined('REIHUNGSTEST_ARBEITSPLAETZE_SCHWUND') && is_numeric(REIHUNGSTEST_ARBEITSPLAETZE_SCHWUND))
+	{
+		$schwund = REIHUNGSTEST_ARBEITSPLAETZE_SCHWUND;
+	}
+	else
+	{
+		$schwund = '';
+	}
+
+	if ($aktion == 'save')
+	{
 		$reihungstest = new reihungstest();
-		$reihungstest->load($rt_id);
-
-		if ($reihungstest->max_teilnehmer && $reihungstest->getTeilnehmerAnzahl($rt_id) >= $reihungstest->max_teilnehmer)
+		// Pruefen der verfuegbaren Plaetze
+		if ($reihungstest->getTeilnehmerAnzahl($rt_id) >= $reihungstest->getVerfuegbarePlaetzeReihungstest($rt_id, $schwund))
 		{
-			die($p->t('bewerbung/maxAnzahlTeilnehmer'));
+			echo json_encode(array(
+				'status' => 'fehler',
+				'msg' => 'Keine Plätze mehr verfügbar'
+			));
+			exit();
 		}
-
-		$timestamp = time();
-
-		$prestudent = new prestudent();
-		if (! $prestudent->getPrestudenten($person_id))
+		// Prüfen, ob schon eine Anmeldung für diesen RT existiert
+		if ($reihungstest->getPersonReihungstest($person_id, $rt_id))
 		{
-			die($p->t('global/fehlerBeimLadenDesDatensatzes'));
+			echo json_encode(array(
+				'status' => 'fehler',
+				'msg' => 'Sie sind bereits für diesen Reihungstest angemeldet. Bitte aktualisieren Sie die Seite.'
+			));
+			exit();
 		}
-
-		foreach ($prestudent->result as $row)
+		$reihungstest->new = true;
+		$reihungstest->reihungstest_id = $rt_id;
+		$reihungstest->person_id = $person_id;
+		$reihungstest->studienplan_id = $studienplan_id;
+		$reihungstest->anmeldedatum = date("Y-m-d H:i:s");
+		$reihungstest->teilgenommen = false;
+		$reihungstest->ort_kurzbz = '';
+		$reihungstest->punkte = '';
+		$reihungstest->insertamum = date("Y-m-d H:i:s");
+		$reihungstest->insertvon = 'online';
+		
+		if (! $reihungstest->savePersonReihungstest())
 		{
-			if ($row->prestudent_id == $pre_id)
+			echo json_encode(array(
+				'status' => 'fehler',
+				'msg' => $reihungstest->errormsg
+			));
+			$message = $p->t('global/fehlerBeimSpeichernDerDaten');
+			exit();
+		}
+		else
+		{
+			// Reihungstest laden um Log-Daten zu befüllen
+			$rt = new reihungstest($rt_id);
+			// Geparkten Logeintrag löschen
+			$log->deleteParked($person_id);
+			// Logeintrag schreiben
+			$log->log($person_id, 
+				'Processstate', 
+				array('name' => 'Signed-on for placement test', 'message' => 'Subscribed for placement test on ' . $rt->datum . ' at ' . $rt->uhrzeit . ' for Studienplan ' . $studienplan_id ), 
+				'aufnahme', 
+				'bewerbung', 
+				null, 
+				'online');
+				
+			echo json_encode(array(
+				'status' => 'ok'
+			));
+			// E-Mail zur Bestätigung an Bewerber schicken
+			/*$kontakt = new kontakt();
+			$kontakt->load_persKontakttyp($person_id, 'email');
+			$mailadresse = isset($kontakt->result[0]->kontakt) ? $kontakt->result[0]->kontakt : '';
+			if ($mailadresse != '')
 			{
-				$prest = new prestudent();
-				$prest->load($pre_id);
-				$prest->reihungstest_id = $rt_id;
-				$prest->anmeldungreihungstest = date('Y-m-d', $timestamp);
-				$prest->updateamum = date("Y-m-d H:i:s");
-				$prest->updatevon = 'online';
-				$prest->new = false;
-
-				if (! $prest->save())
-				{
-					echo $p->t('global/fehlerBeimSpeichernDerDaten');
-				}
+				$person = new person();
+				$person->load($person_id);
+				if($person->geschlecht == 'm')
+					$anrede = $p->t('bewerbung/anredeMaennlich');
+				else
+					$anrede = $p->t('bewerbung/anredeWeiblich');
+				
+				$email = new mail($mailadresse, 'no-reply', $p->t('bewerbung/anmeldungReihungstestMailBetreff'), 'Bitte sehen Sie sich die Nachricht in HTML Sicht an, um den Inhalt vollständig darzustellen.');
+				$email_bewerber = $p->t('bewerbung/anmeldungReihungstestMail', array(
+					$person->vorname, 
+					$person->nachname, 
+					$anrede, 
+					substr($tagbez[$spracheIndex][$datum->formatDatum($rt->datum, 'N')], 0, 2).', '.$datum->formatDatum($rt->datum, 'd.m.Y'), 
+					$datum->formatDatum($rt->uhrzeit,'H:i')));
+					
+				$email->setHTMLContent($email_bewerber);
+				$email->send();
+			}*/
+			exit();
+		}	
+	}
+	elseif ($aktion == 'delete')
+	{
+		$rt_person_id = new reihungstest();
+		$rt_person_id->getPersonReihungstest($person_id, $rt_id);
+		
+		$reihungstest = new reihungstest($rt_id);
+		
+		// Löschen der Anmeldung nur möglich, wenn BEWERBERTOOL_REIHUNGSTEST_STORNIERBAR_TAGE oder Anmeldefrist noch nicht vorbei
+		if (defined('BEWERBERTOOL_REIHUNGSTEST_STORNIERBAR_TAGE') && BEWERBERTOOL_REIHUNGSTEST_STORNIERBAR_TAGE != '')
+		{
+			$time = strtotime($reihungstest->datum.' 23:59:59 -'.BEWERBERTOOL_REIHUNGSTEST_STORNIERBAR_TAGE.'days');
+			if ($time < time())
+			{
+				echo json_encode(array(
+					'status' => 'fehler',
+					'msg' => 'Der Termin konnte nicht storniert werden, da die Anmeldefrist vorbei ist'
+				));
+				exit();// @todo: Phrasenmodul
 			}
+		}
+		elseif ($reihungstest->anmeldefrist != '' && strtotime($reihungstest->anmeldefrist.' 23:59:59') < time())
+		{
+			echo json_encode(array(
+				'status' => 'fehler',
+				'msg' => 'Der Termin konnte nicht storniert werden, da die Anmeldefrist vorbei ist'
+			));
+			exit();// @todo: Phrasenmodul
+		}
+		
+		if (! $reihungstest->deletePersonReihungstest($rt_person_id->rt_person_id))
+		{
+			echo json_encode(array(
+				'status' => 'fehler',
+				'msg' => $reihungstest->errormsg
+			));
+			exit();
+		}
+		else
+		{
+			// Reihungstest laden um Log-Daten zu befüllen
+			$rt = new reihungstest($rt_id);
+			// Geparkten Logeintrag löschen
+			$log->deleteParked($person_id);
+			// Logeintrag schreiben
+			$log->log($person_id,
+				'Action',
+				array('name' => 'Signed-off for placement test', 'message' => 'Signed-off for placement test on ' . $rt->datum . ' at ' . $rt->uhrzeit . ' for Studienplan ' . $studienplan_id ),
+				'aufnahme',
+				'bewerbung',
+				null,
+				'online');
+				
+				echo json_encode(array(
+					'status' => 'ok'
+				));
+				exit();
 		}
 	}
 }
@@ -651,15 +872,6 @@ if (isset($_POST['submit_nachgereicht']))
 					}
 				}
 			}
-
-
-
-
-
-
-
-
-
 		}
 	}
 }
@@ -669,7 +881,7 @@ $active = filter_input(INPUT_GET, 'active');
 
 if (! $active)
 {
-	$active = 'allgemein';
+	$active = $tabs[0];
 }
 $save_error_daten = '';
 // Persönliche Daten speichern
@@ -678,7 +890,7 @@ if (isset($_POST['btn_person']) && ! $eingabegesperrt)
 	$person->titelpre = $_POST['titel_pre'];
 	$person->vorname = $_POST['vorname'];
 	$person->nachname = $_POST['nachname'];
-	$person->titelpost = $_POST['titel_post'];
+	$person->titelpost = $_POST['titelPost'];
 	$person->gebdatum = $datum->formatDatum($_POST['geburtsdatum'], 'Y-m-d');
 	$person->staatsbuergerschaft = $_POST['staatsbuergerschaft'];
 	$person->geschlecht = $_POST['geschlecht'];
@@ -979,7 +1191,7 @@ if (isset($_POST['btn_kontakt']) && ! $eingabegesperrt)
 				if (isset($_POST['nation']) && $_POST['nation'] == 'A' && isset($_POST['ort']) && $_POST['ort'] != '' && isset($_POST['plz']) && $_POST['plz'] != '')
 				{
 					$gemeinde_obj = new gemeinde();
-					$gemeinde_obj->getGemeinde($_POST['ort'], '', $_POST['plz']);
+					$gemeinde_obj->getGemeinde(trim($_POST['ort']), '', trim($_POST['plz']));
 					$gemeinde = $gemeinde_obj->result[0]->name;
 				}
 				// gibt es schon eine adresse, wird die erste adresse genommen und upgedatet
@@ -1033,8 +1245,8 @@ if (isset($_POST['btn_kontakt']) && ! $eingabegesperrt)
 				// adresse neu anlegen
 				$adresse->typ = 'h';
 				$adresse->strasse = $_POST['strasse'];
-				$adresse->plz = $_POST['plz'];
-				$adresse->ort = $_POST['ort'];
+				$adresse->plz = trim($_POST['plz']);
+				$adresse->ort = trim($_POST['ort']);
 				$adresse->gemeinde = $_POST['gemeinde'];
 				$adresse->nation = $_POST['nation'];
 				$adresse->insertamum = date('Y-m-d H:i:s');
@@ -1246,7 +1458,7 @@ if (isset($_POST['btn_rechnungskontakt']))
 				if (isset($_POST['re_nation']) && $_POST['re_nation'] == 'A' && isset($_POST['re_ort']) && $_POST['re_ort'] != '' && isset($_POST['re_plz']) && $_POST['re_plz'] != '')
 				{
 					$gemeinde_obj = new gemeinde();
-					$gemeinde_obj->getGemeinde($_POST['re_ort'], '', $_POST['re_plz']);
+					$gemeinde_obj->getGemeinde($_POST['re_ort'], '', trim($_POST['re_plz']));
 					$gemeinde = $gemeinde_obj->result[0]->name;
 				}
 				// gibt es schon eine adresse, wird die erste adresse genommen und upgedatet
@@ -1276,7 +1488,7 @@ if (isset($_POST['btn_rechnungskontakt']))
 				// adresse neu anlegen
 				$adresse->typ = 'r';
 				$adresse->strasse = $_POST['re_strasse'];
-				$adresse->plz = $_POST['re_plz'];
+				$adresse->plz = trim($_POST['re_plz']);
 				$adresse->ort = $_POST['re_ort'];
 				$adresse->gemeinde = $_POST['re_gemeinde'];
 				$adresse->nation = $_POST['re_nation'];
@@ -1410,11 +1622,17 @@ if (isset($_POST['btn_zgv']))
 if (isset($_POST['btn_notiz']))
 {
 	$anmerkung = filter_input(INPUT_POST, 'anmerkung');
+	$prestudent_id = filter_input(INPUT_POST, 'prestudent_id');
 
-	if ($anmerkung != '')
+	// Es soll nur eine Notiz pro Person gespeichert werden
+	$notiz = new notiz;
+	$notiz->getBewerbungstoolNotizen($person_id);
+
+	if ($anmerkung != '' && count($notiz->result) == 0)
 	{
 		$notiz = new notiz();
 		$notiz->person_id = $person_id;
+		$notiz->prestudent_id = $prestudent_id;
 		$notiz->verfasser_uid = '';
 		$notiz->erledigt = false;
 		$notiz->insertvon = 'online_notiz'; // Nicht aendern, da in notiz.class.php nach insertvon abgefragt wird
@@ -1433,6 +1651,97 @@ if (isset($_POST['btn_notiz']))
 			'success' => true,
 			'message' => 'New notiz has been saved'
 		), 'bewerbung', 'bewerbung', null, 'online');
+	}
+}
+// Notizen mit Ajax speichern
+$saveNotiz = filter_input(INPUT_POST, 'saveNotiz', FILTER_VALIDATE_BOOLEAN);
+
+if ($saveNotiz)
+{
+	$person_id = filter_input(INPUT_POST, 'person_id');
+	$prestudent_id = filter_input(INPUT_POST, 'prestudent_id');
+	$anmerkungstext = trim(filter_input(INPUT_POST, 'anmerkungstext'));
+
+	// Es soll nur eine Notiz pro Person und Prestudent gespeichert werden
+	$notiz = new notiz;
+	$notiz->getBewerbungstoolNotizen($person_id, $prestudent_id);
+
+	$prestudentObj = new prestudent($prestudent_id);
+	$studiengang =  new studiengang($prestudentObj->studiengang_kz);
+
+	if ($anmerkungstext != '' && count($notiz->result) == 0)
+	{
+		$notiz = new notiz();
+		$notiz->person_id = $person_id;
+		$notiz->prestudent_id = $prestudent_id;
+		$notiz->verfasser_uid = '';
+		$notiz->erledigt = false;
+		$notiz->insertvon = 'online_notiz'; // Nicht aendern, da in notiz.class.php nach insertvon abgefragt wird
+		$notiz->insertamum = date('c');
+		$notiz->start = date('Y-m-d');
+		$notiz->titel = 'Anmerkung zur Bewerbung ('.$studiengang->kuerzel.')';
+		$notiz->text = htmlspecialchars($anmerkungstext);
+		$notiz->save(true);
+
+		if ($notiz->saveZuordnung())
+		{
+			// Geparkten Logeintrag löschen
+			$log->deleteParked($person_id);
+			// Logeintrag schreiben
+			$log->log($person_id, 'Action', array(
+				'name' => 'New notiz saved',
+				'success' => true,
+				'message' => 'New notiz has been saved'
+			), 'bewerbung', 'bewerbung', null, 'online');
+
+			echo json_encode(array(
+					'status'=>'ok',
+					'insertamum'=>date('d.m.Y', strtotime($notiz->insertamum)),
+					'anmerkung'=>$notiz->text));
+		}
+		else
+		{
+			echo json_encode(array(
+				'status' => 'fehler',
+				'msg' => 'Error saving note for '.$person_id
+			));
+		}
+		exit();
+	}
+}
+
+$save_error_zugangscode = '';
+// Neuen Zugangscode generieren
+if (isset($_POST['btn_new_accesscode']))
+{
+	$save_error_zugangscode = false;
+	$person = new person($person_id);
+	$zugangscode = substr(md5(openssl_random_pseudo_bytes(20)), 0, 15);
+	
+	$person->zugangscode = $zugangscode;
+	$person->updateamum = date('Y-m-d H:i:s');
+	$person->updatevon = 'online';
+	$person->new = false;
+	
+	if(!$person->save())
+	{
+		$message = $p->t('global/fehlerBeimSpeichernDerDaten');
+		$save_error_zugangscode = true;
+	}
+	else
+	{
+		// Geparkten Logeintrag löschen
+		$log->deleteParked($person_id);
+		// Logeintrag schreiben
+		$log->log($person_id,
+			'Action',
+			array('name'=>'New access code','success'=>true,'message'=>'User generated a new access code.'),
+			'bewerbung',
+			'bewerbung',
+			null,
+			'online'
+			);
+		$message = $p->t('bewerbung/erfolgsMessageNeuerZugangscode', array($zugangscode));
 	}
 }
 
@@ -1456,6 +1765,24 @@ if ($addStudiengang)
 			'msg' => $return
 		));
 	exit();
+}
+
+$addStudienplan = filter_input(INPUT_POST, 'addStudienplan', FILTER_VALIDATE_BOOLEAN);
+if ($addStudienplan)
+{
+	$return = BewerbungPersonAddStudienplan(
+		$_POST['studienplan_id'],
+		$person,
+		$_POST['studiensemester']
+		);
+	if ($return === true)
+		echo json_encode(array('status'=>'ok'));
+	else
+		echo json_encode(array(
+			'status' => 'fehler',
+			'msg' => $return
+		));
+		exit();
 }
 
 $getGemeinden = filter_input(INPUT_POST, 'getGemeinden', FILTER_VALIDATE_BOOLEAN);
@@ -1492,7 +1819,7 @@ if ($person->vorname
 {
 	if (defined('BEWERBERTOOL_AUFMERKSAMDURCH_PFLICHT') && BEWERBERTOOL_AUFMERKSAMDURCH_PFLICHT === true
 		&& isset($prestudent->result[0])
-		&& $prestudent->result[0]->aufmerksamdurch_kurzbz == 'k.A.')
+		&& $prestudent->result[0]->aufmerksamdurch_kurzbz == '')
 	{
 		$status_person = false;
 		$status_person_text = $unvollstaendig;
@@ -1653,6 +1980,23 @@ $studiensemester_bewerbungen =  array_unique($studiensemester_bewerbungen);
 
 $dokumente_abzugeben = getAllDokumenteBewerbungstoolForPerson($person_id, $studiensemester_bewerbungen);
 
+// An der FHTW wird das Dokument "Invitation Letter" zum Download angeboten, wenn bei der Person vorhanden
+if (CAMPUS_NAME == 'FH Technikum Wien')
+{
+	$invLetter = new akte();
+	$invLetter->getAkten($person_id, 'InvitLet');
+	if (count($invLetter->result) > 0)
+	{
+		$invLetterObj = new dokument();
+		$invLetterObj->loadDokumenttyp('InvitLet');
+		$invLetterObj->anzahl_akten_vorhanden = 1;
+		$invLetterObj->anzahl_akten_formal_geprueft = 1;
+		$invLetterObj->anzahl_dokumente_akzeptiert = 1;
+		$invLetterObj->anzahl_akten_nachgereicht = 0;
+		array_push($dokumente_abzugeben, $invLetterObj);
+	}
+}
+
 // $dokumente_abzugeben = new dokument();
 // $dokumente_abzugeben->getAllDokumenteForPerson($person_id, true);
 
@@ -1771,9 +2115,29 @@ if (! $prestudent->getPrestudenten($person_id))
 
 $status_reihungstest = false;
 $status_reihungstest_text = $unvollstaendig;
+$nextWinterSemester = new studiensemester();
+$nextWinterSemester->getNextStudiensemester('WS');
+$nextSommerSemester = new studiensemester();
+$nextSommerSemester->getNextStudiensemester('SS');
+$studienplanReihungstest = getPrioStudienplanForReihungstest($person_id, $nextWinterSemester->studiensemester_kurzbz);
 if (! defined('BEWERBERTOOL_REIHUNGSTEST_ANZEIGEN') || BEWERBERTOOL_REIHUNGSTEST_ANZEIGEN == true)
 {
-	foreach ($prestudent->result as $row)
+	$angemeldeteReihungstests = new reihungstest();
+	$angemeldeteReihungstests->getReihungstestPerson($person_id, $nextWinterSemester->studiensemester_kurzbz);
+	$angemeldeteReihungstests->getReihungstestPerson($person_id, $nextSommerSemester->studiensemester_kurzbz);
+
+	$reihungstestTermine = getReihungstestsForOnlinebewerbung($studienplanReihungstest, $nextWinterSemester->studiensemester_kurzbz);
+	if (count($angemeldeteReihungstests->result) > 0)
+	{
+		$status_reihungstest = true;
+		$status_reihungstest_text = $vollstaendig;
+	}
+	elseif ($reihungstestTermine != '')
+	{
+		$status_reihungstest = false;
+		$status_reihungstest_text = $unvollstaendig;
+	}
+	/*foreach ($prestudent->result as $row)
 	{
 		if ($row->reihungstest_id != '')
 		{
@@ -1801,7 +2165,7 @@ if (! defined('BEWERBERTOOL_REIHUNGSTEST_ANZEIGEN') || BEWERBERTOOL_REIHUNGSTEST
 				$status_reihungstest_text = $vollstaendig;
 			}
 		}
-	}
+	}*/
 }
 else
 {
@@ -1816,6 +2180,7 @@ else
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<title><?php echo $p->t('bewerbung/bewerbung') ?></title>
 		<link rel="stylesheet" type="text/css" href="../../../vendor/twbs/bootstrap/dist/css/bootstrap.min.css">
+		<link rel="stylesheet" type="text/css" href="../include/css/bewerbung.css">
 		<script type="text/javascript" src="../../../vendor/jquery/jqueryV1/jquery-1.12.4.min.js"></script>
 		<script type="text/javascript" src="../../../vendor/twbs/bootstrap/dist/js/bootstrap.min.js"></script>
 		<script src="../include/js/bewerbung.js"></script>
@@ -1830,6 +2195,11 @@ else
 				rest = max_length - length;
 				document.getElementById('countdown_'+id).innerHTML = rest;
 			};
+
+			function changeSprache(sprache)
+			{
+				window.location.href = "<?php echo $_SERVER['PHP_SELF'].'?active='.$active ?>&sprache=" + sprache;
+			}
 
 			window.setTimeout(function() {
 				$("#success-alert").fadeTo(500, 0).slideUp(500, function(){
@@ -1849,72 +2219,13 @@ else
 			$(document).ready(function(){
 				$('[data-toggle="popover"]').popover({html:true});
 				$('[data-toggle="tooltip"]').tooltip();
+				$('#sprache-dropdown-content a').on('click', function() 
+				{
+					var sprache = $(this).attr('data-sprache');
+					changeSprache(sprache);
+				});
 			});
 		</script>
-		<style type="text/css">
-		dokument a:hover
-		{
-			text-decoration:none;
-		}
-		.glyphicon
-		{
-			font-size: 16px;
-		}
-		.navbar-default .navbar-nav>.active>a,
-		.navbar-default .navbar-nav>.active>a:focus,
-		.navbar-default .navbar-nav>.active>a:hover
-		{
-			font-weight: bold
-		}
-		.popover
-		{
-			max-width: 500px;
-		}
-		.list-unstyled li
-		{
-			margin-bottom: 10px;
-		}
-		.list-unstyled
-		{
-			margin-top: 10px;
-		}
-		.statusverlauf_top
-		{
-			max-height: 20px;
-			overflow: hidden;
-			text-overflow: ellipsis;
-			content: "";
-			position: relative;
-		}
-		.statusverlauf_top:before
-		{
-			content: '';
-			width: 100%;
-			height: 100%;
-			position: absolute;
-			left: 0;
-			top: 0;
-			background: linear-gradient(white , transparent);
-		}
-		.statusverlauf_bottom
-		{
-			max-height: 20px;
-			overflow: hidden;
-			text-overflow: ellipsis;
-			content: "";
-			position: relative;
-		}
-		.statusverlauf_bottom:before
-		{
-			content: '';
-			width: 100%;
-			height: 100%;
-			position: absolute;
-			left: 0;
-			top: 0;
-			background: linear-gradient(transparent , white );
-		}
-		</style>
 	</head>
 	<body class="bewerbung">
 		<?php
@@ -1934,11 +2245,20 @@ else
 
 				<div class="collapse navbar-collapse" id="bewerber-navigation">
 					<ul class="nav navbar-nav">
+						<?php if(defined('BEWERBERTOOL_UEBERSICHT_ANZEIGEN') && BEWERBERTOOL_UEBERSICHT_ANZEIGEN): ?>
 						<li>
-							<a href="#allgemein" aria-controls="allgemein" role="tab" data-toggle="tab">
-								<?php echo $p->t('bewerbung/menuAllgemein') ?> <br> &nbsp;
+							<a href="#uebersicht" aria-controls="uebersicht" role="tab" data-toggle="tab">
+								<?php echo $p->t('bewerbung/menuUebersicht') ?><br> &nbsp;
 							</a>
 						</li>
+						<?php endif; ?>
+						<?php if(!defined('BEWERBERTOOL_ALLGEMEIN_ANZEIGEN') || BEWERBERTOOL_ALLGEMEIN_ANZEIGEN): ?>
+						<li>
+							<a href="#allgemein" aria-controls="allgemein" role="tab" data-toggle="tab">
+								<?php echo $p->t('bewerbung/menuAllgemein') ?><br> &nbsp;
+							</a>
+						</li>
+						<?php endif; ?>
 						<li>
 							<a href="#daten" aria-controls="daten" role="tab" data-toggle="tab" <?php echo ($status_person_text == $unvollstaendig?'style="background-color: #F2DEDE !important"':'style="background-color: #DFF0D8 !important"');?>>
 								<?php echo $p->t('bewerbung/menuPersDaten') ?> <br> <?php echo $status_person_text;?>
@@ -2051,23 +2371,72 @@ else
 						<?php endif; ?>
 
 						<?php
-						if(!defined('BEWERBERTOOL_REIHUNGSTEST_ANZEIGEN') || BEWERBERTOOL_REIHUNGSTEST_ANZEIGEN):
+						
+						$display = '';
+						if(!defined('BEWERBERTOOL_REIHUNGSTEST_ANZEIGEN') || BEWERBERTOOL_REIHUNGSTEST_ANZEIGEN)
+						{
+							// An der FHTW wird der Punkt "Reihungstest" erst angezeigt, wenn der Status einer Bewerbung bestätigt wurde
+							if (CAMPUS_NAME == 'FH Technikum Wien')
+							{
+								if (check_person_statusbestaetigt($person_id, 'Interessent', $nextWinterSemester->studiensemester_kurzbz))
+								{
+									$display = '';
+								}
+								else
+								{
+									$display = 'style="display: none"';
+								}
+							}
+						} 
+						echo '	<li id="tab_aufnahme" '.$display.'>
+									<a href="#aufnahme" aria-controls="aufnahme" role="tab" data-toggle="tab" '.($status_reihungstest_text == $unvollstaendig ? 'style="background-color: #F2DEDE !important"': ($status_reihungstest_text == $teilvollstaendig ? 'style="background-color: #FCF8E3 !important"' : 'style="background-color: #DFF0D8 !important"')).'>
+										'.$p->t('bewerbung/menuReihungstest').'<br>'.$status_reihungstest_text.'
+									</a>
+								</li>';
+						
 						?>
-						<li>
-							<a href="#aufnahme" aria-controls="aufnahme" role="tab" data-toggle="tab" <?php echo ($status_reihungstest_text == $unvollstaendig?'style="background-color: #F2DEDE !important"':'style="background-color: #DFF0D8 !important"');?>>
-								<?php echo $p->t('bewerbung/menuReihungstest') ?> <br> <?php echo $status_reihungstest_text;?>
-							</a>
-						</li>
-						<?php endif; ?>
+						<?php if(!defined('BEWERBERTOOL_ABSCHICKEN_ANZEIGEN') || BEWERBERTOOL_ABSCHICKEN_ANZEIGEN):	?>
 						<li>
 							<a href="#abschicken" aria-controls="abschicken" role="tab" data-toggle="tab" <?php echo ($status_abschicken_text == $unvollstaendig ? 'style="background-color: #F2DEDE !important"': ($status_abschicken_text == $teilvollstaendig ? 'style="background-color: #FCF8E3 !important"' : 'style="background-color: #DFF0D8 !important"'));?>>
 								<?php echo $p->t('bewerbung/menuAbschließen') ?> <br> <?php echo $status_abschicken_text;?>
 							</a>
 						</li>
+						<?php endif; ?>
+						<?php if(defined('BEWERBERTOOL_SICHERHEIT_ANZEIGEN') && BEWERBERTOOL_SICHERHEIT_ANZEIGEN):	?>
+						<li>
+							<a href="#sicherheit" aria-controls="sicherheit" role="tab" data-toggle="tab">
+								<?php echo $p->t('bewerbung/menuSicherheit') ?> <br> &nbsp;
+							</a>
+						</li>
+						<?php endif; ?>
 						<li>
 							<a href="bewerbung.php?logout=true">
 								<?php echo $p->t('bewerbung/logout') ?> <br> <span class="glyphicon glyphicon-log-out"></span>
 							</a>
+						</li>
+						<?php
+							$spracheSelect = new sprache();
+							$spracheSelect->getAll(true);
+						?>
+						<li>
+							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+						</li>
+						<li>
+							<div class="sprache-dropdown">
+								<button class="dropbtn">
+									<?php echo $spracheSelect->getBezeichnung(getSprache(), getSprache()) ?>
+									 <br> <span class="glyphicon glyphicon-triangle-bottom"></span>
+								</button>
+								<div id="sprache-dropdown-content" class="sprache-dropdown-content">
+									<?php foreach($spracheSelect->result as $row): ?>
+										<a href="#" tabindex="-1" data-sprache="<?php echo $row->sprache ?>">
+											<?php echo $row->bezeichnung_arr[getSprache()] ?>
+										</a>
+									<?php endforeach; ?>
+								</div>
+							</div>
+							
 						</li>
 					</ul>
 				</div>
@@ -2076,29 +2445,8 @@ else
 		<div class="container">
 			<div class="tab-content">
 				<?php
-				$tabs = array(
-					'allgemein',
-					'daten',
-					'kontakt'
-				);
-				if(!defined('BEWERBERTOOL_DOKUMENTE_ANZEIGEN') || BEWERBERTOOL_DOKUMENTE_ANZEIGEN)
-				{
-					$tabs[]='dokumente';
-				}
-				if(defined('BEWERBERTOOL_AUSBILDUNG_ANZEIGEN') && BEWERBERTOOL_AUSBILDUNG_ANZEIGEN)
-					$tabs[]='ausbildung';
-				if(!defined('BEWERBERTOOL_ZGV_ANZEIGEN') || BEWERBERTOOL_ZGV_ANZEIGEN)
-					$tabs[]='zgv';
-				if(!defined('BEWERBERTOOL_ZAHLUNGEN_ANZEIGEN') || BEWERBERTOOL_ZAHLUNGEN_ANZEIGEN)
-					$tabs[]='zahlungen';
-				if(defined('BEWERBERTOOL_RECHNUNGSKONTAKT_ANZEIGEN') && BEWERBERTOOL_RECHNUNGSKONTAKT_ANZEIGEN)
-					$tabs[]='rechnungskontakt';
-				if(!defined('BEWERBERTOOL_REIHUNGSTEST_ANZEIGEN') || BEWERBERTOOL_REIHUNGSTEST_ANZEIGEN)
-					$tabs[]='aufnahme';
-
-				$tabs[]='abschicken';
-
-				foreach($tabs as $tab)
+				// Tabs nach Index sortieren und in dieser Reihenfolge laden
+				foreach($tabLadefolge as $tab)
 				{
 					require('views/' . $tab . '.php');
 				}
@@ -2120,11 +2468,24 @@ function sendBewerbung($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz,
 	$person->load($person_id);
 
 	$studienplan_bezeichnung = '';
+	$studiengangsbezeichnung = '';
+
 	if ($studienplan_id != '')
 	{
 		$studienplan = new studienplan();
 		$studienplan->loadStudienplan($studienplan_id);
 		$studienplan_bezeichnung = $studienplan->bezeichnung;
+
+		$studienordnung = new studienordnung();
+		$studienordnung->getStudienordnungFromStudienplan($studienplan_id);
+		if ($sprache == 'English')
+		{
+			$studiengangsbezeichnung = $studienordnung->studiengangbezeichnung_englisch;
+		}
+		else
+		{
+			$studiengangsbezeichnung = $studienordnung->studiengangbezeichnung;
+		}
 	}
 
 	$prestudent = new prestudent();
@@ -2134,6 +2495,11 @@ function sendBewerbung($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz,
 	$studiengang = new studiengang();
 	if (! $studiengang->load($prestudent->studiengang_kz))
 		die($p->t('global/fehlerBeimLadenDesDatensatzes'));
+
+	if ($studiengangsbezeichnung == '')
+	{
+		$studiengangsbezeichnung = $studiengang->bezeichnung_arr[$sprache];
+	}
 
 	$typ = new studiengang();
 	$typ->getStudiengangTyp($studiengang->typ);
@@ -2175,30 +2541,32 @@ function sendBewerbung($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz,
 				$anmerkungen .= '- ' . htmlspecialchars($note->text);
 			}
 		}
-
-		$email = $p->t('bewerbung/emailBodyStart');
+		$sanchoMailHeader = base64_encode(file_get_contents(APP_ROOT . 'skin/images/sancho/sancho_header_min_bw.jpg'));
+		$sanchoMailFooter = base64_encode(file_get_contents(APP_ROOT . 'skin/images/sancho/sancho_footer_min_bw.jpg'));
+		$email = $p->t('bewerbung/emailBodyStart', array(VILESCI_ROOT . 'vilesci/personen/personendetails.php?id='.$person_id, $sanchoMailHeader));
+		
 		// Wenn MAIL_DEBUG aktiv ist, zeige auch den Empfänger an
 		if(defined('MAIL_DEBUG') && MAIL_DEBUG != '')
 			$email .= '<br><br>Empfänger: '.$empfaenger.'<br><br>';
 		$email .= '<br><table style="font-size:small"><tbody>';
-		$email .= '<tr><td><b>' . $p->t('global/studiengang') . '</b></td><td>' . $typ->bezeichnung . ' ' . $studiengang->bezeichnung . ($orgform_kurzbz != '' ? ' (' . $orgform_kurzbz . ')' : '') . '</td></tr>';
+		$email .= '<tr><td><b>' . $p->t('global/studiengang') . '</b></td><td>' . $typ->bezeichnung . ' ' . $studiengangsbezeichnung . ($orgform_kurzbz != '' ? ' (' . $orgform_kurzbz . ')' : '') . '</td></tr>';
 		$email .= '<tr><td><b>' . $p->t('global/studiensemester') . '</b></td><td>' . $studiensemester_kurzbz . '</td></tr>';
 		if ($studienplan_bezeichnung != '')
 			$email.= '<tr><td><b>'.$p->t('studienplan/studienplan').'</b></td><td>'.$studienplan_bezeichnung.'</td></tr>';
 		else
 			$email.= '<tr><td><b>'.$p->t('studienplan/studienplan').'</b></td><td><span style="color: red">Es konnte kein passender Studienplan ermittelt werden</span></td></tr>';
 		$email.= '<tr><td><b>'.$p->t('global/geschlecht').'</b></td><td>'.($person->geschlecht=='m'?$p->t('bewerbung/maennlich'):$p->t('bewerbung/weiblich')).'</td></tr>';
-		$email.= '<tr><td><b>'.$p->t('global/titel').'</b></td><td>'.$person->titelpre.'</td></tr>';
-		$email.= '<tr><td><b>'.$p->t('global/postnomen').'</b></td><td>'.$person->titelpost.'</td></tr>';
+		//$email.= '<tr><td><b>'.$p->t('global/titel').'</b></td><td>'.$person->titelpre.'</td></tr>';
+		//$email.= '<tr><td><b>'.$p->t('global/postnomen').'</b></td><td>'.$person->titelpost.'</td></tr>';
 		$email.= '<tr><td><b>'.$p->t('global/vorname').'</b></td><td>'.$person->vorname.'</td></tr>';
 		$email.= '<tr><td><b>'.$p->t('global/nachname').'</b></td><td>'.$person->nachname.'</td></tr>';
-		$email.= '<tr><td><b>'.$p->t('global/geburtsdatum').'</b></td><td>'.date('d.m.Y', strtotime($person->gebdatum)).'</td></tr>';
-		$email.= '<tr><td><b>'.$p->t('global/adresse').'</b></td><td>'.$strasse.'</td></tr>';
-		$email.= '<tr><td><b>'.$p->t('global/plz').'</b></td><td>'.$plz.'</td></tr>';
-		$email.= '<tr><td><b>'.$p->t('global/ort').'</b></td><td>'.$ort.'</td></tr>';
-		$email.= '<tr><td><b>'.$p->t('incoming/nation').'</b></td><td>'.$nation->langtext.'</td></tr>';
-		$email.= '<tr><td><b>'.$p->t('global/emailAdresse').'</b></td><td>'.$mailadresse.'</td></tr>';
-		$email.= '<tr><td><b>'.$p->t('global/telefon').'</b></td><td>'.$telefon.'</td></tr>';
+		//$email.= '<tr><td><b>'.$p->t('global/geburtsdatum').'</b></td><td>'.date('d.m.Y', strtotime($person->gebdatum)).'</td></tr>';
+		//$email.= '<tr><td><b>'.$p->t('global/adresse').'</b></td><td>'.$strasse.'</td></tr>';
+		//$email.= '<tr><td><b>'.$p->t('global/plz').'</b></td><td>'.$plz.'</td></tr>';
+		//$email.= '<tr><td><b>'.$p->t('global/ort').'</b></td><td>'.$ort.'</td></tr>';
+		//$email.= '<tr><td><b>'.$p->t('incoming/nation').'</b></td><td>'.$nation->langtext.'</td></tr>';
+		$email.= '<tr><td><b>'.$p->t('global/emailAdresse').'</b></td><td><a href="mailto:'.$mailadresse.'">'.$mailadresse.'</a></td></tr>';
+		//$email.= '<tr><td><b>'.$p->t('global/telefon').'</b></td><td>'.$telefon.'</td></tr>';
 		$email.= '<tr><td style="vertical-align:top"><b>'.$p->t('global/anmerkungen').'</b></td><td>'.$anmerkungen.'</td></tr>';
 		$email.= '<tr><td><b>'.$p->t('bewerbung/prestudentID').'</b></td><td>'.$prestudent_id.'</td></tr>';
 		$email.= '<tr><td style="vertical-align:top"><b>'.$p->t('tools/dokumente').'</b></td><td>';
@@ -2214,7 +2582,7 @@ function sendBewerbung($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz,
 				if ($row->nachgereicht == true)
 					$email .= '- ' . $dokument->bezeichnung_mehrsprachig[DEFAULT_LANGUAGE] . ' -> ' . $p->t('bewerbung/dokumentWirdNachgereicht') . '<br>';
 				else
-					$email .= '- <a href="' . APP_ROOT . 'cms/dms.php?id=' . $row->dms_id . '">' . $dokument->bezeichnung_mehrsprachig[DEFAULT_LANGUAGE] . '_' . $row->bezeichnung . '</a><br>';
+					$email .= '- <a href="' . VILESCI_ROOT . '/content/akte.php?akte_id=' . $row->akte_id . '">' . $dokument->bezeichnung_mehrsprachig[DEFAULT_LANGUAGE] . '</a><br>';
 			}
 		}
 		$email .= '</td></tr></tbody></table>';
@@ -2227,23 +2595,26 @@ function sendBewerbung($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz,
 					</td></tr>
 					</table>';
 		$email .= '<br>';
-		$email .= $p->t('bewerbung/emailBodyEnde');
+		$email .= $p->t('bewerbung/emailBodyEnde', array($sanchoMailFooter));
 	}
 	else
 	{
-		$email = $p->t('bewerbung/emailBodyStart');
+		$sanchoMailHeader = base64_encode(file_get_contents(APP_ROOT . 'skin/images/sancho/sancho_header_min_bw.jpg'));
+		$sanchoMailFooter = base64_encode(file_get_contents(APP_ROOT . 'skin/images/sancho/sancho_footer_min_bw.jpg'));
+		$email = $p->t('bewerbung/emailBodyStart', array(VILESCI_ROOT . 'vilesci/personen/personendetails.php?id='.$person_id, $sanchoMailHeader));
 		$email .= '<br>';
-		$email .= $p->t('global/studiengang') . ': ' . $typ->bezeichnung . ' ' . $studiengang->bezeichnung . ($orgform_kurzbz != '' ? ' (' . $orgform_kurzbz . ')' : '') . ' <br>';
+		$email .= $p->t('global/studiengang') . ': ' . $typ->bezeichnung . ' ' . $studiengangsbezeichnung . ($orgform_kurzbz != '' ? ' (' . $orgform_kurzbz . ')' : '') . ' <br>';
 		$email .= $p->t('global/studiensemester') . ': ' . $studiensemester_kurzbz . '<br>';
 		$email .= $p->t('global/name') . ': ' . $person->vorname . ' ' . $person->nachname . '<br>';
 		$email .= $p->t('bewerbung/prestudentID') . ': ' . $prestudent_id . '<br><br>';
-		$email .= $p->t('bewerbung/emailBodyEnde');
+		$email .= $p->t('bewerbung/emailBodyEnde', array($sanchoMailFooter));
 	}
 
 	// An der FHTW werden alle Bachelor-Studiengänge vom Infocenter abgearbeitet und deshalb keine Mail verschickt
+	// Die FIT-Studiengänge erhalten auch kein Mail
 	if (CAMPUS_NAME == 'FH Technikum Wien')
 	{
-		if ($studiengang->typ != 'b')
+		if ($studiengang->typ != 'b' && $studiengang->studiengang_kz != 10021 && $studiengang->studiengang_kz != 10027)
 		{
 			$email = wordwrap($email, 70); // Bricht den Code um, da es sonst zu Anzeigefehlern im Mail kommen kann
 
@@ -2273,8 +2644,21 @@ function sendBewerbung($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz,
 			$anrede = $p->t('bewerbung/anredeWeiblich');
 
 		$mail_bewerber = new mail($mailadresse, 'no-reply', $p->t('bewerbung/erfolgreichBeworbenMailBetreff'), 'Bitte sehen Sie sich die Nachricht in HTML Sicht an, um den Inhalt vollständig darzustellen.');
-		$email_bewerber = $p->t('bewerbung/erfolgreichBeworbenMail', array($person->vorname, $person->nachname, $anrede, $studiengang->bezeichnung));
-		$mail_bewerber->setHTMLContent($email_bewerber);
+		// Unterschiedliche Ansprechpersonen für Bachelor und Master
+		$sanchoMailHeader = base64_encode(file_get_contents(APP_ROOT . 'skin/images/sancho/sancho_header_DEFAULT.jpg'));
+		$sanchoMailFooter = base64_encode(file_get_contents(APP_ROOT . 'skin/images/sancho/sancho_footer.jpg'));
+		if ($studiengang->typ == 'b')
+		{
+			$email_bewerber_content = $p->t('bewerbung/erfolgreichBeworbenMailBachelor', array($person->vorname, $person->nachname, $anrede, $studiengangsbezeichnung, $sanchoMailHeader, $sanchoMailFooter));
+		}
+		else
+		{
+			$email_bewerber_content = $p->t('bewerbung/erfolgreichBeworbenMail', array($person->vorname, $person->nachname, $anrede, $studiengangsbezeichnung, $empfaenger, $sanchoMailHeader, $sanchoMailFooter));
+		}
+		
+		$mail_bewerber->setHTMLContent($email_bewerber_content);
+		$mail_bewerber->addEmbeddedImage(APP_ROOT . 'skin/images/sancho/sancho_header_DEFAULT.jpg', 'image/jpg', 'header_image', 'sancho_header');
+		$mail_bewerber->addEmbeddedImage(APP_ROOT . 'skin/images/sancho/sancho_footer.jpg', 'image/jpg', 'footer_image', 'sancho_footer');
 		if (! $mail_bewerber->send())
 			return false;
 	}
@@ -2282,7 +2666,7 @@ function sendBewerbung($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz,
 	// An der FHTW werden alle Bachelor-Studiengänge vom Infocenter abgearbeitet und deshalb keine Mail verschickt
 	if (CAMPUS_NAME == 'FH Technikum Wien')
 	{
-		if ($studiengang->typ != 'b')
+		if ($studiengang->typ != 'b' && $studiengang->studiengang_kz != 10021 && $studiengang->studiengang_kz != 10027)
 		{
 			if (! $mail->send())
 				return false;
@@ -2374,7 +2758,7 @@ function sendAddStudiengang($prestudent_id, $studiensemester_kurzbz, $orgform_ku
 	$email .= '<tr><td><b>' . $p->t('bewerbung/prestudentID') . '</b></td><td>' . $prestudent_id . '</td></tr>';
 	$email .= '</td></tr></tbody></table>';
 	$email .= '<br>';
-	$email .= $p->t('bewerbung/emailBodyEnde');
+	$email .= $p->t('bewerbung/emailBodyEnde', array(null));
 
 	$email = wordwrap($email, 70); // Bricht den Code um, da es sonst zu Anzeigefehlern im Mail kommen kann
 

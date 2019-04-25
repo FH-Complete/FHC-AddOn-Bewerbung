@@ -107,6 +107,7 @@ SELECT DISTINCT
 	tbl_dokument.bezeichnung AS dokumentbezeichnung,
 	tbl_akte.bezeichnung AS dateiname,
 	tbl_akte.titel,
+	tbl_akte.akte_id,
 	dms_id,
 	nachgereicht,
 	tbl_akte.anmerkung
@@ -144,6 +145,7 @@ SELECT DISTINCT
 	tbl_dokument.bezeichnung AS dokumentbezeichnung,
 	tbl_akte.bezeichnung AS dateiname,
 	tbl_akte.titel,
+	tbl_akte.akte_id,
 	dms_id,
 	nachgereicht,
 	tbl_akte.anmerkung 
@@ -162,9 +164,9 @@ WHERE
 AND (tbl_akte.updateamum >= (SELECT (CURRENT_DATE -1||' '||'03:00:00')::timestamp))
 AND tbl_prestudentstatus.bestaetigtam IS NOT NULL
 AND nachgereicht = FALSE
-AND nachgereicht_am IS NOT NULL
+/*AND nachgereicht_am IS NOT NULL*/
 AND (inhalt IS NOT NULL OR dms_id IS NOT NULL)
-AND studiensemester_kurzbz IN ('WS2018')
+AND studiensemester_kurzbz IN (".$db->implode4SQL($studiensemester_arr).")
 AND (SELECT get_rolle_prestudent(tbl_prestudent.prestudent_id, NULL)) NOT IN ('Abgewiesener', 'Abbrecher', 'Absolvent')
 
 ORDER BY studiengang_kz, orgform_kurzbz, nachname, vorname, person_id";
@@ -245,8 +247,7 @@ if($result = $db->db_query($qry))
 	
 				$person = '';
 				$dokument = '';
-				$mailcontent = wordwrap($mailcontent,70);
-				
+
 				$studiengang = new studiengang();
 				if(!$studiengang->load($stg_kz))
 					die($p->t('global/fehlerBeimLadenDesDatensatzes'));
@@ -262,6 +263,23 @@ if($result = $db->db_query($qry))
 				//Pfuschloesung fur BIF Dual
 				if (CAMPUS_NAME=='FH Technikum Wien' && $stg_kz == 257 && $orgform == 'DUA')
 					$empfaenger = 'info.bid@technikum-wien.at';
+
+				if ($empfaenger == '')
+				{
+					if (defined('MAIL_ADMIN') && MAIL_ADMIN != '')
+					{
+						$empfaenger = MAIL_ADMIN;
+						$mailcontentWithWarning = '<p style="color: red; font-weight: bold; padding: 10px 0">Kein Empfänger für diese Mail gefunden</p>';
+						$mailcontentWithWarning .= $mailcontent;
+						$mailcontent = $mailcontentWithWarning;
+					}
+					else
+					{
+						continue;
+					}
+				}
+
+				$mailcontent = wordwrap($mailcontent,70);
 
 				$mail = new mail($empfaenger, 'no-reply', 'Neue Dokumentenuploads '.$bezeichnung.' '.$orgform, 'Bitte sehen Sie sich die Nachricht in HTML Sicht an, um den Inhalt vollständig darzustellen.');
 				//$mail->setBCCRecievers('kindlm@technikum-wien.at');
@@ -303,16 +321,16 @@ if($result = $db->db_query($qry))
 				else
 				{
 					if ($row->dokument_kurzbz == 'Lichtbil')
-						$dokumentenliste .= '<a href="'.APP_ROOT.'cis/public/bild.php?src=person&person_id='.$row->person_id.'">'.$row->dokumentbezeichnung.' ['.$dateiname.']</a><br>';
+						$dokumentenliste .= '<a href="'.APP_ROOT.'content/bild.php?src=person&person_id='.$row->person_id.'">'.$row->dokumentbezeichnung.' ['.$dateiname.']</a><br>';
 					else 
-						$dokumentenliste .= '<a href="'.APP_ROOT.'cms/dms.php?id='.$row->dms_id.'">'.$row->dokumentbezeichnung.' ['.$dateiname.']</a><br>';
+						$dokumentenliste .= '<a href="'.APP_ROOT.'content/akte.php?akte_id='.$row->akte_id.'">'.$row->dokumentbezeichnung.' ['.$dateiname.']</a><br>';
 				}
 				
 				$dokument = $row->dokument_kurzbz;
 			}
 			
 			$kontakt = new kontakt();
-			$kontakt->load_persKontakttyp($row->person_id, 'email', 'updateamum DESC, insertamum DESC NULLS LAST');
+			$kontakt->load_persKontakttyp($row->person_id, 'email', 'zustellung DESC, updateamum DESC, insertamum DESC NULLS LAST');
 			$mailadresse = isset($kontakt->result[0]->kontakt)?$kontakt->result[0]->kontakt:'';
 			
 			$zeile = '<tr class="hover">';
@@ -333,7 +351,6 @@ if($result = $db->db_query($qry))
 		}
 		$mailcontent .= $zeile;
 		$mailcontent .= '</tbody></table>';
-		$mailcontent = wordwrap($mailcontent,70);
 			
 		$studiengang = new studiengang();
 		if(!$studiengang->load($stg_kz))
@@ -350,6 +367,23 @@ if($result = $db->db_query($qry))
 		//Pfuschloesung fur BIF Dual
 		if (CAMPUS_NAME=='FH Technikum Wien' && $stg_kz == 257 && $orgform == 'DUA')
 			$empfaenger = 'info.bid@technikum-wien.at';
+
+		if ($empfaenger == '')
+		{
+			if (defined('MAIL_ADMIN') && MAIL_ADMIN != '')
+			{
+				$empfaenger = MAIL_ADMIN;
+				$mailcontentWithWarning = '<p style="color: red; font-weight: bold; padding: 10px 0">Kein Empfänger für diese Mail gefunden</p>';
+				$mailcontentWithWarning .= $mailcontent;
+				$mailcontent = $mailcontentWithWarning;
+			}
+			else
+			{
+				exit();
+			}
+		}
+
+		$mailcontent = wordwrap($mailcontent,70);
 
 		$mail = new mail($empfaenger, 'no-reply', 'Neue Dokumentenuploads '.$bezeichnung.' '.$orgform, 'Bitte sehen Sie sich die Nachricht in HTML Sicht an, um den Inhalt vollständig darzustellen.');
 		//$mail->setBCCRecievers('kindlm@technikum-wien.at');
