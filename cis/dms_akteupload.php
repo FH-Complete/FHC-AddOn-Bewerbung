@@ -32,6 +32,7 @@ require_once ('../../../include/fotostatus.class.php');
 require_once ('../../../include/studiensemester.class.php');
 require_once ('../../../include/nation.class.php');
 require_once ('../../../include/personlog.class.php');
+require_once ('../../../include/studiengang.class.php');
 require_once ('../bewerbung.config.inc.php');
 require_once ('../include/functions.inc.php');
 
@@ -70,9 +71,33 @@ $error = '';
 $message = '';
 $dokumenttyp_upload = '';
 $detailDiv = '';
+$zgv_nation = '';
 
 $nation = new nation();
 $nation->getAll($ohnesperre = true);
+
+// Ausstellungsnation vorausfüllen, wenn in ZGV Nation vorhanden
+// Prestudenten laden
+$prestudent = new prestudent();
+$prestudent->getPrestudenten($person_id);
+
+foreach ($prestudent->result as $prest)
+{
+	$studiengang = new studiengang($prest->studiengang_kz);
+	if ($studiengang->typ == 'b' && $prest->zgvnation != '')
+	{
+		$zgv_nation = $prest->zgvnation;
+	}
+	elseif ($studiengang->typ == 'm' && $prest->zgvmanation != '')
+	{
+		$zgv_nation = $prest->zgvmanation;
+	}
+}
+
+if ($ausstellungsnation == '' && $zgv_nation != '')
+{
+	$ausstellungsnation = $zgv_nation;
+}
 
 $PHP_SELF = $_SERVER['PHP_SELF']; ?>
 <!DOCTYPE HTML>
@@ -648,14 +673,15 @@ $dokumente_abzugeben = getAllDokumenteBewerbungstoolForPerson($person_id);
 // Sortiert die Dokumente nach Sprache alphabetisch nach bezeichnung_mehrsprachig
 // Pflichtdokumente werden als erstes ausgegeben
 function sortDokumenteAbzugeben($a, $b)
-{	
+{
+	$c = 0;
 	if (CAMPUS_NAME == 'FH Technikum Wien')
 	{
-		if ($a->dokument_kurzbz == 'SprachB2')
+		if ($a->dokument_kurzbz == 'SprachB2' || $b->dokument_kurzbz == 'SprachB2')
 		{
-			$c = $a->pflicht - $b->pflicht;
+			//$c = strcmp(strtolower($a->bezeichnung_mehrsprachig[getSprache()]), strtolower($b->bezeichnung_mehrsprachig[getSprache()]));
 		}
-		else 
+		else
 		{
 			$c = $b->pflicht - $a->pflicht;
 		}
