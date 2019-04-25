@@ -232,8 +232,20 @@ else
 			$stgBeschriftungPanel .= '</i></p>';
 		}
 		
+		// Nation für die Anzeige der richtigen Bewerbungsfrist laden
+		if ($row->typ == 'm')
+		{
+			$zgv_nation = $row->zgvmanation;
+		}
+		else
+		{
+			$zgv_nation = $row->zgvnation;
+		}
+
+		$nation = new nation($zgv_nation);
+
 		// Bewerbungsfristen laden
-		$bewerbungszeitraum = getBewerbungszeitraum($stg->studiengang_kz, $prestudent_status->studiensemester_kurzbz, $prestudent_status->studienplan_id);
+		$bewerbungszeitraum = getBewerbungszeitraum($stg->studiengang_kz, $prestudent_status->studiensemester_kurzbz, $prestudent_status->studienplan_id, $nation->nationengruppe_kurzbz);
 		$fristAbgelaufen = $bewerbungszeitraum['frist_abgelaufen'];
 		
 		echo '	<div class="panel panel-default" id="panel_' . $row->prestudent_id . '" data-prestudent_id="' . $row->prestudent_id . '">
@@ -383,19 +395,59 @@ else
 										</div>
 										<div class="form-group">
 											<label for="status" class="col-sm-3 col-md-5 text-right">' . $p->t('bewerbung/status') . ':</label>
-											<div class="col-sm-9 col-md-7" id="status">' . $prestatus_help . ' (' . $prestudent_status->studiensemester_kurzbz . ')</div>
+											<div class="col-sm-9 col-md-7" id="status">'.$p->t('bewerbung/StatusSeitDatum', array($prestatus_help, $datum->formatDatum($prestudent_status->datum, 'd.m.Y'))).'</div>
 										</div>
-										<div class="form-group">
+										<!--<div class="form-group">
 											<label for="datum" class="col-sm-3 col-md-5 text-right">' . $p->t('global/datum') . ':</label>
 											<div class="col-sm-9 col-md-7" id="datum">' . $datum->formatDatum($prestudent_status->datum, 'd.m.Y') . '</div>
-										</div>
+										</div>-->
 										<div class="form-group">
-											<label for="zeitraum" class="col-sm-3 col-md-5 text-right">' . $p->t('bewerbung/bewerbungszeitraum') . ':
+											<label for="zeitraum" class="col-sm-3 col-md-5 text-right">' . $p->t('bewerbung/bewerbungszeitraumFuer', array(($sprache == 'English'?$nation->engltext:$nation->langtext))) . ':
 											</label>
 											<div class="col-sm-9 col-md-7" id="zeitraum">' . $bewerbungszeitraum['bewerbungszeitraum'] . '</div>
 										</div>
-									</form>
-								</div>
+										<div class="form-group">
+											<label for="notiz" class="col-sm-3 col-md-5 text-right">'.$p->t('bewerbung/anmerkung').':</label>
+											<div class="col-sm-9 col-md-7" id="notizen_'.$row->prestudent_id.'">
+										';
+
+									// Zeige Notizen an
+									$notiz = new notiz;
+									$notiz->getBewerbungstoolNotizen($person_id, $row->prestudent_id);
+									$count_notizen = 0;
+									if(count($notiz->result))
+									{
+										foreach($notiz->result as $note)
+										{
+											if($note->insertvon == 'online_notiz')
+											{
+												$count_notizen ++;
+												echo '	<div><b>'.date('d.m.Y', strtotime($note->insertamum)).'</b><br>'.htmlspecialchars($note->text).'</div>';
+											}
+										}
+									}
+									if(!defined('BEWERBERTOOL_ABSCHICKEN_ANMERKUNG') || BEWERBERTOOL_ABSCHICKEN_ANMERKUNG)
+									{
+										if($count_notizen == 0)
+										{
+											echo '	<div id="notizForm_'.$row->prestudent_id.'">
+														<textarea   class="form-control" 
+																	name="anmerkung" 
+																	style="resize:none" 
+																	rows="3" 
+																	maxlength="1024" 
+																	id="anmerkungUebersicht_'.$row->prestudent_id.'" 
+																	style="width:80%" 
+																	placeholder="'.$p->t('bewerbung/anmerkungPlaceholder').'" 
+																	onInput="zeichenCountdown(\'anmerkungUebersicht_'.$row->prestudent_id.'\',1024)"></textarea>
+														<span class="btn btn-primary" id="anmerkungSubmitButton" onclick="saveNotiz('.$person_id.','.$row->prestudent_id.')">'.$p->t('global/speichern').'</span>
+														<span style="color: grey; display: inline-block; width: 30px;" id="countdown_anmerkungUebersicht_'.$row->prestudent_id.'"></span>
+													</div>';
+										}
+									}
+							echo '			</div>
+										</div>';
+					echo '		</form></div>
 							</div>
 						</div>
 					</div>';
@@ -683,52 +735,7 @@ else
 		}
 		echo '</tbody></table></div><br>';
 	}
-	
-	// Zeige Notizen an		
-	$notiz = new notiz;
-	$notiz->getBewerbungstoolNotizen($person_id);
-	$count_notizen = 0;
-	if(count($notiz->result))
-	{
-		foreach($notiz->result as $note)
-		{
-			if($note->insertvon == 'online_notiz')
-			{
-				$count_notizen ++;
-				echo '	<div class="panel panel-default">
-							<div class="panel-body">
-								<div class="col-sm-2"><b>'.$p->t('bewerbung/notizVom').' '.date('d.m.Y', strtotime($note->insertamum)).'</b></div>
-								<div class="col-sm-10">'.htmlspecialchars($note->text).'</div>
-							</div>
-						</div>
-							<!--<div class="col-sm-3">
-							<b>'.$p->t('bewerbung/notizVom').' '.date('j.n.y H:i', strtotime($note->insertamum)).'</b>
-							</div>
-							<div class="col-sm-9">
-							'.htmlspecialchars($note->text).'
-								</div><br>-->';
-			}
-		}
-	}
-	if(!defined('BEWERBERTOOL_ABSCHICKEN_ANMERKUNG') || BEWERBERTOOL_ABSCHICKEN_ANMERKUNG)
-	{
-		if($count_notizen == 0)
-		{
-			echo '	<form method="POST" id="anmerkungForm" action="'.$_SERVER['PHP_SELF'].'?active=uebersicht">
-						<div class="form-group">
-							<label for="anmerkung">'.$p->t('bewerbung/anmerkung').'</label>
-							<div class="input-group">
-								<textarea class="form-control" name="anmerkung" style="resize:none" rows="4" maxlength="1024" id="anmerkungUebersicht" style="width:80%" placeholder="'.$p->t('bewerbung/anmerkungPlaceholder').'" onInput="zeichenCountdown(\'anmerkungUebersicht\',1024)"></textarea>
-								<span class="input-group-addon btn btn-primary" id="anmerkungSubmitButton">'.$p->t('global/speichern').'</span>
-								<input type="hidden" name="btn_notiz">
-							</div>
-							<span style="color: grey; display: inline-block; width: 30px;" id="countdown_anmerkungUebersicht"></span>
-						</div>
-					</form><br>';
-		}
-		else
-			echo '<br>';
-	}
+
 	?>
 	<button class="btn-nav btn btn-default" type="button"
 		data-jump-tab="<?php echo $tabs[array_search('uebersicht', $tabs)+1] ?>">
@@ -751,18 +758,16 @@ else
 						<label for="studiensemester_kurzbz" class="control-label">
 							<?php echo $p->t('bewerbung/geplanterStudienbeginn') ?>
 						</label>
-						<div class="dropdown">
-							<select id="studiensemester_kurzbz" name="studiensemester_kurzbz"
-								class="form-control">
-								<option value=""><?php echo $p->t('bewerbung/bitteAuswaehlen') ?></option>
-								<?php
-								foreach ($stsem->studiensemester as $row)
-								{
-									echo '<option value="' . $row->studiensemester_kurzbz . '">' . $stsem->convert_html_chars($row->bezeichnung) . ' (' . $p->t('bewerbung/ab') . ' ' . $datum->formatDatum($stsem->convert_html_chars($row->start), 'd.m.Y') . ')</option>';
-								}
-								?>
-							</select>
-						</div>
+						<select id="studiensemester_kurzbz" name="studiensemester_kurzbz"
+							class="form-control">
+							<option value=""><?php echo $p->t('bewerbung/bitteAuswaehlen') ?></option>
+							<?php
+							foreach ($stsem->studiensemester as $row)
+							{
+								echo '<option value="' . $row->studiensemester_kurzbz . '">' . $stsem->convert_html_chars($row->bezeichnung) . ' (' . $p->t('bewerbung/ab') . ' ' . $datum->formatDatum($stsem->convert_html_chars($row->start), 'd.m.Y') . ')</option>';
+							}
+							?>
+						</select>
 					</div>
 					<div class="loaderIcon center-block" style="display: none"></div>
 					<div id="form-group-stg" class="form-group">
@@ -798,7 +803,17 @@ else
 						WHEN 'b' THEN 1
 						WHEN 'm' THEN 2
 						ELSE 3
-					END, tbl_lgartcode.bezeichnung ASC, studiengangbezeichnung";
+					END, 
+					CASE lgartcode
+						WHEN '1'
+							THEN 1
+						WHEN '2'
+							THEN 2
+						WHEN '4'
+							THEN 3
+					ELSE 4
+					END,
+					studiengangbezeichnung";
 	}
 	else
 	{
@@ -806,7 +821,17 @@ else
 						WHEN 'b' THEN 1
 						WHEN 'm' THEN 2
 						ELSE 3
-					END, tbl_lgartcode.bezeichnung ASC, studiengangbezeichnung_englisch";
+					END,
+					CASE lgartcode
+						WHEN '1'
+							THEN 1
+						WHEN '2'
+							THEN 2
+						WHEN '4'
+							THEN 3
+						ELSE 4
+					END,
+					studiengangbezeichnung_englisch";
 	}
 	
 	$studienplan = getStudienplaeneForOnlinebewerbung($studiensemester_array, '1', '', $order); //@todo: ausbildungssemester dynamisch
@@ -888,8 +913,7 @@ else
 			{
 					$disabled = 'disabled';
 			}
-			
-	
+
 			// Wenn es nur einen gueltigen Studienplan gibt, kommt der Name des Studiengangs aus dem Studienplan
 			// Wenn der Name des Studiengangs aus dem Studienplan leer ist -> Fallback auf Studiengangsname vom Studiengang
 			if($sprache != 'German' && $row->studiengangbezeichnung_englisch != '')
@@ -909,16 +933,40 @@ else
 			$stg_bezeichnung .= ' | <i>'.$p->t('bewerbung/orgform/'.$row->orgform_kurzbz).' - '.$p->t('bewerbung/'.$row->sprache).'</i>';
 					
 			// Bewerbungsfristen laden
-			$bewerbungszeitraum = getBewerbungszeitraum($row->studiengang_kz, $std_semester, $row->studienplan_id);
+			// Aktuellste ZGV-Nation suchen. Master > Bachelor
+			$zgv_nation = '';
+			$pstID = 0;
+			$prestudenten = new prestudent();
+			$prestudenten->getPrestudenten($person_id);
+			foreach ($prestudenten->result as $pst)
+			{
+				if ($pst->prestudent_id > $pstID)
+				{
+					if ($pst->zgvmanation != '')
+					{
+						$zgv_nation = $pst->zgvmanation;
+					}
+					elseif ($pst->zgvnation != '')
+					{
+						$zgv_nation = $pst->zgvnation;
+					}
+					$pstID = $pst->prestudent_id;
+				}
+			}
+			$nation = new nation($zgv_nation);
+
+			$bewerbungszeitraum = getBewerbungszeitraum($row->studiengang_kz, $std_semester, $row->studienplan_id, $nation->nationengruppe_kurzbz);
 			$stg_bezeichnung .= ' '.$bewerbungszeitraum['infoDiv'];
 			$fristAbgelaufen = $bewerbungszeitraum['frist_abgelaufen'];
 			
 			// Wenn es für das gewählte Studiensemester schon eine Bewerbung gibt, kann man sich nicht mehr dafür bewerben
 			$disabledExistsPrestudentstatus = '';
+			$textMuted = '';
 			$prestudent_status = new prestudent();
 			if ($prestudent_status->existsPrestudentstatus($person_id, $row->studiengang_kz, $std_semester, null, $row->studienplan_id))
 			{
 				$disabledExistsPrestudentstatus = 'disabled';
+				$textMuted = 'text-muted';
 				$stg_bezeichnung .= '<div class="alert alert-warning" style="margin-bottom: 0">'.$p->t('bewerbung/infotextDisabled', array($std_semester)).'</div>';
 			}
 			else
@@ -939,8 +987,8 @@ else
 			if (!$fristAbgelaufen)
 			{
 				echo '<div class="panel-body">
-						<div class="radio">
-							<label>
+						<div class="radio '.$disabledExistsPrestudentstatus.'">
+							<label class="'.$textMuted.'">
 								<input class="'.$class.'" id="checkbox_'.$row->studienplan_id.'" type="radio" name="studienplaene[]" value="'.$row->studienplan_id.'" '.$checked.' '.$disabled.' '.$disabledExistsPrestudentstatus.'>
 								'.$stg_bezeichnung;
 			}
@@ -1179,6 +1227,39 @@ else
 							$(this).find("div.panel").first().find(".button_up").prop("disabled",true);
 							$(this).find("div.panel").last().find(".button_down").prop("disabled",true);
 						});
+					}
+				},
+				error: function(data)
+				{
+					alert(data.msg)
+				}
+			});
+		}
+		function saveNotiz(person_id, prestudent_id)
+		{
+			anmerkungstext = $("#anmerkungUebersicht_"+prestudent_id).val();
+			data = {
+					person_id: person_id,
+					prestudent_id: prestudent_id,
+					anmerkungstext: anmerkungstext,
+					saveNotiz: true
+			};
+
+			$.ajax({
+				url: basename,
+				data: data,
+				type: 'POST',
+				dataType: "json",
+				success: function(data)
+				{
+					if(data.status != 'ok')
+					{
+						alert(data.msg);
+					}
+					else
+					{
+						$("#notizForm_"+prestudent_id).hide();
+						$("#notizen_"+prestudent_id).append("<div><b>"+data.insertamum+"</b><br>"+data.anmerkung+"</div>");
 					}
 				},
 				error: function(data)
