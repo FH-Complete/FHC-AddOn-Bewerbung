@@ -20,29 +20,32 @@
  * 			Manfred Kindl 	<kindlm@technikum-wien.at>
  */
 
-require_once('../../../config/global.config.inc.php');
 require_once('../../../config/cis.config.inc.php');
-require_once('../../../include/phrasen.class.php');
-require_once('../../../include/person.class.php');
-require_once('../../../include/studiengang.class.php');
-require_once('../../../include/datum.class.php');
-require_once('../../../include/mail.class.php');
-require_once('../../../include/prestudent.class.php');
-require_once('../../../include/preinteressent.class.php');
-require_once('../../../include/kontakt.class.php');
-require_once('../../../include/studiensemester.class.php');
+require_once('../../../config/global.config.inc.php');
+require_once('../../../include/benutzer.class.php');
 require_once('../../../include/bewerbungstermin.class.php');
 require_once('../../../include/datum.class.php');
-require_once('../../../include/sprache.class.php');
-require_once('../../../include/benutzer.class.php');
-require_once('../../../include/konto.class.php');
-require_once('../include/functions.inc.php');
+require_once('../../../include/datum.class.php');
 require_once('../../../include/functions.inc.php');
-require_once('../bewerbung.config.inc.php');
-require_once ('../../../include/personlog.class.php');
-require_once '../../../include/securimage/securimage.php';
-require_once('../../../include/studienplan.class.php');
+require_once('../../../include/kontakt.class.php');
+require_once('../../../include/konto.class.php');
+require_once('../../../include/mail.class.php');
+require_once('../../../include/nation.class.php');
+require_once('../../../include/nationengruppe.class.php');
+require_once('../../../include/person.class.php');
+require_once('../../../include/personlog.class.php');
+require_once('../../../include/phrasen.class.php');
+require_once('../../../include/preinteressent.class.php');
+require_once('../../../include/prestudent.class.php');
+require_once('../../../include/securimage/securimage.php');
+require_once('../../../include/sprache.class.php');
+require_once('../../../include/studiengang.class.php');
 require_once('../../../include/studienordnung.class.php');
+require_once('../../../include/studienplan.class.php');
+require_once('../../../include/studiensemester.class.php');
+require_once('../bewerbung.config.inc.php');
+require_once('../include/functions.inc.php');
+
 
 session_cache_limiter('none'); //muss gesetzt werden sonst funktioniert der Download mit IE8 nicht
 session_start();
@@ -242,6 +245,9 @@ elseif($username && $password)
 				$stsem = new studiensemester();
 				$stsem->getStudiensemesterOnlinebewerbung();
 
+				$nation = new nation();
+				$nation->getAll($ohnesperre = true, ($sprache == 'English' ? true : false));
+
 				$vorname = filter_input(INPUT_POST, 'vorname');
 				$nachname = filter_input(INPUT_POST, 'nachname');
 				$geb_datum = filter_input(INPUT_POST, 'geb_datum');
@@ -258,6 +264,7 @@ elseif($username && $password)
 				$prioritaeten = filter_input(INPUT_POST, 'prioritaet', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY);
 				$studienplaene = filter_input(INPUT_POST, 'studienplaene', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY);
 				$std_semester = filter_input(INPUT_POST, 'studiensemester_kurzbz');
+				$zgv_nation = filter_input(INPUT_POST, 'zgv_nation');
 				$typen = array();
 
 				//Prioritäten neu soritieren falls Lücken sind (zB 1,3,4 ändern auf 1,2,3)
@@ -455,17 +462,29 @@ elseif($username && $password)
 						{
 							$message = '<p class="bg-danger padding-10">'.$p->t('bewerbung/sicherheitscodeFalsch').'</p>';
 						}
+						// Wenn kein Studienplan angeklickt wurde
 						elseif (BEWERBERTOOL_STUDIENAUSWAHL_ANZEIGEN && count($studienplaene) == 0)
 						{
 							$message = '<p class="bg-danger padding-10">'.$p->t('bewerbung/bitteStudienrichtungWaehlen').'</p>';
 						}
+						// Wenn mehr als BEWERBERTOOL_MAX_STUDIENGAENGE übergeben wurden
 						elseif (BEWERBERTOOL_STUDIENAUSWAHL_ANZEIGEN && defined('BEWERBERTOOL_MAX_STUDIENGAENGE') && BEWERBERTOOL_MAX_STUDIENGAENGE != '' && count($studienplaeneBaMa) > BEWERBERTOOL_MAX_STUDIENGAENGE)
 						{
 							$message = '<p class="bg-danger padding-10">'.$p->t('bewerbung/sieKoennenMaximalXStudiengaengeWaehlen', array(BEWERBERTOOL_MAX_STUDIENGAENGE)).'</p>';
 						}
+						// Wenn die Zusatimmung zur Datenübermittlung nicht gegeben ist
 						elseif (BEWERBERTOOL_SHOW_ZUSTIMMUNGSERKLAERUNG_REGISTRATION && !isset($_POST['zustimmung_datenuebermittlung']))
 						{
 							$message = '<p class="bg-danger padding-10">'.$p->t('bewerbung/bitteDatenuebermittlungZustimmen').'</p>';
+						}
+
+						// Wenn keine ZGV-Nation aber ein Bachelor oder Master-Studiengang übergeben wird
+						elseif (defined('BEWERBERTOOL_SHOW_REGISTRATION_ZGVNATION')
+								&& BEWERBERTOOL_SHOW_REGISTRATION_ZGVNATION
+								&& $zgv_nation == ''
+								&& count($studienplaeneBaMa) > 0)
+						{
+							$message = '<p class="bg-danger padding-10">'.$p->t('bewerbung/bitteZGVausweahlen').'</p>';
 						}
 						else
 						{
@@ -525,7 +544,8 @@ elseif($username && $password)
 								{
 									$studienordnung = new studienordnung();
 									$studienordnung->getStudienordnungFromStudienplan($studienplaene[$i]);
-									
+									$studiengangForZgv = new studiengang($studienordnung->studiengang_kz);
+
 									$prestudent = new prestudent();
 									$prestudent->person_id = $person->person_id;
 									$prestudent->studiengang_kz = $studienordnung->studiengang_kz;
@@ -536,6 +556,16 @@ elseif($username && $password)
 									$prestudent->reihungstestangetreten = false;
 									$prestudent->priorisierung = $prioritaeten[$studienplaene[$i]];
 									$prestudent->new = true;
+
+									// ZGV aufgrund der ZGV-Nation setzen
+									if ($zgv_nation != '' && $studiengangForZgv->typ == 'b')
+									{
+										$prestudent->zgvnation = $zgv_nation;
+									}
+									elseif ($zgv_nation != '' && $studiengangForZgv->typ == 'm')
+									{
+										$prestudent->zgvmanation = $zgv_nation;
+									}
 
 									if(!$prestudent->save())
 									{
@@ -611,8 +641,8 @@ elseif($username && $password)
 					}
 				} ?>
 
-				<?php echo $message ?>
-				<form method="post" action="<?php echo basename(__FILE__) ?>?method=registration#label_studiensemester_kurzbz" id="RegistrationLoginForm" name="RegistrationLoginForm" class="form-horizontal">
+				<?php echo '<div id="messagediv">'.$message.'</div>' ?>
+				<form method="post" action="<?php echo basename(__FILE__) ?>?method=registration#label_zgv-nation" id="RegistrationLoginForm" name="RegistrationLoginForm" class="form-horizontal">
 					<?php echo $p->t('bewerbung/welcomeHeaderRegistration') ?>
 					<p class="infotext">
 						<?php echo $p->t('bewerbung/einleitungstext') ?>
@@ -672,12 +702,40 @@ elseif($username && $password)
 					</div>
 
 					<?php if(BEWERBERTOOL_STUDIENAUSWAHL_ANZEIGEN): ?>
+					<?php if(defined('BEWERBERTOOL_SHOW_REGISTRATION_ZGVNATION') && BEWERBERTOOL_SHOW_REGISTRATION_ZGVNATION): ?>
+					<div class="form-group" id="zgv_nation_form-group">
+						<label for="zgv_nation" class="col-sm-3 control-label" id="label_zgv-nation">
+							<?php echo $p->t('bewerbung/studienberechtigungErlangtIn') ?>
+							<a id="infoDivStudienberechtigung" href="#" data-toggle="popover" data-placement="auto" title="" data-content="<?php echo $p->t('bewerbung/studienberechtigungErlangtInErklaerung') ?>">
+								<span style="font-size: 1em;" class="glyphicon glyphicon-info-sign glyph" aria-hidden="true"></span>
+							</a>
+						</label>
+						<div class="col-sm-4 dropdown">
+							<select name="zgv_nation" id="zgv_nation" class="form-control" onChange="changeBewerbungsfristen()">
+								<option value=""><?php echo $p->t('bewerbung/bitteAuswaehlenBaMa') ?></option>
+								<option value="A"><?php	echo ($sprache=='German'? 'Österreich':'Austria'); ?></option>
+								<?php $selected = '';
+								foreach($nation->nation as $nat):
+									$selected = ($zgv_nation == $nat->code) ? 'selected' : ''; ?>
+									<option value="<?php echo $nat->code ?>" <?php echo $selected ?>>
+										<?php
+										if($sprache=='German')
+											echo $nat->langtext;
+										else
+											echo $nat->engltext;
+										?>
+									</option>
+								<?php endforeach; ?>
+							</select>
+						</div>
+					</div>
+					<?php endif; ?>
 					<div class="form-group">
 						<label for="studiensemester_kurzbz" class="col-sm-3 control-label" id="label_studiensemester_kurzbz">
 							<?php echo $p->t('bewerbung/geplanterStudienbeginn') ?>
 						</label>
 						<div class="col-sm-4 dropdown">
-							<select id="studiensemester_kurzbz" name="studiensemester_kurzbz" class="form-control" onChange="changeStudiensemester()">
+							<select id="studiensemester_kurzbz" name="studiensemester_kurzbz" class="form-control" onChange="formSubmit()">
 								<!--<option value=""><?php echo $p->t('bewerbung/bitteAuswaehlen') ?></option>-->
 								<?php
 								$studiensemester_array = array();
@@ -710,13 +768,13 @@ elseif($username && $password)
 												ELSE 3
 											END, 
 											CASE lgartcode
-											WHEN '1'
-												THEN 1
-											WHEN '2'
-												THEN 2
-											WHEN '4'
-												THEN 3
-											ELSE 4
+												WHEN '1'
+													THEN 1
+												WHEN '2'
+													THEN 2
+												WHEN '4'
+													THEN 3
+												ELSE 4
 											END,
 											studiengangbezeichnung";
 							}
@@ -728,13 +786,13 @@ elseif($username && $password)
 												ELSE 3
 											END,
 											CASE lgartcode
-											WHEN '1'
-												THEN 1
-											WHEN '2'
-												THEN 2
-											WHEN '4'
-												THEN 3
-											ELSE 4
+												WHEN '1'
+													THEN 1
+												WHEN '2'
+													THEN 2
+												WHEN '4'
+													THEN 3
+												ELSE 4
 											END,
 											studiengangbezeichnung_englisch";
 							}
@@ -830,9 +888,11 @@ elseif($username && $password)
 									}
 											
 									$stg_bezeichnung .= ' | <i>'.$p->t('bewerbung/orgform/'.$row->orgform_kurzbz).' - '.$p->t('bewerbung/'.$row->sprache).'</i>';
-											
+
+									$nation = new nation($zgv_nation);
+
 									// Bewerbungsfristen laden
-									$bewerbungszeitraum = getBewerbungszeitraum($row->studiengang_kz, $std_semester, $row->studienplan_id);
+									$bewerbungszeitraum = getBewerbungszeitraum($row->studiengang_kz, $std_semester, $row->studienplan_id, $nation->nationengruppe_kurzbz);
 									$stg_bezeichnung .= ' '.$bewerbungszeitraum['infoDiv'];
 									$fristAbgelaufen = $bewerbungszeitraum['frist_abgelaufen'];
 																
@@ -1178,7 +1238,7 @@ elseif($username && $password)
 			window.location.href = "registration.php?sprache=" + sprache + "&method=" + method + "&stg_kz=<?php echo filter_input(INPUT_GET, 'stg_kz') ?>&orgform_kurzbz=<?php echo filter_input(INPUT_GET, 'orgform_kurzbz') ?>";
 		}
 
-		function changeStudiensemester()
+		function formSubmit()
 		{
 			if (document.RegistrationLoginForm.captcha_code.value != '')
 				document.RegistrationLoginForm.captcha_code.value = '';
@@ -1252,20 +1312,36 @@ elseif($username && $password)
 				alert("<?php echo $p->t('bewerbung/bitteEmailAngeben')?>");
 				return false;
 			}
-			<?php if(BEWERBERTOOL_STUDIENAUSWAHL_ANZEIGEN): ?>
-			if(document.RegistrationLoginForm.studiensemester_kurzbz.value == "")
-			{
-				alert("<?php echo $p->t('bewerbung/bitteStudienbeginnWaehlen')?>");
-				return false;
-			}
+
+			<?php if (defined('BEWERBERTOOL_STUDIENAUSWAHL_ANZEIGEN') && BEWERBERTOOL_STUDIENAUSWAHL_ANZEIGEN): ?>
+				if(document.RegistrationLoginForm.studiensemester_kurzbz.value == "")
+				{
+					alert("<?php echo $p->t('bewerbung/bitteStudienbeginnWaehlen')?>");
+					return false;
+				}
 			<?php endif; ?>
-			<?php if(BEWERBERTOOL_SHOW_ZUSTIMMUNGSERKLAERUNG_REGISTRATION): ?>
-			if(document.getElementById('checkbox_zustimmung_datenuebermittlung').checked == false)
-			{
-				alert("<?php echo $p->t('bewerbung/bitteDatenuebermittlungZustimmen')?>");
-				return false;
-			}
+
+			<?php if (defined('BEWERBERTOOL_SHOW_ZUSTIMMUNGSERKLAERUNG_REGISTRATION') && BEWERBERTOOL_SHOW_ZUSTIMMUNGSERKLAERUNG_REGISTRATION): ?>
+				if(document.getElementById('checkbox_zustimmung_datenuebermittlung').checked == false)
+				{
+					alert("<?php echo $p->t('bewerbung/bitteDatenuebermittlungZustimmen')?>");
+					return false;
+				}
 			<?php endif; ?>
+
+			<?php if (defined('BEWERBERTOOL_SHOW_REGISTRATION_ZGVNATION') && BEWERBERTOOL_SHOW_REGISTRATION_ZGVNATION): ?>
+				var checkedInputs = $("input[type=checkbox][class=checkbox_stg]:checked");
+				if(checkedInputs.length > 0 && $('#zgv_nation').val() == '')
+				{
+					$('#zgv_nation_form-group').addClass('has-error has-feedback');
+					$([document.documentElement, document.body]).animate({
+						scrollTop: $("#zgv_nation").offset().top
+					}, 1000);
+					alert("<?php echo $p->t('bewerbung/bitteZGVausweahlen')?>");
+					return false;
+				}
+			<?php endif; ?>
+
 			return true;
 		}
 
@@ -1284,7 +1360,6 @@ elseif($username && $password)
 		
 		$(function()
 		{
-
 			$('#sprache-dropdown a').on('click', function() {
 
 				var sprache = $(this).attr('data-sprache');
@@ -1292,7 +1367,19 @@ elseif($username && $password)
 			});
 
 			//Scrollt nach oben, wenn ein Fehler-Div angezeigt wird
-			if($("#danger-alert").length != 0) 
+			if($("#danger-alert").length != 0)
+			{
+				window.scrollTo(0, 0);
+			}
+
+			$('[data-toggle="popover"]').popover();
+			// Prevents page to jump to top after clicking popup
+			$('a#infoDivStudienberechtigung').on('click', function(e)
+			{
+				e.preventDefault(); return true;
+			});
+
+			if ($('#messagediv').html() != '')
 			{
 				window.scrollTo(0, 0);
 			}
@@ -1425,6 +1512,32 @@ elseif($username && $password)
 					}
 				});
 			<?php endif; ?>
+
+			// Badges bei inaktiven checkboxen ausblenden (vor allem nach Änderung der ZGV relevant)
+			$("input[type=checkbox]").each(function ()
+			{
+				if ($(this).prop('disabled') && $(this).siblings('.badge').html() != '')
+				{
+					$(this).siblings('.badge').html('');
+					$(this).siblings('.prioInput:hidden').val('');
+
+					<?php if (defined('BEWERBERTOOL_MAX_STUDIENGAENGE') && BEWERBERTOOL_MAX_STUDIENGAENGE != ''): ?>
+					//Disabled die Checkboxen, wenn mehr als BEWERBERTOOL_MAX_STUDIENGAENGE Studiengaenge gewaehlt werden
+						var bol = $("input[type=checkbox][class=checkbox_stg]:checked").length >= <?php echo BEWERBERTOOL_MAX_STUDIENGAENGE; ?>;
+						$("input[type=checkbox][class=checkbox_stg]").not(":checked").attr("disabled",bol);
+						if ($("input[type=checkbox][class=checkbox_stg]:checked").length >= <?php echo BEWERBERTOOL_MAX_STUDIENGAENGE; ?>)
+						{
+							$("div[name=checkboxInfoDiv]").html("<?php echo $p->t('bewerbung/sieKoennenMaximalXStudiengaengeWaehlen',  array(BEWERBERTOOL_MAX_STUDIENGAENGE)) ?>");
+							$("div[name=checkboxInfoDiv]").addClass("alert alert-warning alert-dismissible");
+						}
+						else
+						{
+							$("div[name=checkboxInfoDiv]").html("");
+							$("div[name=checkboxInfoDiv]").removeClass();
+						}
+					<?php endif; ?>
+				}
+			});
 		});
 
 		window.setTimeout(function() {
@@ -1467,7 +1580,9 @@ function sendMail($zugangscode, $email, $person_id=null)
 		$msg = $p->t('bewerbung/emailgesendetan', array($email))."<br><br><a href=".$_SERVER['PHP_SELF'].">".$p->t('bewerbung/zurueckZurAnmeldung')."</a>";
 
 	if(defined('MAIL_DEBUG') && MAIL_DEBUG!='')
-		$msg .= "<br><br>Zugangscode: ".$zugangscode;
+	{
+		$msg .= '<br><br>Zugangscode: <a href="'.APP_ROOT.'addons/bewerbung/cis/registration.php?code='.$zugangscode.'&emailAdresse='.$email.'">Link zur Bewerbung</a>';
+	}
 
 	return $msg;
 }
