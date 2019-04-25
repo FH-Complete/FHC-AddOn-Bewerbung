@@ -445,8 +445,14 @@ $this->phrasen['bewerbung/erklaerungSicherheit']='For reasons of privacy, we rec
 $this->phrasen['bewerbung/buttonNeuerZugangscode']='Generate new access code';
 $this->phrasen['bewerbung/erfolgsMessageNeuerZugangscode']='<p>Your new access code is:</p><p>%s</p><p>Please make a note of the new access code</p>';
 $this->phrasen['bewerbung/keineStudienrichtungenFuerStudiensemesterZurAuswahl']='There are currently no courses of study available for the selected semester';
-$this->phrasen['bewerbung/sieHabenFolgendenTerminGewaehlt']='You have registered for the following placement test date';
+$this->phrasen['bewerbung/studienberechtigungErlangtIn']='Studienberechtigung erlangt in'; // Noch zu übersetzen
+$this->phrasen['bewerbung/studienberechtigungErlangtInErklaerung']='Hier ist jene Nation zu wählen, in der Sie Ihren Abschluss erlangt haben/erlangen werden, der Sie zu einem Studium berechtigt (optional für Lehrgänge)';  // Noch zu übersetzen
+$this->phrasen['bewerbung/StatusSeitDatum']='%1$s since %2$s';
+$this->phrasen['bewerbung/bewerbungszeitraumFuer']='Application period for %1$s';
+$this->phrasen['bewerbung/bitteAuswaehlenBaMa']='-- Please select for bachelor and master --';
+$this->phrasen['bewerbung/bitteZGVausweahlen']='Wenn Sie sich für einen Bachelor- oder Master-Studiengang bewerben, wählen Sie bitte das Land aus, in dem Sie die Studienberechtigung erlangt haben'; // Noch zu übersetzen
 
+// Reihungstest
 $this->phrasen['bewerbung/anmeldungReihungstestMailBetreff']='Confirmation of registration to placement test UAS Technikum Wien';
 $this->phrasen['bewerbung/anmeldungReihungstestMail']='Sehr %3$s %1$s %2$s,<br><br>
 Sie haben sich erfolgreich für den Reihungstest am %4$s beworben. Der Test beginnt um %5$s und dauert etwa 3,5 Stunden.<br><br>
@@ -454,14 +460,15 @@ Bitte bringen Sie einen amtlichen Lichtbildausweis zur Überprüfung Ihrer Ident
 Den Raum können Sie etwa eine Woche vor Testbeginn im Bewerbungstool sehen<br>
 Sollten Sie Fragen haben, kontaktieren Sie bitte unser Infocenter <a href="mailto:studienberatung@technikum-wien.at">studienberatung@technikum-wien.at</a>.<br><br>
 Mit freundlichen Grüßen<br>
-Fachhochschule Technikum Wien';
+Fachhochschule Technikum Wien'; // Noch zu übersetzen
 $this->phrasen['bewerbung/reihungstestInfoTextAngemeldet']='<div class="alert alert-info">
 <p>Please make sure that you arrive 15 minutes prior to the placement test at the UAS, 1200 Wien, Höchstädtplatz 6.</p>
 <p>Please bring an official photo ID (passport, identity card, etc.) on the day of your placement test.</p>
 </div><br>';
 $this->phrasen['bewerbung/anmeldefrist']='Term of application';
-$this->phrasen['bewerbung/infoVorgemerktFuerQualifikationskurs']='Sie sind als TeilnehmerIn für die Qualifikationskurse vorgemerkt. Sobald sie dort bestätigt wurden, können Sie hier einen Termin für den Reihungstest wählen.';
+$this->phrasen['bewerbung/infoVorgemerktFuerQualifikationskurs']='Sie sind als TeilnehmerIn für die Qualifikationskurse vorgemerkt. Sobald sie dort bestätigt wurden, können Sie hier einen Termin für den Reihungstest wählen.';// Noch zu übersetzen
 $this->phrasen['bewerbung/raumzuteilungFolgt']='One week prior to the test you will see here the room-number';
+$this->phrasen['bewerbung/sieHabenFolgendenTerminGewaehlt']='You have registered for the following placement test date';
 
 // Ausbildung
 $this->phrasen['bewerbung/menuAusbildung']='Ausbildung';

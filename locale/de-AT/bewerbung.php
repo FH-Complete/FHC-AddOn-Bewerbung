@@ -16,15 +16,35 @@ $this->phrasen['bewerbung/welcomeHeaderLogin']='
 									</div>
 								</div>';
 $this->phrasen['bewerbung/welcomeHeaderRegistration']='
-					<div class="row">
-						<div class="col-xs-2">
+					<div class="row hidden-md hidden-lg">
+						<div class="col-xs-5">
 							<img style="width:150px;" class="center-block img-responsive" src="' . APP_ROOT . 'skin/styles/' . DEFAULT_STYLE . '/logo_academy.png">
 						</div>
-						<div class="col-xs-8">
+						<div class="col-xs-2">
+							
+						</div>
+						<div class="col-xs-5">
+							<img style="width:150px;" class="center-block img-responsive" src="' . APP_ROOT . 'skin/styles/' . DEFAULT_STYLE . '/logo.png">
+						</div>
+					</div>
+					<div class="row hidden-md hidden-lg">
+						<div class="col-xs-12">
 							<h2 class="text-center">Willkommen bei der Online Bewerbung</h2>
 						</div>
+					</div>
+					<div class="row hidden-xs hidden-sm">
 						<div class="col-xs-2">
-							<img style="width:150px;" class="center-block img-responsive" src="' . APP_ROOT . 'skin/styles/' . DEFAULT_STYLE . '/logo.png">
+							<div style="text-align: center;">
+								<img style="margin: 30px 10px; width: 100%%" src="' . APP_ROOT . 'skin/styles/' . DEFAULT_STYLE . '/logo_academy.png"/>
+							</div>
+						</div>
+						<div style="text-align: center;" class="col-xs-8">
+							<h1 style="margin: 30px 10px;">Willkommen bei der Online Bewerbung</h1>
+						</div>
+						<div class="col-xs-2">
+							<div style="text-align: center;">
+								<img style="margin: 30px 10px; width: 100%%" src="' . APP_ROOT . 'skin/styles/' . DEFAULT_STYLE . '/logo.png"/>
+							</div>
 						</div>
 					</div>
 					';
@@ -323,7 +343,7 @@ $this->phrasen['bewerbung/ab']='ab';
 $this->phrasen['bewerbung/adresse']='Adresse (Hauptwohnsitz)';
 $this->phrasen['bewerbung/notizVom']='Notiz vom';
 $this->phrasen['bewerbung/anmerkung']='Anmerkung';
-$this->phrasen['bewerbung/anmerkungPlaceholder']='Hier haben Sie die Möglichkeit, eine Anmerkung (1024 Zeichen) einzutragen, die Sie der Assistenz mitteilen möchten';
+$this->phrasen['bewerbung/anmerkungPlaceholder']='Anmerkungen zu Ihrer Bewerbung bitte hier eintragen und speichern. (1 Anmerkung pro Bewerbung, 1024 Zeichen)';
 $this->phrasen['bewerbung/orgformMussGewaehltWerden']='Es muss eine Organisationsform gewählt werden';
 $this->phrasen['bewerbung/hierUnverbindlichAnmelden']='Hier unverbindlich anmelden';
 $this->phrasen['bewerbung/keineOrgformVorhanden']='Für das gewähle Studiensemester ist noch keine Organisationsform hinterlegt';
@@ -355,7 +375,7 @@ $this->phrasen['bewerbung/bitteGueltigeOesterreichischePlzEingeben']='Bitte gebe
 $this->phrasen['bewerbung/plzMussGueltigSein']='Postleitzahl muss eine gültige Nummer sein';
 $this->phrasen['bewerbung/plzUnbekannt']='Postleitzahl unbekannt';
 $this->phrasen['bewerbung/dateien']='Datei(en)';
-$this->phrasen['bewerbung/dokumentWirdGeprueft']='Dokument wird überprüft';
+$this->phrasen['bewerbung/dokumentWirdGeprueft']='Dokument vorhanden';
 $this->phrasen['bewerbung/dokumentUeberprueft']='Dokument überprüft';
 $this->phrasen['bewerbung/keineDateiAusgewaehlt']='Keine Datei zum Hochladen ausgewählt oder gefunden';
 $this->phrasen['bewerbung/placeholderAnmerkungNachgereicht']='Bitte geben Sie an, welche Institution das Dokument ausstellen wird und bis wann Sie das Dokument voraussichtlich nachreichen können';
@@ -500,7 +520,12 @@ $this->phrasen['bewerbung/erklaerungSicherheit']='Aus Datenschutzgründen empfeh
 $this->phrasen['bewerbung/buttonNeuerZugangscode']='Neuen Zugangscode generieren';
 $this->phrasen['bewerbung/erfolgsMessageNeuerZugangscode']='<p>Ihr neuer Zugangscode lautet:</p><p>%s</p><p>Bitte notieren Sie sich den neuen Zugangscode.</p>';
 $this->phrasen['bewerbung/keineStudienrichtungenFuerStudiensemesterZurAuswahl']='Für das gewählte Studiensemester stehen derzeit keine Studienrichtungen zur Auswahl';
-$this->phrasen['bewerbung/sieHabenFolgendenTerminGewaehlt']='Sie haben sich zu folgendem Reihungstesttermin angemeldet';
+$this->phrasen['bewerbung/studienberechtigungErlangtIn']='Studienberechtigung erlangt in';
+$this->phrasen['bewerbung/studienberechtigungErlangtInErklaerung']='Hier ist jene Nation zu wählen, in der Sie Ihren Abschluss erlangt haben/erlangen werden, der Sie zu einem Studium berechtigt (optional für Lehrgänge)';
+$this->phrasen['bewerbung/StatusSeitDatum']='%1$s seit %2$s';
+$this->phrasen['bewerbung/bewerbungszeitraumFuer']='Bewerbungszeitraum für %1$s';
+$this->phrasen['bewerbung/bitteAuswaehlenBaMa']='-- Für Bachelor und Master bitte auswählen --';
+$this->phrasen['bewerbung/bitteZGVausweahlen']='Wenn Sie sich für einen Bachelor- oder Master-Studiengang bewerben, wählen Sie bitte das Land aus, in dem Sie die Studienberechtigung erlangt haben';
 
 // Reihungstest
 $this->phrasen['bewerbung/anmeldungReihungstestMailBetreff']='Bestätigung Reihungstestanmeldung Fachhochschule Technikum Wien';
@@ -518,6 +543,7 @@ $this->phrasen['bewerbung/reihungstestInfoTextAngemeldet']='<div class="alert al
 $this->phrasen['bewerbung/anmeldefrist']='Anmeldefrist';
 $this->phrasen['bewerbung/infoVorgemerktFuerQualifikationskurs']='Sie sind als TeilnehmerIn für die Qualifikationskurse vorgemerkt. Sobald sie dort bestätigt wurden, können Sie hier einen Termin für den Reihungstest wählen.';
 $this->phrasen['bewerbung/raumzuteilungFolgt']='Raumzuteilung folgt spätestens 1 Woche vor Ihrem Termin';
+$this->phrasen['bewerbung/sieHabenFolgendenTerminGewaehlt']='Sie haben sich zu folgendem Reihungstesttermin angemeldet';
 
 // Ausbildung
 $this->phrasen['bewerbung/menuAusbildung']='Ausbildung';
