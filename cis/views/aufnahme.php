@@ -34,6 +34,7 @@ if(!isset($person_id))
 	// Bachelor-Studienplan mit der höchsten Priorität laden, der abgeschickt und bestätigt ist
 	$studienplanReihungstest = getPrioStudienplanForReihungstest($person_id, $nextWinterSemester->studiensemester_kurzbz);
 	$angemeldeteRtArray = array();
+	$reihungstestID = '';
 
 	// Angemeldete Termine laden
 	if (count($angemeldeteReihungstests->result) > 0)
@@ -55,6 +56,14 @@ if(!isset($person_id))
 
 		foreach($angemeldeteReihungstests->result as $row)
 		{
+			// Durch die Punkteübernahme kann es vorkommen, dass mehrere Ergebnisse für den gleichen RT zurückgegeben werden
+			// Deshalb wird das hier geprüft
+			if ($reihungstestID == $row->reihungstest_id)
+			{
+				continue;
+			}
+			$reihungstestID = $row->reihungstest_id;
+
 			$fristVorbei = false;
 			$uhrzeit = $datum->formatDatum($row->uhrzeit,'H:i');
 
