@@ -386,15 +386,33 @@ if ($aktionReihungstest)
 	$studienplan_id = filter_input(INPUT_POST, 'studienplan_id', FILTER_VALIDATE_INT);
 	$aktion = filter_input(INPUT_POST, 'aktion');
 
+	if (defined('REIHUNGSTEST_ARBEITSPLAETZE_SCHWUND') && is_numeric(REIHUNGSTEST_ARBEITSPLAETZE_SCHWUND))
+	{
+		$schwund = REIHUNGSTEST_ARBEITSPLAETZE_SCHWUND;
+	}
+	else
+	{
+		$schwund = '';
+	}
+
 	if ($aktion == 'save')
 	{
 		$reihungstest = new reihungstest();
 		// Pruefen der verfuegbaren Plaetze
-		if ($reihungstest->getTeilnehmerAnzahl($rt_id) >= $reihungstest->getVerfuegbarePlaetzeReihungstest($rt_id, 5))
+		if ($reihungstest->getTeilnehmerAnzahl($rt_id) >= $reihungstest->getVerfuegbarePlaetzeReihungstest($rt_id, $schwund))
 		{
 			echo json_encode(array(
 				'status' => 'fehler',
 				'msg' => 'Keine Plätze mehr verfügbar'
+			));
+			exit();
+		}
+		// Prüfen, ob schon eine Anmeldung für diesen RT existiert
+		if ($reihungstest->getPersonReihungstest($person_id, $rt_id))
+		{
+			echo json_encode(array(
+				'status' => 'fehler',
+				'msg' => 'Sie sind bereits für diesen Reihungstest angemeldet. Bitte aktualisieren Sie die Seite.'
 			));
 			exit();
 		}
@@ -1604,6 +1622,7 @@ if (isset($_POST['btn_zgv']))
 if (isset($_POST['btn_notiz']))
 {
 	$anmerkung = filter_input(INPUT_POST, 'anmerkung');
+	$prestudent_id = filter_input(INPUT_POST, 'prestudent_id');
 
 	// Es soll nur eine Notiz pro Person gespeichert werden
 	$notiz = new notiz;
@@ -1613,6 +1632,7 @@ if (isset($_POST['btn_notiz']))
 	{
 		$notiz = new notiz();
 		$notiz->person_id = $person_id;
+		$notiz->prestudent_id = $prestudent_id;
 		$notiz->verfasser_uid = '';
 		$notiz->erledigt = false;
 		$notiz->insertvon = 'online_notiz'; // Nicht aendern, da in notiz.class.php nach insertvon abgefragt wird
@@ -1633,6 +1653,63 @@ if (isset($_POST['btn_notiz']))
 		), 'bewerbung', 'bewerbung', null, 'online');
 	}
 }
+// Notizen mit Ajax speichern
+$saveNotiz = filter_input(INPUT_POST, 'saveNotiz', FILTER_VALIDATE_BOOLEAN);
+
+if ($saveNotiz)
+{
+	$person_id = filter_input(INPUT_POST, 'person_id');
+	$prestudent_id = filter_input(INPUT_POST, 'prestudent_id');
+	$anmerkungstext = trim(filter_input(INPUT_POST, 'anmerkungstext'));
+
+	// Es soll nur eine Notiz pro Person und Prestudent gespeichert werden
+	$notiz = new notiz;
+	$notiz->getBewerbungstoolNotizen($person_id, $prestudent_id);
+
+	$prestudentObj = new prestudent($prestudent_id);
+	$studiengang =  new studiengang($prestudentObj->studiengang_kz);
+
+	if ($anmerkungstext != '' && count($notiz->result) == 0)
+	{
+		$notiz = new notiz();
+		$notiz->person_id = $person_id;
+		$notiz->prestudent_id = $prestudent_id;
+		$notiz->verfasser_uid = '';
+		$notiz->erledigt = false;
+		$notiz->insertvon = 'online_notiz'; // Nicht aendern, da in notiz.class.php nach insertvon abgefragt wird
+		$notiz->insertamum = date('c');
+		$notiz->start = date('Y-m-d');
+		$notiz->titel = 'Anmerkung zur Bewerbung ('.$studiengang->kuerzel.')';
+		$notiz->text = htmlspecialchars($anmerkungstext);
+		$notiz->save(true);
+
+		if ($notiz->saveZuordnung())
+		{
+			// Geparkten Logeintrag löschen
+			$log->deleteParked($person_id);
+			// Logeintrag schreiben
+			$log->log($person_id, 'Action', array(
+				'name' => 'New notiz saved',
+				'success' => true,
+				'message' => 'New notiz has been saved'
+			), 'bewerbung', 'bewerbung', null, 'online');
+
+			echo json_encode(array(
+					'status'=>'ok',
+					'insertamum'=>date('d.m.Y', strtotime($notiz->insertamum)),
+					'anmerkung'=>$notiz->text));
+		}
+		else
+		{
+			echo json_encode(array(
+				'status' => 'fehler',
+				'msg' => 'Error saving note for '.$person_id
+			));
+		}
+		exit();
+	}
+}
+
 $save_error_zugangscode = '';
 // Neuen Zugangscode generieren
 if (isset($_POST['btn_new_accesscode']))
