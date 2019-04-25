@@ -823,7 +823,7 @@ function BewerbungGetGemeinden($plz)
 	else
 		return false;
 }
-function getBewerbungszeitraum($studiengang_kz, $studiensemester, $studienplan_id)
+function getBewerbungszeitraum($studiengang_kz, $studiensemester, $studienplan_id, $nationengruppe_kurzbz = null)
 {
 	global $p, $datum;
 	$tage_bis_fristablauf = '';
@@ -832,9 +832,15 @@ function getBewerbungszeitraum($studiengang_kz, $studiensemester, $studienplan_i
 	$bewerbungszeitraum = '';
 	$class = '';
 	$bewerbungsfrist = '';
-	
+
 	$bewerbungsfristen = new bewerbungstermin();
-	$bewerbungsfristen->getBewerbungstermine($studiengang_kz, $studiensemester, 'insertamum DESC', $studienplan_id);
+	$bewerbungsfristen->getBewerbungstermine($studiengang_kz, $studiensemester, 'nationengruppe_kurzbz NULLS FIRST, insertamum DESC', $studienplan_id, $nationengruppe_kurzbz);
+
+	// Wenn eine Nationengruppe übergeben wurde und kein Ergebnis zurück kommt, nationengruppe nochmal mit Parameter 0 (alle NULL-Werte) probieren
+	if ($nationengruppe_kurzbz != '' && !isset($bewerbungsfristen->result[0]))
+	{
+		$bewerbungsfristen->getBewerbungstermine($studiengang_kz, $studiensemester, 'nationengruppe_kurzbz NULLS LAST, insertamum DESC', $studienplan_id, 0);
+	}
 	
 	if (isset($bewerbungsfristen->result[0]))
 	{
@@ -1212,7 +1218,9 @@ function getBewerbungen($person_id, $aktive = null)
 			) AS laststatus_studiensemester_kurzbz,
 			tbl_studiengang.bezeichnung,
 			tbl_studiengang.english,
-			tbl_studiengang.typ
+			tbl_studiengang.typ,
+			tbl_prestudent.zgvnation,
+			tbl_prestudent.zgvmanation
 			FROM public.tbl_prestudent 
 			JOIN public.tbl_studiengang USING (studiengang_kz)
 			WHERE person_id=".$db->db_add_param($person_id, FHC_INTEGER)." 
@@ -1241,6 +1249,8 @@ function getBewerbungen($person_id, $aktive = null)
 			$obj->bezeichnung_arr['German'] = $row->bezeichnung;
 			$obj->bezeichnung_arr['English'] = $row->english;
 			$obj->typ = $row->typ;
+			$obj->zgvnation = $row->zgvnation;
+			$obj->zgvmanation = $row->zgvmanation;
 
 			$db->result[] = $obj;
 		}
@@ -1317,7 +1327,7 @@ function getPrioStudienplanForReihungstest($person_id, $studiensemester_kurzbz)
  *
  * @param integer $studienplan_id Studienplan ID eines zugeteilten Studienplans.
  * @param string $studiensemester_kurzbz Studiensemester des Termins
- * @param string $stufe Optional. Default 1. Stufe, die der Termin haben soll.
+ * @param integer $stufe Optional. Default 1. Stufe, die der Termin haben soll.
  * @param array $excludedStudienplans. Array mit Studienplan_ids, deren Reihungstests von der Abfrage ausgenommen werden sollen
  * 
  * @return TRUE, FALSE im Fehlerfall
