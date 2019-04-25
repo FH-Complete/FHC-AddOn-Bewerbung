@@ -75,4 +75,7 @@ define('BEWERBERTOOL_REIHUNGSTEST_STORNIERBAR_TAGE', '');
 
 // Soll ein Notizfeld (Anmerkung zur Bewerbung) angezeigt werden?
 define('BEWERBERTOOL_ABSCHICKEN_ANMERKUNG', true);
+
+// Soll das DropDown zur ZGV-Nation bei der Registration angezeigt werden?
+define('BEWERBERTOOL_SHOW_REGISTRATION_ZGVNATION', false);
 ?>
