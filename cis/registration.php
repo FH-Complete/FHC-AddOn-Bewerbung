@@ -711,7 +711,7 @@ elseif($username && $password)
 							</a>
 						</label>
 						<div class="col-sm-4 dropdown">
-							<select name="zgv_nation" id="zgv_nation" class="form-control" onChange="changeBewerbungsfristen()">
+							<select name="zgv_nation" id="zgv_nation" class="form-control" onChange="formSubmit()">
 								<option value=""><?php echo $p->t('bewerbung/bitteAuswaehlenBaMa') ?></option>
 								<option value="A"><?php	echo ($sprache=='German'? 'Österreich':'Austria'); ?></option>
 								<?php $selected = '';
