@@ -2508,16 +2508,16 @@ function sendBewerbung($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz,
 	if (CAMPUS_NAME == 'FH Technikum Wien' && $studiengang->typ != 'b')
 	{
 		$kontakt = new kontakt();
-		$kontakt->load_persKontakttyp($person->person_id, 'email');
+		$kontakt->load_persKontakttyp($person->person_id, 'email', 'zustellung DESC');
 		$mailadresse = isset($kontakt->result[0]->kontakt) ? $kontakt->result[0]->kontakt : '';
 
 		$kontakt_t = new kontakt();
-		$kontakt_t->load_persKontakttyp($person->person_id, 'telefon');
+		$kontakt_t->load_persKontakttyp($person->person_id, 'telefon', 'zustellung DESC');
 		$telefon = isset($kontakt_t->result[0]->kontakt) ? $kontakt_t->result[0]->kontakt : '';
 		// Wenn Telefonnumer leer, alternativ Mobilnummer abfragen
 		if ($telefon == '')
 		{
-			$kontakt_t->load_persKontakttyp($person->person_id, 'mobil');
+			$kontakt_t->load_persKontakttyp($person->person_id, 'mobil', 'zustellung DESC');
 			$telefon = isset($kontakt_t->result[0]->kontakt) ? $kontakt_t->result[0]->kontakt : '';
 		}
 
@@ -2635,7 +2635,7 @@ function sendBewerbung($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz,
 	{
 		$p = new phrasen($sprache);
 		$kontakt = new kontakt();
-		$kontakt->load_persKontakttyp($person->person_id, 'email');
+		$kontakt->load_persKontakttyp($person->person_id, 'email', 'zustellung DESC');
 		$mailadresse = isset($kontakt->result[0]->kontakt) ? $kontakt->result[0]->kontakt : '';
 
 		if($person->geschlecht == 'm')
@@ -2710,16 +2710,16 @@ function sendAddStudiengang($prestudent_id, $studiensemester_kurzbz, $orgform_ku
 	$typ->getStudiengangTyp($studiengang->typ);
 
 	$kontakt = new kontakt();
-	$kontakt->load_persKontakttyp($person->person_id, 'email');
+	$kontakt->load_persKontakttyp($person->person_id, 'email', 'zustellung DESC');
 	$mailadresse = isset($kontakt->result[0]->kontakt) ? $kontakt->result[0]->kontakt : '';
 
 	$kontakt_t = new kontakt();
-	$kontakt_t->load_persKontakttyp($person->person_id, 'telefon');
+	$kontakt_t->load_persKontakttyp($person->person_id, 'telefon', 'zustellung DESC');
 	$telefon = isset($kontakt_t->result[0]->kontakt) ? $kontakt_t->result[0]->kontakt : '';
 	// Wenn Telefonnumer leer, alternativ Mobilnummer abfragen
 	if ($telefon == '')
 	{
-		$kontakt_t->load_persKontakttyp($person->person_id, 'mobil');
+		$kontakt_t->load_persKontakttyp($person->person_id, 'mobil', 'zustellung DESC');
 		$telefon = isset($kontakt_t->result[0]->kontakt) ? $kontakt_t->result[0]->kontakt : '';
 	}
 
