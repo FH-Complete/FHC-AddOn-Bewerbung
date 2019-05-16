@@ -15,15 +15,35 @@ $this->phrasen['bewerbung/welcomeHeaderLogin']='<div class="col-xs-3">
 									</div>
 								</div>';
 $this->phrasen['bewerbung/welcomeHeaderRegistration']='
-					<div class="row">
-						<div class="col-xs-2">
+					<div class="row hidden-md hidden-lg">
+						<div class="col-xs-5">
 							<img style="width:150px;" class="center-block img-responsive" src="' . APP_ROOT . 'skin/styles/' . DEFAULT_STYLE . '/logo_academy.png">
 						</div>
-						<div class="col-xs-8">
+						<div class="col-xs-2">
+							
+						</div>
+						<div class="col-xs-5">
+							<img style="width:150px;" class="center-block img-responsive" src="' . APP_ROOT . 'skin/styles/' . DEFAULT_STYLE . '/logo.png">
+						</div>
+					</div>
+					<div class="row hidden-md hidden-lg">
+						<div class="col-xs-12">
 							<h2 class="text-center">Welcome to the Online Application Tool</h2>
 						</div>
+					</div>
+					<div class="row hidden-xs hidden-sm">
 						<div class="col-xs-2">
-							<img style="width:150px;" class="center-block img-responsive" src="' . APP_ROOT . 'skin/styles/' . DEFAULT_STYLE . '/logo.png">
+							<div style="text-align: center;">
+								<img style="margin: 30px 10px; width: 100%%" src="' . APP_ROOT . 'skin/styles/' . DEFAULT_STYLE . '/logo_academy.png"/>
+							</div>
+						</div>
+						<div style="text-align: center;" class="col-xs-8">
+							<h1 style="margin: 30px 10px;">Welcome to the Online Application Tool</h1>
+						</div>
+						<div class="col-xs-2">
+							<div style="text-align: center;">
+								<img style="margin: 30px 10px; width: 100%%" src="' . APP_ROOT . 'skin/styles/' . DEFAULT_STYLE . '/logo.png"/>
+							</div>
 						</div>
 					</div>
 					';
@@ -268,7 +288,7 @@ $this->phrasen['bewerbung/ab']='from';
 $this->phrasen['bewerbung/adresse']='Address (principal residence)';
 $this->phrasen['bewerbung/notizVom']='Note from';
 $this->phrasen['bewerbung/anmerkung']='Comment';
-$this->phrasen['bewerbung/anmerkungPlaceholder']='Here you have the opportunity to enter an additional comment (1024 characters) that you want to tell the assistant';
+$this->phrasen['bewerbung/anmerkungPlaceholder']='Enter additional comments for you application here (1 comment per application, 1024 characters)';
 $this->phrasen['bewerbung/orgformMussGewaehltWerden']='An organization form must be selected';
 $this->phrasen['bewerbung/hierUnverbindlichAnmelden']='Register here without obligation';
 $this->phrasen['bewerbung/keineOrgformVorhanden']='No organization form has been stored for the semester of study selected';
@@ -300,7 +320,7 @@ $this->phrasen['bewerbung/bitteGueltigeOesterreichischePlzEingeben']='Please ent
 $this->phrasen['bewerbung/plzMussGueltigSein']='Postcode must be a valid number';
 $this->phrasen['bewerbung/plzUnbekannt']='Postcode unknown';
 $this->phrasen['bewerbung/dateien']='File(s)';
-$this->phrasen['bewerbung/dokumentWirdGeprueft']='Document in examination';
+$this->phrasen['bewerbung/dokumentWirdGeprueft']='Document uploaded';
 $this->phrasen['bewerbung/dokumentUeberprueft']='Document examined';
 $this->phrasen['bewerbung/keineDateiAusgewaehlt']='No file selected or found';
 $this->phrasen['bewerbung/placeholderAnmerkungNachgereicht']='Please indicate which institution will issue the document and when you can probably submit it';
@@ -445,28 +465,29 @@ $this->phrasen['bewerbung/erklaerungSicherheit']='For reasons of privacy, we rec
 $this->phrasen['bewerbung/buttonNeuerZugangscode']='Generate new access code';
 $this->phrasen['bewerbung/erfolgsMessageNeuerZugangscode']='<p>Your new access code is:</p><p>%s</p><p>Please make a note of the new access code</p>';
 $this->phrasen['bewerbung/keineStudienrichtungenFuerStudiensemesterZurAuswahl']='There are currently no courses of study available for the selected semester';
-$this->phrasen['bewerbung/studienberechtigungErlangtIn']='Studienberechtigung erlangt in'; // Noch zu übersetzen
-$this->phrasen['bewerbung/studienberechtigungErlangtInErklaerung']='Hier ist jene Nation zu wählen, in der Sie Ihren Abschluss erlangt haben/erlangen werden, der Sie zu einem Studium berechtigt (optional für Lehrgänge)';  // Noch zu übersetzen
+$this->phrasen['bewerbung/studienberechtigungErlangtIn']='Entitlement to study obtained in';
+$this->phrasen['bewerbung/studienberechtigungErlangtInErklaerung']='Choose the country where you obtained your school leaving certificate which entitles you to take up a university degree course (optional for Certificate Programs for Further Education)';
 $this->phrasen['bewerbung/StatusSeitDatum']='%1$s since %2$s';
 $this->phrasen['bewerbung/bewerbungszeitraumFuer']='Application period for %1$s';
 $this->phrasen['bewerbung/bitteAuswaehlenBaMa']='-- Please select for bachelor and master --';
-$this->phrasen['bewerbung/bitteZGVausweahlen']='Wenn Sie sich für einen Bachelor- oder Master-Studiengang bewerben, wählen Sie bitte das Land aus, in dem Sie die Studienberechtigung erlangt haben'; // Noch zu übersetzen
+$this->phrasen['bewerbung/bitteZGVausweahlen']='If you are applying for a Bachelor’s or Master’s degree program, please select the country in which you obtained your entitlement to study';
 
 // Reihungstest
 $this->phrasen['bewerbung/anmeldungReihungstestMailBetreff']='Confirmation of registration to placement test UAS Technikum Wien';
-$this->phrasen['bewerbung/anmeldungReihungstestMail']='Sehr %3$s %1$s %2$s,<br><br>
-Sie haben sich erfolgreich für den Reihungstest am %4$s beworben. Der Test beginnt um %5$s und dauert etwa 3,5 Stunden.<br><br>
-Bitte bringen Sie einen amtlichen Lichtbildausweis zur Überprüfung Ihrer Identität mit.<br>
-Den Raum können Sie etwa eine Woche vor Testbeginn im Bewerbungstool sehen<br>
-Sollten Sie Fragen haben, kontaktieren Sie bitte unser Infocenter <a href="mailto:studienberatung@technikum-wien.at">studienberatung@technikum-wien.at</a>.<br><br>
-Mit freundlichen Grüßen<br>
-Fachhochschule Technikum Wien'; // Noch zu übersetzen
+$this->phrasen['bewerbung/anmeldungReihungstestMail']='Dear %3$s %1$s %2$s,<br><br>
+You have successfully applied for the placement test on %4$s. The test begins at %5$s and lasts about 3.5 hours.<br><br>
+Please bring an official photo ID to verify your identity.<br>
+You will be able to see the room where the test will be held about a week beforehand in the Application Tool.<br>
+If you have any questions, please do not hesitate to contact the <a href="mailto:studienberatung@technikum-wien.at">InfoCenter team</a>.<br><br>
+Yours sincerely<br>
+UAS Technikum Wien';
+
 $this->phrasen['bewerbung/reihungstestInfoTextAngemeldet']='<div class="alert alert-info">
 <p>Please make sure that you arrive 15 minutes prior to the placement test at the UAS, 1200 Wien, Höchstädtplatz 6.</p>
 <p>Please bring an official photo ID (passport, identity card, etc.) on the day of your placement test.</p>
 </div><br>';
 $this->phrasen['bewerbung/anmeldefrist']='Term of application';
-$this->phrasen['bewerbung/infoVorgemerktFuerQualifikationskurs']='Sie sind als TeilnehmerIn für die Qualifikationskurse vorgemerkt. Sobald sie dort bestätigt wurden, können Sie hier einen Termin für den Reihungstest wählen.';// Noch zu übersetzen
+$this->phrasen['bewerbung/infoVorgemerktFuerQualifikationskurs']='You are pencilled in as a participant for the qualification courses. Once you are confirmed there, you can choose an appointment for the placement test here.';
 $this->phrasen['bewerbung/raumzuteilungFolgt']='One week prior to the test you will see here the room-number';
 $this->phrasen['bewerbung/sieHabenFolgendenTerminGewaehlt']='You have registered for the following placement test date';
 
