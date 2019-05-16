@@ -977,6 +977,9 @@ function getAllDokumenteBewerbungstoolForPerson($person_id, $studiensemester_arr
 
 	// $beschreibung_mehrsprachig = $sprache->getSprachQuery('beschreibung_mehrsprachig');
 	$qry = "SELECT DISTINCT 
+			tbl_prestudent.prestudent_id,
+			dok_stg.studiengang_kz,
+			dok_stg.stufe,
 			dok_stg.dokument_kurzbz,
 			tbl_dokument.bezeichnung,
 			dok_stg.pflicht,
@@ -1036,9 +1039,129 @@ function getAllDokumenteBewerbungstoolForPerson($person_id, $studiensemester_arr
 			else 
 				$qry .= " AND get_rolle_prestudent (tbl_prestudent.prestudent_id, null) NOT IN ('Abgewiesener','Abbrecher')";
 			
-			$qry .= " ORDER BY dokument_kurzbz,
+			$qry .= " ORDER BY studiengang_kz,stufe,dokument_kurzbz,
 				pflicht DESC";
+	//echo $qry;
+	if ($result = $db->db_query($qry))
+	{
+		while ($row = $db->db_fetch_object($result))
+		{
+			$dok = new stdClass();
+			$dok->prestudent_id = $row->prestudent_id;
+			$dok->studiengang_kz = $row->studiengang_kz;
+			$dok->stufe = $row->stufe;
+			$dok->dokument_kurzbz = $row->dokument_kurzbz;
+			$dok->bezeichnung = $row->bezeichnung;
+			$dok->pflicht = $db->db_parse_bool($row->pflicht);
+			$dok->nachreichbar = $db->db_parse_bool($row->nachreichbar);
+			$dok->ausstellungsdetails = $db->db_parse_bool($row->ausstellungsdetails);
+			$dok->anzahl_akten_vorhanden = $row->anzahl_akten_vorhanden;
+			$dok->anzahl_akten_formal_geprueft = $row->anzahl_akten_formal_geprueft;
+			$dok->anzahl_dokumente_akzeptiert = $row->anzahl_dokumente_akzeptiert;
+			$dok->anzahl_akten_nachgereicht = $row->anzahl_akten_nachgereicht;
+			$dok->bezeichnung_mehrsprachig = $sprache->parseSprachResult('bezeichnung_mehrsprachig', $row);
+			$dok->dokumentbeschreibung_mehrsprachig = $sprache->parseSprachResult('dokumentbeschreibung_mehrsprachig', $row);
+			$dok->beschreibung_mehrsprachig = $sprache->parseSprachResult('beschreibung_mehrsprachig', $row);
+			
+			$dok->new = true;
+			
+			$db->result[] = $dok;
+		}
+		if (isset($db->result))
+			return $db->result;
+		else
+			return false;
+	}
+	else
+	{
+		$db->errormsg = "Fehler bei der Abfrage aufgetreten";
+		return false;
+	}
+}
 
+/**
+ * Liefert alle Dokumente die eine Person im Bewerbungstool abzugeben hat.
+ *
+ * @param integer $person_id
+ * @param array $studiensemester_array
+ */
+function getAllDokumenteForStufeForPrestudent($person_id, $studiensemester_array = null)
+{
+	$db = new basis_db();
+	$sprache = new sprache();
+	$bezeichnung_mehrsprachig = $sprache->getSprachQuery('bezeichnung_mehrsprachig');
+	$dokumentbeschreibung_mehrsprachig = $sprache->getSprachQuery('dokumentbeschreibung_mehrsprachig');
+
+	if(isset($studiensemester_array) && !is_array($studiensemester_array))
+	{
+		$db->errormsg = '$studiensemester_array is not an array';
+		return false;
+	}
+
+	// $beschreibung_mehrsprachig = $sprache->getSprachQuery('beschreibung_mehrsprachig');
+	$qry = "SELECT DISTINCT 
+			dok_stg.dokument_kurzbz,
+			tbl_dokument.bezeichnung,
+			dok_stg.pflicht,
+			dok_stg.nachreichbar,
+			tbl_dokument.ausstellungsdetails,
+			(
+				SELECT count(*)
+				FROM PUBLIC.tbl_akte
+				WHERE dokument_kurzbz = dok_stg.dokument_kurzbz
+					AND person_id = " . $db->db_add_param($person_id, FHC_INTEGER) . "
+					AND (inhalt IS NOT NULL OR dms_id IS NOT NULL)
+				) AS anzahl_akten_vorhanden,
+			(
+				SELECT count(*)
+				FROM PUBLIC.tbl_akte
+				WHERE dokument_kurzbz = dok_stg.dokument_kurzbz
+					AND person_id = " . $db->db_add_param($person_id, FHC_INTEGER) . "
+					AND formal_geprueft_amum IS NOT NULL
+				) AS anzahl_akten_formal_geprueft,
+			(
+				SELECT count(*)
+				FROM PUBLIC.tbl_akte
+				WHERE dokument_kurzbz = dok_stg.dokument_kurzbz
+					AND person_id = " . $db->db_add_param($person_id, FHC_INTEGER) . "
+					AND nachgereicht = true
+				) AS anzahl_akten_nachgereicht,
+			(
+				SELECT count(*)
+				FROM PUBLIC.tbl_dokumentprestudent
+				WHERE dokument_kurzbz = dok_stg.dokument_kurzbz
+					AND prestudent_id IN (
+						SELECT prestudent_id
+						FROM PUBLIC.tbl_prestudent
+						WHERE person_id = " . $db->db_add_param($person_id, FHC_INTEGER) . "
+						)
+				) AS anzahl_dokumente_akzeptiert,
+			$bezeichnung_mehrsprachig, $dokumentbeschreibung_mehrsprachig
+			FROM PUBLIC.tbl_dokumentstudiengang dok_stg
+			JOIN PUBLIC.tbl_prestudent USING (studiengang_kz)
+			JOIN PUBLIC.tbl_dokument USING (dokument_kurzbz)
+			WHERE tbl_prestudent.person_id = " . $db->db_add_param($person_id, FHC_INTEGER) . "
+				AND dok_stg.onlinebewerbung IS true ";
+
+	if (isset($studiensemester_array) && !empty($studiensemester_array))
+	{
+		$i = 0;
+		$qry .= " AND (";
+		foreach ($studiensemester_array as $studiensemester)
+		{
+			if ($i > 0)
+				$qry .= " OR ";
+			$qry .= " get_rolle_prestudent (tbl_prestudent.prestudent_id, " . $db->db_add_param($studiensemester, FHC_STRING) . ") NOT IN ('Abgewiesener','Abbrecher')";
+			$i ++;
+		}
+		$qry .= " ) ";
+	}
+	else
+		$qry .= " AND get_rolle_prestudent (tbl_prestudent.prestudent_id, null) NOT IN ('Abgewiesener','Abbrecher')";
+
+	$qry .= " ORDER BY dokument_kurzbz,
+				pflicht DESC";
+	//echo $qry;
 	if ($result = $db->db_query($qry))
 	{
 		while ($row = $db->db_fetch_object($result))
@@ -1056,9 +1179,9 @@ function getAllDokumenteBewerbungstoolForPerson($person_id, $studiensemester_arr
 			$dok->bezeichnung_mehrsprachig = $sprache->parseSprachResult('bezeichnung_mehrsprachig', $row);
 			$dok->dokumentbeschreibung_mehrsprachig = $sprache->parseSprachResult('dokumentbeschreibung_mehrsprachig', $row);
 			$dok->beschreibung_mehrsprachig = $sprache->parseSprachResult('beschreibung_mehrsprachig', $row);
-			
+
 			$dok->new = true;
-			
+
 			$db->result[] = $dok;
 		}
 		if (isset($db->result))
@@ -1147,8 +1270,13 @@ function getMailEmpfaenger($studiengang_kz, $studienplan_id = null, $orgform_kur
 	}
 	elseif(isset($empf_array[$studiengang_kz]))
 	{
+		// Mails an Lehrgänge gehen alle an den Shared Folder lehrgang@technikum-wien.at
+		if (CAMPUS_NAME == 'FH Technikum Wien' && $studiengang->typ == 'l' && $studiengang->lgartcode != '')
+		{
+			$empfaenger = 'lehrgang@technikum-wien.at';
+		}
 		// Pfuschloesung, damit bei BIF Dual die Mail an info.bid geht
-		if (CAMPUS_NAME == 'FH Technikum Wien' && $studiengang_kz == 257)
+		elseif (CAMPUS_NAME == 'FH Technikum Wien' && $studiengang_kz == 257)
 		{
 			if ((isset($studienplan) && $studienplan->orgform_kurzbz == 'DUA') ||
 				($orgform_kurzbz != '' && $orgform_kurzbz == 'DUA'))
@@ -1164,7 +1292,28 @@ function getMailEmpfaenger($studiengang_kz, $studienplan_id = null, $orgform_kur
 			$empfaenger = $empf_array[$studiengang_kz];
 	}
 	else
-		$empfaenger = $studiengang->email;
+	{
+		// Mails an Lehrgänge gehen alle an den Shared Folder lehrgang@technikum-wien.at
+		if (CAMPUS_NAME == 'FH Technikum Wien' && $studiengang->typ == 'l' && $studiengang->lgartcode != '')
+		{
+			$empfaenger = 'lehrgang@technikum-wien.at';
+		}
+		// Pfuschloesung, damit bei BIF Dual die Mail an info.bid geht
+		elseif (CAMPUS_NAME == 'FH Technikum Wien' && $studiengang_kz == 257)
+		{
+			if ((isset($studienplan) && $studienplan->orgform_kurzbz == 'DUA') ||
+				($orgform_kurzbz != '' && $orgform_kurzbz == 'DUA'))
+			{
+				$empfaenger = 'info.bid@technikum-wien.at';
+			}
+			else
+			{
+				$empfaenger = 'info.bif@technikum-wien.at';
+			}
+		}
+		else
+			$empfaenger = $studiengang->email;
+	}
 
 	if ($empfaenger != '')
 		return $empfaenger;
@@ -1515,3 +1664,67 @@ function hasPersonStatusgrund($person_id, $studiensemester_kurzbz, $status_grund
 	}
 }
 
+/**
+ * Liefert die Stufe eines Prestudenten
+ * Kein passender Status -> 0
+ * Interessent, Wartender, Bewerber -> 1
+ * Aufgenommener, Student -> 2
+ *
+ * @param integer $prestudent_id
+ * @param string $studiensemester_kurzbz Optional. Studiensemester der Bewerbung
+ *
+ * @return integer Stufe, in der sich der PreStudent befindet oder false im Fehlerfall
+ */
+function getStufeBewerberFuerDokumente($prestudent_id, $studiensemester_kurzbz = null)
+{
+	$db = new basis_db();
+	$qry = "
+			SELECT status_kurzbz 
+			FROM public.tbl_prestudent
+			JOIN public.tbl_prestudentstatus USING (prestudent_id)
+			WHERE prestudent_id = ".$db->db_add_param($prestudent_id, FHC_INTEGER);
+
+	if ($studiensemester_kurzbz != '')
+	{
+		$qry .= " AND studiensemester_kurzbz = ".$db->db_add_param($studiensemester_kurzbz);
+	}
+
+	$qry .= " ORDER BY tbl_prestudentstatus.insertamum DESC LIMIT 1";
+
+	if ($db->db_query($qry))
+	{
+		if ($row = $db->db_fetch_object())
+		{
+			switch ($row->status_kurzbz)
+			{
+				case 'Interessent':
+					return 1;
+					break;
+				case 'Bewerber':
+					return 1;
+					break;
+				case 'Wartender':
+					return 1;
+					break;
+				case 'Aufgenommener':
+					return 2;
+					break;
+				case 'Student':
+					return 2;
+					break;
+				default:
+					return 0;
+			}
+		}
+		else
+		{
+			$db->errormsg = 'Fehler bei der Abfrage';
+			return false;
+		}
+	}
+	else
+	{
+		$db->errormsg = 'Fehler beim Laden der Daten';
+		return false;
+	}
+}

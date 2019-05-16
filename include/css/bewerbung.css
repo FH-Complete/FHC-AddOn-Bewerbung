@@ -142,4 +142,26 @@ dokument a:hover
 .sprache-dropdown:hover .sprache-dropdown-content 
 {
 	display: block;
-} 
+}
+
+.dokumentdetails
+{
+	font-style: italic;
+	font-size: 0.9em
+}
+.fade-out
+{
+	max-height: 3em;
+	overflow: hidden;
+	position: relative;
+}
+.fade-out:before
+{
+	content: '';
+	width: 100%;
+	height: 70%;
+	position: absolute;
+	left: 0;
+	top: 30%;
+	background: linear-gradient(transparent 10%, white);
+}

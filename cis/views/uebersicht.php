@@ -274,6 +274,9 @@ else
 		}
 		echo '				</div>';
 
+		// Letzten Interessentenstatus laden
+		$lastInteressentenStatus = new prestudent();
+		$lastInteressentenStatus->getLastStatus($row->prestudent_id, '', 'Interessent');
 		// Stornieren nur moeglich, wenn letzter Status "Interessent" ist oder noch nicht abgeschickt oder bestätigt wurde
 		$buttonStornierenEnabled = false;
 		if ($prestudent_status->status_kurzbz == 'Interessent'
@@ -291,10 +294,10 @@ else
 		
 		// Abschicken nur möglich, wenn die Frist nicht abgelaufen ist und die Bewerbung noch nicht geschickt oder bestätigt wurde
 		$buttonAbschickenEnabled = false;
-		if ($prestudent_status->bewerbung_abgeschicktamum == '' 
+		if ($lastInteressentenStatus->bewerbung_abgeschicktamum == ''
 			&& $fristAbgelaufen == false
-			&& $prestudent_status->bestaetigtam == ''
-			&& $prestudent_status->bestaetigtvon == '')
+			&& $lastInteressentenStatus->bestaetigtam == ''
+			&& $lastInteressentenStatus->bestaetigtvon == '')
 		{
 			$buttonAbschickenEnabled = true;
 		}
@@ -308,7 +311,7 @@ else
 									data-parent="#accordionBewerbungen' . $row->laststatus_studiensemester_kurzbz . '" 
 									href="#panelCollapse' . $row->prestudent_id . '"
 									style="color: inherit">
-									<div class="col-xs-6 col-sm-7 col-md-6 panel-header-stgbez ' . ($prestudent_status->bewerbung_abgeschicktamum == '' && $fristAbgelaufen ? 'text-muted' : '') . '">
+									<div class="col-xs-6 col-sm-7 col-md-6 panel-header-stgbez ' . ($lastInteressentenStatus->bewerbung_abgeschicktamum == '' && $fristAbgelaufen ? 'text-muted' : '') . '">
 										' . $stgBeschriftungPanel . '
 									</div>
 								</a>';
@@ -334,7 +337,7 @@ else
 		else 
 		{
 			echo '				<div class="col-xs-4 col-sm-3 col-md-5 text-right action-buttons">';
-						if ($prestudent_status->bewerbung_abgeschicktamum != '' || $prestudent_status->bestaetigtam != '')
+						if ($lastInteressentenStatus->bewerbung_abgeschicktamum != '' || $lastInteressentenStatus->bestaetigtam != '')
 						{
 							echo '	<div class="label label-info hidden-md hidden-lg bg-danger"><span class="glyphicon glyphicon-info-sign hidden-md hidden-lg"></div>';
 							echo '	<div class="label label-info hidden-sm hidden-xs">' . $p->t('bewerbung/BewerbungBereitsVerschickt') . '</div>';
@@ -342,7 +345,7 @@ else
 						elseif ($bewerbungszeitraum['frist_abgelaufen'] == true)
 						{
 							echo '	<div class="label label-danger hidden-md hidden-lg"><span class="glyphicon glyphicon-alert hidden-md hidden-lg"></div>';
-							echo '	<div class="label label-danger hidden-sm hidden-xs">' . $p->t('bewerbung/bewerbungsfristFuerStudiensemesterXAbgelaufen', array($prestudent_status->studiensemester_kurzbz)) . '</div>';
+							echo '	<div class="label label-danger hidden-sm hidden-xs">' . $p->t('bewerbung/bewerbungsfristFuerStudiensemesterXAbgelaufen', array($lastInteressentenStatus->studiensemester_kurzbz)) . '</div>';
 						}
 			echo '				</div>';
 		}
@@ -366,13 +369,13 @@ else
 								<div class="col-xs-12">
 									<form class="form-horizontal">';
 							// Status anzeigen
-							if ($prestudent_status->bewerbung_abgeschicktamum != '' || $prestudent_status->bestaetigtam != '')
+							if ($lastInteressentenStatus->bewerbung_abgeschicktamum != '' || $lastInteressentenStatus->bestaetigtam != '')
 							{
 								echo '	<div class="alert alert-info">' . $p->t('bewerbung/BewerbungBereitsVerschickt') . '</div>';
 							}
 							elseif ($bewerbungszeitraum['frist_abgelaufen'] == true)
 							{
-								echo '	<div class="alert alert-danger">' . $p->t('bewerbung/bewerbungsfristFuerStudiensemesterXAbgelaufen', array($prestudent_status->studiensemester_kurzbz)) . '</div>';
+								echo '	<div class="alert alert-danger">' . $p->t('bewerbung/bewerbungsfristFuerStudiensemesterXAbgelaufen', array($lastInteressentenStatus->studiensemester_kurzbz)) . '</div>';
 							}
 		echo '							<div class="" style="display: table; margin-right: auto; margin-left: auto; padding-bottom: 15px;">
 											<button class="btn-nav btn btn-sm btn-success ' . ($buttonAbschickenEnabled ? '' : 'disabled hidden') . '" type="button"
@@ -470,14 +473,14 @@ else
 												' . $p->t('bewerbung/bewerbungStornieren') .'</h4>
 								</div>
 								<div class="modal-body">
-											' . $p->t('bewerbung/bewerbungStornierenInfotext', array($prestudent_status->studiensemester_kurzbz, $stgBeschriftungPanel)) . '
+											' . $p->t('bewerbung/bewerbungStornierenInfotext', array($lastInteressentenStatus->studiensemester_kurzbz, $stgBeschriftungPanel)) . '
 										</div>
 								<div class="modal-footer">
 									<button type="button" class="btn btn-default" data-dismiss="modal">' . $p->t('global/abbrechen') . '
 											</button>
 										
 									<button type="button" class="btn btn-warning"
-										onclick="bewerbungStornieren(\'' . $row->prestudent_id . '\',\'' . $prestudent_status->studiensemester_kurzbz . '\')">
+										onclick="bewerbungStornieren(\'' . $row->prestudent_id . '\',\'' . $lastInteressentenStatus->studiensemester_kurzbz . '\')">
 													' . $p->t('bewerbung/bewerbungStornierenBestaetigen') . '
 												</button>
 				
