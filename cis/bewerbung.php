@@ -557,12 +557,32 @@ if (isset($_POST['btn_bewerbung_abschicken']))
 		$alterstatus = new prestudent();
 		$alterstatus->getLastStatus($pr_id);
 
+		$studiengang = new studiengang($prestudent_status->studiengang_kz);
+
+		// Nation für die Anzeige der richtigen Bewerbungsfrist laden
+		if ($studiengang->typ == 'm')
+		{
+			$zgv_nation = $prestudent_status->zgvmanation;
+		}
+		else
+		{
+			$zgv_nation = $prestudent_status->zgvnation;
+		}
+
+		$nation = new nation($zgv_nation);
+		$nationengruppe = $nation->nationengruppe_kurzbz;
+
+		if ($nationengruppe == '')
+		{
+			$nationengruppe = 0;
+		}
+
 		// check ob es status schon gibt
 		if ($prestudent_status->load_rolle($pr_id, 'Interessent', $alterstatus->studiensemester_kurzbz, '1'))
 		{
 			// Check, ob Bewerbungsfrist schon begonnen hat, bzw abgelaufen ist
 			$bewerbungsfristen = new bewerbungstermin();
-			$bewerbungsfristen->getBewerbungstermine($prestudent_status->studiengang_kz, $prestudent_status->studiensemester_kurzbz, 'insertamum DESC', $prestudent_status->studienplan_id);
+			$bewerbungsfristen->getBewerbungstermine($prestudent_status->studiengang_kz, $prestudent_status->studiensemester_kurzbz, 'insertamum DESC', $prestudent_status->studienplan_id, $nationengruppe);
 
 			if (isset($bewerbungsfristen->result[0]))
 			{
