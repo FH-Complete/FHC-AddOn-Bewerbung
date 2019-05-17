@@ -841,7 +841,7 @@ function getBewerbungszeitraum($studiengang_kz, $studiensemester, $studienplan_i
 	{
 		$bewerbungsfristen->getBewerbungstermine($studiengang_kz, $studiensemester, 'nationengruppe_kurzbz NULLS LAST, insertamum DESC', $studienplan_id, 0);
 	}
-	
+
 	if (isset($bewerbungsfristen->result[0]))
 	{
 		$bewerbungsfristen = $bewerbungsfristen->result[0];
