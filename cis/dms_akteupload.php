@@ -698,9 +698,16 @@ if ($dokumente_abzugeben)
 {
 	foreach ($dokumente_abzugeben as $dok)
 	{
+		// Check, ob Dokument mit Upload akzeptiert wurde
 		$akte = new akte();
 		$akte->getAkten($person_id, $dok->dokument_kurzbz);
-		if ($dok->anzahl_akten_vorhanden > 0 && isset($akte->result[0]))
+
+		// Check, ob Dokument ohne Upload akzeptiert wurde
+		$dokument = new dokument();
+		$dok_ohneUpload_akzeptiert = false;
+		$dok_ohneUpload_akzeptiert = $dokument->akzeptiert($dok->dokument_kurzbz, $person_id);
+
+		if (($dok->anzahl_akten_vorhanden > 0 && isset($akte->result[0])) || $dok_ohneUpload_akzeptiert)
 		{
 			$akte_vorhanden[$dok->dokument_kurzbz] = true;
 		}

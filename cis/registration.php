@@ -890,9 +890,15 @@ elseif($username && $password)
 									$stg_bezeichnung .= ' | <i>'.$p->t('bewerbung/orgform/'.$row->orgform_kurzbz).' - '.$p->t('bewerbung/'.$row->sprache).'</i>';
 
 									$nation = new nation($zgv_nation);
+									$nationengruppe = $nation->nationengruppe_kurzbz;
+
+									if ($nationengruppe == '')
+									{
+										$nationengruppe = 0;
+									}
 
 									// Bewerbungsfristen laden
-									$bewerbungszeitraum = getBewerbungszeitraum($row->studiengang_kz, $std_semester, $row->studienplan_id, $nation->nationengruppe_kurzbz);
+									$bewerbungszeitraum = getBewerbungszeitraum($row->studiengang_kz, $std_semester, $row->studienplan_id, $nationengruppe);
 									$stg_bezeichnung .= ' '.$bewerbungszeitraum['infoDiv'];
 									$fristAbgelaufen = $bewerbungszeitraum['frist_abgelaufen'];
 																

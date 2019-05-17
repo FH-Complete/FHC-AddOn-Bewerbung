@@ -243,9 +243,15 @@ else
 		}
 
 		$nation = new nation($zgv_nation);
+		$nationengruppe = $nation->nationengruppe_kurzbz;
+
+		if ($nationengruppe == '')
+		{
+			$nationengruppe = 0;
+		}
 
 		// Bewerbungsfristen laden
-		$bewerbungszeitraum = getBewerbungszeitraum($stg->studiengang_kz, $prestudent_status->studiensemester_kurzbz, $prestudent_status->studienplan_id, $nation->nationengruppe_kurzbz);
+		$bewerbungszeitraum = getBewerbungszeitraum($stg->studiengang_kz, $prestudent_status->studiensemester_kurzbz, $prestudent_status->studienplan_id, $nationengruppe);
 		$fristAbgelaufen = $bewerbungszeitraum['frist_abgelaufen'];
 		
 		echo '	<div class="panel panel-default" id="panel_' . $row->prestudent_id . '" data-prestudent_id="' . $row->prestudent_id . '">
@@ -957,8 +963,14 @@ else
 				}
 			}
 			$nation = new nation($zgv_nation);
+			$nationengruppe = $nation->nationengruppe_kurzbz;
 
-			$bewerbungszeitraum = getBewerbungszeitraum($row->studiengang_kz, $std_semester, $row->studienplan_id, $nation->nationengruppe_kurzbz);
+			if ($nationengruppe == '')
+			{
+				$nationengruppe = 0;
+			}
+
+			$bewerbungszeitraum = getBewerbungszeitraum($row->studiengang_kz, $std_semester, $row->studienplan_id, $nationengruppe);
 			$stg_bezeichnung .= ' '.$bewerbungszeitraum['infoDiv'];
 			$fristAbgelaufen = $bewerbungszeitraum['frist_abgelaufen'];
 			
