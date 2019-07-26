@@ -32,6 +32,7 @@ require_once('../../../include/konto.class.php');
 require_once('../../../include/mail.class.php');
 require_once('../../../include/nation.class.php');
 require_once('../../../include/nationengruppe.class.php');
+require_once('../../../include/organisationsform.class.php');
 require_once('../../../include/person.class.php');
 require_once('../../../include/personlog.class.php');
 require_once('../../../include/phrasen.class.php');
@@ -647,6 +648,9 @@ elseif($username && $password)
 					<p class="infotext">
 						<?php echo $p->t('bewerbung/einleitungstext') ?>
 					</p>
+					<div class="alert alert-warning">
+						<?php echo $p->t('bewerbung/infotextRegistrationBewerbungGesperrt') ?>
+					</div>
 					<div class="form-group">
 						<label for="vorname" class="col-sm-3 control-label">
 							<?php echo $p->t('global/vorname') ?>
@@ -744,7 +748,7 @@ elseif($username && $password)
 								foreach($stsem->studiensemester as $row): ?>
 									<option value="<?php echo $row->studiensemester_kurzbz ?>"
 										<?php echo $std_semester == $row->studiensemester_kurzbz ? 'selected' : '' ?>>
-										<?php echo $row->bezeichnung.' ('.$p->t('bewerbung/ab').' '.$datum->formatDatum($stsem->convert_html_chars($row->start),'d.m.Y').')' ?>
+										<?php echo $row->bezeichnung.' ('.$p->t('bewerbung/ab').' '.$datum->formatDatum($stsem->convert_html_chars($row->start),'M. Y').')' ?>
 									</option>
 								<?php endforeach; ?>
 							</select>
@@ -803,7 +807,10 @@ elseif($username && $password)
 							$last_lgtyp = '';
 							$bewerbungszeitraum = '';
 							$typ_bezeichung = '';
-							
+
+							echo '	<div class="alert alert-warning">
+											'.$p->t('bewerbung/infotextRegistrationBewerbungGesperrt').'
+										</div>';
 							// Wenn es gar keine Studiengänge/Lehrgänge zum gewählten Studiensemester gibt, Info anzeigen
 							if ($studienplan == '')
 							{
@@ -886,8 +893,11 @@ elseif($username && $password)
 										$studiengang = new studiengang($row->studiengang_kz);
 										$stg_bezeichnung = $studiengang->bezeichnung_arr[$sprache];
 									}
+
+									$organisationsform = new organisationsform($row->orgform_kurzbz);
 											
-									$stg_bezeichnung .= ' | <i>'.$p->t('bewerbung/orgform/'.$row->orgform_kurzbz).' - '.$p->t('bewerbung/'.$row->sprache).'</i>';
+									$stg_bezeichnung .= ' | <i>'.$organisationsform->bezeichnung_mehrsprachig[$sprache].
+														' - '.$p->t('bewerbung/'.$row->sprache).'</i>';
 
 									$nation = new nation($zgv_nation);
 									$nationengruppe = $nation->nationengruppe_kurzbz;
