@@ -161,12 +161,13 @@ $this->phrasen['bewerbung/menuDokumente']='Documents';
 $this->phrasen['bewerbung/dokument']='Document';
 $this->phrasen['bewerbung/bitteDokumenteHochladen']='In order to be able to send in your application, you need to upload all documents marked as "required". 
 													If the document is not yet available at the respective time, you may submit the same at a later date. 
-													To do so, click the "submit document later" icon (hourglass) and specify when you are going to submit the document as well as the institution issuing the same.<br><br>
+													To do so, click "submit document later" and specify when you are going to submit the document as well as the institution issuing the same.<br><br>
 													You may be prompted to upload more documents here in the course of your application.';
 $this->phrasen['bewerbung/linkDokumenteHochladen']='Upload Documents';
 $this->phrasen['bewerbung/dokumenteZumHochladen']='Required documents:';
 $this->phrasen['bewerbung/dokumentName']='Name';
 $this->phrasen['bewerbung/benoetigtFuer']='Required for';
+$this->phrasen['bewerbung/dokumenteFuer']='Documents for';
 $this->phrasen['bewerbung/dokumentErforderlich']='Required document';
 $this->phrasen['bewerbung/dokumentOffen']='Document not yet submitted (open)';
 $this->phrasen['bewerbung/dokumentNichtUeberprueft']='Document has been submitted but not yet examined';
@@ -471,6 +472,12 @@ $this->phrasen['bewerbung/StatusSeitDatum']='%1$s since %2$s';
 $this->phrasen['bewerbung/bewerbungszeitraumFuer']='Application period for %1$s';
 $this->phrasen['bewerbung/bitteAuswaehlenBaMa']='-- Please select for bachelor and master --';
 $this->phrasen['bewerbung/bitteZGVausweahlen']='If you are applying for a Bachelor’s or Master’s degree program, please select the country in which you obtained your entitlement to study';
+$this->phrasen['bewerbung/allgemeineDokumente']='General Documents';
+$this->phrasen['bewerbung/akteBereitsVorhanden']='Die maximal erlaubte Anzahl an Uploads für dieses Dokument ist erreicht'; // Noch zu übersetzen
+$this->phrasen['bewerbung/vervollstaendigenSieIhreDaten']='Vervollständigen Sie Ihre Daten um die Bewerbung abschicken zu können';// Noch zu übersetzen
+$this->phrasen['bewerbung/durchsuchen']='Browse...';
+$this->phrasen['bewerbung/infotextRegistrationBewerbungGesperrt']='Currently you can only apply for Certificate Programs for Further Education.<br>The application period for bachelor and master degree programs will start in September';
+$this->phrasen['bewerbung/mehr']='More';
 
 // Reihungstest
 $this->phrasen['bewerbung/anmeldungReihungstestMailBetreff']='Confirmation of registration to placement test UAS Technikum Wien';

@@ -165,7 +165,7 @@ $this->phrasen['bewerbung/allgemeineErklaerung']='Wir freuen uns, dass Sie sich 
 	Sie können online bis zu '.(defined('BEWERBERTOOL_MAX_STUDIENGAENGE') && BEWERBERTOOL_MAX_STUDIENGAENGE != ''?BEWERBERTOOL_MAX_STUDIENGAENGE:'').' Studienrichtungen und beliebig viele Lehrgänge zur Weiterbildung auswählen.<br>
 	Klicken Sie auf den grünen Button, um Ihrer Bewerbung einen Studiengang oder Lehrgang hinzuzufügen. Bitte beachten Sie, dass Sie bei der Auswahl Ihrer Studiengänge eine Priorität abgeben müssen und diese nach dem Abschicken nicht mehr geändert werden kann.
 	<br><br>
-	Sind alle Daten eingetragen und alle Dokumente vollständig hochgeladen, können Sie durch einen Klick auf "Bewerbung abschicken", Ihre Bewerbung an uns übermitteln.
+	Sind alle erforderlichen Daten ausgefüllt, können Sie durch einen Klick auf "Bewerbung abschicken", Ihre Bewerbung an uns übermitteln.
 	<br><br>
 	Wenn Sie mehr Informationen benötigen, steht Ihnen unsere <a href=\'https://www.technikum-wien.at/studieninformationen/studienberatung-kontaktieren/\' target=\'_blank\'>Studienberatung</a> gerne persönlich, telefonisch, per E-Mail oder WhatsApp zur Verfügung.
 	<br><br>
@@ -212,12 +212,13 @@ $this->phrasen['bewerbung/menuDokumente']='Dokumente';
 $this->phrasen['bewerbung/dokument']='Dokument';
 $this->phrasen['bewerbung/bitteDokumenteHochladen']='Um Ihre Bewerbung abschicken zu können, müssen Sie Dokumente, die als „erforderlich“ markiert sind, hochladen.<br>
 	Sollte das Dokument zum gegenwärtigen Zeitpunkt noch nicht verfügbar sein, haben Sie die Möglichkeit, das Dokument nachzureichen.<br>
-	Klicken Sie dazu das Symbol für "Dokument wird nachgereicht" (Sanduhr) und geben Sie an, bis zu welchem Zeitpunkt Sie das Dokument nachreichen werden und welche Institution das Dokument ausstellt.<br><br>
+	Klicken Sie dazu auf "Dokument wird nachgereicht" und geben Sie an, bis zu welchem Zeitpunkt Sie das Dokument nachreichen werden und welche Institution das Dokument ausstellen wird.<br><br>
 	Gegebenenfalls werden Sie im weiteren Verlauf der Bewerbung aufgefordert, hier weitere Dokumente hochzuladen.';
 $this->phrasen['bewerbung/linkDokumenteHochladen']='Dokumente hochladen';
 $this->phrasen['bewerbung/dokumenteZumHochladen']='Benötigte Dokumente:';
 $this->phrasen['bewerbung/dokumentName']='Name';
 $this->phrasen['bewerbung/benoetigtFuer']='Benötigt für';
+$this->phrasen['bewerbung/dokumenteFuer']='Dokumente für';
 $this->phrasen['bewerbung/dokumentErforderlich']='Dokument erforderlich';
 $this->phrasen['bewerbung/dokumentOffen']='Dokument hochladen';
 $this->phrasen['bewerbung/dokumentNichtUeberprueft']='Dokument wurde abgegeben aber noch nicht überprüft';
@@ -526,6 +527,13 @@ $this->phrasen['bewerbung/StatusSeitDatum']='%1$s seit %2$s';
 $this->phrasen['bewerbung/bewerbungszeitraumFuer']='Bewerbungszeitraum für %1$s';
 $this->phrasen['bewerbung/bitteAuswaehlenBaMa']='-- Für Bachelor und Master bitte auswählen --';
 $this->phrasen['bewerbung/bitteZGVausweahlen']='Wenn Sie sich für einen Bachelor- oder Master-Studiengang bewerben, wählen Sie bitte das Land aus, in dem Sie die Studienberechtigung erlangt haben';
+$this->phrasen['bewerbung/allgemeineDokumente']='Allgemeine Dokumente';
+$this->phrasen['bewerbung/akteBereitsVorhanden']='Die maximal erlaubte Anzahl an Uploads für dieses Dokument ist erreicht';
+$this->phrasen['bewerbung/vervollstaendigenSieIhreDaten']='Vervollständigen Sie Ihre Daten um die Bewerbung abschicken zu können';
+$this->phrasen['bewerbung/datenUnvollstaendig']='Daten unvollständig';
+$this->phrasen['bewerbung/durchsuchen']='Durchsuchen...';
+$this->phrasen['bewerbung/infotextRegistrationBewerbungGesperrt']='Derzeit sind Bewerbungen ausschließlich für Lehrgänge möglich.<br>Für Bachelor- und Master-Studiengänge öffnet die Bewerbungsmöglichkeit wieder im September 2019';
+$this->phrasen['bewerbung/mehr']='Mehr';
 
 // Reihungstest
 $this->phrasen['bewerbung/anmeldungReihungstestMailBetreff']='Bestätigung Reihungstestanmeldung Fachhochschule Technikum Wien';

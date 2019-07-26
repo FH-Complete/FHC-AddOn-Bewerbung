@@ -163,5 +163,30 @@ dokument a:hover
 	position: absolute;
 	left: 0;
 	top: 30%;
-	background: linear-gradient(transparent 10%, white);
+	background-image: linear-gradient(top, rgba(255,255,255,0) 0%, #fff 5%, #fff 100%);
+	background-image: -o-linear-gradient(top, rgba(255,255,255,0) 0%, #fff 100%);
+	background-image: -moz-linear-gradient(top, rgba(255,255,255,0) 0%, #fff 100%);
+	background-image: -webkit-linear-gradient(top, rgba(255,255,255,0) 0%, #fff 100%);
+	background-image: -ms-linear-gradient(top, rgba(255,255,255,0) 0%, #fff 100%);
+}
+.btn-file
+{
+	position: relative;
+	overflow: hidden;
+}
+.btn-file input[type=file]
+{
+	position: absolute;
+	top: 0;
+	right: 0;
+	min-width: 100%;
+	min-height: 100%;
+	font-size: 100px;
+	text-align: right;
+	filter: alpha(opacity=0);
+	opacity: 0;
+	outline: none;
+	background: white;
+	cursor: inherit;
+	display: block;
 }

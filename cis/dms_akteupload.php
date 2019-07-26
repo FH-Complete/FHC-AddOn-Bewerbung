@@ -450,7 +450,7 @@ if (isset($_POST['submitfile']))
 							$dms = new dms();
 							if(!$dms->setPermission($uploadfile))
 								$message .= $dms->errormsg;
-							
+
 							$dms->version = $version;
 							$dms->kategorie_kurzbz = 'Akte';
 

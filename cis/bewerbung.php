@@ -78,6 +78,7 @@ require_once ('../../../include/bisberufstaetigkeit.class.php');
 require_once ('../../../include/datum.class.php');
 require_once ('../../../include/dms.class.php');
 require_once ('../../../include/dokument.class.php');
+require_once ('../../../include/fotostatus.class.php');
 require_once ('../../../include/functions.inc.php');
 require_once ('../../../include/gemeinde.class.php');
 require_once ('../../../include/kontakt.class.php');
@@ -226,6 +227,73 @@ if ($method == 'delete')
 		{
 			$save_error_dokumente = true;
 			$message = $p->t('global/fehlerBeimLoeschenDesEintrags');
+		}
+	}
+}
+
+// Löschen einer Akte per Ajax
+$deleteAkte = filter_input(INPUT_POST, 'deleteAkte', FILTER_VALIDATE_BOOLEAN);
+if ($deleteAkte && isset($_POST['akte_id']))
+{
+	$akte_id = filter_input(INPUT_POST, 'akte_id', FILTER_VALIDATE_INT);
+
+	$akte = new akte();
+	if (! $akte->load($akte_id))
+	{
+		echo json_encode(array(
+			'status' => 'fehler',
+			'msg' => $p->t('global/fehlerBeiDerParameteruebergabe')
+		));
+		exit();
+	}
+	else
+	{
+		if ($akte->person_id != $person_id)
+		{
+			echo json_encode(array(
+				'status' => 'fehler',
+				'msg' => $p->t('global/fehlerBeimLadenDesDatensatzes')
+			));
+			exit();
+		}
+
+		$dms_id = $akte->dms_id;
+		$dms = new dms();
+
+		if ($akte->delete($akte_id))
+		{
+			if (! $dms->deleteDms($dms_id))
+			{
+				echo json_encode(array(
+					'status' => 'fehler',
+					'msg' => $p->t('global/fehlerBeimLoeschenDesEintrags')
+				));
+				exit();
+			}
+			else
+			{
+				// Geparkten Logeintrag löschen
+				$log->deleteParked($person_id);
+				// Logeintrag schreiben
+				$log->log($person_id, 'Action', array(
+					'name' => 'Document ' . $akte->bezeichnung . ' deleted',
+					'success' => true,
+					'message' => 'Document ' . $akte->bezeichnung . ' "' . $akte->titel . '" deleted by user'
+				), 'bewerbung', 'bewerbung', null, 'online');
+				echo json_encode(array(
+					'status' => 'ok',
+					'msg' => $p->t('global/erfolgreichgelöscht')
+				));
+				exit();
+			}
+		}
+		else
+		{
+			echo json_encode(array(
+				'status' => 'fehler',
+				'msg' => $p->t('global/fehlerBeimLoeschenDesEintrags')
+			));
+			exit();
 		}
 	}
 }
@@ -1765,6 +1833,283 @@ if (isset($_POST['btn_new_accesscode']))
 	}
 }
 
+// Upload eines Dokuments
+if (isset($_POST['submitfile']))
+{
+	$error = false;
+	$message = '';
+	$ausstellungsnation = (isset($_POST['ausstellungsnation'])) ? $_POST['ausstellungsnation'] : '';
+	// Check, ob ein File gewaelt wurde
+	if (!empty($_FILES['file']['tmp_name']))
+	{
+		$dokumenttyp_upload = $_POST['dokumenttyp'];
+
+		// Check, ob Akte vorhanden
+		$akte = new akte();
+		$akte->getAkten($person_id, $dokumenttyp_upload, null, null, false, 'nachgereicht DESC');
+
+		if (!defined('BEWERBERTOOL_ANZAHL_DOKUMENTPLOAD_JE_TYP')
+			|| ((is_numeric(BEWERBERTOOL_ANZAHL_DOKUMENTPLOAD_JE_TYP)
+				&& count($akte->result) < BEWERBERTOOL_ANZAHL_DOKUMENTPLOAD_JE_TYP)
+				||
+				(   $akte->result[0]->inhalt_vorhanden == false
+					&& $akte->result[0]->dms_id == '')))
+		// Wie verfahren wir mit Nachreichungen, wenn mehr als 1 Dokument verohanden ist??
+		//if (!isset($akte->result[0]) || ($akte->result[0]->inhalt == '' && $akte->result[0]->dms_id == ''))
+		{
+			if ($dokumenttyp_upload != '')
+			{
+				// DMS-Eintrag erstellen
+				$ext = strtolower(pathinfo($_FILES['file']['name'], PATHINFO_EXTENSION));
+
+				// Auf gültige Dateitypen prüfen
+				if (($_REQUEST['dokumenttyp'] == 'Lichtbil' && in_array($ext, array(
+							'jpg',
+							'jpeg'
+						))) || ($_REQUEST['dokumenttyp'] != 'Lichtbil' && in_array($ext, array(
+							'pdf',
+							'jpg',
+							'jpeg'
+						))))
+				{
+					$filename = uniqid();
+					$filename .= "." . $ext;
+					$uploadfile = DMS_PATH . $filename;
+
+					if (move_uploaded_file($_FILES['file']['tmp_name'], $uploadfile))
+					{
+						// Wenn Akte mit DMS-ID vorhanden, wird diese geladen
+						// Derzeit soll nur eine Akte pro Typ hochgeladen werden können
+						// Daher wird immer ein neuer DMS-Eintrag erstellt
+						$version = '0';
+						$dms_id = '';
+
+						$dms = new dms();
+						if(!$dms->setPermission($uploadfile))
+						{
+							$save_error_dokumente = true;
+							$message .= $dms->errormsg;
+						}
+
+						$dms->version = $version;
+						$dms->kategorie_kurzbz = 'Akte';
+
+						$dms->insertamum = date('Y-m-d H:i:s');
+						$dms->insertvon = 'online';
+						$dms->mimetype = $_FILES['file']['type'];
+						$dms->filename = $filename;
+						$dms->name = $_FILES['file']['name'];
+
+						if ($dms->save(true))
+						{
+							$dms_id = $dms->dms_id;
+						}
+						else
+						{
+							$save_error_dokumente = true;
+							$message .= $p->t('global/fehlerBeimSpeichernDerDaten');
+						}
+					}
+					else
+					{
+						$save_error_dokumente = true;
+						$message .= $p->t('global/dateiNichtErfolgreichHochgeladen');
+					}
+				}
+				else
+				{
+					$save_error_dokumente = true;
+					$message .= $p->t('bewerbung/falscherDateityp');
+				}
+			}
+			else
+			{
+				$save_error_dokumente = true;
+				$message .= $p->t('bewerbung/keinDokumententypUebergeben');
+			}
+
+			if (isset($_FILES['file']['tmp_name']) && ! $error)
+			{
+				// Extension herausfiltern
+				$ext = explode('.', $_FILES['file']['name']);
+				$ext = mb_strtolower($ext[count($ext) - 1]);
+
+				$filename = $_FILES['file']['tmp_name'];
+
+				$akte = new akte();
+
+				// Lichtbilder darf es nur einmal geben und werden überschrieben
+				// Normale Akten werden für jeden Upload neu angelegt, es sei denn es gibt bereits Eine mit "nachgereicht"==true
+				// Dann wird diese überschrieben
+
+				// Derzeit soll nur eine Akte pro Typ hochgeladen werden können
+				// Daher wird immer eine neue Akte angelegt es sei denn es gibt bereits Eine mit "nachgereicht"==true
+				$akte->getAkten($person_id, $dokumenttyp_upload);
+				if (count($akte->result) > 0)
+				{
+					// Wenn ein Dokument im Status "nachgereicht" ist, wird der Datensatz aktualisiert
+					if ($akte->result[0]->nachgereicht === true)
+					{
+						$akte = $akte->result[0];
+						$akte->new = false;
+						$akte->updateamum = date('Y-m-d H:i:s');
+						$akte->updatevon = 'online';
+					}
+					else
+					{
+						$akte->new = true;
+						$akte->insertamum = date('Y-m-d H:i:s');
+						$akte->insertvon = 'online';
+					}
+				}
+				else
+				{
+					$akte->new = true;
+					$akte->insertamum = date('Y-m-d H:i:s');
+					$akte->insertvon = 'online';
+				}
+
+				$dokument = new dokument();
+				$dokument->loadDokumenttyp($dokumenttyp_upload);
+
+				$exts_arr = explode(".", strtolower($_FILES['file']['name']));
+				$extension = end($exts_arr);
+				$titel = '';
+
+				$akte->dokument_kurzbz = $dokumenttyp_upload;
+				$akte->titel = cutString($_FILES['file']['name'], 32, '~', true); // Dateiname
+				$akte->bezeichnung = cutString($dokument->bezeichnung, 32); // Dokumentbezeichnung
+				$akte->person_id = $person_id;
+				/*if ($dokumenttyp_upload == 'Lichtbil')
+				{
+					// Fotos auf maximal 827x1063 begrenzen
+					resize($uploadfile, 827, 1063);
+
+					$fp = fopen($uploadfile, 'r');
+					// auslesen
+					$content = fread($fp, filesize($uploadfile));
+					fclose($fp);
+
+					$akte->inhalt = base64_encode($content);
+				}*/
+				$akte->mimetype = $_FILES['file']['type'];
+				$akte->erstelltam = date('Y-m-d H:i:s');
+				$akte->gedruckt = false;
+				$akte->nachgereicht = false;
+// 				$akte->anmerkung = ''; Auch bei nachträglichem Upload bleibt die Anmerkung erhalten
+				$akte->uid = '';
+				$akte->dms_id = $dms_id;
+				$akte->ausstellungsnation = $ausstellungsnation;
+
+				if (! $akte->save())
+				{
+					$save_error_dokumente = true;
+					$message .= $p->t('global/fehleraufgetreten') . ": $akte->errormsg";
+				}
+				else
+				{
+					$save_error_dokumente = false;
+					$message .= $p->t('global/erfolgreichgespeichert');
+
+					// Logeintrag schreiben
+					$log->log($person_id, 'Action', array(
+						'name' => 'Document ' . $akte->bezeichnung . ' uploaded',
+						'success' => true,
+						'message' => 'Document ' . $akte->bezeichnung . ' "' . $akte->titel . '" uploaded'
+					), 'bewerbung', 'bewerbung', null, 'online');
+
+					if ($dokumenttyp_upload == 'Lichtbil')
+					{
+						// Wenn ein Foto hochgeladen wird, dieses auch in die Person speichern
+						// groesse auf maximal 101x130 begrenzen
+						$tempname = resize($uploadfile, 240, 320);
+
+						// in DB speichern
+						// File oeffnen
+						$fp = fopen($tempname, 'r');
+						// auslesen
+						$content = fread($fp, filesize($tempname));
+						fclose($fp);
+						unset($tempname);
+						// in base64 umrechnen
+						$content = base64_encode($content);
+
+						$person = new person();
+						if ($person->load($person_id))
+						{
+							// base64 Wert in die Datenbank speichern
+							$person->foto = $content;
+							$person->new = false;
+							if ($person->save())
+							{
+								$fs = new fotostatus();
+								$fs->person_id = $person->person_id;
+								$fs->fotostatus_kurzbz = 'hochgeladen';
+								$fs->datum = date('Y-m-d');
+								$fs->insertamum = date('Y-m-d H:i:s');
+								$fs->insertvon = 'online';
+								// 							$fs->updateamum = date('Y-m-d H:i:s');
+								// 							$fs->updatevon = 'online';
+								if (! $fs->save(true))
+									echo '<span class="error">Fehler beim Setzen des Bildstatus</span>';
+							}
+							else
+							{
+								echo '<span class="error">Fehler beim Speichern der Person</span>';
+							}
+						}
+						else
+						{
+							echo '<span class="error">Personen nicht gefunden</span>';
+						}
+					}
+				}
+
+				if (! defined('BEWERBERTOOL_SEND_UPLOAD_EMPFAENGER') || BEWERBERTOOL_SEND_UPLOAD_EMPFAENGER)
+				{
+					// Wenn nach dem Bestätigen einer Bewerbung ein Dokument hochgeladen wird, wird ein Infomail verschickt
+					$prestudent = new prestudent();
+					$prestudent->getPrestudenten($person_id);
+
+					// Beim verschicken der Infomail wird auch das vorvorige Studiensemester hinzugefügt, damit auch Infomails für Studiensemester verschickt werden, für die man sich nicht mehr bewerben aber noch Dokumente hochladen kann.
+					if (isset($stsem_array[0]))
+						array_unshift($stsem_array, $studiensemester->jump($stsem_array[0], - 2));
+
+					foreach ($prestudent->result as $prest)
+					{
+						$prestudent2 = new prestudent();
+						$prestudent2->getPrestudentRolle($prest->prestudent_id, 'Interessent');
+						foreach ($prestudent2->result as $row)
+						{
+							if (in_array($row->studiensemester_kurzbz, $stsem_array))
+							{
+								if ($row->bestaetigtam != '' && in_array($prest->studiengang_kz, $benoetigt))
+								{
+									sendDokumentupload($prest->studiengang_kz, $dokument->dokument_kurzbz, $row->orgform_kurzbz, $row->studiensemester_kurzbz, $row->prestudent_id, $dms_id);
+								}
+							}
+						}
+					}
+				}
+				/*echo "<script>
+				var loc = window.opener.location;
+				window.opener.location = 'bewerbung.php?active=dokumente';
+				</script>"*/;
+			}
+		}
+		else
+		{
+			$save_error_dokumente = true;
+			$message .= $p->t('bewerbung/akteBereitsVorhanden');
+		}
+	}
+	else
+	{
+		$save_error_dokumente = true;
+		$message .= $p->t('bewerbung/keineDateiAusgewaehlt');
+	}
+}
+
 $addStudiengang = filter_input(INPUT_POST, 'addStudiengang', FILTER_VALIDATE_BOOLEAN);
 
 if ($addStudiengang)
@@ -2009,10 +2354,12 @@ if (CAMPUS_NAME == 'FH Technikum Wien')
 	{
 		$invLetterObj = new dokument();
 		$invLetterObj->loadDokumenttyp('InvitLet');
+		$invLetterObj->studiengang_kz = '0';
+		$invLetterObj->stufe = '0';
 		$invLetterObj->anzahl_akten_vorhanden = 1;
 		$invLetterObj->anzahl_akten_formal_geprueft = 1;
 		$invLetterObj->anzahl_dokumente_akzeptiert = 1;
-		$invLetterObj->anzahl_akten_nachgereicht = 0;
+		$invLetterObj->anzahl_akten_wird_nachgereicht = 0;
 		array_push($dokumente_abzugeben, $invLetterObj);
 	}
 }
@@ -2042,16 +2389,13 @@ if ($dokumente_abzugeben)
 {
 	foreach ($dokumente_abzugeben as $dok)
 	{
-		if ($dok->anzahl_akten_formal_geprueft > 0 || $dok->anzahl_akten_formal_geprueft > 0 || $dok->anzahl_dokumente_akzeptiert > 0 || $dok->anzahl_akten_nachgereicht > 0)
+		if ($dok->anzahl_akten_formal_geprueft > 0 || $dok->anzahl_dokumente_akzeptiert > 0 || $dok->anzahl_akten_wird_nachgereicht > 0)
 			$akzeptierte_dokumente[] = $dok->dokument_kurzbz;
 
-		// An der FHTW ist das Dokument "Sprachkenntnisse B2" nicht verpflichtend, soll aber im ersten Schritt angezeigt werden
-		if (CAMPUS_NAME == 'FH Technikum Wien')
-		{
-			if ($dok->pflicht && ! in_array($dok->dokument_kurzbz, $akzeptierte_dokumente, true) && $dok->anzahl_akten_vorhanden == 0 && $dok->dokument_kurzbz != 'SprachB2')
-				$missing_document = true;
-		}
-		elseif ($dok->pflicht && ! in_array($dok->dokument_kurzbz, $akzeptierte_dokumente, true) && $dok->anzahl_akten_vorhanden == 0)
+		if ($dok->pflicht
+			&& ! in_array($dok->dokument_kurzbz, $akzeptierte_dokumente, true)
+			&& $dok->anzahl_akten_vorhanden == 0
+			&& $dok->anzahl_akten_wird_nachgereicht == 0)
 		{
 			$missing_document = true;
 		}
@@ -2071,21 +2415,16 @@ if ($dokumente_abzugeben)
 				$ben_bezeichnung['German'][$dok->dokument_kurzbz][] = $stg->bezeichnung;
 				$ben_bezeichnung['English'][$dok->dokument_kurzbz][] = $stg->english;
 				$ben_kz[$dok->dokument_kurzbz][] = $row->studiengang_kz;
-				if ($dok->pflicht)
+				if ($dok->pflicht
+					&& $dok->anzahl_akten_vorhanden == 0
+					&& $dok->anzahl_akten_wird_nachgereicht == 0 )
 				{
-					// An der FHTW ist das Dokument "Sprachkenntnisse B2" nicht verpflichtend, soll aber im ersten Schritt angezeigt werden
-					if (CAMPUS_NAME == 'FH Technikum Wien')
-					{
-						if ($dok->dokument_kurzbz == 'SprachB2')
-							continue;
-					}
-					$status_dokumente_arr[$row->studiengang_kz][] = $dok->dokument_kurzbz;
+					$status_dokumente_arr[$row->studiengang_kz][$row->stufe][] = $dok->dokument_kurzbz;
 				}
 			}
 		}
 	}
 }
-
 if ($missing_document && (! defined('BEWERBERTOOL_DOKUMENTE_ANZEIGEN') || BEWERBERTOOL_DOKUMENTE_ANZEIGEN == true))
 {
 	$status_dokumente = false;
@@ -2095,9 +2434,13 @@ else
 {
 	$status_dokumente = true;
 	$status_dokumente_text = $vollstaendig;
-	if (CAMPUS_NAME == 'FH Technikum Wien')
-		$status_dokumente_text = '&nbsp;';
 }
+
+// Mit den Statusabhängigen Dokumenten funktioniert die Vollständigkeits-Logik der Dokumente so nicht
+// Daher wird vorläufig kein Status angezeigt
+$status_dokumente = true;
+$status_dokumente_text = '&nbsp;';
+
 
 $konto = new konto();
 
@@ -2201,9 +2544,11 @@ else
 		<title><?php echo $p->t('bewerbung/bewerbung') ?></title>
 		<link rel="stylesheet" type="text/css" href="../../../vendor/twbs/bootstrap/dist/css/bootstrap.min.css">
 		<link rel="stylesheet" type="text/css" href="../include/css/bewerbung.css">
+		<link rel="stylesheet" type="text/css" href="../include/css/croppie.css">
 		<script type="text/javascript" src="../../../vendor/jquery/jqueryV1/jquery-1.12.4.min.js"></script>
 		<script type="text/javascript" src="../../../vendor/twbs/bootstrap/dist/js/bootstrap.min.js"></script>
 		<script src="../include/js/bewerbung.js"></script>
+		<script src="../include/js/croppie.js"></script>
 		<script type="text/javascript">
 			var activeTab = <?php echo json_encode($active) ?>,
 				basename = <?php echo json_encode(basename(__FILE__)) ?>;
