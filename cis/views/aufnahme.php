@@ -142,23 +142,37 @@ if(!isset($person_id))
 	$nextSummerSemester = $nextSummerSemester->getaktorNext('SS');
 
 	$prestudent = new prestudent();
-	$isStudentQuali = $prestudent->existsPrestudentstatus($person_id, STUDIENGANG_KZ_QUALIFIKATIONKURSE, $nextSummerSemester);
+	$isStudentQuali = false;
+
+	// Wenn Studiengang KZ für Qualifikationskurse gesetzt ist, prüfen, ob Bewerber dort einen Status hat
+	if (defined('STUDIENGANG_KZ_QUALIFIKATIONKURSE')
+		&& STUDIENGANG_KZ_QUALIFIKATIONKURSE != ''
+		&& STUDIENGANG_KZ_QUALIFIKATIONKURSE != null)
+	{
+		$isStudentQuali = $prestudent->existsPrestudentstatus($person_id, STUDIENGANG_KZ_QUALIFIKATIONKURSE, $nextSummerSemester);
+	}
 	
 	$reihungstestTermine = '';
 
-	//Reihungstesttermine der Qualifikationskurse laden
-	$studienplanQualikurse = new studienplan();
-	$studienplanQualikurse->getStudienplaeneFromSem(STUDIENGANG_KZ_QUALIFIKATIONKURSE, $nextWinterSemester->studiensemester_kurzbz);
-	// Wenn für das übergbene Studiensemester kein Studienplan gefunden wird, wird nochmal ohne Studiensemester gesucht
-	if (count($studienplanQualikurse->result) == 0)
-	{
-		$studienplanQualikurse->getStudienplaeneFromSem(STUDIENGANG_KZ_QUALIFIKATIONKURSE);
-	}
+	//Reihungstesttermine der Qualifikationskurse laden, wenn STUDIENGANG_KZ_QUALIFIKATIONKURSE gesetzt ist
 	$studienplanQualikurse_arr = array();
-	foreach ($studienplanQualikurse->result AS $row)
+	if (defined('STUDIENGANG_KZ_QUALIFIKATIONKURSE')
+	&& STUDIENGANG_KZ_QUALIFIKATIONKURSE != ''
+	&& STUDIENGANG_KZ_QUALIFIKATIONKURSE != null)
 	{
-		$studienplanQualikurse_arr[] = $row->studienplan_id;
+		$studienplanQualikurse = new studienplan();
+		$studienplanQualikurse->getStudienplaeneFromSem(STUDIENGANG_KZ_QUALIFIKATIONKURSE, $nextWinterSemester->studiensemester_kurzbz);
+		// Wenn für das übergbene Studiensemester kein Studienplan gefunden wird, wird nochmal ohne Studiensemester gesucht
+		if (count($studienplanQualikurse->result) == 0)
+		{
+			$studienplanQualikurse->getStudienplaeneFromSem(STUDIENGANG_KZ_QUALIFIKATIONKURSE);
+		}
+		foreach ($studienplanQualikurse->result AS $row)
+		{
+			$studienplanQualikurse_arr[] = $row->studienplan_id;
+		}
 	}
+	$studienplanQualikurse_arr = array_unique($studienplanQualikurse_arr);
 	// Qualifikationskursteilnehmer sehen keine Termine, bis sie einen Studenten-Account im Studiengang EQK haben
 	if ($hasStatusgrundQuali == true)
 	{

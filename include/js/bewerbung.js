@@ -113,8 +113,14 @@ function toggleDiv(div)
 	$('#anmerkung_row_'+div).attr('colspan',colspan);
 }
 
-$(function() {
+function toggleNachreichdaten(id)
+{
+	$('#nachreichdaten_'+id).toggle();
+	$('#panelbody_'+id).toggle();
+}
 
+$(function()
+{
 	if(activeTab) {
 		$('#bewerber-navigation a[href="#' + activeTab + '"]').tab('show');
 	}
@@ -131,4 +137,202 @@ $(function() {
 			$(this).closest('.collapse').collapse('hide');
 		}
 	});
+
+	$('.fileselect').on('change', function()
+	{
+		if ($(this).val() != '')
+		{
+			// Enable Upload-Button
+			$(this).closest('form').find(':submit').prop('disabled', false);
+			// Change Class of Upload-Button
+			$(this).closest('form').find(':submit').removeClass('btn-default').addClass('btn-primary');
+
+			// Set Value of Textfield to Filename of selected file
+			var label = $(this).val().replace(/\\/g, '/').replace(/.*\//, '');
+			$(this).closest('form').find('.selectedFile').val(label);
+		}
+	});
+
+	// Croppie für Bildzuschnitt initialisieren
+	/*$uploadCrop = $(".croppie-container").croppie(
+	{
+		enableExif: true,
+		enforceBoundary: true,
+		viewport: {
+			width: 240,
+			height: 320
+		},
+		boundary: {
+			width: 400,
+			height: 400
+		}
+	});*/
+
+	$(".imageselect").on("change", function ()
+	{
+		readURL(this);
+
+		/*var reader = new FileReader();
+
+		reader.onload = function (e)
+		{
+			alert (e.target.result);
+			checkImageProperties($(this), function(result)
+			{
+				if (result)
+				{
+					$(".croppie-container").addClass("ready");
+					$uploadCrop.croppie("bind",
+						{
+							url: e.target.result
+						}).then(function ()
+					{
+						console.log("jQuery bind complete");
+					});
+					$("#zuschnittLichtbildModal").modal();
+				}
+			});
+
+		};*/
+
+	});
 });
+
+function readURL(input)
+{
+	if (input.files && input.files[0])
+	{
+		var reader = new FileReader();
+		reader.onload = function(e)
+		{
+			$('#zuschnittLichtbildModal').modal();
+			$('#croppie-container').attr('src', e.target.result);
+			//setTimeout($('.croppie-container').attr('src', e.target.result), 2000);
+			var resize = new Croppie($('#croppie-container')[0],
+			{
+				enableExif: true,
+				enforceBoundary: true,
+				viewport: {
+					width: 240,
+					height: 320
+				},
+				boundary: {
+					width: 400,
+					height: 400
+				}
+			});
+			$('#submitimage').on('click', function()
+			{
+				// Do something
+				/*resize.result('base64').then(function(dataImg)
+				{
+					var data = [{ image: dataImg }, { name: 'myimgage.jpg' }];
+					// use ajax to send data to php
+					$('#result').attr('src', dataImg);
+				})*/
+			})
+		}
+		reader.readAsDataURL(input.files[0]);
+	}
+}
+
+function deleteAkte(akte_id, dokument_kurzbz, maxDokumente)
+{
+	data = {
+		akte_id: akte_id,
+		dokument_kurzbz: dokument_kurzbz,
+		deleteAkte: true
+	};
+
+	$.ajax({
+		url: '../cis/bewerbung.php',
+		data: data,
+		type: 'POST',
+		dataType: "json",
+		success: function(data)
+		{
+			if(data.status!='ok')
+			{
+				$("#dokumente_message_div").attr("class","alert alert-danger");
+				$("#dokumente_message_div").html(data["msg"]+"<button type=\"button\" class=\"close\" data-dismiss=\"alert\">x</button>");
+			}
+			else
+			{
+				// Entferne alle Listeneinträge vom gleichen Dokumenttyp
+				$(".listItem_"+akte_id).remove();
+				// Reload Dokumentenupload
+				location.reload(true);
+				// Zeige den Upload wieder an
+				/*anzahlDokumente = $(".list_"+dokument_kurzbz+" li").length;
+				if (anzahlDokumente < maxDokumente)
+				{
+					$(".dokumentUploadDiv_" + dokument_kurzbz).removeClass("hidden");
+					$(".aktenliste_" + dokument_kurzbz).removeClass("col-sm-offset-3");
+				}
+				$("#dokumente_message_div").attr("class","alert alert-success");
+
+				$("#dokumente_message_div").html(data["msg"]);
+				$("#dokumente_message_div").html(data["msg"]).delay(2000).fadeOut();*/
+			}
+		},
+		error: function(data)
+		{
+			$("#dokumente_message_div").attr("class","alert alert-danger");
+			$("#dokumente_message_div").html(data["msg"]);
+			$("#dokumente_message_div").html(data["msg"]+"<button type=\"button\" class=\"close\" data-dismiss=\"alert\">x</button>").delay(2000).fadeOut();
+		}
+	});
+}
+
+function checkImageProperties(input, callback)
+{
+	// get the file name, possibly with path (depends on browser)
+	var filename = input.val();
+
+	// Use a regular expression to trim everything before final dot
+	var extension = filename.replace(/^.*\./, '');
+
+	// Iff there is no dot anywhere in filename, we would have extension == filename,
+	// so we account for this possibility now
+	if (extension == filename)
+	{
+		extension = '';
+	}
+	else
+	{
+		// if there is an extension, we convert to lower case
+		// (N.B. this conversion will not effect the value of the extension
+		// on the file upload.)
+		extension = extension.toLowerCase();
+	}
+
+	if (extension != 'jpeg' && extension != 'jpg')
+	{
+		alert("Das Bild muss von Typ .jpg sein.\n\nThe image has to be of type .jpg");
+		return false;
+	}
+
+	// Check auf Bildgroeße
+	var _URL = window.URL || window.webkitURL;
+	var file = input[0].files && input[0].files[0];
+
+	var image = new Image();
+	image.src = _URL.createObjectURL(file);
+
+	image.onload = function ()
+	{
+		var imgwidth = image.width;
+		var imgheight = image.height;
+
+		if(imgwidth <= 240 || imgheight <= 320)
+		{
+			alert("Das Bild muss mindestens die Auflösung 240x320 Pixel haben.\nBitte wählen Sie ein größeres Bild.\n\nThe minimum solution of the image has to be 240x320 pixels.\nPlease choose a larger image");
+			callback(false);
+		}
+		else
+		{
+			callback(true);
+		}
+	};
+};
+

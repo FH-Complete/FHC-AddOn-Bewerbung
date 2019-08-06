@@ -78,4 +78,7 @@ define('BEWERBERTOOL_ABSCHICKEN_ANMERKUNG', true);
 
 // Soll das DropDown zur ZGV-Nation bei der Registration angezeigt werden?
 define('BEWERBERTOOL_SHOW_REGISTRATION_ZGVNATION', false);
+
+// Wieviele Dokumente dürfen pro Dokumenttyp hochgeladen werden? Integer
+define('BEWERBERTOOL_ANZAHL_DOKUMENTPLOAD_JE_TYP', 100);
 ?>

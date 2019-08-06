@@ -317,6 +317,35 @@ function BewerbungPersonAddStudienplan($studienplan_id, $person, $studiensemeste
 			$zgvmadatum = $prestudent_zgv->zgvmadatum;
 			$zgvmanation = $prestudent_zgv->zgvmanation;
 		}
+
+		// Wenn immer noch keine ZGV-Daten gefunden wurden, alle anderen PreStudenten der Person durchsuchen
+		if ($zgv_code == '')
+		{
+			foreach ($pre->result as $row)
+			{
+				if ($row->prestudent_id > $prestudent_id
+					&& ($row->zgv_code != '' || $row->zgvmas_code != '')) // Höchste Prestudent ID mit ZGV suchen
+				{
+					$prestudent_id = $row->prestudent_id;
+				}
+			}
+			if ($prestudent_id != 0)
+			{
+				$prestudent_help = $prestudent_id;
+
+				$prestudent_zgv = new prestudent();
+				$prestudent_zgv->load($prestudent_help);
+
+				$zgv_code = $prestudent_zgv->zgv_code;
+				$zgvort = $prestudent_zgv->zgvort;
+				$zgvdatum = $prestudent_zgv->zgvdatum;
+				$zgvnation = $prestudent_zgv->zgvnation;
+				$zgvmas_code = $prestudent_zgv->zgvmas_code;
+				$zgvmaort = $prestudent_zgv->zgvmaort;
+				$zgvmadatum = $prestudent_zgv->zgvmadatum;
+				$zgvmanation = $prestudent_zgv->zgvmanation;
+			}
+		}
 		// An der FHTW werden seit dem Infocenter keine bestehenden ZGVs für Bachelor übernommen
 		if (CAMPUS_NAME == 'FH Technikum Wien' && $studiengaenge_arr[$studiengang_kz]['typ'] == 'b')
 		{
@@ -857,41 +886,11 @@ function getBewerbungszeitraum($studiengang_kz, $studiensemester, $studienplan_i
 			else
 				$bewerbungsbeginn = $p->t('bewerbung/unbegrenzt');
 		}
-		// Wenn Nachfrist gesetzt und das Nachfrist-Datum befuellt ist, gilt die Nachfrist
-		// sonst das Endedatum, wenn eines gesetzt ist
-		if ($bewerbungsfristen->nachfrist == true && $bewerbungsfristen->nachfrist_ende != '')
-		{
-			$tage_bis_fristablauf = ((strtotime($bewerbungsfristen->nachfrist_ende) - time()) / 86400);
-			// Wenn die Frist in weniger als 7 Tagen ablaeuft oder vorbei ist, hervorheben
-			if ($tage_bis_fristablauf > 7)
-			{
-				$infoDiv = '| ' . $p->t('bewerbung/bewerbungsfrist') . ': ' . $datum->formatDatum($bewerbungsfristen->nachfrist_ende, 'd.m.Y');
-			}
-			if ($tage_bis_fristablauf <= 7)
-			{
-				$infoDiv = '| ' . $p->t('bewerbung/bewerbungsfrist') . ': ' . $datum->formatDatum($bewerbungsfristen->nachfrist_ende, 'd.m.Y');
-				$infoDiv .= '<br/><div class="label label-warning">
-											<span class="glyphicon glyphicon-warning-sign"></span>
-											&nbsp;&nbsp;' . $p->t('bewerbung/bewerbungsfristEndetInXTagen', array(
-					floor($tage_bis_fristablauf)
-				)) . '</div>';
-				$class = 'class="alert-warning"';
-			}
-			if ($tage_bis_fristablauf <= 0)
-			{
-				$infoDiv = '<br/><div class="label label-danger">
-											<span class="glyphicon glyphicon-warning-sign"></span>
-											&nbsp;&nbsp;' . $p->t('bewerbung/bewerbungsfristFuerStudiensemesterXAbgelaufen', array(
-					$studiensemester
-				)) . '</div>';
-				$fristAbgelaufen = true;
-				$class = 'class="alert-danger"';
-			}
-			
-			$bewerbungszeitraum = $bewerbungsbeginn.'<span '.$class.'>'.$datum->formatDatum($bewerbungsfristen->nachfrist_ende, 'd.m.Y').'</span>';
-			$bewerbungsfrist = $datum->formatDatum($bewerbungsfristen->nachfrist_ende, 'd.m.Y');
-		}
-		elseif ($bewerbungsfristen->ende != '')
+
+		// Wenn eine Ende-Datum gesetzt ist, wird dieses angezeigt, bis es erreicht ist
+		// Danach wird die Nachfrist angezeigt, falls eine gesetzt ist.
+
+		if ($bewerbungsfristen->ende != '' && strtotime($bewerbungsfristen->ende) >= time())
 		{
 			$tage_bis_fristablauf = ((strtotime($bewerbungsfristen->ende) - time()) / 86400);
 			// Wenn die Frist in weniger als 7 Tagen ablaeuft oder vorbei ist, hervorheben
@@ -902,11 +901,19 @@ function getBewerbungszeitraum($studiengang_kz, $studiensemester, $studienplan_i
 			if ($tage_bis_fristablauf <= 7)
 			{
 				$infoDiv = '| ' . $p->t('bewerbung/bewerbungsfrist') . ': ' . $datum->formatDatum($bewerbungsfristen->ende, 'd.m.Y');
-				$infoDiv .= '<br/><div class="label label-warning">
+				// Alternativer Text wenn Frist heute endet
+				if (floor($tage_bis_fristablauf) == 0)
+				{
+					$infoDiv .= '<br/><div class="label label-warning">
 											<span class="glyphicon glyphicon-warning-sign"></span>
-											&nbsp;&nbsp;' . $p->t('bewerbung/bewerbungsfristEndetInXTagen', array(
-					floor($tage_bis_fristablauf)
-				)) . '</div>';
+											&nbsp;&nbsp;' . $p->t('bewerbung/bewerbungsfristEndetHeute') . '</div>';
+				}
+				else
+				{
+					$infoDiv .= '<br/><div class="label label-warning">
+											<span class="glyphicon glyphicon-warning-sign"></span>
+											&nbsp;&nbsp;' . $p->t('bewerbung/bewerbungsfristEndetInXTagen', array(floor($tage_bis_fristablauf))) . '</div>';
+				}
 				$class = 'class="alert-warning"';
 			}
 			if ($tage_bis_fristablauf <= 0)
@@ -914,15 +921,72 @@ function getBewerbungszeitraum($studiengang_kz, $studiensemester, $studienplan_i
 				$infoDiv = '<br/><div class="label label-danger">
 											<span class="glyphicon glyphicon-warning-sign"></span>
 											&nbsp;&nbsp;' . $p->t('bewerbung/bewerbungsfristFuerStudiensemesterXAbgelaufen', array(
-					$studiensemester
-				)) . '</div>';
+						$studiensemester
+					)) . '</div>';
 				$fristAbgelaufen = true;
 				$class = 'class="alert-danger"';
 			}
 			$bewerbungszeitraum = $bewerbungsbeginn.'<span '.$class.'>'.$datum->formatDatum($bewerbungsfristen->ende, 'd.m.Y').'</span>';
 			$bewerbungsfrist = $datum->formatDatum($bewerbungsfristen->ende, 'd.m.Y');
 		}
-		else 
+		elseif ($bewerbungsfristen->nachfrist == true && $bewerbungsfristen->nachfrist_ende != '')
+		{
+			$tage_bis_fristablauf = ((strtotime($bewerbungsfristen->nachfrist_ende) - time()) / 86400);
+			// Wenn die Frist in weniger als 7 Tagen ablaeuft oder vorbei ist, hervorheben
+			if ($tage_bis_fristablauf > 7)
+			{
+				$infoDiv = '| ' . $p->t('bewerbung/bewerbungsfrist') . ': ' . $datum->formatDatum($bewerbungsfristen->nachfrist_ende, 'd.m.Y');
+			}
+			if ($tage_bis_fristablauf <= 7)
+			{
+				$infoDiv = '| ' . $p->t('bewerbung/bewerbungsfrist') . ': ' . $datum->formatDatum($bewerbungsfristen->nachfrist_ende, 'd.m.Y');
+				// Alternativer Text wenn Frist heute endet
+				if (floor($tage_bis_fristablauf) == 0)
+				{
+					$infoDiv .= '<br/><div class="label label-warning">
+											<span class="glyphicon glyphicon-warning-sign"></span>
+											&nbsp;&nbsp;' . $p->t('bewerbung/bewerbungsfristEndetHeute') . '</div>';
+				}
+				else
+				{
+					$infoDiv .= '<br/><div class="label label-warning">
+											<span class="glyphicon glyphicon-warning-sign"></span>
+											&nbsp;&nbsp;' . $p->t('bewerbung/bewerbungsfristEndetInXTagen', array(floor($tage_bis_fristablauf))) . '</div>';
+				}
+
+				$class = 'class="alert-warning"';
+			}
+			if ($tage_bis_fristablauf <= 0)
+			{
+				$infoDiv = '<br/><div class="label label-danger">
+											<span class="glyphicon glyphicon-warning-sign"></span>
+											&nbsp;&nbsp;' . $p->t('bewerbung/bewerbungsfristFuerStudiensemesterXAbgelaufen', array(
+						$studiensemester
+					)) . '</div>';
+				$fristAbgelaufen = true;
+				$class = 'class="alert-danger"';
+			}
+
+			$bewerbungszeitraum = $bewerbungsbeginn.'<span '.$class.'>'.$datum->formatDatum($bewerbungsfristen->nachfrist_ende, 'd.m.Y').'</span>';
+			$bewerbungsfrist = $datum->formatDatum($bewerbungsfristen->nachfrist_ende, 'd.m.Y');
+		}
+		elseif ($bewerbungsfristen->ende != '')
+		{
+			$tage_bis_fristablauf = ((strtotime($bewerbungsfristen->ende) - time()) / 86400);
+			if ($tage_bis_fristablauf <= 0)
+			{
+				$infoDiv = '<br/><div class="label label-danger">
+											<span class="glyphicon glyphicon-warning-sign"></span>
+											&nbsp;&nbsp;' . $p->t('bewerbung/bewerbungsfristFuerStudiensemesterXAbgelaufen', array(
+						$studiensemester
+					)) . '</div>';
+				$fristAbgelaufen = true;
+				$class = 'class="alert-danger"';
+			}
+			$bewerbungszeitraum = $bewerbungsbeginn.'<span '.$class.'>'.$datum->formatDatum($bewerbungsfristen->ende, 'd.m.Y').'</span>';
+			$bewerbungsfrist = $datum->formatDatum($bewerbungsfristen->ende, 'd.m.Y');
+		}
+		else
 		{
 			$bewerbungszeitraum = $p->t('bewerbung/unbegrenzt');
 		}
@@ -931,9 +995,9 @@ function getBewerbungszeitraum($studiengang_kz, $studiensemester, $studienplan_i
 		{
 			$infoDiv = '<br><div class="label label-success">
 										&nbsp;&nbsp;' . $p->t('bewerbung/bewerbungenFuerAb', array(
-				$studiensemester,
-				$datum->formatDatum($bewerbungsfristen->beginn, 'd.m.Y')
-			)) . '</div>';
+					$studiensemester,
+					$datum->formatDatum($bewerbungsfristen->beginn, 'd.m.Y')
+				)) . '</div>';
 			$fristAbgelaufen = true;
 			$bewerbungszeitraum = $bewerbungsbeginn.$p->t('bewerbung/unbegrenzt');
 		}
@@ -977,6 +1041,9 @@ function getAllDokumenteBewerbungstoolForPerson($person_id, $studiensemester_arr
 
 	// $beschreibung_mehrsprachig = $sprache->getSprachQuery('beschreibung_mehrsprachig');
 	$qry = "SELECT DISTINCT 
+			tbl_prestudent.prestudent_id,
+			dok_stg.studiengang_kz,
+			dok_stg.stufe,
 			dok_stg.dokument_kurzbz,
 			tbl_dokument.bezeichnung,
 			dok_stg.pflicht,
@@ -1002,7 +1069,7 @@ function getAllDokumenteBewerbungstoolForPerson($person_id, $studiensemester_arr
 				WHERE dokument_kurzbz = dok_stg.dokument_kurzbz
 					AND person_id = " . $db->db_add_param($person_id, FHC_INTEGER) . "
 					AND nachgereicht = true
-				) AS anzahl_akten_nachgereicht,
+				) AS anzahl_akten_wird_nachgereicht,
 			(
 				SELECT count(*)
 				FROM PUBLIC.tbl_dokumentprestudent
@@ -1036,14 +1103,17 @@ function getAllDokumenteBewerbungstoolForPerson($person_id, $studiensemester_arr
 			else 
 				$qry .= " AND get_rolle_prestudent (tbl_prestudent.prestudent_id, null) NOT IN ('Abgewiesener','Abbrecher')";
 			
-			$qry .= " ORDER BY dokument_kurzbz,
+			$qry .= " ORDER BY studiengang_kz,stufe,dokument_kurzbz,
 				pflicht DESC";
-
+	//echo $qry;
 	if ($result = $db->db_query($qry))
 	{
 		while ($row = $db->db_fetch_object($result))
 		{
 			$dok = new stdClass();
+			$dok->prestudent_id = $row->prestudent_id;
+			$dok->studiengang_kz = $row->studiengang_kz;
+			$dok->stufe = $row->stufe;
 			$dok->dokument_kurzbz = $row->dokument_kurzbz;
 			$dok->bezeichnung = $row->bezeichnung;
 			$dok->pflicht = $db->db_parse_bool($row->pflicht);
@@ -1052,7 +1122,7 @@ function getAllDokumenteBewerbungstoolForPerson($person_id, $studiensemester_arr
 			$dok->anzahl_akten_vorhanden = $row->anzahl_akten_vorhanden;
 			$dok->anzahl_akten_formal_geprueft = $row->anzahl_akten_formal_geprueft;
 			$dok->anzahl_dokumente_akzeptiert = $row->anzahl_dokumente_akzeptiert;
-			$dok->anzahl_akten_nachgereicht = $row->anzahl_akten_nachgereicht;
+			$dok->anzahl_akten_wird_nachgereicht = $row->anzahl_akten_wird_nachgereicht;
 			$dok->bezeichnung_mehrsprachig = $sprache->parseSprachResult('bezeichnung_mehrsprachig', $row);
 			$dok->dokumentbeschreibung_mehrsprachig = $sprache->parseSprachResult('dokumentbeschreibung_mehrsprachig', $row);
 			$dok->beschreibung_mehrsprachig = $sprache->parseSprachResult('beschreibung_mehrsprachig', $row);
@@ -1147,8 +1217,13 @@ function getMailEmpfaenger($studiengang_kz, $studienplan_id = null, $orgform_kur
 	}
 	elseif(isset($empf_array[$studiengang_kz]))
 	{
+		// Mails an Lehrgänge gehen alle an den Shared Folder lehrgang@technikum-wien.at
+		if (CAMPUS_NAME == 'FH Technikum Wien' && $studiengang->typ == 'l' && $studiengang->lgartcode != '')
+		{
+			$empfaenger = 'lehrgang@technikum-wien.at';
+		}
 		// Pfuschloesung, damit bei BIF Dual die Mail an info.bid geht
-		if (CAMPUS_NAME == 'FH Technikum Wien' && $studiengang_kz == 257)
+		elseif (CAMPUS_NAME == 'FH Technikum Wien' && $studiengang_kz == 257)
 		{
 			if ((isset($studienplan) && $studienplan->orgform_kurzbz == 'DUA') ||
 				($orgform_kurzbz != '' && $orgform_kurzbz == 'DUA'))
@@ -1164,7 +1239,28 @@ function getMailEmpfaenger($studiengang_kz, $studienplan_id = null, $orgform_kur
 			$empfaenger = $empf_array[$studiengang_kz];
 	}
 	else
-		$empfaenger = $studiengang->email;
+	{
+		// Mails an Lehrgänge gehen alle an den Shared Folder lehrgang@technikum-wien.at
+		if (CAMPUS_NAME == 'FH Technikum Wien' && $studiengang->typ == 'l' && $studiengang->lgartcode != '')
+		{
+			$empfaenger = 'lehrgang@technikum-wien.at';
+		}
+		// Pfuschloesung, damit bei BIF Dual die Mail an info.bid geht
+		elseif (CAMPUS_NAME == 'FH Technikum Wien' && $studiengang_kz == 257)
+		{
+			if ((isset($studienplan) && $studienplan->orgform_kurzbz == 'DUA') ||
+				($orgform_kurzbz != '' && $orgform_kurzbz == 'DUA'))
+			{
+				$empfaenger = 'info.bid@technikum-wien.at';
+			}
+			else
+			{
+				$empfaenger = 'info.bif@technikum-wien.at';
+			}
+		}
+		else
+			$empfaenger = $studiengang->email;
+	}
 
 	if ($empfaenger != '')
 		return $empfaenger;
@@ -1220,7 +1316,8 @@ function getBewerbungen($person_id, $aktive = null)
 			tbl_studiengang.english,
 			tbl_studiengang.typ,
 			tbl_prestudent.zgvnation,
-			tbl_prestudent.zgvmanation
+			tbl_prestudent.zgvmanation,
+			tbl_studiengang.lgartcode
 			FROM public.tbl_prestudent 
 			JOIN public.tbl_studiengang USING (studiengang_kz)
 			WHERE person_id=".$db->db_add_param($person_id, FHC_INTEGER)." 
@@ -1251,6 +1348,7 @@ function getBewerbungen($person_id, $aktive = null)
 			$obj->typ = $row->typ;
 			$obj->zgvnation = $row->zgvnation;
 			$obj->zgvmanation = $row->zgvmanation;
+			$obj->lgartcode = $row->lgartcode;
 
 			$db->result[] = $obj;
 		}
@@ -1289,9 +1387,9 @@ function getPrioStudienplanForReihungstest($person_id, $studiensemester_kurzbz)
 			WHERE person_id = " . $db->db_add_param($person_id, FHC_INTEGER) . "
 				AND studiensemester_kurzbz = " . $db->db_add_param($studiensemester_kurzbz) . "
 				AND tbl_studiengang.typ = 'b'
-				AND bewerbung_abgeschicktamum IS NOT NULL
+				/*AND bewerbung_abgeschicktamum IS NOT NULL*/ /* Auskommentiert, da nicht immer verlaesslich */
 				AND bestaetigtam IS NOT NULL
-				AND bestaetigtvon != ''
+				/*AND bestaetigtvon != ''*/ /* Auskommentiert, da nicht immer verlaesslich */
 				AND (
 					SELECT status_kurzbz
 					FROM PUBLIC.tbl_prestudentstatus
@@ -1299,8 +1397,13 @@ function getPrioStudienplanForReihungstest($person_id, $studiensemester_kurzbz)
 						AND studiensemester_kurzbz = tbl_prestudentstatus.studiensemester_kurzbz
 					ORDER BY datum DESC,
 						tbl_prestudentstatus.insertamum DESC LIMIT 1
-					) IN ('Interessent')
-			ORDER BY priorisierung ASC NULLS LAST, tbl_prestudent.insertamum DESC LIMIT 1";
+					) IN ('Interessent')";
+			// An der FHTW werden die Qualifikationskurse ausgenommen
+			if (CAMPUS_NAME == 'FH Technikum Wien')
+			{
+				$qry .= " AND tbl_studiengang.studiengang_kz != 10002 ";
+			}
+	$qry .= " ORDER BY priorisierung ASC NULLS LAST, tbl_prestudent.insertamum DESC LIMIT 1";
 
 	if ($db->db_query($qry))
 	{
@@ -1403,7 +1506,7 @@ function getReihungstestsForOnlinebewerbung($studienplan_id, $studiensemester_ku
 								)";
 			}
 
-			if ($excludedStudienplans != '')
+			if (!empty($excludedStudienplans))
 			{
 				$excludedStudienplans = $db->implode4SQL($excludedStudienplans);
 				$qry .= "	AND rt.reihungstest_id NOT IN (
@@ -1415,7 +1518,7 @@ function getReihungstestsForOnlinebewerbung($studienplan_id, $studiensemester_ku
 								)";
 			}
 	$qry .= "	AND oeffentlich = true
-				AND anmeldefrist >= now()
+				AND anmeldefrist >= now()::date
 				
 			ORDER BY datum,
 				uhrzeit ";
@@ -1515,3 +1618,356 @@ function hasPersonStatusgrund($person_id, $studiensemester_kurzbz, $status_grund
 	}
 }
 
+/**
+ * Liefert die Stufe eines Prestudenten
+ * Kein passender Status -> 0
+ * Interessent -> 10
+ * Bewerber -> 20
+ * Wartender -> 30
+ * Aufgenommener -> 40
+ * Student -> 50
+ *
+ * @param integer $prestudent_id
+ * @param string $studiensemester_kurzbz Optional. Studiensemester der Bewerbung
+ *
+ * @return integer Stufe, in der sich der PreStudent befindet oder false im Fehlerfall
+ */
+function getStufeBewerberFuerDokumente($prestudent_id, $studiensemester_kurzbz = null)
+{
+	$db = new basis_db();
+	$qry = "
+			SELECT status_kurzbz 
+			FROM public.tbl_prestudent
+			JOIN public.tbl_prestudentstatus USING (prestudent_id)
+			WHERE prestudent_id = ".$db->db_add_param($prestudent_id, FHC_INTEGER);
+
+	if ($studiensemester_kurzbz != '')
+	{
+		$qry .= " AND studiensemester_kurzbz = ".$db->db_add_param($studiensemester_kurzbz);
+	}
+
+	$qry .= " ORDER BY tbl_prestudentstatus.insertamum DESC LIMIT 1";
+
+	if ($db->db_query($qry))
+	{
+		if ($row = $db->db_fetch_object())
+		{
+			switch ($row->status_kurzbz)
+			{
+				case 'Interessent':
+					return 10;
+					break;
+				case 'Bewerber':
+					return 20;
+					break;
+				case 'Wartender':
+					return 30;
+					break;
+				case 'Aufgenommener':
+					return 40;
+					break;
+				case 'Student':
+					return 50;
+					break;
+				default:
+					return 0;
+			}
+		}
+		else
+		{
+			$db->errormsg = 'Fehler bei der Abfrage';
+			return false;
+		}
+	}
+	else
+	{
+		$db->errormsg = 'Fehler beim Laden der Daten';
+		return false;
+	}
+}
+
+/**
+ * Liefert die Liste den Akten. Wenn eine Akte im Status "Wir nachgereicht" ist, werden die Nachreich.Daten geliefert. Ansonsten die Aktenliste.
+ *
+ * @param integer $person_id
+ * @param string $dokument_kurzbz
+ *
+ * @return string HTML-String mit den Nachreichdaten
+ */
+function getAktenListe($person_id, $dokument_kurzbz)
+{
+	global $p, $datum;
+	$anzahlDokumenteJeTyp = 100;
+	if (defined('BEWERBERTOOL_ANZAHL_DOKUMENTPLOAD_JE_TYP') && is_numeric(BEWERBERTOOL_ANZAHL_DOKUMENTPLOAD_JE_TYP))
+	{
+		$anzahlDokumenteJeTyp = BEWERBERTOOL_ANZAHL_DOKUMENTPLOAD_JE_TYP;
+	}
+
+	$akten = new akte();
+	$akten->getAkten($person_id, $dokument_kurzbz);
+	$returnstring = '<div class="list-group list_'.$dokument_kurzbz.'" style="margin-bottom: 0">';
+	foreach ($akten->result as $akte)
+	{
+		// Wenn Akte im Status "wird nachgereicht" ist und noch nichts hochgeladen wurde
+		// zeige die Daten der Nachreichung und den Upload
+		if ($akte->nachgereicht === true && $akte->inhalt == '' && $akte->dms_id == '')
+		{
+			//$returnstring = '';
+			$returnstring .= '		<div class="list-group-item listItem_'.$akte->akte_id.'">
+										
+											'.$p->t('bewerbung/wirdNachgreichtAm').' '.$datum->formatDatum($akte->nachgereicht_am, 'd.m.Y').'
+										';
+			// An der FHTW wird beim Dokument "zgv_bakk" das vorläufiges ZGV-Dokument angezeigt, wenn eines vorhanden ist
+			if (CAMPUS_NAME == 'FH Technikum Wien' && $akte->dokument_kurzbz == 'zgv_bakk')
+			{
+				// Checken, ob der Dokumenttyp ZgvBaPre in der DB vorhanden ist
+				$checkZgvBaPre = new dokument();
+				if ($checkZgvBaPre->loadDokumenttyp('ZgvBaPre'))
+				{
+					// Laden des vorläufigen ZGV Dokuments der Person
+					$zgvBaPre = new akte();
+					$zgvBaPre->getAkten($person_id, 'ZgvBaPre');
+					if (isset($zgvBaPre->result[0]))
+					{
+						$returnstring .= '  
+													
+													<br><span>'.$p->t('bewerbung/vorlaeufigesDokument').':<br> 
+													<span class="glyphicon glyphicon-file" aria-hidden="true"></span>'.cutString($zgvBaPre->result[0]->titel, 25, '...').'</span>
+													<button type="button" title="'.$p->t('bewerbung/dokumentHerunterladen').'" 
+															class="btn btn-default btn-sm" 
+															href="'.APP_ROOT.'cms/dms.php?id='.$zgvBaPre->result[0]->dms_id.'" 
+															onclick="FensterOeffnen(\''.APP_ROOT.'cms/dms.php?id='.$zgvBaPre->result[0]->dms_id.'&akte_id='.$zgvBaPre->result[0]->akte_id.'\'); return false;">
+														<span class="glyphicon glyphicon glyphicon-download-alt" aria-hidden="true" title="'.$p->t('bewerbung/dokumentHerunterladen').'"></span>
+													</button>';
+					}
+				}
+			}
+			$returnstring .= '</div>';
+		}
+		// Liste mit den Akten und Download und Lösch-Button
+		else
+		{
+			// Beim Lichtbild wird aus cis/public/bild.php geladen und nicht aus dem DMS
+			if ($akte->dokument_kurzbz == 'Lichtbil')
+			{
+				$downloadlink = APP_ROOT.'cis/public/bild.php?src=person&person_id='.$person_id;
+			}
+			else
+			{
+				$downloadlink = APP_ROOT.'cms/dms.php?id='.$akte->dms_id.'&akte_id='.$akte->akte_id;
+			}
+			$returnstring .= '	<div class="list-group-item listItem_'.$akte->akte_id.'" title="'.$akte->titel.'">
+									<span><span class="glyphicon glyphicon-file" aria-hidden="true"></span>'.cutString($akte->titel, 25, '...').'</span>
+									<br>
+									<button type="button" 
+											title="'.$p->t('bewerbung/dokumentHerunterladen').'" 
+											class="btn btn-default btn-sm"
+											onclick="FensterOeffnen(\''.$downloadlink.'\'); return false;">
+										<span class="glyphicon glyphicon glyphicon-download-alt" aria-hidden="true" title="'.$p->t('bewerbung/dokumentHerunterladen').'"></span>
+									</button>';
+			// Löschen nur bei nicht-akzeptierten Dokumenten möglich
+			// Invitation letter dürfen nie gelöscht werden
+			if (!akteAkzeptiert($akte->akte_id) && $akte->dokument_kurzbz != 'InvitLet')
+			{
+				$returnstring .= '	<button type="button"
+											title="'.$p->t('global/löschen').'"
+											class="btn btn-default btn-sm"
+											onclick="deleteAkte(\''.$akte->akte_id.'\',\''.$akte->dokument_kurzbz.'\', '.$anzahlDokumenteJeTyp.')">
+										<span class="glyphicon glyphicon-remove" aria-hidden="true" title="'.$p->t('global/löschen').'"></span>
+									</button>
+									<span class="label label-warning">'.$p->t('bewerbung/dokumentWirdGeprueft').'</span>';
+			}
+			else
+			{
+				$returnstring .= '<br><span class="label label-success">'.$p->t('bewerbung/dokumentUeberprueft').'</span>';
+			}
+			$returnstring .= '	</div>';
+		}
+	}
+	$returnstring .= '</div>';
+	return $returnstring;
+}
+/**
+ * Liefert den String mit Upload-Button und ggf. Nachreich-Button
+ *
+ * @param string $dokument_kurzbz
+ * @param boolean $nachreichbutton. Default false
+ * @param boolean $visible. Default true. Wenn false, wird der Upload-Bereich ausgeblendet
+ * @param integer $studiengang
+ *
+ * @return string HTML-String mit Upload-Button und ggf. Nachreich-Button
+ */
+function getUploadButton($dokument_kurzbz, $nachreichbutton = false, $visible = true, $studiengang)
+{
+	global $p, $datum;
+	$display = '';
+	if ($visible === false)
+	{
+		$display = 'hidden';
+	}
+	$returnstring = '<form method="POST" enctype="multipart/form-data" action="'.$_SERVER['PHP_SELF'].'?active=dokumente" class="form-horizontal" onsubmit="return checkAusstellungsnation()">';
+	$returnstring .= '  <div class="dokumentUploadDiv_'.$dokument_kurzbz.' '.$display.'" >';
+	// Lichtbilder werden gesondert behandelt
+	if ($dokument_kurzbz == 'LichtbilXXX')
+	{
+		$returnstring .= '	<p><input class="imageselect" type="file" name="file" class="file" accept=".jpg, .jpeg" style="display: inline">
+							<input type="hidden" name="dokumenttyp" value="'.$dokument_kurzbz.'"></p>';
+	}
+	else
+	{
+		$returnstring .= '	<p>
+								<div class="input-group">
+									<div class="input-group-btn">
+										<span class="btn btn-primary btn-file">
+											'.$p->t('bewerbung/durchsuchen').' <input type="file" name="file" class="fileselect" accept=".jpg, .jpeg, .pdf" style="display: inline">
+										</span>
+									</div>
+									<input type="text" class="form-control selectedFile" readonly="">
+									<input type="hidden" name="dokumenttyp" value="'.$dokument_kurzbz.'">
+									<div class="input-group-btn">
+										<button type="submit" 
+											name="submitfile" 
+											class="btn btn-labeled btn-default"
+											disabled>
+											'.$p->t('bewerbung/upload').'
+										</button>
+									</div>
+									
+								</div>
+							</p>';
+	}
+		//$returnstring .= '	<p class="help-block" >'.$p->t('bewerbung/ExtensionInformation').' JPG, PDF </p>';
+
+	if ((!defined('BEWERBERTOOL_DOKUMENTE_NACHREICHEN') || BEWERBERTOOL_DOKUMENTE_NACHREICHEN == true) && $nachreichbutton)
+	{
+		$returnstring .= '	<p class="text-muted">'.$p->t('bewerbung/dokumentNochNichtVorhanden').'</p>
+							<p>
+								<button type="button" title="'.$p->t('bewerbung/dokumentWirdNachgereicht').'" class="btn btn-primary" onclick="toggleNachreichdaten(\''.$studiengang.'_'.$dokument_kurzbz.'\');return false;">
+									'.$p->t('bewerbung/dokumentWirdNachgereicht').'
+								</button>
+							</p>';
+	}
+	$returnstring .= '	</div>';
+	$returnstring .= '</form>';
+	return $returnstring;
+}
+
+/**
+ * Liefert den String mit den Optionen zum Nachreichen
+ *
+ * @param string $dokument_kurzbz
+ * @param integer $studiengang
+ *
+ * @return string HTML-String mit Upload-Button und ggf. Nachreich-Button
+ */
+function getNachreichForm($dokument_kurzbz, $studiengang)
+{
+	global $p, $datum;
+
+	$returnstring = '<form method="POST" enctype="multipart/form-data" action="'.$_SERVER['PHP_SELF'].'?active=dokumente" class="form-horizontal">';
+	$returnstring .=    $p->t('bewerbung/placeholderAnmerkungNachgereicht').':
+						';
+
+	$returnstring .= '		<div class="form-group">
+								<div class="row">
+									<div class="col-sm-12">
+										<input type="checkbox" name="check_nachgereicht" checked="checked" style="display:none">
+										<div class="col-sm-8">
+											<div class="input-group">
+												<input  type="text" 
+														class="form-control" 
+														id="anmerkung_'.$dokument_kurzbz.'" 
+														name="txt_anmerkung" 
+														onInput="zeichenCountdown(\'anmerkung_'.$dokument_kurzbz.'\',128)" 
+														placeholder="'.$p->t('bewerbung/placeholderOrtNachgereicht').'">
+												<span class="input-group-addon" style="color: grey;" id="countdown_anmerkung_'.$dokument_kurzbz.'">128</span>
+											</div>
+										</div>
+										<div class="col-sm-4">
+											<input  type="text" 
+													class="form-control" 
+													id="nachreichungam_'.$dokument_kurzbz.'" 
+													name="nachreichungam" 
+													autofocus="autofocus" 
+													placeholder="'.$p->t('bewerbung/datumFormat').'">
+										</div>
+									</div>
+								</div><br>
+								<div class="row">
+									<div class="col-sm-12">';
+
+	// An der FHTW wird beim nachreichen des Dokuments "zgv_bakk" ein vorläufiges ZGV-Dokument verlangt
+	// Die Spaltenbreite wird daher angepasst
+	$colspan = 12;
+	if (CAMPUS_NAME == 'FH Technikum Wien' && $dokument_kurzbz == 'zgv_bakk')
+	{
+		$returnstring .= '				<div class="col-sm-8">
+											<span>'.$p->t('bewerbung/infotextVorlaeufigesZgvDokument').':</span>
+											<input  id="filenachgereicht_'.$dokument_kurzbz.'" 
+													type="file" 
+													name="filenachgereicht" 
+													class=""
+													accept=".jpg, .jpeg, .pdf" 
+													style="display: inline">
+										</div>';
+		$colspan = 4;
+	}
+		$returnstring .= '				<div class="col-sm-'.$colspan.'">
+											<div class="btn-group pull-right">
+												<input  type="submit" 
+														value="OK" 
+														name="submit_nachgereicht" 
+														class="btn btn-primary" 
+														onclick="return checkNachgereicht(\''.$dokument_kurzbz.'\')">
+												<input  type="button" 
+														value="'.$p->t('global/abbrechen').'" 
+														class="btn btn-default"
+														onclick="toggleNachreichdaten(\''.$studiengang.'_'.$dokument_kurzbz.'\');return false;">
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>';
+
+	$returnstring .= '		<input type="hidden" name="dok_kurzbz" value="'.$dokument_kurzbz.'">';
+
+	$returnstring .= '	';
+	$returnstring .= '</form>';
+	return $returnstring;
+}
+
+function resize($filename, $width, $height)
+{
+	$ext = explode('.', $_FILES['file']['name']);
+	$ext = mb_strtolower($ext[count($ext) - 1]);
+
+	// Hoehe und Breite neu berechnen
+	list ($width_orig, $height_orig) = getimagesize($filename);
+
+	if ($width && ($width_orig < $height_orig))
+	{
+		$width = ($height / $height_orig) * $width_orig;
+	}
+	else
+	{
+		$height = ($width / $width_orig) * $height_orig;
+	}
+
+	$image_p = imagecreatetruecolor($width, $height);
+
+	$image = imagecreatefromjpeg($filename);
+
+	// Bild nur verkleinern aber nicht vergroessern
+	if ($width_orig > $width || $height_orig > $height)
+		imagecopyresampled($image_p, $image, 0, 0, 0, 0, $width, $height, $width_orig, $height_orig);
+	else
+		$image_p = $image;
+
+	$tmpfname = tempnam(sys_get_temp_dir(), 'FHC');
+
+	imagejpeg($image_p, $tmpfname, 80);
+
+	imagedestroy($image_p);
+	@imagedestroy($image);
+	return $tmpfname;
+}
