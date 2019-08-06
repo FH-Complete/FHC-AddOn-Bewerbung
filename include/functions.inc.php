@@ -1506,7 +1506,7 @@ function getReihungstestsForOnlinebewerbung($studienplan_id, $studiensemester_ku
 								)";
 			}
 
-			if ($excludedStudienplans != '')
+			if (!empty($excludedStudienplans))
 			{
 				$excludedStudienplans = $db->implode4SQL($excludedStudienplans);
 				$qry .= "	AND rt.reihungstest_id NOT IN (
@@ -1739,20 +1739,10 @@ function getAktenListe($person_id, $dokument_kurzbz)
 															onclick="FensterOeffnen(\''.APP_ROOT.'cms/dms.php?id='.$zgvBaPre->result[0]->dms_id.'&akte_id='.$zgvBaPre->result[0]->akte_id.'\'); return false;">
 														<span class="glyphicon glyphicon glyphicon-download-alt" aria-hidden="true" title="'.$p->t('bewerbung/dokumentHerunterladen').'"></span>
 													</button>';
-						/*if (akteAkzeptiert($zgvBaPre->result[0]->akte_id))
-						{
-							$returnstring .= '		<span class="label label-success">'.$p->t('bewerbung/dokumentUeberprueft').'</span>';
-						}
-						else
-						{
-							$returnstring .= '		<span class="label label-warning">'.$p->t('bewerbung/dokumentWirdGeprueft').'</span>';
-						}*/
-						//$returnstring .= '</div>';
 					}
 				}
 			}
 			$returnstring .= '</div>';
-			//return $returnstring;
 		}
 		// Liste mit den Akten und Download und Lösch-Button
 		else
@@ -1776,7 +1766,8 @@ function getAktenListe($person_id, $dokument_kurzbz)
 										<span class="glyphicon glyphicon glyphicon-download-alt" aria-hidden="true" title="'.$p->t('bewerbung/dokumentHerunterladen').'"></span>
 									</button>';
 			// Löschen nur bei nicht-akzeptierten Dokumenten möglich
-			if (!akteAkzeptiert($akte->akte_id) && (CAMPUS_NAME == 'FH Technikum Wien' && $akte->dokument_kurzbz != 'InvitLet'))
+			// Invitation letter dürfen nie gelöscht werden
+			if (!akteAkzeptiert($akte->akte_id) && $akte->dokument_kurzbz != 'InvitLet')
 			{
 				$returnstring .= '	<button type="button"
 											title="'.$p->t('global/löschen').'"
@@ -1849,7 +1840,7 @@ function getUploadButton($dokument_kurzbz, $nachreichbutton = false, $visible = 
 
 	if ((!defined('BEWERBERTOOL_DOKUMENTE_NACHREICHEN') || BEWERBERTOOL_DOKUMENTE_NACHREICHEN == true) && $nachreichbutton)
 	{
-		$returnstring .= '	<p>'.$p->t('global/oder').'</p>
+		$returnstring .= '	<p class="text-muted">'.$p->t('bewerbung/dokumentNochNichtVorhanden').'</p>
 							<p>
 								<button type="button" title="'.$p->t('bewerbung/dokumentWirdNachgereicht').'" class="btn btn-primary" onclick="toggleNachreichdaten(\''.$studiengang.'_'.$dokument_kurzbz.'\');return false;">
 									'.$p->t('bewerbung/dokumentWirdNachgereicht').'

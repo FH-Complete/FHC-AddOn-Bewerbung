@@ -534,6 +534,8 @@ $this->phrasen['bewerbung/datenUnvollstaendig']='Daten unvollständig';
 $this->phrasen['bewerbung/durchsuchen']='Durchsuchen...';
 $this->phrasen['bewerbung/infotextRegistrationBewerbungGesperrt']='Derzeit sind Bewerbungen ausschließlich für Lehrgänge möglich.<br>Für Bachelor- und Master-Studiengänge öffnet die Bewerbungsmöglichkeit wieder im September 2019';
 $this->phrasen['bewerbung/mehr']='Mehr';
+$this->phrasen['bewerbung/dokumentNochNichtVorhanden']='Dokument noch nicht vorhanden? Dann klicken Sie:';
+$this->phrasen['bewerbung/keineDokumenteErforderlich']='Derzeit sind keine Dokumente erforderlich';
 
 // Reihungstest
 $this->phrasen['bewerbung/anmeldungReihungstestMailBetreff']='Bestätigung Reihungstestanmeldung Fachhochschule Technikum Wien';

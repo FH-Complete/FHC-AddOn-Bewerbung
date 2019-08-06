@@ -260,8 +260,10 @@ function deleteAkte(akte_id, dokument_kurzbz, maxDokumente)
 			{
 				// Entferne alle Listeneinträge vom gleichen Dokumenttyp
 				$(".listItem_"+akte_id).remove();
+				// Reload Dokumentenupload
+				location.reload(true);
 				// Zeige den Upload wieder an
-				anzahlDokumente = $(".list_"+dokument_kurzbz+" li").length;
+				/*anzahlDokumente = $(".list_"+dokument_kurzbz+" li").length;
 				if (anzahlDokumente < maxDokumente)
 				{
 					$(".dokumentUploadDiv_" + dokument_kurzbz).removeClass("hidden");
@@ -270,7 +272,7 @@ function deleteAkte(akte_id, dokument_kurzbz, maxDokumente)
 				$("#dokumente_message_div").attr("class","alert alert-success");
 
 				$("#dokumente_message_div").html(data["msg"]);
-				$("#dokumente_message_div").html(data["msg"]).delay(2000).fadeOut();
+				$("#dokumente_message_div").html(data["msg"]).delay(2000).fadeOut();*/
 			}
 		},
 		error: function(data)

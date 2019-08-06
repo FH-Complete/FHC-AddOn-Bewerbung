@@ -473,11 +473,13 @@ $this->phrasen['bewerbung/bewerbungszeitraumFuer']='Application period for %1$s'
 $this->phrasen['bewerbung/bitteAuswaehlenBaMa']='-- Please select for bachelor and master --';
 $this->phrasen['bewerbung/bitteZGVausweahlen']='If you are applying for a Bachelor’s or Master’s degree program, please select the country in which you obtained your entitlement to study';
 $this->phrasen['bewerbung/allgemeineDokumente']='General Documents';
-$this->phrasen['bewerbung/akteBereitsVorhanden']='Die maximal erlaubte Anzahl an Uploads für dieses Dokument ist erreicht'; // Noch zu übersetzen
-$this->phrasen['bewerbung/vervollstaendigenSieIhreDaten']='Vervollständigen Sie Ihre Daten um die Bewerbung abschicken zu können';// Noch zu übersetzen
+$this->phrasen['bewerbung/akteBereitsVorhanden']='The maximum number of uploads for this document has been reached'; // Nur grob übersetzt
+$this->phrasen['bewerbung/vervollstaendigenSieIhreDaten']='Complete the data to send the application'; // Nur grob übersetzt
 $this->phrasen['bewerbung/durchsuchen']='Browse...';
 $this->phrasen['bewerbung/infotextRegistrationBewerbungGesperrt']='Currently you can only apply for Certificate Programs for Further Education.<br>The application period for bachelor and master degree programs will start in September';
 $this->phrasen['bewerbung/mehr']='More';
+$this->phrasen['bewerbung/dokumentNochNichtVorhanden']='Document not avalilable yet? Then click:'; // Nur grob übersetzt
+$this->phrasen['bewerbung/keineDokumenteErforderlich']='Currently no documents are required to upload'; // Nur grob übersetzt
 
 // Reihungstest
 $this->phrasen['bewerbung/anmeldungReihungstestMailBetreff']='Confirmation of registration to placement test UAS Technikum Wien';

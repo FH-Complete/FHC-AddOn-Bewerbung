@@ -145,10 +145,15 @@ $studiensemester_array = array();
 			}
 
 			// Die Vollständigkeit der Dokumente wird extra für jeden Studiengang gecheckt
-			// Stufe des Bewerbers ermittel
+			// Stufe des Bewerbers ermitteln
 			$stufe = getStufeBewerberFuerDokumente($row->prestudent_id, $row->laststatus_studiensemester_kurzbz);
-			//echo '<pre>',var_dump($status_dokumente_arr),'</pre>';
+
+			// Wenn für dieses Stufe alle Dokumente abgebeben sind, wird nochmal für Dokumente ohne Stufe gecheckt
 			if (!empty($status_dokumente_arr[$row->studiengang_kz][$stufe]))
+			{
+				$disabledAbschicken = true;
+			}
+			if (!empty($status_dokumente_arr[$row->studiengang_kz]['']))
 			{
 				$disabledAbschicken = true;
 			}
@@ -459,7 +464,11 @@ $studiensemester_array = array();
 												echo '<p class="alert alert-danger">'.$p->t('bewerbung/menuAusbildung').' '.$p->t('bewerbung/unvollstaendig').'</p>';
 											if (CAMPUS_NAME != 'FH Technikum Wien' && !$status_reihungstest)
 												echo '<p class="alert alert-danger">'.$p->t('bewerbung/menuReihungstest').' '.$p->t('bewerbung/unvollstaendig').'</p>';
+
+											// Wenn für dieses Stufe alle Dokumente abgebeben sind, wird nochmal für Dokumente ohne Stufe gecheckt
 											if (!empty($status_dokumente_arr[$row->studiengang_kz][$stufe]))
+												echo '<p class="alert alert-danger">'.$p->t('bewerbung/menuDokumente').' '.$p->t('bewerbung/unvollstaendig').'</p>';
+											elseif (!empty($status_dokumente_arr[$row->studiengang_kz]['']))
 												echo '<p class="alert alert-danger">'.$p->t('bewerbung/menuDokumente').' '.$p->t('bewerbung/unvollstaendig').'</p>';
 				echo '					</div>';
 			}
