@@ -25,7 +25,6 @@ if (! isset($person_id))
 ?>
 <div role="tabpanel" class="tab-pane" id="dokumente">
 	<h2><?php echo $p->t('bewerbung/menuDokumente'); ?></h2>
-	<p><?php echo $p->t('bewerbung/bitteDokumenteHochladen'); ?></p>
 	<div class="" id="dokumente_message_div"></div>
 	<?php
 
@@ -45,7 +44,7 @@ if (! isset($person_id))
 	}
 
 	$db = new basis_db();
-	//var_dump($dokumente_abzugeben);
+
 	// Sortiert die Dokumente je nach Sprache alphabetisch nach bezeichnung_mehrsprachig
 	// Pflichtdokumente werden als erstes ausgegeben
 	// Gepruefte Dokumente werden nach unten sortiert
@@ -53,8 +52,8 @@ if (! isset($person_id))
 	{
 		$c = $a->studiengang_kz - $b->studiengang_kz;
 		$c .= $a->anzahl_akten_vorhanden - $b->anzahl_akten_vorhanden;
-		$c .= $a->stufe - $b->stufe;
 		$c .= $b->pflicht - $a->pflicht;
+		$c .= $a->stufe - $b->stufe;
 		$c .= strcmp(strtolower($a->bezeichnung_mehrsprachig[getSprache()]), strtolower($b->bezeichnung_mehrsprachig[getSprache()]));
 		$c .= $a->anzahl_akten_formal_geprueft - $b->anzahl_akten_formal_geprueft;
 		$c .= $a->anzahl_dokumente_akzeptiert - $b->anzahl_dokumente_akzeptiert;
@@ -65,9 +64,9 @@ if (! isset($person_id))
 	if ($dokumente_abzugeben)
 		usort($dokumente_abzugeben, "sortDocuments");
 
-	//echo '<form class="form-horizontal">';
 	if ($dokumente_abzugeben)
 	{
+		echo '<p>'.$p->t('bewerbung/bitteDokumenteHochladen').'</p>';
 		$currentStudiengangKz = '';
 		$stufePrestudent = 0;
 		foreach ($dokumente_abzugeben as $dok)
@@ -145,6 +144,7 @@ if (! isset($person_id))
 
 			$collapseStatus = 'collapse in';
 			$statusInfotext = '';
+			$displayDetailsArrow = true;
 			// Panel-Header unterschiedlich stylen
 			if ($dok->anzahl_akten_vorhanden > 0)
 			{
@@ -156,15 +156,18 @@ if (! isset($person_id))
 			{
 				echo '<div class="panel panel-warning">';
 				$statusInfotext = '<div class="label label-warning">'.$p->t('bewerbung/dokumentWirdNachgereicht').'</div>';
+				$displayDetailsArrow = false;
 			}
 			elseif ($dok->pflicht)
 			{
 				echo '<div class="panel panel-danger">';
 				$statusInfotext = '<div class="label label-danger">'.$p->t('bewerbung/dokumentErforderlich').'</div>';
+				$displayDetailsArrow = false;
 			}
 			else
 			{
 				echo '<div class="panel panel-default">';
+				$displayDetailsArrow = false;
 			}
 
 			// Invitation-Letter an der FHTW immer anzeigen
@@ -179,7 +182,7 @@ if (! isset($person_id))
 							<div class="col-sm-6 hidden-xs text-right">'.$statusInfotext.'</div>
 							<div class="col-sm-6 visible-xs">'.$statusInfotext.'</div>
 						</div>
-						<div class="row">
+						<div class="row details-arrow '.($displayDetailsArrow == true ? '':'hidden').'">
 							<div class="col-xs-12 text-center">
 								<span class="glyphicon glyphicon-chevron-down text-muted"></span>
 								<span class="text-muted small">'.$p->t('bewerbung/details').'</span>
@@ -233,7 +236,10 @@ if (! isset($person_id))
 					{
 						if (array_key_exists($kennzahl, $status_dokumente_arr))
 						{
-							unset($status_dokumente_arr[$kennzahl][$stufePrestudent][array_search($dok->dokument_kurzbz, $status_dokumente_arr[$kennzahl])]);
+							if (($key = array_search($dok->dokument_kurzbz, $status_dokumente_arr[$kennzahl])) !== false)
+							{
+								unset($status_dokumente_arr[$kennzahl][$stufePrestudent][$key]);
+							}
 						}
 					}
 				}
@@ -285,6 +291,10 @@ if (! isset($person_id))
 				echo '	</div>';
 			}
 
+			// Hier wird ein unsichtbares div mit der Anzahl an erforderlichen Dokumeten ausgegeben
+			// Auf dieses wird dann mit jquery abgefragt um den Menüpunkt einfärben zu können.
+			echo '<div id="anzahlOffeneDokumente" style="display: none">'.count($status_dokumente_arr).'</div>';
+
 			// Bei Lichtbildern wird zusätzlich ein Modal für den Bildzuschnitt mit Croppie angezeigt
 			if ($dok->dokument_kurzbz == 'LichtbilXXX')
 			{
@@ -324,25 +334,13 @@ if (! isset($person_id))
 		}
 		echo '	</div></fieldset>';
 	}
-	//echo '</form>';
+	else
+	{
+		echo '<div class="alert alert-info">'.$p->t('bewerbung/keineDokumenteErforderlich').'</div>';
+		echo '<div id="anzahlOffeneDokumente" style="display: none"></div>';
+	}
 	?>
-	<!-- Legende -->
-	<!--<br>
-	<h4><?php echo $p->t('bewerbung/legende'); ?></h4>
-	<table class="table">
-		<tr>
-			<td><span class="glyphicon glyphicon glyphicon-download-alt"
-				aria-hidden="true"
-				title="<?php echo $p->t('bewerbung/dokumentHerunterladen'); ?>;"></span>
-			</td>
-			<td><?php echo $p->t('bewerbung/dokumentHerunterladen'); ?></td>
-		</tr>
-		<tr>
-			<td><span class="glyphicon glyphicon-remove" aria-hidden="true"
-				title="<?php echo $p->t('global/löschen'); ?>;"></span></td>
-			<td><?php echo $p->t('global/löschen'); ?></td>
-		</tr>
-	</table>-->
+
 	<button class="btn-nav btn btn-default" type="button"
 		data-jump-tab="<?php echo $tabs[array_search('dokumente', $tabs)-1] ?>">
 		<?php echo $p->t('global/zurueck') ?>
@@ -372,77 +370,124 @@ if (! isset($person_id))
 				</button>';
 	}
 	?>
-	
-	<!--<br><?php echo $message ?><br />-->
+
 	<br /><br/><br/>
 	<script type="text/javascript">
-	function checkNachgereicht(dokument)
-	{
-		var zgvDat = document.getElementById('nachreichungam_'+dokument).value;
-		zgvDat = zgvDat.split(".");
-
-		if(zgvDat.length !== 3)
+		function checkNachgereicht(dokument)
 		{
-			alert("<?php echo $p->t('bewerbung/datumsformatUngueltig')?>");
-			return false;
-		}
+			var zgvDat = document.getElementById('nachreichungam_'+dokument).value;
+			zgvDat = zgvDat.split(".");
 
-		if(zgvDat[0].length !==2 && zgvDat[1].length !== 2 && zgvDat[2].length !== 4)
-		{
-			alert("<?php echo $p->t('bewerbung/datumsformatUngueltig')?>");
-			return false;
-		}
-
-		var dateZgv = new Date(zgvDat[2], zgvDat[1]-1, zgvDat[0]);
-		var now = new Date();
-
-		zgvDat[0] = parseInt(zgvDat[0], 10);
-		zgvDat[1] = parseInt(zgvDat[1], 10);
-		zgvDat[2] = parseInt(zgvDat[2], 10);
-
-		if(!(dateZgv.getFullYear() === zgvDat[2] && (dateZgv.getMonth()+1) === zgvDat[1] && dateZgv.getDate() === zgvDat[0]))
-		{
-			alert("<?php echo $p->t('bewerbung/datumsformatUngueltig')?>");
-			return false;
-		}
-
-		// Check ob ZGV-Datum in der Vergangenheit liegt
-		if(dateZgv < now)
-		{
-			alert("<?php echo $p->t('bewerbung/nachreichDatumNichtVergangenheit')?>");
-			return false;
-		}
-
-		var anmerkung = document.getElementById('anmerkung_'+dokument).value;
-		if(anmerkung.length == 0)
-		{
-			alert("<?php echo $p->t('bewerbung/bitteAnmerkungEintragen')?>");
-			return false;
-		}
-		// Check ob File ausgewählt wurde
-		if(document.getElementById('filenachgereicht_'+dokument).value == "")
-		{
-			alert("<?php echo $p->t('bewerbung/bitteDateiAuswaehlen')?>");
-			return false;
-		}
-	};
-	$('.linkPopover').on('click', function (event) {
-		//Set timeout to wait for popup div to redraw(animation)
-		setTimeout(function(){
-			if($('div.popover').css('top').charAt(0) === '-'){
-				 $('div.popover').css('top', '0px');
-				 var buttonTop = $(event.currentTarget).position().top;
-				 var buttonHeight = $(event.currentTarget).height();
-				 $('.popover.right>.arrow').css('top', buttonTop + (buttonHeight/2));
+			if(zgvDat.length !== 3)
+			{
+				alert("<?php echo $p->t('bewerbung/datumsformatUngueltig')?>");
+				return false;
 			}
-		},100);
-	});
-	function showDetails(id)
-	{
-		if ($('#'+id).hasClass('fade-out'))
-			$('#'+id).removeClass('fade-out');
-		else
-			$('#'+id).addClass('fade-out');
-	}
+
+			if(zgvDat[0].length !==2 && zgvDat[1].length !== 2 && zgvDat[2].length !== 4)
+			{
+				alert("<?php echo $p->t('bewerbung/datumsformatUngueltig')?>");
+				return false;
+			}
+
+			var dateZgv = new Date(zgvDat[2], zgvDat[1]-1, zgvDat[0]);
+			var now = new Date();
+
+			zgvDat[0] = parseInt(zgvDat[0], 10);
+			zgvDat[1] = parseInt(zgvDat[1], 10);
+			zgvDat[2] = parseInt(zgvDat[2], 10);
+
+			if(!(dateZgv.getFullYear() === zgvDat[2] && (dateZgv.getMonth()+1) === zgvDat[1] && dateZgv.getDate() === zgvDat[0]))
+			{
+				alert("<?php echo $p->t('bewerbung/datumsformatUngueltig')?>");
+				return false;
+			}
+
+			// Check ob ZGV-Datum in der Vergangenheit liegt
+			if(dateZgv < now)
+			{
+				alert("<?php echo $p->t('bewerbung/nachreichDatumNichtVergangenheit')?>");
+				return false;
+			}
+
+			var anmerkung = document.getElementById('anmerkung_'+dokument).value;
+			if(anmerkung.length == 0)
+			{
+				alert("<?php echo $p->t('bewerbung/bitteAnmerkungEintragen')?>");
+				return false;
+			}
+			// Check ob File ausgewählt wurde
+			if(document.getElementById('filenachgereicht_'+dokument).value == "")
+			{
+				alert("<?php echo $p->t('bewerbung/bitteDateiAuswaehlen')?>");
+				return false;
+			}
+		};
+		$('.linkPopover').on('click', function (event) {
+			//Set timeout to wait for popup div to redraw(animation)
+			setTimeout(function(){
+				if($('div.popover').css('top').charAt(0) === '-'){
+					 $('div.popover').css('top', '0px');
+					 var buttonTop = $(event.currentTarget).position().top;
+					 var buttonHeight = $(event.currentTarget).height();
+					 $('.popover.right>.arrow').css('top', buttonTop + (buttonHeight/2));
+				}
+			},100);
+		});
+		function showDetails(id)
+		{
+			if ($('#'+id).hasClass('fade-out'))
+				$('#'+id).removeClass('fade-out');
+			else
+				$('#'+id).addClass('fade-out');
+		}
+		// Farbe des Tabs abschließend mit jQuery stylen
+		$(document).ready(function()
+		{
+			var anzahlOffeneDokumente = $('#anzahlOffeneDokumente').html();
+
+			if (anzahlOffeneDokumente != '')
+			{
+				anzahlOffeneDokumente = parseInt(anzahlOffeneDokumente);
+
+				if (anzahlOffeneDokumente != 0)
+				{
+					$('#tabDokumenteLink').css('background-color','#F2DEDE');
+					$('#tabDokumenteLink').hover(
+						function()
+						{
+							$(this).css('background-color','#F2DEDE');
+						}
+					);
+					$('#tabDokumenteStatustext').text('<?php echo $p->t('bewerbung/unvollstaendig')?>');
+					$('#tabDokumenteStatustext').addClass('text-danger');
+				}
+				else
+				{
+					$('#tabDokumenteLink').css('background-color','#DFF0D8');
+					$('#tabDokumenteLink').hover(
+						function()
+						{
+							$(this).css('background-color','#DFF0D8');
+						}
+					);
+					$('#tabDokumenteStatustext').text('<?php echo $p->t('bewerbung/vollstaendig')?>');
+					$('#tabDokumenteStatustext').addClass('text-success');
+				}
+			}
+			else
+			{
+				$('#tabDokumenteStatustext').html('&nbsp;');
+			}
+
+			$('.panel-collapse').on('show.bs.collapse', function ()
+			{
+				$(this).siblings('.panel-heading').find('div.details-arrow').addClass('hidden');
+			})
+			$('.panel-collapse').on('hide.bs.collapse', function ()
+			{
+				$(this).siblings('.panel-heading').find('div.details-arrow').removeClass('hidden');
+			})
+		});
 	</script>
 </div>

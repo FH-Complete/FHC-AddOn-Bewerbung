@@ -315,15 +315,12 @@ if ($bewerbungStornieren && isset($_POST['prestudent_id']))
 		// Status "Abgewiesen" mit Statusgrund anlegen
 		$prestudent_status->status_kurzbz = 'Abgewiesener';
 		$prestudent_status->studiensemester_kurzbz = $studiensemester_kurzbz;
-		$prestudent_status->ausbildungssemester = $prestudent_status->ausbildungssemester;
 		$prestudent_status->datum = date("Y-m-d H:i:s");
 		$prestudent_status->insertamum = date("Y-m-d H:i:s");
 		$prestudent_status->insertvon = 'online';
 	// 	$prestudent_status->updateamum = date("Y-m-d H:i:s");
 	// 	$prestudent_status->updatevon = 'online';
 		$prestudent_status->new = true;
-		$prestudent_status->orgform_kurzbz = $prestudent_status->orgform_kurzbz;
-		$prestudent_status->studienplan_id = $prestudent_status->studienplan_id;
 		// Wenn BEWERBERTOOL_STORNIERUNG_STATUSGRUND_ID definiert ist, wird ein Statusgrund gesetzt
 		if (defined('BEWERBERTOOL_STORNIERUNG_STATUSGRUND_ID') && is_int(BEWERBERTOOL_STORNIERUNG_STATUSGRUND_ID))
 			$prestudent_status->statusgrund_id = BEWERBERTOOL_STORNIERUNG_STATUSGRUND_ID;
@@ -2500,35 +2497,6 @@ if (! defined('BEWERBERTOOL_REIHUNGSTEST_ANZEIGEN') || BEWERBERTOOL_REIHUNGSTEST
 		$status_reihungstest = false;
 		$status_reihungstest_text = $unvollstaendig;
 	}
-	/*foreach ($prestudent->result as $row)
-	{
-		if ($row->reihungstest_id != '')
-		{
-			$status_reihungstest = true;
-			$status_reihungstest_text = $vollstaendig;
-		}
-		else
-		{
-			// Wenn keine Reihungstesttermine vorhanden sind ist die Bewerbung auch vollstaendig
-			if (! $prestudent->getPrestudenten($person_id))
-				die($p->t('global/fehlerBeimLadenDesDatensatzes'));
-
-			$anzahl_reihungstests = 0;
-			foreach ($prestudent->result as $row)
-			{
-				$reihungstest = new reihungstest();
-				if (! $reihungstest->getStgZukuenftige($row->studiengang_kz))
-					die($p->t('global/fehleraufgetreten') . ': ' . $reihungstest->errormsg);
-
-				$anzahl_reihungstests += count($reihungstest->result);
-			}
-			if ($anzahl_reihungstests == 0)
-			{
-				$status_reihungstest = true;
-				$status_reihungstest_text = $vollstaendig;
-			}
-		}
-	}*/
 }
 else
 {
@@ -2668,8 +2636,8 @@ else
 									if (!$standalone_masterbewerbung || $masterbewerbung_bestaetigt)
 									{
 										echo '	<li>
-											<a href="#dokumente" aria-controls="dokumente" role="tab" data-toggle="tab" '.($status_dokumente_text == $unvollstaendig?'style="background-color: #F2DEDE !important"':'').'>
-												'.$p->t('bewerbung/menuDokumente').' <br> '.$status_dokumente_text.'
+											<a id="tabDokumenteLink" href="#dokumente" aria-controls="dokumente" role="tab" data-toggle="tab">
+												'.$p->t('bewerbung/menuDokumente').' <br> <span id="tabDokumenteStatustext"></span>
 											</a>
 										</li>';
 									}
@@ -2677,8 +2645,8 @@ else
 								elseif ($aktiverBenutzer)
 								{
 									echo '	<li>
-										<a href="#dokumente" aria-controls="dokumente" role="tab" data-toggle="tab" '.($status_dokumente_text == $unvollstaendig?'style="background-color: #F2DEDE !important"':'style="background-color: #DFF0D8 !important"').'>
-											'.$p->t('bewerbung/menuDokumente').' <br> '.$status_dokumente_text.'
+										<a id="tabDokumenteLink" href="#dokumente" aria-controls="dokumente" role="tab" data-toggle="tab">
+											'.$p->t('bewerbung/menuDokumente').' <br> <span id="tabDokumenteStatustext"></span>
 										</a>
 									</li>';
 								}
@@ -2687,8 +2655,8 @@ else
 							else
 							{
 								echo '	<li>
-										<a href="#dokumente" aria-controls="dokumente" role="tab" data-toggle="tab" '.($status_dokumente_text == $unvollstaendig?'style="background-color: #F2DEDE !important"':'style="background-color: #DFF0D8 !important"').'>
-											'.$p->t('bewerbung/menuDokumente').' <br> '.$status_dokumente_text.'
+										<a id="tabDokumenteLink" href="#dokumente" aria-controls="dokumente" role="tab" data-toggle="tab">
+											'.$p->t('bewerbung/menuDokumente').' <br> <span id="tabDokumenteStatustext"></span>
 										</a>
 									</li>';
 							}
