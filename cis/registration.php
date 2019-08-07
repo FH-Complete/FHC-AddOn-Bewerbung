@@ -648,9 +648,6 @@ elseif($username && $password)
 					<p class="infotext">
 						<?php echo $p->t('bewerbung/einleitungstext') ?>
 					</p>
-					<div class="alert alert-warning">
-						<?php echo $p->t('bewerbung/infotextRegistrationBewerbungGesperrt') ?>
-					</div>
 					<div class="form-group">
 						<label for="vorname" class="col-sm-3 control-label">
 							<?php echo $p->t('global/vorname') ?>
@@ -807,10 +804,7 @@ elseif($username && $password)
 							$last_lgtyp = '';
 							$bewerbungszeitraum = '';
 							$typ_bezeichung = '';
-
-							echo '	<div class="alert alert-warning">
-											'.$p->t('bewerbung/infotextRegistrationBewerbungGesperrt').'
-										</div>';
+							
 							// Wenn es gar keine Studiengänge/Lehrgänge zum gewählten Studiensemester gibt, Info anzeigen
 							if ($studienplan == '')
 							{
