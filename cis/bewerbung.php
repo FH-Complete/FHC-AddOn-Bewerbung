@@ -1833,7 +1833,7 @@ if (isset($_POST['btn_new_accesscode']))
 // Upload eines Dokuments
 if (isset($_POST['submitfile']))
 {
-	$error = false;
+	$save_error_dokumente = false;
 	$message = '';
 	$ausstellungsnation = (isset($_POST['ausstellungsnation'])) ? $_POST['ausstellungsnation'] : '';
 	// Check, ob ein File gewaelt wurde
@@ -1925,7 +1925,7 @@ if (isset($_POST['submitfile']))
 				$message .= $p->t('bewerbung/keinDokumententypUebergeben');
 			}
 
-			if (isset($_FILES['file']['tmp_name']) && ! $error)
+			if (isset($_FILES['file']['tmp_name']) && ! $save_error_dokumente)
 			{
 				// Extension herausfiltern
 				$ext = explode('.', $_FILES['file']['name']);
