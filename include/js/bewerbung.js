@@ -261,7 +261,8 @@ function deleteAkte(akte_id, dokument_kurzbz, maxDokumente)
 				// Entferne alle Listeneinträge vom gleichen Dokumenttyp
 				$(".listItem_"+akte_id).remove();
 				// Reload Dokumentenupload
-				location.reload(true);
+				//location.reload(true);
+				window.location.href = 'bewerbung.php?active=dokumente';
 				// Zeige den Upload wieder an
 				/*anzahlDokumente = $(".list_"+dokument_kurzbz+" li").length;
 				if (anzahlDokumente < maxDokumente)
@@ -335,4 +336,3 @@ function checkImageProperties(input, callback)
 		}
 	};
 };
-
