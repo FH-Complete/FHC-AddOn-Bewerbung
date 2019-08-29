@@ -358,7 +358,7 @@ if ($bewerbungStornieren && isset($_POST['prestudent_id']))
 
 $changePriority = filter_input(INPUT_POST, 'changePriority', FILTER_VALIDATE_BOOLEAN);
 // Ändern der Priorität von Bewerbungen
-if ($changePriority && isset($_POST['ausgang_prestudent_id']) 
+if ($changePriority && isset($_POST['ausgang_prestudent_id'])
 	&& isset($_POST['ziel_prestudent_id'])
 	&& isset($_POST['ausgang_prioritaet'])
 	&& isset($_POST['ziel_prioritaet'])
@@ -369,10 +369,10 @@ if ($changePriority && isset($_POST['ausgang_prestudent_id'])
 	$ausgangsPrioritaet = filter_input(INPUT_POST, 'ausgang_prioritaet');
 	$zielPrioritaet = filter_input(INPUT_POST, 'ziel_prioritaet');
 	$studiensemester_kurzbz = filter_input(INPUT_POST, 'studiensemester_kurzbz');
-	
+
 	$prestudent1 = new prestudent($ausgang_prestudent_id);
 	$prestudent2 = new prestudent($ziel_prestudent_id);
-	$hoechstePrio = new prestudent(); 
+	$hoechstePrio = new prestudent();
 	$hoechstePrio->getPriorisierungPersonStudiensemester($prestudent1->person_id, $studiensemester_kurzbz);
 	// Wenn $ausgangsPrioritaet NULL ist, höchste Prio ermitteln, diese setzen und $zielPrioritaet +1 setzen
 	if ($ausgangsPrioritaet == '')
@@ -383,7 +383,7 @@ if ($changePriority && isset($_POST['ausgang_prestudent_id'])
 			$ausgangsPrioritaetNeu = 1;
 			$zielPrioritaetNeu = 2;
 		}
-		else 
+		else
 		{
 			// Wenn $zielPrioritaet NULL ist, höchste Prio ermitteln und $ausgangsPrioritaet +1 setzen und $zielPrioritaet + 2 setzen
 			if ($zielPrioritaet == '')
@@ -391,14 +391,14 @@ if ($changePriority && isset($_POST['ausgang_prestudent_id'])
 				$ausgangsPrioritaetNeu = $hoechstePrio->priorisierung + 1;
 				$zielPrioritaetNeu = $hoechstePrio->priorisierung + 2;
 			}
-			else 
+			else
 			{
 				$ausgangsPrioritaetNeu = $zielPrioritaet;
 				$zielPrioritaetNeu = $hoechstePrio->priorisierung + 1;
 			}
 		}
 	}
-	else 
+	else
 	{
 		// Wenn $zielPrioritaet NULL ist, $ausgangsPrioritaet höchste Prio +1 setzen und $zielPrioritaet gelcih $ausgangsPrioritaet setzen
 		if ($zielPrioritaet == '')
@@ -433,7 +433,7 @@ if ($changePriority && isset($_POST['ausgang_prestudent_id'])
 			));
 			exit();
 		}
-		else 
+		else
 		{
 			echo json_encode(array(
 				'status' => 'ok'
@@ -491,7 +491,7 @@ if ($aktionReihungstest)
 		$reihungstest->punkte = '';
 		$reihungstest->insertamum = date("Y-m-d H:i:s");
 		$reihungstest->insertvon = 'online';
-		
+
 		if (! $reihungstest->savePersonReihungstest())
 		{
 			echo json_encode(array(
@@ -508,14 +508,14 @@ if ($aktionReihungstest)
 			// Geparkten Logeintrag löschen
 			$log->deleteParked($person_id);
 			// Logeintrag schreiben
-			$log->log($person_id, 
-				'Processstate', 
-				array('name' => 'Signed-on for placement test', 'message' => 'Subscribed for placement test on ' . $rt->datum . ' at ' . $rt->uhrzeit . ' for Studienplan ' . $studienplan_id ), 
-				'aufnahme', 
-				'bewerbung', 
-				null, 
+			$log->log($person_id,
+				'Processstate',
+				array('name' => 'Signed-on for placement test', 'message' => 'Subscribed for placement test on ' . $rt->datum . ' at ' . $rt->uhrzeit . ' for Studienplan ' . $studienplan_id ),
+				'aufnahme',
+				'bewerbung',
+				null,
 				'online');
-				
+
 			echo json_encode(array(
 				'status' => 'ok'
 			));
@@ -531,28 +531,28 @@ if ($aktionReihungstest)
 					$anrede = $p->t('bewerbung/anredeMaennlich');
 				else
 					$anrede = $p->t('bewerbung/anredeWeiblich');
-				
+
 				$email = new mail($mailadresse, 'no-reply', $p->t('bewerbung/anmeldungReihungstestMailBetreff'), 'Bitte sehen Sie sich die Nachricht in HTML Sicht an, um den Inhalt vollständig darzustellen.');
 				$email_bewerber = $p->t('bewerbung/anmeldungReihungstestMail', array(
-					$person->vorname, 
-					$person->nachname, 
-					$anrede, 
-					substr($tagbez[$spracheIndex][$datum->formatDatum($rt->datum, 'N')], 0, 2).', '.$datum->formatDatum($rt->datum, 'd.m.Y'), 
+					$person->vorname,
+					$person->nachname,
+					$anrede,
+					substr($tagbez[$spracheIndex][$datum->formatDatum($rt->datum, 'N')], 0, 2).', '.$datum->formatDatum($rt->datum, 'd.m.Y'),
 					$datum->formatDatum($rt->uhrzeit,'H:i')));
-					
+
 				$email->setHTMLContent($email_bewerber);
 				$email->send();
 			}*/
 			exit();
-		}	
+		}
 	}
 	elseif ($aktion == 'delete')
 	{
 		$rt_person_id = new reihungstest();
 		$rt_person_id->getPersonReihungstest($person_id, $rt_id);
-		
+
 		$reihungstest = new reihungstest($rt_id);
-		
+
 		// Löschen der Anmeldung nur möglich, wenn BEWERBERTOOL_REIHUNGSTEST_STORNIERBAR_TAGE oder Anmeldefrist noch nicht vorbei
 		if (defined('BEWERBERTOOL_REIHUNGSTEST_STORNIERBAR_TAGE') && BEWERBERTOOL_REIHUNGSTEST_STORNIERBAR_TAGE != '')
 		{
@@ -574,7 +574,7 @@ if ($aktionReihungstest)
 			));
 			exit();// @todo: Phrasenmodul
 		}
-		
+
 		if (! $reihungstest->deletePersonReihungstest($rt_person_id->rt_person_id))
 		{
 			echo json_encode(array(
@@ -597,7 +597,7 @@ if ($aktionReihungstest)
 				'bewerbung',
 				null,
 				'online');
-				
+
 				echo json_encode(array(
 					'status' => 'ok'
 				));
@@ -1802,12 +1802,12 @@ if (isset($_POST['btn_new_accesscode']))
 	$save_error_zugangscode = false;
 	$person = new person($person_id);
 	$zugangscode = substr(md5(openssl_random_pseudo_bytes(20)), 0, 15);
-	
+
 	$person->zugangscode = $zugangscode;
 	$person->updateamum = date('Y-m-d H:i:s');
 	$person->updatevon = 'online';
 	$person->new = false;
-	
+
 	if(!$person->save())
 	{
 		$message = $p->t('global/fehlerBeimSpeichernDerDaten');
@@ -2172,10 +2172,10 @@ if (! $prestudent->getPrestudenten($person->person_id))
 }
 
 // Abfrage ob persönliche Daten vollständig sind
-if ($person->vorname 
-	&& $person->nachname 
-	&& $person->gebdatum 
-	&& $person->staatsbuergerschaft 
+if ($person->vorname
+	&& $person->nachname
+	&& $person->gebdatum
+	&& $person->staatsbuergerschaft
 	&& $person->geschlecht
 	)
 {
@@ -2198,7 +2198,7 @@ if ($person->vorname
 		$status_person = false;
 		$status_person_text = $unvollstaendig;
 	}
-	else 
+	else
 	{
 		$status_person = true;
 		$status_person_text = $vollstaendig;
@@ -2223,12 +2223,12 @@ $kontakttel->load_persKontakttyp($person->person_id, 'telefon');
 $adresse = new adresse();
 $adresse->load_pers($person->person_id);
 
-if (isset($adresse->result[0]) 
-	&& count($kontakt->result) 
-	&& count($adresse->result[0]->strasse) 
-	&& count($adresse->result[0]->plz) 
-	&& count($adresse->result[0]->ort) 
-	&& count($adresse->result[0]->nation) 
+if (isset($adresse->result[0])
+	&& count($kontakt->result)
+	&& count($adresse->result[0]->strasse)
+	&& count($adresse->result[0]->plz)
+	&& count($adresse->result[0]->ort)
+	&& count($adresse->result[0]->nation)
 	&& count($kontakttel->result))
 {
 	$status_kontakt = true;
@@ -2552,7 +2552,7 @@ else
 			$(document).ready(function(){
 				$('[data-toggle="popover"]').popover({html:true});
 				$('[data-toggle="tooltip"]').tooltip();
-				$('#sprache-dropdown-content a').on('click', function() 
+				$('#sprache-dropdown-content a').on('click', function()
 				{
 					var sprache = $(this).attr('data-sprache');
 					changeSprache(sprache);
@@ -2704,7 +2704,7 @@ else
 						<?php endif; ?>
 
 						<?php
-						
+
 						$display = '';
 						if(!defined('BEWERBERTOOL_REIHUNGSTEST_ANZEIGEN') || BEWERBERTOOL_REIHUNGSTEST_ANZEIGEN)
 						{
@@ -2720,13 +2720,13 @@ else
 									$display = 'style="display: none"';
 								}
 							}
-						} 
-						echo '	<li id="tab_aufnahme" '.$display.'>
+
+							echo '	<li id="tab_aufnahme" '.$display.'>
 									<a href="#aufnahme" aria-controls="aufnahme" role="tab" data-toggle="tab" '.($status_reihungstest_text == $unvollstaendig ? 'style="background-color: #F2DEDE !important"': ($status_reihungstest_text == $teilvollstaendig ? 'style="background-color: #FCF8E3 !important"' : 'style="background-color: #DFF0D8 !important"')).'>
 										'.$p->t('bewerbung/menuReihungstest').'<br>'.$status_reihungstest_text.'
 									</a>
 								</li>';
-						
+						}
 						?>
 						<?php if(!defined('BEWERBERTOOL_ABSCHICKEN_ANZEIGEN') || BEWERBERTOOL_ABSCHICKEN_ANZEIGEN):	?>
 						<li>
@@ -2769,7 +2769,7 @@ else
 									<?php endforeach; ?>
 								</div>
 							</div>
-							
+
 						</li>
 					</ul>
 				</div>
@@ -2877,7 +2877,7 @@ function sendBewerbung($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz,
 		$sanchoMailHeader = base64_encode(file_get_contents(APP_ROOT . 'skin/images/sancho/sancho_header_min_bw.jpg'));
 		$sanchoMailFooter = base64_encode(file_get_contents(APP_ROOT . 'skin/images/sancho/sancho_footer_min_bw.jpg'));
 		$email = $p->t('bewerbung/emailBodyStart', array(VILESCI_ROOT . 'vilesci/personen/personendetails.php?id='.$person_id, $sanchoMailHeader));
-		
+
 		// Wenn MAIL_DEBUG aktiv ist, zeige auch den Empfänger an
 		if(defined('MAIL_DEBUG') && MAIL_DEBUG != '')
 			$email .= '<br><br>Empfänger: '.$empfaenger.'<br><br>';
@@ -2988,7 +2988,7 @@ function sendBewerbung($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz,
 		{
 			$email_bewerber_content = $p->t('bewerbung/erfolgreichBeworbenMail', array($person->vorname, $person->nachname, $anrede, $studiengangsbezeichnung, $empfaenger, $sanchoMailHeader, $sanchoMailFooter));
 		}
-		
+
 		$mail_bewerber->setHTMLContent($email_bewerber_content);
 		$mail_bewerber->addEmbeddedImage(APP_ROOT . 'skin/images/sancho/sancho_header_DEFAULT.jpg', 'image/jpg', 'header_image', 'sancho_header');
 		$mail_bewerber->addEmbeddedImage(APP_ROOT . 'skin/images/sancho/sancho_footer.jpg', 'image/jpg', 'footer_image', 'sancho_footer');
