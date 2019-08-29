@@ -20,7 +20,7 @@ $this->phrasen['bewerbung/welcomeHeaderRegistration']='
 							<img style="width:150px;" class="center-block img-responsive" src="' . APP_ROOT . 'skin/styles/' . DEFAULT_STYLE . '/logo_academy.png">
 						</div>
 						<div class="col-xs-2">
-							
+
 						</div>
 						<div class="col-xs-5">
 							<img style="width:150px;" class="center-block img-responsive" src="' . APP_ROOT . 'skin/styles/' . DEFAULT_STYLE . '/logo.png">
@@ -159,8 +159,8 @@ $this->phrasen['bewerbung/kontakt']='Contact';
 $this->phrasen['bewerbung/nation']='Nation';
 $this->phrasen['bewerbung/menuDokumente']='Documents';
 $this->phrasen['bewerbung/dokument']='Document';
-$this->phrasen['bewerbung/bitteDokumenteHochladen']='In order to be able to send in your application, you need to upload all documents marked as "required". 
-													If the document is not yet available at the respective time, you may submit the same at a later date. 
+$this->phrasen['bewerbung/bitteDokumenteHochladen']='In order to be able to send in your application, you need to upload all documents marked as "required".
+													If the document is not yet available at the respective time, you may submit the same at a later date.
 													To do so, click "submit document later" and specify when you are going to submit the document as well as the institution issuing the same.<br><br>
 													You may be prompted to upload more documents here in the course of your application.';
 $this->phrasen['bewerbung/linkDokumenteHochladen']='Upload Documents';
@@ -217,13 +217,13 @@ $this->phrasen['bewerbung/fehlerBeimVersendenDerBewerbung']='An error occured wh
 $this->phrasen['bewerbung/svnrBereitsVorhanden']='Social Security Number already exists.';
 $this->phrasen['bewerbung/menuBewerbungFuerStudiengang']='Application for a degree program';
 $this->phrasen['bewerbung/emailBodyStart']='<html>
-	<head>	
+	<head>
 		<title>Sancho Mail</title>
 	</head>
 	<body>
 		<center>
-			<table cellpadding="0" cellspacing="0" style="border: 2px solid #000000; padding: 0px; max-width: 850px; 
-				border-collapse:collapse; mso-table-lspace:0pt; mso-table-rspace:0pt;">  
+			<table cellpadding="0" cellspacing="0" style="border: 2px solid #000000; padding: 0px; max-width: 850px;
+				border-collapse:collapse; mso-table-lspace:0pt; mso-table-rspace:0pt;">
 				<tr>
 					<td align="center">
 						<table cellpadding="0" cellspacing="0" width="100%%" border="0">
@@ -363,13 +363,13 @@ $this->phrasen['bewerbung/studierendenDaten']='Student’s current data';
 $this->phrasen['bewerbung/keineRtTermineZurAuswahl']='At the moment there are no placement test dates available';
 $this->phrasen['bewerbung/erfolgreichBeworbenMailBachelor']='
 <html>
-	<head>	
+	<head>
 		<title>Sancho Mail</title>
 	</head>
 	<body>
 		<center>
-			<table cellpadding="0" cellspacing="0" style="border: 2px solid #000000; padding: 0px; max-width: 850px; 
-				border-collapse:collapse; mso-table-lspace:0pt; mso-table-rspace:0pt;">  
+			<table cellpadding="0" cellspacing="0" style="border: 2px solid #000000; padding: 0px; max-width: 850px;
+				border-collapse:collapse; mso-table-lspace:0pt; mso-table-rspace:0pt;">
 				<tr>
 					<td align="center">
 						<img src="cid:sancho_header" alt="header_image" style="width: 100%%; display: block"/>
@@ -382,7 +382,7 @@ $this->phrasen['bewerbung/erfolgreichBeworbenMailBachelor']='
 								<td style="padding-left: 8%%; padding-right: 8%%; padding-top: 5%%; padding-bottom: 5%%;">
 									Dear %3$s %1$s %2$s,<br><br>
 									Your have successfully submitted your application for %4$s. Generally, we will get back to you within 5 working days. If necessary, you will then be requested to upload additional documents.<br><br>
-									You can see the status of your application in the <a href="'.APP_ROOT.'addons/bewerbung/cis/registration.php">application tool</a>.<br> 
+									You can see the status of your application in the <a href="'.APP_ROOT.'addons/bewerbung/cis/registration.php">application tool</a>.<br>
 									If you have any questions regarding your application, do not hesitate to contact our Info Center at <a href="mailto:studienberatung@technikum-wien.at">studienberatung@technikum-wien.at</a>.<br><br>
 									Best regards,<br>
 									UAS Technikum Wien
@@ -403,13 +403,13 @@ $this->phrasen['bewerbung/erfolgreichBeworbenMailBachelor']='
 ';
 $this->phrasen['bewerbung/erfolgreichBeworbenMail']='
 <html>
-	<head>	
+	<head>
 		<title>Sancho Mail</title>
 	</head>
 	<body>
 		<center>
-			<table cellpadding="0" cellspacing="0" style="border: 2px solid #000000; padding: 0px; max-width: 850px; 
-				border-collapse:collapse; mso-table-lspace:0pt; mso-table-rspace:0pt;">  
+			<table cellpadding="0" cellspacing="0" style="border: 2px solid #000000; padding: 0px; max-width: 850px;
+				border-collapse:collapse; mso-table-lspace:0pt; mso-table-rspace:0pt;">
 				<tr>
 					<td align="center">
 						<img src="cid:sancho_header" alt="header_image" style="width: 100%%; display: block"/>
@@ -516,4 +516,7 @@ $this->phrasen['bewerbung/re_anrede']='Salutation';
 $this->phrasen['bewerbung/re_titel']='Titel';
 $this->phrasen['bewerbung/re_vorname']='Surname';
 $this->phrasen['bewerbung/re_nachname']='Name';
+$this->phrasen['bewerbung/staatsbuergerschaft']='Citizenship';
+$this->phrasen['bewerbung/staatsbuergerschaftErklaerung']='Please enter your Citizenship here';
+$this->phrasen['bewerbung/bitteAuswaehlenStaatsbuergerschaft']='-- Please select Entry --';
 ?>

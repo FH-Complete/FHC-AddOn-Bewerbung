@@ -266,6 +266,7 @@ elseif($username && $password)
 				$studienplaene = filter_input(INPUT_POST, 'studienplaene', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY);
 				$std_semester = filter_input(INPUT_POST, 'studiensemester_kurzbz');
 				$zgv_nation = filter_input(INPUT_POST, 'zgv_nation');
+				$staatsbuergerschaft = filter_input(INPUT_POST, 'staatsbuergerschaft');
 				$typen = array();
 
 				//Prioritäten neu soritieren falls Lücken sind (zB 1,3,4 ändern auf 1,2,3)
@@ -386,6 +387,7 @@ elseif($username && $password)
 							$zugangscode = substr(md5(openssl_random_pseudo_bytes(20)), 0, 15);
 
 							$person->zugangscode = $zugangscode;
+							$person->staatsbuergerschaft = $staatsbuergerschaft;
 							$person->updateamum = date('Y-m-d H:i:s');
 							$person->updatevon = 'online';
 							$person->new = false;
@@ -498,6 +500,7 @@ elseif($username && $password)
 							$person->vorname = $vorname;
 							$person->gebdatum = $geb_datum;
 							$person->geschlecht = $geschlecht;
+							$person->staatsbuergerschaft = $staatsbuergerschaft;
 							$person->anrede = ($geschlecht=='m'?'Herr':'Frau');
 							$person->aktiv = true;
 							$person->zugangscode = $zugangscode;
@@ -731,6 +734,37 @@ elseif($username && $password)
 						</div>
 					</div>
 					<?php endif; ?>
+					<?php if(defined('BEWERBERTOOL_SHOW_REGISTRATION_STAATSBUERGERSCHAFT') && BEWERBERTOOL_SHOW_REGISTRATION_STAATSBUERGERSCHAFT): ?>
+					<div class="form-group" id="zgv_nation_form-group">
+						<label for="staatsbuergerschaft" class="col-sm-3 control-label" id="label_staatsbuergerschaft">
+							<?php echo $p->t('bewerbung/staatsbuergerschaft') ?>
+							<a id="infoDivStaatsbuergerschaft" href="#" data-toggle="popover" data-placement="auto" title="" data-content="<?php echo $p->t('bewerbung/staatsbuergerschaftErklaerung') ?>">
+								<span style="font-size: 1em;" class="glyphicon glyphicon-info-sign glyph" aria-hidden="true"></span>
+							</a>
+						</label>
+						<div class="col-sm-4 dropdown">
+							<select name="staatsbuergerschaft" id="staatsbuergerschaft" class="form-control" onChange="formSubmit()">
+								<option value=""><?php echo $p->t('bewerbung/bitteAuswaehlenStaatsbuergerschaft') ?></option>
+								<option value="A"><?php	echo ($sprache=='German'? 'Österreich':'Austria'); ?></option>
+								<?php $selected = '';
+								foreach($nation->nation as $nat):
+									$selected = ($staatsbuergerschaft == $nat->code) ? 'selected' : ''; ?>
+									<option value="<?php echo $nat->code ?>" <?php echo $selected ?>>
+										<?php
+										if($sprache=='German')
+											echo $nat->langtext;
+										else
+											echo $nat->engltext;
+										?>
+									</option>
+								<?php endforeach; ?>
+							</select>
+						</div>
+					</div>
+					<?php endif; ?>
+
+
+
 					<div class="form-group">
 						<label for="studiensemester_kurzbz" class="col-sm-3 control-label" id="label_studiensemester_kurzbz">
 							<?php echo $p->t('bewerbung/geplanterStudienbeginn') ?>
@@ -1348,6 +1382,18 @@ elseif($username && $password)
 						scrollTop: $("#zgv_nation").offset().top
 					}, 1000);
 					alert("<?php echo $p->t('bewerbung/bitteZGVausweahlen')?>");
+					return false;
+				}
+			<?php endif; ?>
+			<?php if (defined('BEWERBERTOOL_SHOW_REGISTRATION_STAATSBUERGERSCHAFT') && BEWERBERTOOL_SHOW_REGISTRATION_STAATSBUERGERSCHAFT): ?>
+				var checkedInputs = $("input[type=checkbox][class=checkbox_stg]:checked");
+				if(checkedInputs.length > 0 && $('#staatsbuergerschaft').val() == '')
+				{
+					$('#zgv_nation_form-group').addClass('has-error has-feedback');
+					$([document.documentElement, document.body]).animate({
+						scrollTop: $("#staatsbuergerschaft").offset().top
+					}, 1000);
+					alert("<?php echo $p->t('bewerbung/bitteausweahlenStaatsbuergerschaft')?>");
 					return false;
 				}
 			<?php endif; ?>

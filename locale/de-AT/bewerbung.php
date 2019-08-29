@@ -21,7 +21,7 @@ $this->phrasen['bewerbung/welcomeHeaderRegistration']='
 							<img style="width:150px;" class="center-block img-responsive" src="' . APP_ROOT . 'skin/styles/' . DEFAULT_STYLE . '/logo_academy.png">
 						</div>
 						<div class="col-xs-2">
-							
+
 						</div>
 						<div class="col-xs-5">
 							<img style="width:150px;" class="center-block img-responsive" src="' . APP_ROOT . 'skin/styles/' . DEFAULT_STYLE . '/logo.png">
@@ -79,13 +79,13 @@ $this->phrasen['bewerbung/anredeMaennlich']='geehrter Herr';
 $this->phrasen['bewerbung/anredeWeiblich']='geehrte Frau';
 $this->phrasen['bewerbung/mailtext']='
 <html>
-	<head>	
+	<head>
 		<title>Sancho Mail</title>
 	</head>
 	<body>
 		<center>
-			<table cellpadding="0" cellspacing="0" style="border: 2px solid #000000; padding: 0px; max-width: 850px; 
-				border-collapse:collapse; mso-table-lspace:0pt; mso-table-rspace:0pt;">  
+			<table cellpadding="0" cellspacing="0" style="border: 2px solid #000000; padding: 0px; max-width: 850px;
+				border-collapse:collapse; mso-table-lspace:0pt; mso-table-rspace:0pt;">
 				<tr>
 					<td align="center">
 						<img src="cid:sancho_header" alt="header_image" style="width: 100%%; display: block"/>
@@ -271,13 +271,13 @@ $this->phrasen['bewerbung/menuBewerbungFuerStudiengang']='Bewerbung für einen S
 $this->phrasen['bewerbung/dokumentOhneUploadGeprueft'] = 'Dokument ohne Upload überprüft.';
 $this->phrasen['bewerbung/emailBodyStart']='
 <html>
-	<head>	
+	<head>
 		<title>Sancho Mail</title>
 	</head>
 	<body>
 		<center>
-			<table cellpadding="0" cellspacing="0" style="border: 2px solid #000000; padding: 0px; max-width: 850px; 
-				border-collapse:collapse; mso-table-lspace:0pt; mso-table-rspace:0pt;">  
+			<table cellpadding="0" cellspacing="0" style="border: 2px solid #000000; padding: 0px; max-width: 850px;
+				border-collapse:collapse; mso-table-lspace:0pt; mso-table-rspace:0pt;">
 				<tr>
 					<td align="center">
 						<table cellpadding="0" cellspacing="0" width="100%%" border="0">
@@ -418,17 +418,17 @@ $this->phrasen['bewerbung/studierendenDaten']='Aktuelle Studierendendaten';
 $this->phrasen['bewerbung/keineRtTermineZurAuswahl']='Derzeit stehen keine Reihungstesttermine zur Auswahl';
 $this->phrasen['bewerbung/erfolgreichBeworbenMailBachelor']='
 <html>
-	<head>	
+	<head>
 		<title>Sancho Mail</title>
 	</head>
 	<body>
 		<center>
-			<table cellpadding="0" cellspacing="0" style="border: 2px solid #000000; padding: 0px; max-width: 850px; 
-				border-collapse:collapse; mso-table-lspace:0pt; mso-table-rspace:0pt;">  
+			<table cellpadding="0" cellspacing="0" style="border: 2px solid #000000; padding: 0px; max-width: 850px;
+				border-collapse:collapse; mso-table-lspace:0pt; mso-table-rspace:0pt;">
 				<tr>
 					<td align="center">
 						<img src="cid:sancho_header" alt="header_image" style="width: 100%%; display: block"/>
-								
+
 					</td>
 				</tr>
 				<tr>
@@ -459,13 +459,13 @@ $this->phrasen['bewerbung/erfolgreichBeworbenMailBachelor']='
 ';
 $this->phrasen['bewerbung/erfolgreichBeworbenMail']='
 <html>
-	<head>	
+	<head>
 		<title>Sancho Mail</title>
 	</head>
 	<body>
 		<center>
-			<table cellpadding="0" cellspacing="0" style="border: 2px solid #000000; padding: 0px; max-width: 850px; 
-				border-collapse:collapse; mso-table-lspace:0pt; mso-table-rspace:0pt;">  
+			<table cellpadding="0" cellspacing="0" style="border: 2px solid #000000; padding: 0px; max-width: 850px;
+				border-collapse:collapse; mso-table-lspace:0pt; mso-table-rspace:0pt;">
 				<tr>
 					<td align="center">
 						<img src="cid:sancho_header" alt="header_image" style="width: 100%%; display: block"/>
@@ -571,4 +571,7 @@ $this->phrasen['bewerbung/re_anrede']='Anrede';
 $this->phrasen['bewerbung/re_titel']='Titel';
 $this->phrasen['bewerbung/re_vorname']='Vorname';
 $this->phrasen['bewerbung/re_nachname']='Nachname';
+$this->phrasen['bewerbung/staatsbuergerschaft']='Staatsangehörigkeit';
+$this->phrasen['bewerbung/staatsbuergerschaftErklaerung']='Bitte geben Sie hier Ihre Staatsbürgerschaft an';
+$this->phrasen['bewerbung/bitteAuswaehlenStaatsbuergerschaft']='-- Bitte auswählen --';
 ?>
