@@ -190,3 +190,7 @@ dokument a:hover
 	cursor: inherit;
 	display: block;
 }
+.errorAusstellungsnation
+{
+	border-color: #a94442;
+}

@@ -896,7 +896,7 @@ function getBewerbungszeitraum($studiengang_kz, $studiensemester, $studienplan_i
 			// Wenn die Frist in weniger als 7 Tagen ablaeuft oder vorbei ist, hervorheben
 			if ($tage_bis_fristablauf > 7)
 			{
-				$infoDiv = '| ' . $p->t('bewerbung/bewerbungsfrist') . ': ' . $datum->formatDatum($bewerbungsfristen->ende, 'd.m.Y');
+				$infoDiv = '<span class="text-muted small">| ' . $p->t('bewerbung/bewerbungsfrist') . ': ' . $datum->formatDatum($bewerbungsfristen->ende, 'd.m.Y').'</span>';
 			}
 			if ($tage_bis_fristablauf <= 7)
 			{
@@ -1794,18 +1794,19 @@ function getAktenListe($person_id, $dokument_kurzbz)
  * @param boolean $nachreichbutton. Default false
  * @param boolean $visible. Default true. Wenn false, wird der Upload-Bereich ausgeblendet
  * @param integer $studiengang
+ * @param boolean $ausstellungsdetails. Wenn true, wird das DropDown mit der Ausstellungsnation angezeigt
  *
  * @return string HTML-String mit Upload-Button und ggf. Nachreich-Button
  */
-function getUploadButton($dokument_kurzbz, $nachreichbutton = false, $visible = true, $studiengang)
+function getUploadButton($dokument_kurzbz, $nachreichbutton = false, $visible = true, $studiengang, $ausstellungsdetails = false)
 {
-	global $p, $datum;
+	global $p, $sprache;
 	$display = '';
 	if ($visible === false)
 	{
 		$display = 'hidden';
 	}
-	$returnstring = '<form method="POST" enctype="multipart/form-data" action="'.$_SERVER['PHP_SELF'].'?active=dokumente" class="form-horizontal" onsubmit="return checkAusstellungsnation()">';
+	$returnstring = '<form method="POST" enctype="multipart/form-data" action="'.$_SERVER['PHP_SELF'].'?active=dokumente" class="form-horizontal documentUploadForm">';
 	$returnstring .= '  <div class="dokumentUploadDiv_'.$dokument_kurzbz.' '.$display.'" >';
 	// Lichtbilder werden gesondert behandelt
 	if ($dokument_kurzbz == 'LichtbilXXX')
@@ -1837,6 +1838,32 @@ function getUploadButton($dokument_kurzbz, $nachreichbutton = false, $visible = 
 							</p>';
 	}
 		//$returnstring .= '	<p class="help-block" >'.$p->t('bewerbung/ExtensionInformation').' JPG, PDF </p>';
+
+	// Wenn das Attribut "Ausstellungsdetails" beim Dokument gesetzt ist, Länderdropdown anzeigen
+	if ($ausstellungsdetails)
+	{
+		$nation = new nation();
+		$nation->getAll($ohnesperre = true);
+		$returnstring .= '	<p>
+								<select name="ausstellungsnation" class="form-control ausstellungsnation" style="margin-top: 1em; display: block;" >
+									<option value="">'. $p->t('bewerbung/bitteAusstellungsnationAuswaehlen') .'</option>
+									<option value="A">'.($sprache=='German'? 'Österreich':'Austria').'</option>';
+									$selected = '';
+									foreach ($nation->nation as $nat)
+									{
+										//$selected = ($ausstellungsnation == $nat->code) ? 'selected="selected"' : '';
+										$returnstring .= '<option value="'.$nat->code.'" '.$selected.'>';
+
+										if ($sprache == 'German')
+											$returnstring .= $nat->langtext;
+										else
+											$returnstring .= $nat->engltext;
+
+										$returnstring .= '</option>';
+									}
+			$returnstring .= '</select>
+							</p>';
+	}
 
 	if ((!defined('BEWERBERTOOL_DOKUMENTE_NACHREICHEN') || BEWERBERTOOL_DOKUMENTE_NACHREICHEN == true) && $nachreichbutton)
 	{

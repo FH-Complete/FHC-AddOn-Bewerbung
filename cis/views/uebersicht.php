@@ -528,6 +528,15 @@ $studiensemester_array = array();
 			{
 				if ($count_notizen == 0)
 				{
+					// Wenn Bewerbung schon abgeschickt wurde, anmerkung disablen
+					if ($lastInteressentenStatus->bewerbung_abgeschicktamum != '' || $lastInteressentenStatus->bestaetigtam != '')
+					{
+						$anmerkungDisabled = 'disabled';
+					}
+					else
+					{
+						$anmerkungDisabled = '';
+					}
 					echo '	<div id="notizForm_'.$row->prestudent_id.'">
 														<textarea   class="form-control" 
 																	name="anmerkung" 
@@ -537,8 +546,11 @@ $studiensemester_array = array();
 																	id="anmerkungUebersicht_'.$row->prestudent_id.'" 
 																	style="width:80%" 
 																	placeholder="'.$p->t('bewerbung/anmerkungPlaceholder').'" 
-																	onInput="zeichenCountdown(\'anmerkungUebersicht_'.$row->prestudent_id.'\',1024)"></textarea>
-														<span class="btn btn-primary" id="anmerkungSubmitButton" onclick="saveNotiz('.$person_id.','.$row->prestudent_id.')">'.$p->t('global/speichern').'</span>
+																	onInput="zeichenCountdown(\'anmerkungUebersicht_'.$row->prestudent_id.'\',1024)"
+																	'.$anmerkungDisabled.'></textarea>
+														<span   class="btn btn-primary '.$anmerkungDisabled.'" 
+																id="anmerkungSubmitButton" 
+																'.($anmerkungDisabled != '' ? '' : 'onclick="saveNotiz('.$person_id.','.$row->prestudent_id.')"').'>'.$p->t('global/speichern').'</span>
 														<span style="color: grey; display: inline-block; width: 30px;" id="countdown_anmerkungUebersicht_'.$row->prestudent_id.'"></span>
 													</div>';
 				}

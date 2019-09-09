@@ -360,7 +360,7 @@ $this->phrasen['bewerbung/hackStufeBezeichnungBachelor']=''; // Überschreibt di
 $this->phrasen['bewerbung/hackStufeBezeichnungMaster']=''; // Überschreibt die ZGV Stufen-Bezeichnung "Master". Leer lassen, wenn nicht benötigt
 $this->phrasen['bewerbung/prioritaet']='Priority';
 $this->phrasen['bewerbung/studierendenDaten']='Student’s current data';
-$this->phrasen['bewerbung/keineRtTermineZurAuswahl']='At the moment there are no placement test dates available';
+$this->phrasen['bewerbung/keineRtTermineZurAuswahl']='At the moment there are no placement test dates available. <br><br>You will be informed as soon as the registration for our placement tests are possible (probably January 2020).';
 $this->phrasen['bewerbung/erfolgreichBeworbenMailBachelor']='
 <html>
 	<head>
@@ -480,6 +480,7 @@ $this->phrasen['bewerbung/infotextRegistrationBewerbungGesperrt']='Currently you
 $this->phrasen['bewerbung/mehr']='More';
 $this->phrasen['bewerbung/dokumentNochNichtVorhanden']='Document not avalilable yet? Then click:'; // Nur grob übersetzt
 $this->phrasen['bewerbung/keineDokumenteErforderlich']='Currently no documents are required to upload'; // Nur grob übersetzt
+$this->phrasen['bewerbung/menuUebersichtBewerbungAbschicken']='Overview / Send application';
 
 // Reihungstest
 $this->phrasen['bewerbung/anmeldungReihungstestMailBetreff']='Confirmation of registration to placement test UAS Technikum Wien';

@@ -838,7 +838,7 @@ elseif($username && $password)
 							$last_lgtyp = '';
 							$bewerbungszeitraum = '';
 							$typ_bezeichung = '';
-							
+
 							// Wenn es gar keine Studiengänge/Lehrgänge zum gewählten Studiensemester gibt, Info anzeigen
 							if ($studienplan == '')
 							{

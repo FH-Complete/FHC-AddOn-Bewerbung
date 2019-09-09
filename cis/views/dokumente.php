@@ -270,7 +270,7 @@ if (! isset($person_id))
 
 					// Upload-Button ausgeben
 					echo '	<div class="col-sm-3 text-right">';
-						echo getUploadButton($dok->dokument_kurzbz, false, $uploadButtonVisible, $dok->studiengang_kz);
+						echo getUploadButton($dok->dokument_kurzbz, false, $uploadButtonVisible, $dok->studiengang_kz, $dok->ausstellungsdetails);
 					echo '	</div>';
 				}
 				else
@@ -287,7 +287,7 @@ if (! isset($person_id))
 			{
 				// Spalte mit Fileselect und Upload-Button
 				echo '	<div class="col-sm-6 text-right">';
-					echo getUploadButton($dok->dokument_kurzbz, $dok->nachreichbar, true, $dok->studiengang_kz);
+					echo getUploadButton($dok->dokument_kurzbz, $dok->nachreichbar, true, $dok->studiengang_kz, $dok->ausstellungsdetails);
 				echo '	</div>';
 			}
 
@@ -434,6 +434,23 @@ if (! isset($person_id))
 				}
 			},100);
 		});
+		function checkAusstellungsnation()
+		{
+			alert($(this).closest("form").find(".ausstellungsnation").length);
+			return false;
+			if ($(this).closest("form").find(".ausstellungsnation").length)
+			{
+				alert("Ja");
+				$(this).parents("form").find(".ausstellungsnation").addClass("errorAusstellungsnation");
+				return false;
+			}
+			else
+			{
+				alert("Nein");
+				$("#ausstellungsnation").removeClass("errorAusstellungsnation");
+				return false;
+			}
+		};
 		function showDetails(id)
 		{
 			if ($('#'+id).hasClass('fade-out'))
@@ -488,6 +505,21 @@ if (! isset($person_id))
 			{
 				$(this).siblings('.panel-heading').find('div.details-arrow').removeClass('hidden');
 			})
+
+			$('.documentUploadForm').submit(function()
+			{
+				var ausstellungsNationSelect = $(this).find(".ausstellungsnation");
+				if (ausstellungsNationSelect.length == 1 && ausstellungsNationSelect.val() == '')
+				{
+					ausstellungsNationSelect.addClass("errorAusstellungsnation");
+					return false;
+				}
+				else
+				{
+					ausstellungsNationSelect.removeClass("errorAusstellungsnation");
+					return true;
+				}
+			});
 		});
 	</script>
 </div>

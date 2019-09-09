@@ -53,7 +53,7 @@ echo '	<form method="POST" action="'.$_SERVER['PHP_SELF'].'?active=sicherheit">
 
 echo '<br><br>
 	<button class="btn-nav btn btn-default" type="button" data-jump-tab="'.$tabs[0].'">
-		'.$p->t('bewerbung/menuUebersicht').'
+		'.$p->t('bewerbung/menuUebersichtBewerbungAbschicken').'
 	</button>
 </div>';
 ?>

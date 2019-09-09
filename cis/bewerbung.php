@@ -2580,7 +2580,7 @@ else
 					<ul class="nav navbar-nav">
 						<?php if(defined('BEWERBERTOOL_UEBERSICHT_ANZEIGEN') && BEWERBERTOOL_UEBERSICHT_ANZEIGEN): ?>
 						<li>
-							<a href="#uebersicht" aria-controls="uebersicht" role="tab" data-toggle="tab">
+							<a href="#uebersicht" aria-controls="uebersicht" role="tab" data-toggle="tab" <?php echo ($count_abgeschickte == 0?'style="background-color: #F2DEDE !important"':'');?>>
 								<?php echo $p->t('bewerbung/menuUebersicht') ?><br> &nbsp;
 							</a>
 						</li>
@@ -2743,9 +2743,22 @@ else
 						</li>
 						<?php endif; ?>
 						<li>
-							<a href="bewerbung.php?logout=true">
-								<?php echo $p->t('bewerbung/logout') ?> <br> <span class="glyphicon glyphicon-log-out"></span>
-							</a>
+							<?php
+								if ($count_abgeschickte == 0)
+								{
+									echo '	<a 	data-toggle="modal"
+												data-target="#logoutModal"
+												style="vertical-align: top">
+												'.$p->t('bewerbung/logout').' <br> <span class="glyphicon glyphicon-log-out"></span>
+											</a>';
+								}
+								else
+								{
+									echo '  <a href="bewerbung.php?logout=true">
+												'.$p->t('bewerbung/logout').' <br> <span class="glyphicon glyphicon-log-out"></span>
+											</a>';
+								}
+								?>
 						</li>
 						<?php
 							$spracheSelect = new sprache();
@@ -2775,6 +2788,41 @@ else
 				</div>
 			</div>
 		</nav>
+		<?php
+		if ($count_abgeschickte == 0)
+		{
+			echo '	<div class="modal fade"
+						id="logoutModal"
+						tabindex="10000"
+						role="dialog"
+						aria-labelledby="logoutModalLabel"
+						aria-hidden="true">
+						<div class="modal-dialog">
+							<div class="modal-content">
+								<div class="modal-header">
+									<button type="button" class="close" data-dismiss="modal"
+										aria-hidden="true">&times;</button>
+									<h4 class="modal-title">
+										'.$p->t('bewerbung/logout').'
+									</h4>
+								</div>
+								<div class="modal-body">
+											'.$p->t('bewerbung/logoutInfotext').'
+										</div>
+								<div class="modal-footer">
+									<button type="button" class="btn btn-default" data-dismiss="modal">
+										'.$p->t('global/abbrechen').'
+									</button>
+									<a href="bewerbung.php?logout=true" class="btn btn-warning" role="button">
+										'.$p->t('bewerbung/logout').'
+									</a>
+								</div>
+							</div>
+						</div>
+					</div>';
+		}
+
+		?>
 		<div class="container">
 			<div class="tab-content">
 				<?php
