@@ -493,7 +493,7 @@ $studiensemester_array = array();
 										</div>
 										<div class="form-group">
 											<label for="status" class="col-sm-3 col-md-5 text-right">'.$p->t('bewerbung/status').':</label>
-											<div class="col-sm-9 col-md-7" id="status">'.$p->t('bewerbung/StatusSeitDatum', array($prestatus_help, $datum->formatDatum($prestudent_status->datum, 'd.m.Y'))).'</div>
+											<div class="col-sm-9 col-md-7" id="status">'.$prestatus_help.'</div>
 										</div>
 										<!--<div class="form-group">
 											<label for="datum" class="col-sm-3 col-md-5 text-right">'.$p->t('global/datum').':</label>
