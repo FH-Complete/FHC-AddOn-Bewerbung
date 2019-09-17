@@ -838,7 +838,7 @@ elseif($username && $password)
 							$last_lgtyp = '';
 							$bewerbungszeitraum = '';
 							$typ_bezeichung = '';
-
+							
 							// Wenn es gar keine Studiengänge/Lehrgänge zum gewählten Studiensemester gibt, Info anzeigen
 							if ($studienplan == '')
 							{
@@ -1627,8 +1627,11 @@ function sendMail($zugangscode, $email, $person_id=null)
 
 	$mail = new mail($email, 'no-reply', $p->t('bewerbung/registration'), $p->t('bewerbung/mailtextHtml'));
 	$text = $p->t('bewerbung/mailtext',array($vorname, $nachname, $zugangscode, $anrede, $email));
-	$mail->addEmbeddedImage(APP_ROOT.'skin/images/sancho/sancho_header_DEFAULT.jpg', 'image/jpg', 'header_image', 'sancho_header');
-	$mail->addEmbeddedImage(APP_ROOT.'skin/images/sancho/sancho_footer.jpg', 'image/jpg', 'footer_image', 'sancho_footer');
+	if(CAMPUS_NAME != 'FH BFI Wien')
+	{
+		$mail->addEmbeddedImage(APP_ROOT.'skin/images/sancho/sancho_header_DEFAULT.jpg', 'image/jpg', 'header_image', 'sancho_header');
+		$mail->addEmbeddedImage(APP_ROOT.'skin/images/sancho/sancho_footer.jpg', 'image/jpg', 'footer_image', 'sancho_footer');
+	}
 	$mail->setHTMLContent($text);
 	if(!$mail->send())
 		$msg = '<span class="error">'.$p->t('bewerbung/fehlerBeimSenden').'</span><br /><a href='.$_SERVER['PHP_SELF'].'?method=registration>'.$p->t('bewerbung/zurueckZurAnmeldung').'</a>';
