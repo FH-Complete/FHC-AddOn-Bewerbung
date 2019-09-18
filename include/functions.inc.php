@@ -1903,9 +1903,9 @@ function getNachreichForm($dokument_kurzbz, $studiengang)
 											<div class="input-group">
 												<input  type="text" 
 														class="form-control" 
-														id="anmerkung_'.$dokument_kurzbz.'" 
+														id="anmerkung_'.$studiengang.'_'.$dokument_kurzbz.'" 
 														name="txt_anmerkung" 
-														onInput="zeichenCountdown(\'anmerkung_'.$dokument_kurzbz.'\',128)" 
+														onInput="zeichenCountdown(\'anmerkung_'.$studiengang.'_'.$dokument_kurzbz.'\',128)" 
 														placeholder="'.$p->t('bewerbung/placeholderOrtNachgereicht').'">
 												<span class="input-group-addon" style="color: grey;" id="countdown_anmerkung_'.$dokument_kurzbz.'">128</span>
 											</div>
@@ -1913,7 +1913,7 @@ function getNachreichForm($dokument_kurzbz, $studiengang)
 										<div class="col-sm-4">
 											<input  type="text" 
 													class="form-control" 
-													id="nachreichungam_'.$dokument_kurzbz.'" 
+													id="nachreichungam_'.$studiengang.'_'.$dokument_kurzbz.'" 
 													name="nachreichungam" 
 													autofocus="autofocus" 
 													placeholder="'.$p->t('bewerbung/datumFormat').'">
@@ -1930,7 +1930,7 @@ function getNachreichForm($dokument_kurzbz, $studiengang)
 	{
 		$returnstring .= '				<div class="col-sm-8">
 											<span>'.$p->t('bewerbung/infotextVorlaeufigesZgvDokument').':</span>
-											<input  id="filenachgereicht_'.$dokument_kurzbz.'" 
+											<input  id="filenachgereicht_'.$studiengang.'_'.$dokument_kurzbz.'" 
 													type="file" 
 													name="filenachgereicht" 
 													class=""
@@ -1945,7 +1945,7 @@ function getNachreichForm($dokument_kurzbz, $studiengang)
 														value="OK" 
 														name="submit_nachgereicht" 
 														class="btn btn-primary" 
-														onclick="return checkNachgereicht(\''.$dokument_kurzbz.'\')">
+														onclick="return checkNachgereicht(\''.$studiengang.'_'.$dokument_kurzbz.'\')">
 												<input  type="button" 
 														value="'.$p->t('global/abbrechen').'" 
 														class="btn btn-default"
