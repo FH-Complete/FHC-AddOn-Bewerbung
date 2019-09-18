@@ -538,6 +538,8 @@ $this->phrasen['bewerbung/dokumentNochNichtVorhanden']='Dokument noch nicht vorh
 $this->phrasen['bewerbung/keineDokumenteErforderlich']='Derzeit sind keine Dokumente erforderlich';
 $this->phrasen['bewerbung/menuUebersichtBewerbungAbschicken']='Übersicht / Bewerbung abschicken';
 $this->phrasen['bewerbung/logoutInfotext']='Sie haben Ihre Bewerbung noch nicht abgeschickt. Sind Sie sicher, dass Sie sich ausloggen möchten?';
+$this->phrasen['bewerbung/menuMessages']='Nachrichten';
+$this->phrasen['bewerbung/erklaerungMessages']='Hier können Sie Nachrichten abrufen';
 
 // Reihungstest
 $this->phrasen['bewerbung/anmeldungReihungstestMailBetreff']='Bestätigung Reihungstestanmeldung Fachhochschule Technikum Wien';

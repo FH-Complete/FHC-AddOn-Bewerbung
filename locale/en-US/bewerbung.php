@@ -482,6 +482,8 @@ $this->phrasen['bewerbung/dokumentNochNichtVorhanden']='Document not avalilable 
 $this->phrasen['bewerbung/keineDokumenteErforderlich']='Currently no documents are required to upload'; // Nur grob übersetzt
 $this->phrasen['bewerbung/menuUebersichtBewerbungAbschicken']='Overview / Send application';
 $this->phrasen['bewerbung/logoutInfotext']='Your application has not been sent yet. Are you sure you want to logout?'; // Nur grob übersetzt
+$this->phrasen['bewerbung/menuMessages']='Messages';
+$this->phrasen['bewerbung/erklaerungMessages']='Hier können Sie Nachrichten abrufen';
 
 // Reihungstest
 $this->phrasen['bewerbung/anmeldungReihungstestMailBetreff']='Confirmation of registration to placement test UAS Technikum Wien';
