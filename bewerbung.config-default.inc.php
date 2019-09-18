@@ -9,10 +9,11 @@ define('BEWERBERTOOL_ZGV_ANZEIGEN', true);
 define('BEWERBERTOOL_BERUFSTAETIGKEIT_ANZEIGEN', true);
 define('BEWERBERTOOL_AUSBILDUNG_ANZEIGEN', true);
 define('BEWERBERTOOL_PAYMENT_ANZEIGEN', true);
-define('BEWERBERTOOL_ALLGEMEIN_ANZEIGEN', true);
+define('BEWERBERTOOL_ALLGEMEIN_ANZEIGEN', true); // Deprecated
 define('BEWERBERTOOL_UEBERSICHT_ANZEIGEN', true);
-define('BEWERBERTOOL_ABSCHICKEN_ANZEIGEN', true);
+define('BEWERBERTOOL_ABSCHICKEN_ANZEIGEN', true); // Deprecated
 define('BEWERBERTOOL_SICHERHEIT_ANZEIGEN', false);
+define('BEWERBERTOOL_MESSAGES_ANZEIGEN', false);
 // Initialbelastung auf das Konto des Interessenten. Buchungstyp_kurzbz aus public.tbl_buchungstyp
 define('BEWERBERTOOL_KONTOBELASTUNG_BUCHUNGSTYP', '');
 // Wenn hier eine Mailadresse angegeben ist, werden die Bewerbungen aus der Onlinebwerbung an diese Adresse gesendet.
@@ -20,8 +21,8 @@ define('BEWERBERTOOL_KONTOBELASTUNG_BUCHUNGSTYP', '');
 define('BEWERBERTOOL_MAILEMPFANG', '');
 // Wenn true dann koennen Dokumente nachgereicht werden, wenn false dann nicht
 define('BEWERBERTOOL_DOKUMENTE_NACHREICHEN', true);
-//Soll beim nachtraeglichen Upload von Dokumenten im Bewerbertool ein Mail versand werden?
-define('BEWERBERTOOL_SEND_UPLOAD_EMPFAENGER', true);
+//Soll beim nachtraeglichen Upload von Dokumenten im Bewerbertool ein Mail versand werden? // Deprecated
+define('BEWERBERTOOL_SEND_UPLOAD_EMPFAENGER', true); // Deprecated
 //Wer soll beim nachtraeglichen Upload von Dokumenten im Bewerbertool benachrichtigt werden. Kommagetrenntes Array in der Form: "Stg-Kz" => "empfaenger@domain.at". zB: "227" => "info.bbe@technikum-wien.at",
 define('BEWERBERTOOL_UPLOAD_EMPFAENGER', serialize(array()));
 //Array von Empfaengern fuer das Abschicken von Bewerbungen aus dem Bewerbungstool. Kommagetrenntes Array in der Form: "Stg-Kz" => "empfaenger@domain.at". zB: "227" => "info.bbe@technikum-wien.at",
