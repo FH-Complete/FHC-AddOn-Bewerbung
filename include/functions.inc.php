@@ -1907,7 +1907,7 @@ function getNachreichForm($dokument_kurzbz, $studiengang)
 														name="txt_anmerkung" 
 														onInput="zeichenCountdown(\'anmerkung_'.$studiengang.'_'.$dokument_kurzbz.'\',128)" 
 														placeholder="'.$p->t('bewerbung/placeholderOrtNachgereicht').'">
-												<span class="input-group-addon" style="color: grey;" id="countdown_anmerkung_'.$dokument_kurzbz.'">128</span>
+												<span class="input-group-addon" style="color: grey;" id="countdown_anmerkung_'.$studiengang.'_'.$dokument_kurzbz.'">128</span>
 											</div>
 										</div>
 										<div class="col-sm-4">
