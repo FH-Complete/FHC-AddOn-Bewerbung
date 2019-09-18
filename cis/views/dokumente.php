@@ -69,13 +69,25 @@ if (! isset($person_id))
 		echo '<p>'.$p->t('bewerbung/bitteDokumenteHochladen').'</p>';
 		$currentStudiengangKz = '';
 		$stufePrestudent = 0;
+		$dokumentKurzbz = '';
 		foreach ($dokumente_abzugeben as $dok)
 		{
+			// Stufe des PreStudenten ermitteln. Wenn Stufe < Dokumentstufe, zum nächsten weitergehen.
 			$stufePrestudent = getStufeBewerberFuerDokumente($dok->prestudent_id);
-			if ($stufePrestudent < $dok->stufe)
+			if ($stufePrestudent < $dok->stufe && $dokumentKurzbz != $dok->dokument_kurzbz)
 			{
 				continue;
 			}
+
+			// Wenn es 2 Orgformen in einem Studiengang gibt, werden die Dokumente doppelt ausgegeben,
+			// da auch die Prestudent_id geliefert wird. Diese wird jedoch für die Ermittlung der Stufe benötigt.
+			// Deshalb werden doppelte Dokumente hier übersprungen
+			if ($dok->dokument_kurzbz == $dokumentKurzbz)
+			{
+				continue;
+			}
+			$dokumentKurzbz = $dok->dokument_kurzbz;
+
 			if ($dok->studiengang_kz != $currentStudiengangKz)
 			{
 				if ($currentStudiengangKz != '')
