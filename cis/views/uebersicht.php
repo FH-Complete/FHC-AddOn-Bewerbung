@@ -128,15 +128,11 @@ $studiensemester_array = array();
 				$status_zgv_bak == true &&
 				$status_ausbildung == true)
 			{
-				// An der FHTW ist das Abschicken der Bewerbung nicht abhängig vom Reihungstest
-				if (CAMPUS_NAME == 'FH Technikum Wien')
+				// Das Abschicken der Bewerbung ist an keiner FH abhängig vom Reihungstest
+				/*if ($status_reihungstest == true)
 				{
 					$disabledAbschicken = false;
-				}
-				elseif ($status_reihungstest == true)
-				{
-					$disabledAbschicken = false;
-				}
+				}*/
 			}
 
 			if ($stg->typ == 'm' && $status_zgv_mas == false)
@@ -462,8 +458,9 @@ $studiensemester_array = array();
 												echo '<p class="alert alert-danger">'.$p->t('bewerbung/menuZugangsvoraussetzungen').' '.$p->t('bewerbung/unvollstaendig').'</p>';
 											if (!$status_ausbildung)
 												echo '<p class="alert alert-danger">'.$p->t('bewerbung/menuAusbildung').' '.$p->t('bewerbung/unvollstaendig').'</p>';
-											if (CAMPUS_NAME != 'FH Technikum Wien' && !$status_reihungstest)
-												echo '<p class="alert alert-danger">'.$p->t('bewerbung/menuReihungstest').' '.$p->t('bewerbung/unvollstaendig').'</p>';
+											//Derzeit bei keiner FH benötigt
+											//if (!$status_reihungstest)
+												//echo '<p class="alert alert-danger">'.$p->t('bewerbung/menuReihungstest').' '.$p->t('bewerbung/unvollstaendig').'</p>';
 
 											// Wenn für dieses Stufe alle Dokumente abgebeben sind, wird nochmal für Dokumente ohne Stufe gecheckt
 											if (!empty($status_dokumente_arr[$row->studiengang_kz][$stufe]))

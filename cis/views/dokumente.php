@@ -357,30 +357,11 @@ if (! isset($person_id))
 		data-jump-tab="<?php echo $tabs[array_search('dokumente', $tabs)-1] ?>">
 		<?php echo $p->t('global/zurueck') ?>
 	</button>
-	<?php 
-	if (CAMPUS_NAME == 'FH Technikum Wien')
-	{
-		if (check_person_statusbestaetigt($person_id, 'Interessent', $nextWinterSemester->studiensemester_kurzbz))
-		{
-			echo '	<button class="btn-nav btn btn-default" type="button"
-						data-jump-tab="'.$tabs[array_search('dokumente', $tabs)+1].'">
-						'.$p->t('bewerbung/weiter').'
-					</button>';
-		}
-		else
-		{
-			echo '	<button class="btn-nav btn btn-default" type="button" data-jump-tab="'.$tabs[array_search('dokumente', $tabs)+2].'">
-						'.$p->t('bewerbung/weiter').'
-					</button>';
-		}
-	}
-	else 
-	{
-		echo '	<button class="btn-nav btn btn-default" type="button"
-					data-jump-tab="'.$tabs[array_search('dokumente', $tabs)+1].'">
-					'.$p->t('bewerbung/weiter').'
-				</button>';
-	}
+	<?php
+	echo '	<button class="btn-nav btn btn-default" type="button"
+				data-jump-tab="'.$tabs[array_search('dokumente', $tabs)+1].'">
+				'.$p->t('bewerbung/weiter').'
+			</button>';
 	?>
 
 	<br /><br/><br/>

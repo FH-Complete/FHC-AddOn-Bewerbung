@@ -2718,6 +2718,25 @@ else
 								else
 								{
 									$display = 'style="display: none"';
+									if (($key = array_search('aufnahme', $tabs)) !== false)
+									{
+										unset($tabs[$key]);
+									}
+									$tabs = array_values($tabs);
+								}
+							}
+							elseif (CAMPUS_NAME == 'FH BFI Wien')
+							{
+								$dokument = new dokument();
+
+								if ($dokument->akzeptiert('RTE', $person_id))
+								{
+									$display = '';
+									if (($key = array_search('aufnahme', $tabs)) !== false)
+									{
+										unset($tabs[$key]);
+									}
+									$tabs = array_values($tabs);
 								}
 							}
 
