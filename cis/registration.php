@@ -329,13 +329,24 @@ elseif($username && $password)
 							$studienplan = new studienplan();
 							if($orgform_get != '')
 							{
-								$studienplan->getStudienplaeneFromSem($stg, $std_semester, '1', $orgform_get);
+								// Studienplan in $sprache laden
+								$studienplan->getStudienplaeneFromSem($stg, $std_semester, '1', $orgform_get, $sprache);
+								//Wenn keine Studienplan in $sprache gefunden wurde, nochmal ohne probieren
+								if (count($studienplan->result) == 0)
+								{
+									$studienplan->getStudienplaeneFromSem($stg, $std_semester, '1', $orgform_get);
+								}
 							}
 							else
 							{
-								$studienplan->getStudienplaeneFromSem($stg, $std_semester, '1');
+								// Studienplan in $sprache laden
+								$studienplan->getStudienplaeneFromSem($stg, $std_semester, '1', NULL, $sprache);
+								//Wenn keine Studienplan in $sprache gefunden wurde, nochmal ohne probieren
+								if (count($studienplan->result) == 0)
+								{
+									$studienplan->getStudienplaeneFromSem($stg, $std_semester, '1');
+								}
 							}
-
 							// Wenn kein passender Studienplan gefunden wird, wird er NULL gesetzt
 							foreach ($studienplan->result AS $row)
 							{
@@ -343,8 +354,6 @@ elseif($username && $password)
 							}
 						}
 					}
-					
-					
 				}
 				else
 				{
