@@ -1622,6 +1622,7 @@ function hasPersonStatusgrund($person_id, $studiensemester_kurzbz, $status_grund
  * Liefert die Stufe eines Prestudenten
  * Kein passender Status -> 0
  * Interessent -> 10
+ * Interessent Status bestätigt -> 15
  * Bewerber -> 20
  * Wartender -> 30
  * Aufgenommener -> 40
@@ -1636,7 +1637,7 @@ function getStufeBewerberFuerDokumente($prestudent_id, $studiensemester_kurzbz =
 {
 	$db = new basis_db();
 	$qry = "
-			SELECT status_kurzbz 
+			SELECT status_kurzbz, bestaetigtam
 			FROM public.tbl_prestudent
 			JOIN public.tbl_prestudentstatus USING (prestudent_id)
 			WHERE prestudent_id = ".$db->db_add_param($prestudent_id, FHC_INTEGER);
@@ -1655,8 +1656,16 @@ function getStufeBewerberFuerDokumente($prestudent_id, $studiensemester_kurzbz =
 			switch ($row->status_kurzbz)
 			{
 				case 'Interessent':
-					return 10;
-					break;
+					if ($row->bestaetigtam == '')
+					{
+						return 10;
+						break;
+					}
+					else
+					{
+						return 15;
+						break;
+					}
 				case 'Bewerber':
 					return 20;
 					break;
