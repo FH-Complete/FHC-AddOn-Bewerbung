@@ -2934,7 +2934,7 @@ function sendBewerbung($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz,
 		$nation = new nation($adr_nation);
 
 		$notiz = new notiz();
-		$notiz->getBewerbungstoolNotizen($person_id);
+		$notiz->getBewerbungstoolNotizen($person_id, $prestudent_id);
 		$anmerkungen = '';
 		foreach ($notiz->result as $note)
 		{
@@ -3136,7 +3136,7 @@ function sendAddStudiengang($prestudent_id, $studiensemester_kurzbz, $orgform_ku
 	$nation = new nation($adr_nation);
 
 	$notiz = new notiz();
-	$notiz->getBewerbungstoolNotizen($person_id);
+	$notiz->getBewerbungstoolNotizen($person_id, $prestudent_id);
 	$anmerkungen = '';
 	foreach ($notiz->result as $note)
 	{
