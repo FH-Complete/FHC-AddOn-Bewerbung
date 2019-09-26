@@ -2732,6 +2732,10 @@ else
 								if ($dokument->akzeptiert('RTE', $person_id))
 								{
 									$display = '';
+								}
+								else
+								{
+									$display = 'style="display: none"';
 									if (($key = array_search('aufnahme', $tabs)) !== false)
 									{
 										unset($tabs[$key]);
