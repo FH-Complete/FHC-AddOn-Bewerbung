@@ -133,6 +133,7 @@ $studiensemester_array = array();
 				{
 					$disabledAbschicken = false;
 				}*/
+				$disabledAbschicken = false;
 			}
 
 			if ($stg->typ == 'm' && $status_zgv_mas == false)
