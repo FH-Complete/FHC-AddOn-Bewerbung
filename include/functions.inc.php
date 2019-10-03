@@ -1815,7 +1815,7 @@ function getUploadButton($dokument_kurzbz, $nachreichbutton = false, $visible = 
 	{
 		$display = 'hidden';
 	}
-	$returnstring = '<form method="POST" enctype="multipart/form-data" action="'.$_SERVER['PHP_SELF'].'?active=dokumente" class="form-horizontal documentUploadForm">';
+	$returnstring = '<form method="POST" enctype="multipart/form-data" action="'.$_SERVER['PHP_SELF'].'?active=dokumente&fileupload=true" class="form-horizontal documentUploadForm">';
 	$returnstring .= '  <div class="dokumentUploadDiv_'.$dokument_kurzbz.' '.$display.'" >';
 	// Lichtbilder werden gesondert behandelt
 	if ($dokument_kurzbz == 'LichtbilXXX')
@@ -1876,11 +1876,11 @@ function getUploadButton($dokument_kurzbz, $nachreichbutton = false, $visible = 
 
 	if ((!defined('BEWERBERTOOL_DOKUMENTE_NACHREICHEN') || BEWERBERTOOL_DOKUMENTE_NACHREICHEN == true) && $nachreichbutton)
 	{
-		$returnstring .= '	<p class="text-muted">'.$p->t('bewerbung/dokumentNochNichtVorhanden').'</p>
-							<p>
-								<button type="button" title="'.$p->t('bewerbung/dokumentWirdNachgereicht').'" class="btn btn-primary" onclick="toggleNachreichdaten(\''.$studiengang.'_'.$dokument_kurzbz.'\');return false;">
+		$returnstring .= '	<p class="text-muted">
+								'.$p->t('bewerbung/dokumentNochNichtVorhanden').' 
+								<a href="#" onclick="toggleNachreichdaten(\''.$studiengang.'_'.$dokument_kurzbz.'\');return false;">
 									'.$p->t('bewerbung/dokumentWirdNachgereicht').'
-								</button>
+								</a>
 							</p>';
 	}
 	$returnstring .= '	</div>';

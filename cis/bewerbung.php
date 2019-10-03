@@ -1830,6 +1830,12 @@ if (isset($_POST['btn_new_accesscode']))
 	}
 }
 
+// Upload eines leeren Dokuments oder wenn die Datei zu groß ist
+if (empty($_POST) && isset($_GET['fileupload']) && $_GET['fileupload'] == 'true')
+{
+	$save_error_dokumente = true;
+	$message = $p->t('bewerbung/dateiUploadLeer');
+}
 // Upload eines Dokuments
 if (isset($_POST['submitfile']))
 {
@@ -1851,7 +1857,7 @@ if (isset($_POST['submitfile']))
 				||
 				(   $akte->result[0]->inhalt_vorhanden == false
 					&& $akte->result[0]->dms_id == '')))
-		// Wie verfahren wir mit Nachreichungen, wenn mehr als 1 Dokument verohanden ist??
+		// Wie verfahren wir mit Nachreichungen, wenn mehr als 1 Dokument vorhanden ist??
 		//if (!isset($akte->result[0]) || ($akte->result[0]->inhalt == '' && $akte->result[0]->dms_id == ''))
 		{
 			if ($dokumenttyp_upload != '')
@@ -2557,6 +2563,13 @@ else
 					var sprache = $(this).attr('data-sprache');
 					changeSprache(sprache);
 				});
+				// remove fileupload from get param
+				var uri = window.location.toString();
+				if (uri.indexOf("?") > 0)
+				{
+					var clean_uri = uri.substring(0, uri.indexOf("&fileupload"));
+					window.history.replaceState({}, document.title, clean_uri);
+				}
 			});
 		</script>
 	</head>

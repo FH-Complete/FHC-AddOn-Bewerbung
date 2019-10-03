@@ -52,12 +52,11 @@ if (! isset($person_id))
 	{
 		$c = $a->studiengang_kz - $b->studiengang_kz;
 		$c .= $a->anzahl_akten_vorhanden - $b->anzahl_akten_vorhanden;
+		$c .= $a->anzahl_dokumente_akzeptiert - $b->anzahl_dokumente_akzeptiert;
 		$c .= $b->pflicht - $a->pflicht;
 		$c .= $a->stufe - $b->stufe;
 		$c .= strcmp(strtolower($a->bezeichnung_mehrsprachig[getSprache()]), strtolower($b->bezeichnung_mehrsprachig[getSprache()]));
 		$c .= $a->anzahl_akten_formal_geprueft - $b->anzahl_akten_formal_geprueft;
-		$c .= $a->anzahl_dokumente_akzeptiert - $b->anzahl_dokumente_akzeptiert;
-
 
 		return $c;
 	}
@@ -115,11 +114,7 @@ if (! isset($person_id))
 			{
 				$dokumentbezeichnung = $dok->bezeichnung_mehrsprachig[DEFAULT_LANGUAGE];
 			}
-			// Pflichtdokumente werden gekennzeichnet
-			if ($dok->pflicht)
-			{
-				//$dokumentbezeichnung .= '<span style="color: red"> *</span>';
-			}
+
 			// Detailbeschreibungen zu Dokumenten holen. Diese werden mit den allgemeinen Beschreibungen zusammengeführt
 			$details = new dokument();
 			$details->getBeschreibungenDokumente(array($dok->studiengang_kz), $dok->dokument_kurzbz);
@@ -158,7 +153,11 @@ if (! isset($person_id))
 			$statusInfotext = '';
 			$displayDetailsArrow = true;
 			// Panel-Header unterschiedlich stylen
-			if ($dok->anzahl_akten_vorhanden > 0)
+			// Wenn akten vorhanden sind oder das Dokument bereits akzeptiert wurde
+			if ($dok->anzahl_akten_vorhanden > 0
+				|| (defined('BEWERBERTOOL_UPLOAD_DOKUMENT_WENN_AKZEPTIERT')
+					&& BEWERBERTOOL_UPLOAD_DOKUMENT_WENN_AKZEPTIERT === false
+					&& $dok->anzahl_dokumente_akzeptiert > 0))
 			{
 				echo '<div class="panel panel-success">';
 				$collapseStatus = 'collapse';
@@ -261,7 +260,7 @@ if (! isset($person_id))
 				{
 					$uploadButtonVisible = true;
 					$offsetAktenListe = '';
-					if ($dok->anzahl_akten_vorhanden >= BEWERBERTOOL_ANZAHL_DOKUMENTPLOAD_JE_TYP)
+					if (defined('BEWERBERTOOL_ANZAHL_DOKUMENTPLOAD_JE_TYP') && $dok->anzahl_akten_vorhanden >= BEWERBERTOOL_ANZAHL_DOKUMENTPLOAD_JE_TYP)
 					{
 						// Wenn ANZAHL_DOKUMENTPLOAD_JE_TYP erreicht ist, Upload-Button ausblenden
 						$uploadButtonVisible = false;
@@ -294,6 +293,16 @@ if (! isset($person_id))
 				}
 
 			}
+			// Wenn das Dokument bereits akzeptiert aber noch nichts hochgeladen wurde
+			elseif (defined('BEWERBERTOOL_UPLOAD_DOKUMENT_WENN_AKZEPTIERT')
+				&& BEWERBERTOOL_UPLOAD_DOKUMENT_WENN_AKZEPTIERT === false
+				&& $dok->anzahl_dokumente_akzeptiert > 0)
+			{
+				// Akten ausgeben
+				echo '	<div class="col-sm-3 col-sm-offset-3 aktenliste_'.$dok->dokument_kurzbz.'" style="padding-bottom: 5px">';
+				echo getAktenListe($person_id, $dok->dokument_kurzbz);
+				echo '	</div>';
+			}
 			// Noch keine Akte vorhanden
 			else
 			{
@@ -303,7 +312,7 @@ if (! isset($person_id))
 				echo '	</div>';
 			}
 
-			// Hier wird ein unsichtbares div mit der Anzahl an erforderlichen Dokumeten ausgegeben
+			// Hier wird ein unsichtbares div mit der Anzahl an erforderlichen Dokumenten ausgegeben
 			// Auf dieses wird dann mit jquery abgefragt um den Menüpunkt einfärben zu können.
 			echo '<div id="anzahlOffeneDokumente" style="display: none">'.count($status_dokumente_arr).'</div>';
 
