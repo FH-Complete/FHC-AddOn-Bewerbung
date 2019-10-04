@@ -1032,16 +1032,18 @@ elseif($username && $password)
 
 					<div class="form-group">
 						<div class="col-xs-12 col-sm-7 col-sm-offset-3 col-md-7 col-md-offset-3 ">
-							<div class="checkbox-inline">
-								<input type="checkbox" name="zustimmung_datenuebermittlung" id="checkbox_zustimmung_datenuebermittlung" value="" required="required">
-								<?php echo $p->t('bewerbung/zustimmungDatenuebermittlung') ?>
-							</div>
+							<?php if (defined('BEWERBERTOOL_SHOW_ZUSTIMMUNGSERKLAERUNG_REGISTRATION') && BEWERBERTOOL_SHOW_ZUSTIMMUNGSERKLAERUNG_REGISTRATION === true): ?>
+								<div class="checkbox-inline">
+									<input type="checkbox" name="zustimmung_datenuebermittlung" id="checkbox_zustimmung_datenuebermittlung" value="" required="required">
+									<?php echo $p->t('bewerbung/zustimmungDatenuebermittlung') ?>
+								</div>
+								<br />
+							<?php endif; ?>
 							<?php if (defined('BEWERBERTOOL_SHOW_ZUSTIMMUNGSERKLAERUNG_AGB') && BEWERBERTOOL_SHOW_ZUSTIMMUNGSERKLAERUNG_AGB === true): ?>
-							<br />
-							<div class="checkbox-inline">
-								<input type="checkbox" name="zustimmung_agb" id="checkbox_zustimmung_agb" value="" required="required">
-								<?php echo $p->t('bewerbung/zustimmungAGB') ?>
-							</div>
+								<div class="checkbox-inline">
+									<input type="checkbox" name="zustimmung_agb" id="checkbox_zustimmung_agb" value="" required="required">
+									<?php echo $p->t('bewerbung/zustimmungAGB') ?>
+								</div>
 							<?php endif; ?>
 						</div>
 					</div>
