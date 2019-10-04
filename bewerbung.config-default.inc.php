@@ -59,6 +59,9 @@ define('BEWERBERTOOL_SHOW_ZUSTIMMUNGSERKLAERUNG_REGISTRATION', false);
 // Soll das DropDown zur Staatsbürgerschaft bei der Registration angezeigt werden?
 define('BEWERBERTOOL_SHOW_REGISTRATION_STAATSBUERGERSCHAFT', false);
 
+// Soll die Checkbox mit den AGB bei der Registration angezeigt werden?
+define('BEWERBERTOOL_SHOW_ZUSTIMMUNGSERKLAERUNG_AGB', false);
+
 // Wenn true, wird für jede Bewerbung ein neuer PreStudent-Datensatz angelegt.
 // Ansonsten wird ein PreStudent des selben Studiengangs ermittelt (wenn vorhanden) und ein neuer Status an diesen angehängt.
 define('BEWERBERTOOL_ALWAYS_CREATE_NEW_PRESTUDENT_FOR_APPLICATION', false);

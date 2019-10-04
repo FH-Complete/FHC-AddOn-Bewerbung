@@ -2870,6 +2870,7 @@ else
 				?>
 			</div>
 		</div>
+		<div style="text-align:center; color:gray;"><?php echo $p->t('bewerbung/footerText')?></div>
 	</body>
 </html>
 
@@ -3074,8 +3075,12 @@ function sendBewerbung($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz,
 		}
 
 		$mail_bewerber->setHTMLContent($email_bewerber_content);
-		$mail_bewerber->addEmbeddedImage(APP_ROOT . 'skin/images/sancho/sancho_header_DEFAULT.jpg', 'image/jpg', 'header_image', 'sancho_header');
-		$mail_bewerber->addEmbeddedImage(APP_ROOT . 'skin/images/sancho/sancho_footer.jpg', 'image/jpg', 'footer_image', 'sancho_footer');
+		// BFI braucht keine eingebetteten Images
+		if (CAMPUS_NAME != 'FH BFI Wien')
+		{
+			$mail_bewerber->addEmbeddedImage(APP_ROOT.'skin/images/sancho/sancho_header_DEFAULT.jpg', 'image/jpg', 'header_image', 'sancho_header');
+			$mail_bewerber->addEmbeddedImage(APP_ROOT.'skin/images/sancho/sancho_footer.jpg', 'image/jpg', 'footer_image', 'sancho_footer');
+		}
 		if (! $mail_bewerber->send())
 			return false;
 	}
