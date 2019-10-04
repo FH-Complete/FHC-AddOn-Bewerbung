@@ -253,17 +253,18 @@ function BewerbungPersonAddStudienplan($studienplan_id, $person, $studiensemeste
 	// nach der höchsten prestudent_id mit ZGV suchen, um dessen ZGV uebernehmen zu koennen
 	if ($prestudent_id == 0)
 	{
+		$prestudent_id_for_zgv = 0;
 		foreach ($pre->result as $row)
 		{
 			if ($row->prestudent_id > $prestudent_id
 				&& $row->zgv_code != '')
 			{
-				$prestudent_id = $row->prestudent_id;
+				$prestudent_id_for_zgv = $row->prestudent_id;
 			}
 		}
-		if ($prestudent_id != 0)
+		if ($prestudent_id_for_zgv != 0)
 		{
-			$prestudent_help = $prestudent_id;
+			$prestudent_help = $prestudent_id_for_zgv;
 			
 			$prestudent_zgv = new prestudent();
 			$prestudent_zgv->load($prestudent_help);
