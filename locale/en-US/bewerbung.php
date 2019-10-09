@@ -485,6 +485,7 @@ $this->phrasen['bewerbung/logoutInfotext']='Your application has not been sent y
 $this->phrasen['bewerbung/dateiUploadLeer']='File could not be uploaded. Maybe filesize exceeded 15MB'; // Nur grob übersetzt
 $this->phrasen['bewerbung/zustimmungAGB']='Zustimmung zu unseren allgemeinen Geschäftsbedingungen.'; // Noch zu übersetzen
 $this->phrasen['bewerbung/bitteAGBZustimmen']='Sie müssen den AGB zustimmen, um Ihre Bewerbung abschicken zu können'; // Noch zu übersetzen
+$this->phrasen['bewerbung/zahlungAusstaendig']='Es sind noch Zahlungen offen. Sie können die Bewerbung erst abschicken, wenn alle Zahlungen eingegangen sind.'; // Noch zu übersetzen
 
 // Reihungstest
 $this->phrasen['bewerbung/anmeldungReihungstestMailBetreff']='Confirmation of registration to placement test UAS Technikum Wien';

@@ -541,6 +541,7 @@ $this->phrasen['bewerbung/logoutInfotext']='Sie haben Ihre Bewerbung noch nicht 
 $this->phrasen['bewerbung/dateiUploadLeer']='Die Datei konnte nicht hochgeladen werden. Möglicherweise wurde die Dateigröße von 15MB überschritten';
 $this->phrasen['bewerbung/zustimmungAGB']='Zustimmung zu unseren allgemeinen Geschäftsbedingungen.';
 $this->phrasen['bewerbung/bitteAGBZustimmen']='Sie müssen den AGB zustimmen, um Ihre Bewerbung abschicken zu können';
+$this->phrasen['bewerbung/zahlungAusstaendig']='Es sind noch Zahlungen offen. Sie können die Bewerbung erst abschicken, wenn alle Zahlungen eingegangen sind.';
 
 // Reihungstest
 $this->phrasen['bewerbung/anmeldungReihungstestMailBetreff']='Bestätigung Reihungstestanmeldung Fachhochschule Technikum Wien';

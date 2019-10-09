@@ -1218,13 +1218,8 @@ function getMailEmpfaenger($studiengang_kz, $studienplan_id = null, $orgform_kur
 	}
 	elseif(isset($empf_array[$studiengang_kz]))
 	{
-		// Mails an Lehrgänge gehen alle an den Shared Folder lehrgang@technikum-wien.at
-		if (CAMPUS_NAME == 'FH Technikum Wien' && $studiengang->typ == 'l' && $studiengang->lgartcode != '')
-		{
-			$empfaenger = 'lehrgang@technikum-wien.at';
-		}
 		// Pfuschloesung, damit bei BIF Dual die Mail an info.bid geht
-		elseif (CAMPUS_NAME == 'FH Technikum Wien' && $studiengang_kz == 257)
+		if (CAMPUS_NAME == 'FH Technikum Wien' && $studiengang_kz == 257)
 		{
 			if ((isset($studienplan) && $studienplan->orgform_kurzbz == 'DUA') ||
 				($orgform_kurzbz != '' && $orgform_kurzbz == 'DUA'))
@@ -1241,13 +1236,8 @@ function getMailEmpfaenger($studiengang_kz, $studienplan_id = null, $orgform_kur
 	}
 	else
 	{
-		// Mails an Lehrgänge gehen alle an den Shared Folder lehrgang@technikum-wien.at
-		if (CAMPUS_NAME == 'FH Technikum Wien' && $studiengang->typ == 'l' && $studiengang->lgartcode != '')
-		{
-			$empfaenger = 'lehrgang@technikum-wien.at';
-		}
 		// Pfuschloesung, damit bei BIF Dual die Mail an info.bid geht
-		elseif (CAMPUS_NAME == 'FH Technikum Wien' && $studiengang_kz == 257)
+		if (CAMPUS_NAME == 'FH Technikum Wien' && $studiengang_kz == 257)
 		{
 			if ((isset($studienplan) && $studienplan->orgform_kurzbz == 'DUA') ||
 				($orgform_kurzbz != '' && $orgform_kurzbz == 'DUA'))

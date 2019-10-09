@@ -608,12 +608,25 @@ if ($aktionReihungstest)
 $save_error_abschicken = '';
 if (isset($_POST['btn_bewerbung_abschicken']))
 {
+	// Die BFI-KI nimmt automatisch Kontobelastungen vor, wenn es eine neue Bewerbung gibt.
+	// Wenn die Seite dazwischen nicht aktualisiert wird, kann man dennoch abschicken.
+	// Darum wird hier nochmal auf Belastungen gecheckt
+	if (defined('BEWERBERTOOL_ZAHLUNGEN_ANZEIGEN') && BEWERBERTOOL_ZAHLUNGEN_ANZEIGEN === true)
+	{
+		$konto = new konto();
+		if (! $konto->checkKontostand($person_id))
+		{
+			$message = $p->t('bewerbung/zahlungAusstaendig');
+			$save_error_abschicken = true;
+		}
+	}
+
 	// Mail an zuständige Assistenz schicken
 	$pr_id = isset($_POST['prestudent_id']) ? $_POST['prestudent_id'] : '';
 	$sendmail = false; // Damit das Mail beim Seitenreload nicht nochmal geschickt wird
 	$bewerbungszeitraum_gueltig = true;
 
-	if ($pr_id != '')
+	if ($pr_id != '' && $save_error_abschicken == '')
 	{
 		// Status Bewerber anlegen
 		$prestudent_status = new prestudent();
@@ -705,7 +718,7 @@ if (isset($_POST['btn_bewerbung_abschicken']))
 		$prestudent->load($pr_id);
 		$studiengang = new studiengang();
 		$studiengang->load($prestudent->studiengang_kz);
-		if ($sendmail == true && $bewerbungszeitraum_gueltig == true)
+		if ($sendmail == true && $bewerbungszeitraum_gueltig == true && $save_error_abschicken == '')
 		{
 			if (sendBewerbung($pr_id, $prestudent_status->studiensemester_kurzbz, $prestudent_status->orgform_kurzbz, $prestudent_status->studienplan_id))
 			{
@@ -2618,61 +2631,11 @@ else
 						<?php
 						if(!defined('BEWERBERTOOL_DOKUMENTE_ANZEIGEN') || BEWERBERTOOL_DOKUMENTE_ANZEIGEN)
 						{
-							// An der FHTW werden Dokumente nur angezeigt wenn eine aktive Bewerbung vorliegt oder die Person einen aktiven Account hat
-							if (CAMPUS_NAME == 'FH Technikum Wien')
-							{
-								$standalone_masterbewerbung = false;
-								$masterbewerbung_bestaetigt = false;
-								$aktiverBenutzer = false;
-								$benutzer = new benutzer();
-								if ($benutzer->getBenutzerFromPerson($person_id, true))
-								{
-									if (count($benutzer->result) > 0)
-										$aktiverBenutzer = true;
-								}
-								if ($prestudent = getBewerbungen($person_id, true))
-								{
-									foreach ($prestudent as $row)
-									{
-										if ($row->studiengang_typ != 'm')
-										{
-											$standalone_masterbewerbung = false;
-											break;
-										}
-										if ($row->studiengang_typ == 'm')
-										{
-											$standalone_masterbewerbung = true;
-											if (check_person_statusbestaetigt($person_id, 'Interessent', null, $row->studiengang_kz))
-												$masterbewerbung_bestaetigt = true;
-										}
-									}
-									if (!$standalone_masterbewerbung || $masterbewerbung_bestaetigt)
-									{
-										echo '	<li>
-											<a id="tabDokumenteLink" href="#dokumente" aria-controls="dokumente" role="tab" data-toggle="tab">
-												'.$p->t('bewerbung/menuDokumente').' <br> <span id="tabDokumenteStatustext"></span>
-											</a>
-										</li>';
-									}
-								}
-								elseif ($aktiverBenutzer)
-								{
-									echo '	<li>
-										<a id="tabDokumenteLink" href="#dokumente" aria-controls="dokumente" role="tab" data-toggle="tab">
-											'.$p->t('bewerbung/menuDokumente').' <br> <span id="tabDokumenteStatustext"></span>
-										</a>
-									</li>';
-								}
-
-							}
-							else
-							{
-								echo '	<li>
-										<a id="tabDokumenteLink" href="#dokumente" aria-controls="dokumente" role="tab" data-toggle="tab">
-											'.$p->t('bewerbung/menuDokumente').' <br> <span id="tabDokumenteStatustext"></span>
-										</a>
-									</li>';
-							}
+							echo '	<li>
+									<a id="tabDokumenteLink" href="#dokumente" aria-controls="dokumente" role="tab" data-toggle="tab">
+										'.$p->t('bewerbung/menuDokumente').' <br> <span id="tabDokumenteStatustext"></span>
+									</a>
+								</li>';
 						}
 						 ?>
 
