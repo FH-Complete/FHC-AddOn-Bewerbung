@@ -728,6 +728,16 @@ elseif($username && $password)
 							<input type="email" maxlength="128" name="email" id="email" value="<?php echo $email ?>" class="form-control">
 						</div>
 					</div>
+					<?php if (CAMPUS_NAME == 'FH Technikum Wien'): ?>
+						<div class="form-group" id="microsoftMailWarning" style="display: none">
+							<label for="email" class="col-sm-3 control-label">
+
+							</label>
+							<div class="col-sm-4 alert alert-warning">
+								<?php echo $p->t('bewerbung/microsoftMailWarning') ?>
+							</div>
+						</div>
+					<?php endif; ?>
 
 					<?php if(BEWERBERTOOL_STUDIENAUSWAHL_ANZEIGEN): ?>
 					<?php if(defined('BEWERBERTOOL_SHOW_REGISTRATION_ZGVNATION') && BEWERBERTOOL_SHOW_REGISTRATION_ZGVNATION): ?>
@@ -1630,6 +1640,20 @@ elseif($username && $password)
 					<?php endif; ?>
 				}
 			});
+			<?php if (CAMPUS_NAME == 'FH Technikum Wien'): ?>
+			//Bei Microsoft-Adressen gibt es derzeit Probleme an der FHTW
+			$("#email").keyup(function()
+			{
+				var str = $(this).val();
+				if (str.indexOf("@hotmail") >= 0
+					|| str.indexOf("@live") >= 0
+					|| str.indexOf("@outlook") >= 0)
+				{
+					$("#microsoftMailWarning").show();
+					$("#email").css("color", "red")
+				}
+			});
+			<?php endif; ?>
 		});
 
 		window.setTimeout(function() {
