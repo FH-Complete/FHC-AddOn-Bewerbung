@@ -63,12 +63,13 @@ if (! isset($person_id))
 	if ($dokumente_abzugeben)
 		usort($dokumente_abzugeben, "sortDocuments");
 
+	$anzahlOffeneDokumente = 0;
 	if ($dokumente_abzugeben)
 	{
-		echo '<p>'.$p->t('bewerbung/bitteDokumenteHochladen').'</p>';
 		$currentStudiengangKz = '';
 		$stufePrestudent = 0;
 		$dokumentKurzbz = '';
+		$anzahlDokumente = 0;
 		foreach ($dokumente_abzugeben as $dok)
 		{
 			// Stufe des PreStudenten ermitteln. Wenn Stufe < Dokumentstufe, zum nächsten weitergehen.
@@ -85,10 +86,18 @@ if (! isset($person_id))
 			{
 				continue;
 			}
+			$anzahlDokumente++;
+
+			if ($anzahlDokumente == 1)
+			{
+				echo '<p>'.$p->t('bewerbung/bitteDokumenteHochladen').'</p>';
+			}
+
 			$dokumentKurzbz = $dok->dokument_kurzbz;
 
 			if ($dok->studiengang_kz != $currentStudiengangKz)
 			{
+				$dokumentKurzbz = '';
 				if ($currentStudiengangKz != '')
 				{
 					echo '	</div></fieldset>';
@@ -174,6 +183,7 @@ if (! isset($person_id))
 				echo '<div class="panel panel-danger">';
 				$statusInfotext = '<div class="label label-danger">'.$p->t('bewerbung/dokumentErforderlich').'</div>';
 				$displayDetailsArrow = false;
+				$anzahlOffeneDokumente ++;
 			}
 			else
 			{
@@ -312,10 +322,6 @@ if (! isset($person_id))
 				echo '	</div>';
 			}
 
-			// Hier wird ein unsichtbares div mit der Anzahl an erforderlichen Dokumenten ausgegeben
-			// Auf dieses wird dann mit jquery abgefragt um den Menüpunkt einfärben zu können.
-			echo '<div id="anzahlOffeneDokumente" style="display: none">'.count($status_dokumente_arr).'</div>';
-
 			// Bei Lichtbildern wird zusätzlich ein Modal für den Bildzuschnitt mit Croppie angezeigt
 			if ($dok->dokument_kurzbz == 'LichtbilXXX')
 			{
@@ -353,13 +359,25 @@ if (! isset($person_id))
 					
 			';
 		}
-		echo '	</div></fieldset>';
+
+		if ($anzahlDokumente == 0)
+		{
+			echo '<div class="alert alert-info">'.$p->t('bewerbung/keineDokumenteErforderlich').'</div>';
+			echo '<div id="anzahlOffeneDokumente" style="display: none"></div>';
+		}
+		else
+		{
+			echo '	</div></fieldset>';
+		}
 	}
 	else
 	{
 		echo '<div class="alert alert-info">'.$p->t('bewerbung/keineDokumenteErforderlich').'</div>';
 		echo '<div id="anzahlOffeneDokumente" style="display: none"></div>';
 	}
+	// Hier wird ein unsichtbares div mit der Anzahl an erforderlichen Dokumenten ausgegeben
+	// Auf dieses wird dann mit jquery abgefragt um den Menüpunkt einfärben zu können.
+	echo '<div id="anzahlOffeneDokumente" style="display: none">'.$anzahlOffeneDokumente.'</div>';
 	?>
 
 	<button class="btn-nav btn btn-default" type="button"

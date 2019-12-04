@@ -98,7 +98,7 @@ $studiensemester_array = array();
 				}
 				echo '<p><b>'.$p->t('bewerbung/bewerbungenFuerStudiensemesterXX', array($row->laststatus_studiensemester_kurzbz)).'</b></p>';
 				echo '<div class="row" style="padding: 5px 15px;">
-						<div class="col-xs-2 col-sm-2 col-md-1 text-center">
+						<div class="col-xs-2 col-sm-2 col-md-1 text-center label label-default">
 							'.$p->t('bewerbung/prioritaet').'
 						</div>
 						<div class="col-xs-10 col-sm-10 col-md-11">&nbsp;</div>

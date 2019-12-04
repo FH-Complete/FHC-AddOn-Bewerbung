@@ -818,21 +818,29 @@ if (isset($_POST['submit_nachgereicht']))
 
 
 
-			// An der FHTW wird ein vorläufiges ZGV-Dokument verlangt
-			if (CAMPUS_NAME == 'FH Technikum Wien' && $_POST['dok_kurzbz'] == 'zgv_bakk')
+			// An der FHTW wird ein vorläufiges ZGV-Dokument bei Bachelor und Master verlangt
+			if (CAMPUS_NAME == 'FH Technikum Wien' && ($_POST['dok_kurzbz'] == 'zgv_bakk' || $_POST['dok_kurzbz'] == 'zgv_mast'))
 			{
-				// Check, ob Dakumenttyp 'ZgvBaPre' schon existiert
+				if ($_POST['dok_kurzbz'] == 'zgv_bakk')
+				{
+					$preDokument = 'ZgvBaPre';
+				}
+				elseif ($_POST['dok_kurzbz'] == 'zgv_mast')
+				{
+					$preDokument = 'ZgvMaPre';
+				}
+				// Check, ob Dokumenttyp 'ZgvBaPre' bzw. 'ZgvMaPre' schon existiert
 				$dokument = new dokument();
-				if ($dokument->loadDokumenttyp('ZgvBaPre'))
+				if ($dokument->loadDokumenttyp($preDokument))
 				{
 					$error = false;
 					$message = '';
 					// Check, ob ein File gewaelt wurde
 					if (!empty($_FILES['filenachgereicht']['tmp_name']))
 					{
-						$dokumenttyp_upload = 'ZgvBaPre';
+						$dokumenttyp_upload = $preDokument;
 
-						// Es wird eine neue Akte vom Typ "ZgvBaPre" angelegt
+						// Es wird eine neue Akte vom Typ "ZgvBaPre" bzw. "ZgvMaPre" angelegt
 						// DMS-Eintrag erstellen
 						$ext = strtolower(pathinfo($_FILES['filenachgereicht']['name'], PATHINFO_EXTENSION));
 
@@ -894,9 +902,9 @@ if (isset($_POST['submit_nachgereicht']))
 							$akte->insertvon = 'online';
 
 							$dokument = new dokument();
-							$dokument->loadDokumenttyp('ZgvBaPre');
+							$dokument->loadDokumenttyp($preDokument);
 
-							$akte->dokument_kurzbz = 'ZgvBaPre';
+							$akte->dokument_kurzbz = $preDokument;
 							$akte->titel = cutString($_FILES['filenachgereicht']['name'], 32, '~', true); // Dateiname
 							$akte->bezeichnung = cutString($dokument->bezeichnung, 32); // Dokumentbezeichnung
 							$akte->person_id = $person_id;
@@ -2685,20 +2693,41 @@ else
 						if(!defined('BEWERBERTOOL_REIHUNGSTEST_ANZEIGEN') || BEWERBERTOOL_REIHUNGSTEST_ANZEIGEN)
 						{
 							// An der FHTW wird der Punkt "Reihungstest" erst angezeigt, wenn der Status einer Bewerbung bestätigt wurde
+							// und es mindestens eine Bachelor-Bewerbung gibt
 							if (CAMPUS_NAME == 'FH Technikum Wien')
 							{
-								if (check_person_statusbestaetigt($person_id, 'Interessent', $nextWinterSemester->studiensemester_kurzbz))
+								$standalone_masterbewerbung = false;
+								if ($prestudent = getBewerbungen($person_id, true))
 								{
-									$display = '';
-								}
-								else
-								{
-									$display = 'style="display: none"';
-									if (($key = array_search('aufnahme', $tabs)) !== false)
+									foreach ($prestudent as $row)
 									{
-										unset($tabs[$key]);
+										if ($row->studiengang_typ != 'm')
+										{
+											$standalone_masterbewerbung = false;
+											break;
+										}
+										else
+										{
+											$standalone_masterbewerbung = true;
+											$display = 'style="display: none"';
+										}
 									}
-									$tabs = array_values($tabs);
+									if ($standalone_masterbewerbung === false)
+									{
+										if (check_person_statusbestaetigt($person_id, 'Interessent', $nextWinterSemester->studiensemester_kurzbz))
+										{
+											$display = '';
+										}
+										else
+										{
+											$display = 'style="display: none"';
+											if (($key = array_search('aufnahme', $tabs)) !== false)
+											{
+												unset($tabs[$key]);
+											}
+											$tabs = array_values($tabs);
+										}
+									}
 								}
 							}
 							elseif (CAMPUS_NAME == 'FH BFI Wien')

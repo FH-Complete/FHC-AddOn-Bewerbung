@@ -121,7 +121,99 @@ $this->phrasen['bewerbung/mailtext']='
 $this->phrasen['bewerbung/zugangsdatenFalsch']='Der eingegebene Zugangscode ist falsch oder Sie haben sich noch nicht registriert.';
 $this->phrasen['bewerbung/mailFalsch']='Die eingegebene E-Mailadresse ist falsch oder Sie haben sich noch nicht registriert.';
 $this->phrasen['bewerbung/fehlerBeimSenden']='Beim Senden der E-Mail ist ein Fehler aufgetreten.';
-$this->phrasen['bewerbung/emailgesendetan']='Die E-Mail mit Ihrem Zugangscode wurde erfolgreich an %s verschickt.';
+$this->phrasen['bewerbung/emailgesendetan']='
+<style type="text/css">
+	#mail_icon
+		{
+			position:relative;
+			animation:mymove 2s  ;
+			animation-iteration-count:2;
+			/* Safari and Chrome */
+			-webkit-animation:mailsend_small 2s;
+			-webkit-animation-iteration-count:2;
+		}
+	@media (min-width: 576px)
+	{
+		#mail_icon
+		{
+			position:relative;
+			animation:mymove 2s  ;
+			animation-iteration-count:2;
+			/* Safari and Chrome */
+			-webkit-animation:mailsend_small 2s;
+			-webkit-animation-iteration-count:2;
+		}
+	}
+	@media (min-width: 768px)
+	{
+		#mail_icon
+		{
+			position:relative;
+			animation:mymove 2s  ;
+			animation-iteration-count:2;
+			/* Safari and Chrome */
+			-webkit-animation:mailsend_medium 2s;
+			-webkit-animation-iteration-count:2;
+		}
+	}
+	@media (min-width: 992px)
+	{
+		#mail_icon
+		{
+			position:relative;
+			animation:mymove 2s  ;
+			animation-iteration-count:2;
+			/* Safari and Chrome */
+			-webkit-animation:mailsend_large 2s;
+			-webkit-animation-iteration-count:2;
+		}
+	}
+	@keyframes mailsend_small 
+	{
+		0%%,30%% 
+		{
+			opacity: 1;
+			transform: translate(0, 0);
+		}
+		100%% 
+		{
+			opacity: 0;
+			transform: translate(200px, 0);
+		}
+	}
+	@keyframes mailsend_medium
+	{
+		0%%,30%% 
+		{
+			opacity: 1;
+			transform: translate(0, 0);
+		}
+		100%% 
+		{
+			opacity: 0;
+			transform: translate(300px, 0);
+		}
+	}
+	@keyframes mailsend_large
+	{
+		0%%,30%% 
+		{
+			opacity: 1;
+			transform: translate(0, 0);
+		}
+		100%% 
+		{
+			opacity: 0;
+			transform: translate(400px, 0);
+		}
+	}
+	
+</style>
+<span id="mail_icon" class="glyphicon glyphicon-envelope" style="font-size:50px;"></span>
+<br><br>
+Die E-Mail mit Ihrem Zugangscode wurde erfolgreich an %s verschickt.
+<br><br>In der Regel erhalten Sie das Mail in wenigen Minuten. Wenn Sie nach <b>24 Stunden</b> noch kein Mail erhalten haben, 
+kontaktieren Sie bitte unsere <a href=\'https://www.technikum-wien.at/studieninformationen/studienberatung-kontaktieren/\' target=\'_blank\'>Studienberatung</a>';
 $this->phrasen['bewerbung/zurueckZurAnmeldung']='Zurück zur Login-Seite.';
 $this->phrasen['bewerbung/sicherheitscodeFalsch']='Der eingegebene Sicherheitscode ist falsch.';
 $this->phrasen['bewerbung/geplanterStudienbeginn']='Geplanter Studienbeginn';
@@ -542,6 +634,7 @@ $this->phrasen['bewerbung/dateiUploadLeer']='Die Datei konnte nicht hochgeladen 
 $this->phrasen['bewerbung/zustimmungAGB']='Zustimmung zu unseren allgemeinen Geschäftsbedingungen.';
 $this->phrasen['bewerbung/bitteAGBZustimmen']='Sie müssen den AGB zustimmen, um Ihre Bewerbung abschicken zu können';
 $this->phrasen['bewerbung/zahlungAusstaendig']='Es sind noch Zahlungen offen. Sie können die Bewerbung erst abschicken, wenn alle Zahlungen eingegangen sind.';
+$this->phrasen['bewerbung/microsoftMailWarning']='<b>Achtung!</b> Derzeit kommt es bei E-Mail Zustellungen an @hotmail, @outlook und @live Adressen zu Empfangsproblemen seitens Microsoft. Eine Zustellung kann nicht garantiert werden! <br>Bitte verwenden Sie nach Möglichkeit eine andere E-Mail Adresse.';
 
 // Reihungstest
 $this->phrasen['bewerbung/anmeldungReihungstestMailBetreff']='Bestätigung Reihungstestanmeldung Fachhochschule Technikum Wien';
