@@ -580,6 +580,7 @@ $this->phrasen['bewerbung/zustimmungAGB']='Zustimmung zu unseren allgemeinen Ges
 $this->phrasen['bewerbung/bitteAGBZustimmen']='Sie müssen den AGB zustimmen, um Ihre Bewerbung abschicken zu können'; // Noch zu übersetzen
 $this->phrasen['bewerbung/zahlungAusstaendig']='Es sind noch Zahlungen offen. Sie können die Bewerbung erst abschicken, wenn alle Zahlungen eingegangen sind.'; // Noch zu übersetzen
 $this->phrasen['bewerbung/microsoftMailWarning']='<b>Warning!</b> Currently e-mails from the UAS Technikum Wien can not be received via @hotmail, @outlook and @live adresses.<br>Please use an other e-mail address if possible.';
+$this->phrasen['bewerbung/herkunftDesBewerbers']='Herkunft';
 
 // Reihungstest
 $this->phrasen['bewerbung/anmeldungReihungstestMailBetreff']='Confirmation of registration to placement test UAS Technikum Wien';
