@@ -635,6 +635,7 @@ $this->phrasen['bewerbung/zustimmungAGB']='Zustimmung zu unseren allgemeinen Ges
 $this->phrasen['bewerbung/bitteAGBZustimmen']='Sie müssen den AGB zustimmen, um Ihre Bewerbung abschicken zu können';
 $this->phrasen['bewerbung/zahlungAusstaendig']='Es sind noch Zahlungen offen. Sie können die Bewerbung erst abschicken, wenn alle Zahlungen eingegangen sind.';
 $this->phrasen['bewerbung/microsoftMailWarning']='<b>Achtung!</b> Derzeit kommt es bei E-Mail Zustellungen an @hotmail, @outlook und @live Adressen zu Empfangsproblemen seitens Microsoft. Eine Zustellung kann nicht garantiert werden! <br>Bitte verwenden Sie nach Möglichkeit eine andere E-Mail Adresse.';
+$this->phrasen['bewerbung/herkunftDesBewerbers']='Herkunft';
 
 // Reihungstest
 $this->phrasen['bewerbung/anmeldungReihungstestMailBetreff']='Bestätigung Reihungstestanmeldung Fachhochschule Technikum Wien';

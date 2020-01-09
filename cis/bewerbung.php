@@ -2951,6 +2951,36 @@ function sendBewerbung($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz,
 				$anmerkungen .= '- ' . htmlspecialchars($note->text);
 			}
 		}
+
+		// Prüfen, ob der Bewerber schon Student an der FHTW war
+		// Wenn ja, Auflistung der Status, ansonsten "extern"
+		$herkunft = '';
+		$allPrestudents = new prestudent();
+		$allPrestudents->getPrestudenten($prestudent->person_id);
+		$stgPrestudent = new studiengang();
+		$stgPrestudent->getAll('typ, kurzbz', true);
+
+		foreach ($allPrestudents->result as $prestudentRow)
+		{
+			$prestudentLastStatus = new prestudent();
+			$prestudentLastStatus->getLastStatus($prestudentRow->prestudent_id);
+
+			if ($prestudentLastStatus->status_kurzbz == 'Student'
+				|| $prestudentLastStatus->status_kurzbz == 'Absolvent'
+				|| $prestudentLastStatus->status_kurzbz == 'Abbrecher'
+				|| $prestudentLastStatus->status_kurzbz == 'Incoming'
+				|| $prestudentLastStatus->status_kurzbz == 'Unterbrecher'
+				|| $prestudentLastStatus->status_kurzbz == 'Diplomand'
+				|| $prestudentLastStatus->status_kurzbz == 'Outgoing')
+			{
+				$herkunft .= $stgPrestudent->kuerzel_arr[$prestudentRow->studiengang_kz].' ('.$prestudentLastStatus->status_kurzbz.' '.$prestudentLastStatus->studiensemester_kurzbz.')<br/>';
+			}
+		}
+		if ($herkunft == '')
+		{
+			$herkunft = 'extern';
+		}
+
 		$sanchoMailHeader = base64_encode(file_get_contents(APP_ROOT . 'skin/images/sancho/sancho_header_min_bw.jpg'));
 		$sanchoMailFooter = base64_encode(file_get_contents(APP_ROOT . 'skin/images/sancho/sancho_footer_min_bw.jpg'));
 		$email = $p->t('bewerbung/emailBodyStart', array(VILESCI_ROOT . 'vilesci/personen/personendetails.php?id='.$person_id, $sanchoMailHeader));
@@ -2959,6 +2989,7 @@ function sendBewerbung($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz,
 		if(defined('MAIL_DEBUG') && MAIL_DEBUG != '')
 			$email .= '<br><br>Empfänger: '.$empfaenger.'<br><br>';
 		$email .= '<br><table style="font-size:small"><tbody>';
+		$email .= '<tr><td style="vertical-align:top"><b>' . $p->t('bewerbung/herkunftDesBewerbers') . '</b></td><td>'.$herkunft.'</td></tr>';
 		$email .= '<tr><td><b>' . $p->t('global/studiengang') . '</b></td><td>' . $typ->bezeichnung . ' ' . $studiengangsbezeichnung . ($orgform_kurzbz != '' ? ' (' . $orgform_kurzbz . ')' : '') . '</td></tr>';
 		$email .= '<tr><td><b>' . $p->t('global/studiensemester') . '</b></td><td>' . $studiensemester_kurzbz . '</td></tr>';
 		if ($studienplan_bezeichnung != '')
