@@ -112,7 +112,8 @@ if (! isset($person_id))
 				else
 				{
 					$studiengang = new studiengang($dok->studiengang_kz);
-					echo '<legend>'.$p->t('bewerbung/dokumenteFuer').' '.$studiengang->bezeichnung_arr[getSprache()].'</legend>';
+					$studiengang->getStudiengangTyp($studiengang->typ);
+					echo '<legend>'.$p->t('bewerbung/dokumenteFuer').' '.$studiengang->bezeichnung.' '.$studiengang->bezeichnung_arr[getSprache()].'</legend>';
 				}
 				echo '<div class="panel-group">';
 			}

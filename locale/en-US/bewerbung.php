@@ -587,7 +587,7 @@ $this->phrasen['bewerbung/anmeldungReihungstestMailBetreff']='Confirmation of re
 $this->phrasen['bewerbung/anmeldungReihungstestMail']='Dear %3$s %1$s %2$s,<br><br>
 You have successfully applied for the placement test on %4$s. The test begins at %5$s and lasts about 3.5 hours.<br><br>
 Please bring an official photo ID to verify your identity.<br>
-You will be able to see the room where the test will be held about a week beforehand in the Application Tool.<br>
+You will be able to see the room where the test will be held about 2 days beforehand in the Application Tool.<br>
 If you have any questions, please do not hesitate to contact the <a href="mailto:studienberatung@technikum-wien.at">InfoCenter team</a>.<br><br>
 Yours sincerely<br>
 UAS Technikum Wien';
@@ -598,7 +598,7 @@ $this->phrasen['bewerbung/reihungstestInfoTextAngemeldet']='<div class="alert al
 </div><br>';
 $this->phrasen['bewerbung/anmeldefrist']='Term of application';
 $this->phrasen['bewerbung/infoVorgemerktFuerQualifikationskurs']='You are pencilled in as a participant for the qualification courses. Once you are confirmed there, you can choose an appointment for the placement test here.';
-$this->phrasen['bewerbung/raumzuteilungFolgt']='One week prior to the test you will see here the room-number';
+$this->phrasen['bewerbung/raumzuteilungFolgt']='Two days prior to the test you will see here the room-number';
 $this->phrasen['bewerbung/sieHabenFolgendenTerminGewaehlt']='You have registered for the following placement test date';
 
 // Ausbildung

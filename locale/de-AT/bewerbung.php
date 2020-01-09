@@ -642,7 +642,7 @@ $this->phrasen['bewerbung/anmeldungReihungstestMailBetreff']='Bestätigung Reihu
 $this->phrasen['bewerbung/anmeldungReihungstestMail']='Sehr %3$s %1$s %2$s,<br><br>
 Sie haben sich erfolgreich für den Reihungstest am %4$s beworben. Der Test beginnt um %5$s und dauert etwa 3,5 Stunden.<br><br>
 Bitte bringen Sie einen amtlichen Lichtbildausweis zur Überprüfung Ihrer Identität mit.<br>
-Den Raum können Sie etwa eine Woche vor Testbeginn im Bewerbungstool sehen<br>
+Den Raum können Sie spätestens 2 Tage vor Testbeginn im Bewerbungstool sehen<br>
 Sollten Sie Fragen haben, kontaktieren Sie bitte unser Infocenter <a href="mailto:studienberatung@technikum-wien.at">studienberatung@technikum-wien.at</a>.<br><br>
 Mit freundlichen Grüßen<br>
 Fachhochschule Technikum Wien';
@@ -652,7 +652,7 @@ $this->phrasen['bewerbung/reihungstestInfoTextAngemeldet']='<div class="alert al
 </div><br>';
 $this->phrasen['bewerbung/anmeldefrist']='Anmeldefrist';
 $this->phrasen['bewerbung/infoVorgemerktFuerQualifikationskurs']='Sie sind als TeilnehmerIn für die Qualifikationskurse vorgemerkt. Sobald sie dort bestätigt wurden, können Sie hier einen Termin für den Reihungstest wählen.';
-$this->phrasen['bewerbung/raumzuteilungFolgt']='Raumzuteilung folgt spätestens 1 Woche vor Ihrem Termin';
+$this->phrasen['bewerbung/raumzuteilungFolgt']='Raumzuteilung folgt spätestens 2 Tage vor Ihrem Termin';
 $this->phrasen['bewerbung/sieHabenFolgendenTerminGewaehlt']='Sie haben sich zu folgendem Reihungstesttermin angemeldet';
 
 // Ausbildung

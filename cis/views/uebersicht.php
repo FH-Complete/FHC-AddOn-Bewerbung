@@ -317,11 +317,30 @@ $studiensemester_array = array();
 			echo '				<div class="col-xs-2 col-sm-2 col-md-1 text-center">
 								<!--<div class="text-center">Priorisierung</div>-->
 								<label style="padding-right: 2px" class="prioIndex">'.$prioIndex.'</label>';
-			// Priorisierung deaktivieren, wenn Bewerbung abgeschickt
-			if (!check_person_bewerbungabgeschickt($person_id, $row->laststatus_studiensemester_kurzbz))
+			// An der FHTW Priorisierung deaktivieren, wenn Anmeldung zum Reihungstest, sonst, wenn abgeschickt
+			if (CAMPUS_NAME == 'FH Technikum Wien')
 			{
-				echo '				<div class="btn-group-vertical">
-									
+				if (count($angemeldeteReihungstests->result) == 0)
+				{
+					echo '	<div class="btn-group-vertical">
+								<button class="btn btn-default button_up btn-block" type="button"
+									onclick="changePriority(\''.$row->prestudent_id.'\', \''.$row->laststatus_studiensemester_kurzbz.'\', \'up\')">
+									<span class="glyphicon glyphicon-triangle-top"></span>
+								</button>
+								<input type="hidden" class="form-control text-center" value="'.$row->priorisierung.'" disabled="disabled">
+								<button class="btn btn-default button_down btn-block" type="button"
+									onclick="changePriority(\''.$row->prestudent_id.'\', \''.$row->laststatus_studiensemester_kurzbz.'\', \'down\')">
+									<span class="glyphicon glyphicon-triangle-bottom"></span>
+								</button>
+							</div>';
+				}
+			}
+			else
+			{
+				// Priorisierung deaktivieren, wenn Bewerbung abgeschickt
+				if (!check_person_bewerbungabgeschickt($person_id, $row->laststatus_studiensemester_kurzbz))
+				{
+					echo '		<div class="btn-group-vertical">
 									<button class="btn btn-default button_up btn-block" type="button"
 										onclick="changePriority(\''.$row->prestudent_id.'\', \''.$row->laststatus_studiensemester_kurzbz.'\', \'up\')">
 										<span class="glyphicon glyphicon-triangle-top"></span>
@@ -332,6 +351,7 @@ $studiensemester_array = array();
 										<span class="glyphicon glyphicon-triangle-bottom"></span>
 									</button>
 								</div>';
+				}
 			}
 			echo '				</div>';
 
