@@ -81,6 +81,7 @@ require_once ('../../../include/dokument.class.php');
 require_once ('../../../include/fotostatus.class.php');
 require_once ('../../../include/functions.inc.php');
 require_once ('../../../include/gemeinde.class.php');
+require_once ('../../../include/geschlecht.class.php');
 require_once ('../../../include/kontakt.class.php');
 require_once ('../../../include/konto.class.php');
 require_once ('../../../include/mail.class.php');
@@ -1000,7 +1001,18 @@ if (isset($_POST['btn_person']) && ! $eingabegesperrt)
 	$person->gebdatum = $datum->formatDatum($_POST['geburtsdatum'], 'Y-m-d');
 	$person->staatsbuergerschaft = $_POST['staatsbuergerschaft'];
 	$person->geschlecht = $_POST['geschlecht'];
-	$person->anrede = ($_POST['geschlecht'] == 'm' ? 'Herr' : 'Frau');
+	if ($_POST['geschlecht'] == 'm')
+	{
+		$person->anrede = 'Herr';
+	}
+	elseif ($_POST['geschlecht'] == 'w')
+	{
+		$person->anrede = 'Frau';
+	}
+	else
+	{
+		$person->anrede = '';
+	}
 	$person->svnr = isset($_POST['svnr']) ? $_POST['svnr'] : '';
 	$person->gebort = $_POST['gebort'];
 	$person->geburtsnation = $_POST['geburtsnation'];
@@ -2915,6 +2927,21 @@ function sendBewerbung($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz,
 	$typ->getStudiengangTyp($studiengang->typ);
 	$empfaenger = getMailEmpfaenger($studiengang->studiengang_kz);
 
+	if (CAMPUS_NAME == 'FH Technikum Wien')
+	{
+		// Wenn Geschlecht "Divers" ist wird eine Notiz als Hinweis angelegt
+		$notiz = new notiz();
+		$notiz->person_id = $person_id;
+		$notiz->verfasser_uid = '';
+		$notiz->erledigt = false;
+		$notiz->insertvon = 'online_notiz';
+		$notiz->insertamum = date('c');
+		$notiz->start = date('Y-m-d');
+		$notiz->titel = 'ACHTUNG! Geschlecht: "Divers"';
+		$notiz->text = 'Dokumente prüfen. Nur gültig, wenn auf offiziellem Dokument ebenfalls "Divers" angeführt wird';
+		$notiz->save(true);
+		$notiz->saveZuordnung();
+	}
 	if (CAMPUS_NAME == 'FH Technikum Wien' && $studiengang->typ != 'b')
 	{
 		$kontakt = new kontakt();
@@ -2996,7 +3023,9 @@ function sendBewerbung($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz,
 			$email.= '<tr><td><b>'.$p->t('studienplan/studienplan').'</b></td><td>'.$studienplan_bezeichnung.'</td></tr>';
 		else
 			$email.= '<tr><td><b>'.$p->t('studienplan/studienplan').'</b></td><td><span style="color: red">Es konnte kein passender Studienplan ermittelt werden</span></td></tr>';
-		$email.= '<tr><td><b>'.$p->t('global/geschlecht').'</b></td><td>'.($person->geschlecht=='m'?$p->t('bewerbung/maennlich'):$p->t('bewerbung/weiblich')).'</td></tr>';
+
+		$geschlecht = new geschlecht($person->geschlecht);
+		$email.= '<tr><td><b>'.$p->t('global/geschlecht').'</b></td><td>'.$geschlecht->bezeichnung_mehrsprachig_arr[$sprache].'</td></tr>';
 		//$email.= '<tr><td><b>'.$p->t('global/titel').'</b></td><td>'.$person->titelpre.'</td></tr>';
 		//$email.= '<tr><td><b>'.$p->t('global/postnomen').'</b></td><td>'.$person->titelpost.'</td></tr>';
 		$email.= '<tr><td><b>'.$p->t('global/vorname').'</b></td><td>'.$person->vorname.'</td></tr>';
@@ -3081,8 +3110,10 @@ function sendBewerbung($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz,
 
 		if($person->geschlecht == 'm')
 			$anrede = $p->t('bewerbung/anredeMaennlich');
-		else
+		elseif($person->geschlecht == 'w')
 			$anrede = $p->t('bewerbung/anredeWeiblich');
+		else
+			$anrede = $p->t('bewerbung/anredeNeutral');
 
 		$mail_bewerber = new mail($mailadresse, 'no-reply', $p->t('bewerbung/erfolgreichBeworbenMailBetreff'), 'Bitte sehen Sie sich die Nachricht in HTML Sicht an, um den Inhalt vollständig darzustellen.');
 		// Unterschiedliche Ansprechpersonen für Bachelor und Master
@@ -3126,13 +3157,13 @@ function sendBewerbung($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz,
 		if (! $mail->send())
 			return false;
 		else
-			return true;;
+			return true;
 	}
 }
 // sendet eine Email an die Assistenz, wenn nachträglich eine Bewerbung hinzugefügt wird
 function sendAddStudiengang($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz)
 {
-	global $person_id;
+	global $person_id, $sprache;
 	$p = new phrasen(DEFAULT_LANGUAGE);
 
 	// Array fuer Mailempfaenger. Vorruebergehende Loesung. Kindlm am 28.10.2015
@@ -3189,11 +3220,12 @@ function sendAddStudiengang($prestudent_id, $studiensemester_kurzbz, $orgform_ku
 		}
 	}
 
-	$email = 'Es hat sich ' . ($person->geschlecht == 'm' ? 'ein Bewerber' : 'eine Bewerberin') . ' am System registriert<br>';
+	$email = 'Es hat sich ein Bewerber/eine Bewerberin am System registriert<br>';
 	$email .= '<br><table style="font-size:small"><tbody>';
 	$email .= '<tr><td><b>' . $p->t('global/studiengang') . '</b></td><td>' . $typ->bezeichnung . ' ' . $studiengang->bezeichnung . ($orgform_kurzbz != '' ? ' (' . $orgform_kurzbz . ')' : '') . '</td></tr>';
 	$email .= '<tr><td><b>' . $p->t('global/studiensemester') . '</b></td><td>' . $studiensemester_kurzbz . '</td></tr>';
-	$email .= '<tr><td><b>' . $p->t('global/geschlecht') . '</b></td><td>' . ($person->geschlecht == 'm' ? $p->t('bewerbung/maennlich') : $p->t('bewerbung/weiblich')) . '</td></tr>';
+	$geschlecht = new geschlecht($person->geschlecht);
+	$email .= '<tr><td><b>' . $p->t('global/geschlecht') . '</b></td><td>'.$geschlecht->bezeichnung_mehrsprachig_arr[$sprache].'</td></tr>';
 	// $email.= '<tr><td><b>'.$p->t('global/titel').'</b></td><td>'.$person->titelpre.'</td></tr>';
 	// $email.= '<tr><td><b>'.$p->t('global/postnomen').'</b></td><td>'.$person->titelpost.'</td></tr>';
 	$email .= '<tr><td><b>' . $p->t('global/vorname') . '</b></td><td>' . $person->vorname . '</td></tr>';
@@ -3208,7 +3240,7 @@ function sendAddStudiengang($prestudent_id, $studiensemester_kurzbz, $orgform_ku
 	$email = wordwrap($email, 70); // Bricht den Code um, da es sonst zu Anzeigefehlern im Mail kommen kann
 
 	$empfaenger = getMailEmpfaenger($prestudent->studiengang_kz);
-	$mail = new mail($empfaenger, 'no-reply', ($person->geschlecht == 'm' ? 'Neuer Bewerber ' : 'Neue Bewerberin ') . $person->vorname . ' ' . $person->nachname . ' registriert', 'Bitte sehen Sie sich die Nachricht in HTML Sicht an, um den Inhalt vollständig darzustellen.');
+	$mail = new mail($empfaenger, 'no-reply', ($person->geschlecht == 'm' ? 'Neuer Bewerber ' : $person->geschlecht == 'w' ? 'Neue Bewerberin ' : 'Neue/r Bewerber/in ') . $person->vorname . ' ' . $person->nachname . ' registriert', 'Bitte sehen Sie sich die Nachricht in HTML Sicht an, um den Inhalt vollständig darzustellen.');
 	$mail->setHTMLContent($email);
 	if (! $mail->send())
 		return false;

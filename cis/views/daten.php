@@ -185,11 +185,26 @@ if(!isset($person_id))
 			<label for="geschlecht" class="col-sm-3 control-label"><?php echo $p->t('global/geschlecht') ?></label>
 			<div class="col-sm-9">
 				<?php
-				$geschl_m = ($person->geschlecht == 'm') ? 'checked' : '';
-				$geschl_w = ($person->geschlecht == 'w') ? 'checked' : '';
+				$geschlechter = new geschlecht();
+				$geschlechter->getAll();
+
+				foreach ($geschlechter->result AS $gsch)
+				{
+					if ($gsch->geschlecht == 'u')
+					{
+						continue;
+					}
+					$checked = '';
+					if ($gsch->geschlecht == $person->geschlecht)
+					{
+						$checked = 'checked';
+					}
+					echo '	<label class="radio-inline">
+								<input type="radio" name="geschlecht" class="radio-inline" '.$disabled.' value="'.$gsch->geschlecht.'" '.$checked.'>
+								'.$gsch->bezeichnung_mehrsprachig_arr[$sprache].'
+							</label>';
+				}
 				?>
-				<?php echo $p->t('bewerbung/maennlich') ?>: <input type="radio" name="geschlecht"  <?php echo $disabled; ?> value="m" <?php echo $geschl_m ?>>
-				<?php echo $p->t('bewerbung/weiblich') ?>: <input type="radio" name="geschlecht"  <?php echo $disabled; ?> value="w" <?php echo $geschl_w ?>>
 			</div>
 		</div>
 		<?php 
