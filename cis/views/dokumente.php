@@ -97,9 +97,9 @@ if (! isset($person_id))
 
 			if ($dok->studiengang_kz != $currentStudiengangKz)
 			{
-				$dokumentKurzbz = '';
 				if ($currentStudiengangKz != '')
 				{
+					$dokumentKurzbz = '';
 					echo '	</div></fieldset>';
 				}
 				$currentStudiengangKz = $dok->studiengang_kz;
