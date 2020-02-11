@@ -143,6 +143,9 @@ if ($userid)
 elseif($username && $password)
 {
 	$benutzer = new benutzer();
+	// $username to lowercase
+	$username = strtolower($username);
+
 	if($benutzer->load($username))
 	{
 		$auth = new authentication();
@@ -1274,7 +1277,7 @@ elseif($username && $password)
 										<?php echo $p->t('global/username') ?>
 									</label>
 									<div class="col-sm-8">
-										<input class="form-control" type="text" placeholder="<?php echo $p->t('global/username') ?>" name="username">
+										<input class="form-control" style="text-transform:lowercase" type="text" placeholder="<?php echo $p->t('global/username') ?>" name="username">
 									</div>
 								</div>
 								<div class="form-group">
