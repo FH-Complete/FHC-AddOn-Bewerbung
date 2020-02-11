@@ -143,6 +143,9 @@ if ($userid)
 elseif($username && $password)
 {
 	$benutzer = new benutzer();
+	// $username to lowercase
+	$username = strtolower($username);
+
 	if($benutzer->load($username))
 	{
 		$auth = new authentication();
@@ -329,13 +332,24 @@ elseif($username && $password)
 							$studienplan = new studienplan();
 							if($orgform_get != '')
 							{
-								$studienplan->getStudienplaeneFromSem($stg, $std_semester, '1', $orgform_get);
+								// Studienplan in $sprache laden
+								$studienplan->getStudienplaeneFromSem($stg, $std_semester, '1', $orgform_get, $sprache);
+								//Wenn keine Studienplan in $sprache gefunden wurde, nochmal ohne probieren
+								if (count($studienplan->result) == 0)
+								{
+									$studienplan->getStudienplaeneFromSem($stg, $std_semester, '1', $orgform_get);
+								}
 							}
 							else
 							{
-								$studienplan->getStudienplaeneFromSem($stg, $std_semester, '1');
+								// Studienplan in $sprache laden
+								$studienplan->getStudienplaeneFromSem($stg, $std_semester, '1', NULL, $sprache);
+								//Wenn keine Studienplan in $sprache gefunden wurde, nochmal ohne probieren
+								if (count($studienplan->result) == 0)
+								{
+									$studienplan->getStudienplaeneFromSem($stg, $std_semester, '1');
+								}
 							}
-
 							// Wenn kein passender Studienplan gefunden wird, wird er NULL gesetzt
 							foreach ($studienplan->result AS $row)
 							{
@@ -343,8 +357,6 @@ elseif($username && $password)
 							}
 						}
 					}
-					
-					
 				}
 				else
 				{
@@ -466,19 +478,34 @@ elseif($username && $password)
 							$message = '<p class="bg-danger padding-10">'.$p->t('bewerbung/sicherheitscodeFalsch').'</p>';
 						}
 						// Wenn kein Studienplan angeklickt wurde
-						elseif (BEWERBERTOOL_STUDIENAUSWAHL_ANZEIGEN && count($studienplaene) == 0)
+						elseif (defined('BEWERBERTOOL_STUDIENAUSWAHL_ANZEIGEN')
+								&& BEWERBERTOOL_STUDIENAUSWAHL_ANZEIGEN
+								&& count($studienplaene) == 0)
 						{
 							$message = '<p class="bg-danger padding-10">'.$p->t('bewerbung/bitteStudienrichtungWaehlen').'</p>';
 						}
 						// Wenn mehr als BEWERBERTOOL_MAX_STUDIENGAENGE übergeben wurden
-						elseif (BEWERBERTOOL_STUDIENAUSWAHL_ANZEIGEN && defined('BEWERBERTOOL_MAX_STUDIENGAENGE') && BEWERBERTOOL_MAX_STUDIENGAENGE != '' && count($studienplaeneBaMa) > BEWERBERTOOL_MAX_STUDIENGAENGE)
+						elseif (defined('BEWERBERTOOL_STUDIENAUSWAHL_ANZEIGEN')
+								&& BEWERBERTOOL_STUDIENAUSWAHL_ANZEIGEN
+								&& defined('BEWERBERTOOL_MAX_STUDIENGAENGE')
+								&& BEWERBERTOOL_MAX_STUDIENGAENGE != ''
+								&& count($studienplaeneBaMa) > BEWERBERTOOL_MAX_STUDIENGAENGE)
 						{
 							$message = '<p class="bg-danger padding-10">'.$p->t('bewerbung/sieKoennenMaximalXStudiengaengeWaehlen', array(BEWERBERTOOL_MAX_STUDIENGAENGE)).'</p>';
 						}
 						// Wenn die Zusatimmung zur Datenübermittlung nicht gegeben ist
-						elseif (BEWERBERTOOL_SHOW_ZUSTIMMUNGSERKLAERUNG_REGISTRATION && !isset($_POST['zustimmung_datenuebermittlung']))
+						elseif (defined('BEWERBERTOOL_SHOW_ZUSTIMMUNGSERKLAERUNG_REGISTRATION')
+								&& BEWERBERTOOL_SHOW_ZUSTIMMUNGSERKLAERUNG_REGISTRATION
+								&& !isset($_POST['zustimmung_datenuebermittlung']))
 						{
 							$message = '<p class="bg-danger padding-10">'.$p->t('bewerbung/bitteDatenuebermittlungZustimmen').'</p>';
+						}
+						// Wenn die Zusatimmung zu AGB nicht gegeben ist
+						elseif (defined('BEWERBERTOOL_SHOW_ZUSTIMMUNGSERKLAERUNG_AGB')
+								&& BEWERBERTOOL_SHOW_ZUSTIMMUNGSERKLAERUNG_AGB
+								&& !isset($_POST['zustimmung_agb']))
+						{
+							$message = '<p class="bg-danger padding-10">'.$p->t('bewerbung/bitteAGBZustimmen').'</p>';
 						}
 
 						// Wenn keine ZGV-Nation aber ein Bachelor oder Master-Studiengang übergeben wird
@@ -704,6 +731,16 @@ elseif($username && $password)
 							<input type="email" maxlength="128" name="email" id="email" value="<?php echo $email ?>" class="form-control">
 						</div>
 					</div>
+					<?php if (CAMPUS_NAME == 'FH Technikum Wien'): ?>
+						<div class="form-group" id="microsoftMailWarning" style="display: none">
+							<label for="email" class="col-sm-3 control-label">
+
+							</label>
+							<div class="col-sm-4 alert alert-warning">
+								<?php echo $p->t('bewerbung/microsoftMailWarning') ?>
+							</div>
+						</div>
+					<?php endif; ?>
 
 					<?php if(BEWERBERTOOL_STUDIENAUSWAHL_ANZEIGEN): ?>
 					<?php if(defined('BEWERBERTOOL_SHOW_REGISTRATION_ZGVNATION') && BEWERBERTOOL_SHOW_REGISTRATION_ZGVNATION): ?>
@@ -1008,10 +1045,19 @@ elseif($username && $password)
 
 					<div class="form-group">
 						<div class="col-xs-12 col-sm-7 col-sm-offset-3 col-md-7 col-md-offset-3 ">
-							<div class="checkbox-inline">
-								<input type="checkbox" name="zustimmung_datenuebermittlung" id="checkbox_zustimmung_datenuebermittlung" value="" required="required">
-								<?php echo $p->t('bewerbung/zustimmungDatenuebermittlung') ?>
-							</div>
+							<?php if (defined('BEWERBERTOOL_SHOW_ZUSTIMMUNGSERKLAERUNG_REGISTRATION') && BEWERBERTOOL_SHOW_ZUSTIMMUNGSERKLAERUNG_REGISTRATION === true): ?>
+								<div class="checkbox-inline">
+									<input type="checkbox" name="zustimmung_datenuebermittlung" id="checkbox_zustimmung_datenuebermittlung" value="" required="required">
+									<?php echo $p->t('bewerbung/zustimmungDatenuebermittlung') ?>
+								</div>
+								<br />
+							<?php endif; ?>
+							<?php if (defined('BEWERBERTOOL_SHOW_ZUSTIMMUNGSERKLAERUNG_AGB') && BEWERBERTOOL_SHOW_ZUSTIMMUNGSERKLAERUNG_AGB === true): ?>
+								<div class="checkbox-inline">
+									<input type="checkbox" name="zustimmung_agb" id="checkbox_zustimmung_agb" value="" required="required">
+									<?php echo $p->t('bewerbung/zustimmungAGB') ?>
+								</div>
+							<?php endif; ?>
 						</div>
 					</div>
 					<div class="form-group">
@@ -1231,7 +1277,7 @@ elseif($username && $password)
 										<?php echo $p->t('global/username') ?>
 									</label>
 									<div class="col-sm-8">
-										<input class="form-control" type="text" placeholder="<?php echo $p->t('global/username') ?>" name="username">
+										<input class="form-control" style="text-transform:lowercase" type="text" placeholder="<?php echo $p->t('global/username') ?>" name="username">
 									</div>
 								</div>
 								<div class="form-group">
@@ -1251,8 +1297,7 @@ elseif($username && $password)
 								</div>
 							  </div>
 							</div>
-							<br><br><br><br><br><br>
-							<div style="text-align:center; color:gray;"><center><?php echo $p->t('bewerbung/footerText')?></center></div>
+							<div style="text-align:center; color:gray;"><?php echo $p->t('bewerbung/footerText')?></div>
 							<br><br><br><br><br><br><br>
 							<br><br><br><br><br><br><br>
 							<br><br><br><br><br><br><br>
@@ -1267,10 +1312,6 @@ elseif($username && $password)
 				</div>
 			<?php endif; ?>
 		</div>
-		<?php
-		//if(BEWERBERTOOL_STUDIENAUSWAHL_ANZEIGEN)
-			//require('views/modal_sprache_orgform.php');
-		?>
 		<script type="text/javascript" src="../../../vendor/jquery/jqueryV1/jquery-1.12.4.min.js"></script>
 		<script type="text/javascript" src="../../../vendor/twbs/bootstrap/dist/js/bootstrap.min.js"></script>
 		<script type="text/javascript">
@@ -1371,6 +1412,14 @@ elseif($username && $password)
 					alert("<?php echo $p->t('bewerbung/bitteDatenuebermittlungZustimmen')?>");
 					return false;
 				}
+			<?php endif; ?>
+
+			<?php if (defined('BEWERBERTOOL_SHOW_ZUSTIMMUNGSERKLAERUNG_AGB') && BEWERBERTOOL_SHOW_ZUSTIMMUNGSERKLAERUNG_AGB): ?>
+			if(document.getElementById('checkbox_zustimmung_agb').checked == false)
+			{
+				alert("<?php echo $p->t('bewerbung/bitteAGBZustimmen')?>");
+				return false;
+			}
 			<?php endif; ?>
 
 			<?php if (defined('BEWERBERTOOL_SHOW_REGISTRATION_ZGVNATION') && BEWERBERTOOL_SHOW_REGISTRATION_ZGVNATION): ?>
@@ -1594,6 +1643,20 @@ elseif($username && $password)
 					<?php endif; ?>
 				}
 			});
+			<?php if (CAMPUS_NAME == 'FH Technikum Wien'): ?>
+			//Bei Microsoft-Adressen gibt es derzeit Probleme an der FHTW
+			$("#email").keyup(function()
+			{
+				var str = $(this).val();
+				if (str.indexOf("@hotmail") >= 0
+					|| str.indexOf("@live") >= 0
+					|| str.indexOf("@outlook") >= 0)
+				{
+					$("#microsoftMailWarning").show();
+					$("#email").css("color", "red")
+				}
+			});
+			<?php endif; ?>
 		});
 
 		window.setTimeout(function() {

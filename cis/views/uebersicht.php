@@ -98,7 +98,7 @@ $studiensemester_array = array();
 				}
 				echo '<p><b>'.$p->t('bewerbung/bewerbungenFuerStudiensemesterXX', array($row->laststatus_studiensemester_kurzbz)).'</b></p>';
 				echo '<div class="row" style="padding: 5px 15px;">
-						<div class="col-xs-2 col-sm-2 col-md-1 text-center">
+						<div class="col-xs-2 col-sm-2 col-md-1 text-center label label-default">
 							'.$p->t('bewerbung/prioritaet').'
 						</div>
 						<div class="col-xs-10 col-sm-10 col-md-11">&nbsp;</div>
@@ -128,15 +128,12 @@ $studiensemester_array = array();
 				$status_zgv_bak == true &&
 				$status_ausbildung == true)
 			{
-				// An der FHTW ist das Abschicken der Bewerbung nicht abhängig vom Reihungstest
-				if (CAMPUS_NAME == 'FH Technikum Wien')
+				// Das Abschicken der Bewerbung ist an keiner FH abhängig vom Reihungstest
+				/*if ($status_reihungstest == true)
 				{
 					$disabledAbschicken = false;
-				}
-				elseif ($status_reihungstest == true)
-				{
-					$disabledAbschicken = false;
-				}
+				}*/
+				$disabledAbschicken = false;
 			}
 
 			if ($stg->typ == 'm' && $status_zgv_mas == false)
@@ -320,11 +317,30 @@ $studiensemester_array = array();
 			echo '				<div class="col-xs-2 col-sm-2 col-md-1 text-center">
 								<!--<div class="text-center">Priorisierung</div>-->
 								<label style="padding-right: 2px" class="prioIndex">'.$prioIndex.'</label>';
-			// Priorisierung deaktivieren, wenn Bewerbung abgeschickt
-			if (!check_person_bewerbungabgeschickt($person_id, $row->laststatus_studiensemester_kurzbz))
+			// An der FHTW Priorisierung deaktivieren, wenn Anmeldung zum Reihungstest, sonst, wenn abgeschickt
+			if (CAMPUS_NAME == 'FH Technikum Wien')
 			{
-				echo '				<div class="btn-group-vertical">
-									
+				if (count($angemeldeteReihungstests->result) == 0)
+				{
+					echo '	<div class="btn-group-vertical">
+								<button class="btn btn-default button_up btn-block" type="button"
+									onclick="changePriority(\''.$row->prestudent_id.'\', \''.$row->laststatus_studiensemester_kurzbz.'\', \'up\')">
+									<span class="glyphicon glyphicon-triangle-top"></span>
+								</button>
+								<input type="hidden" class="form-control text-center" value="'.$row->priorisierung.'" disabled="disabled">
+								<button class="btn btn-default button_down btn-block" type="button"
+									onclick="changePriority(\''.$row->prestudent_id.'\', \''.$row->laststatus_studiensemester_kurzbz.'\', \'down\')">
+									<span class="glyphicon glyphicon-triangle-bottom"></span>
+								</button>
+							</div>';
+				}
+			}
+			else
+			{
+				// Priorisierung deaktivieren, wenn Bewerbung abgeschickt
+				if (!check_person_bewerbungabgeschickt($person_id, $row->laststatus_studiensemester_kurzbz))
+				{
+					echo '		<div class="btn-group-vertical">
 									<button class="btn btn-default button_up btn-block" type="button"
 										onclick="changePriority(\''.$row->prestudent_id.'\', \''.$row->laststatus_studiensemester_kurzbz.'\', \'up\')">
 										<span class="glyphicon glyphicon-triangle-top"></span>
@@ -335,6 +351,7 @@ $studiensemester_array = array();
 										<span class="glyphicon glyphicon-triangle-bottom"></span>
 									</button>
 								</div>';
+				}
 			}
 			echo '				</div>';
 
@@ -462,8 +479,9 @@ $studiensemester_array = array();
 												echo '<p class="alert alert-danger">'.$p->t('bewerbung/menuZugangsvoraussetzungen').' '.$p->t('bewerbung/unvollstaendig').'</p>';
 											if (!$status_ausbildung)
 												echo '<p class="alert alert-danger">'.$p->t('bewerbung/menuAusbildung').' '.$p->t('bewerbung/unvollstaendig').'</p>';
-											if (CAMPUS_NAME != 'FH Technikum Wien' && !$status_reihungstest)
-												echo '<p class="alert alert-danger">'.$p->t('bewerbung/menuReihungstest').' '.$p->t('bewerbung/unvollstaendig').'</p>';
+											//Derzeit bei keiner FH benötigt
+											//if (!$status_reihungstest)
+												//echo '<p class="alert alert-danger">'.$p->t('bewerbung/menuReihungstest').' '.$p->t('bewerbung/unvollstaendig').'</p>';
 
 											// Wenn für dieses Stufe alle Dokumente abgebeben sind, wird nochmal für Dokumente ohne Stufe gecheckt
 											if (!empty($status_dokumente_arr[$row->studiengang_kz][$stufe]))

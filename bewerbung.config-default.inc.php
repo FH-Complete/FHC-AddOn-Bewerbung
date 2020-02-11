@@ -59,6 +59,9 @@ define('BEWERBERTOOL_SHOW_ZUSTIMMUNGSERKLAERUNG_REGISTRATION', false);
 // Soll das DropDown zur Staatsbürgerschaft bei der Registration angezeigt werden?
 define('BEWERBERTOOL_SHOW_REGISTRATION_STAATSBUERGERSCHAFT', false);
 
+// Soll die Checkbox mit den AGB bei der Registration angezeigt werden?
+define('BEWERBERTOOL_SHOW_ZUSTIMMUNGSERKLAERUNG_AGB', false);
+
 // Wenn true, wird für jede Bewerbung ein neuer PreStudent-Datensatz angelegt.
 // Ansonsten wird ein PreStudent des selben Studiengangs ermittelt (wenn vorhanden) und ein neuer Status an diesen angehängt.
 define('BEWERBERTOOL_ALWAYS_CREATE_NEW_PRESTUDENT_FOR_APPLICATION', false);
@@ -85,4 +88,7 @@ define('BEWERBERTOOL_SHOW_REGISTRATION_ZGVNATION', false);
 
 // Wieviele Dokumente dürfen pro Dokumenttyp hochgeladen werden? Integer
 define('BEWERBERTOOL_ANZAHL_DOKUMENTPLOAD_JE_TYP', 100);
+
+// Darf bei Dokumenten, die bereits akzeptiert oder formal geprüft wurden noch etwas hochgalden werden? Boolean
+define('BEWERBERTOOL_UPLOAD_DOKUMENT_WENN_AKZEPTIERT', true);
 ?>

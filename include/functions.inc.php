@@ -253,17 +253,21 @@ function BewerbungPersonAddStudienplan($studienplan_id, $person, $studiensemeste
 	// nach der höchsten prestudent_id mit ZGV suchen, um dessen ZGV uebernehmen zu koennen
 	if ($prestudent_id == 0)
 	{
+		$prestudent_id_for_zgv = 0;
 		foreach ($pre->result as $row)
 		{
-			if ($row->prestudent_id > $prestudent_id
-				&& $row->zgv_code != '')
+			// Hochste PreStudent_id bei einem bachelor oder master suchen, bei der die ZGV gesetzt ist
+			if ($row->prestudent_id > $prestudent_id_for_zgv
+				&& $row->zgv_code != ''
+				&& ($studiengaenge_arr[$row->studiengang_kz]['typ'] == 'b'
+					|| $studiengaenge_arr[$row->studiengang_kz]['typ'] == 'm'))
 			{
-				$prestudent_id = $row->prestudent_id;
+				$prestudent_id_for_zgv = $row->prestudent_id;
 			}
 		}
-		if ($prestudent_id != 0)
+		if ($prestudent_id_for_zgv != 0)
 		{
-			$prestudent_help = $prestudent_id;
+			$prestudent_help = $prestudent_id_for_zgv;
 			
 			$prestudent_zgv = new prestudent();
 			$prestudent_zgv->load($prestudent_help);
@@ -305,33 +309,41 @@ function BewerbungPersonAddStudienplan($studienplan_id, $person, $studiensemeste
 		}
 		elseif($student->load_person($person->person_id)) // Sonst prüfen, ob Person schon irgendwo Student war und ZGV-Daten von dort holen
 		{
-			$prestudent_zgv = new prestudent();
-			$prestudent_zgv->load($student->prestudent_id);
+			// Checken, ob es ein Bachelor oder Master war
+			if ($studiengaenge_arr[$student->studiengang_kz]['typ'] == 'b'
+				|| $studiengaenge_arr[$student->studiengang_kz]['typ'] == 'm')
+			{
+				$prestudent_zgv = new prestudent();
+				$prestudent_zgv->load($student->prestudent_id);
 
-			$zgv_code = $prestudent_zgv->zgv_code;
-			$zgvort = $prestudent_zgv->zgvort;
-			$zgvdatum = $prestudent_zgv->zgvdatum;
-			$zgvnation = $prestudent_zgv->zgvnation;
-			$zgvmas_code = $prestudent_zgv->zgvmas_code;
-			$zgvmaort = $prestudent_zgv->zgvmaort;
-			$zgvmadatum = $prestudent_zgv->zgvmadatum;
-			$zgvmanation = $prestudent_zgv->zgvmanation;
+				$zgv_code = $prestudent_zgv->zgv_code;
+				$zgvort = $prestudent_zgv->zgvort;
+				$zgvdatum = $prestudent_zgv->zgvdatum;
+				$zgvnation = $prestudent_zgv->zgvnation;
+				$zgvmas_code = $prestudent_zgv->zgvmas_code;
+				$zgvmaort = $prestudent_zgv->zgvmaort;
+				$zgvmadatum = $prestudent_zgv->zgvmadatum;
+				$zgvmanation = $prestudent_zgv->zgvmanation;
+			}
 		}
 
 		// Wenn immer noch keine ZGV-Daten gefunden wurden, alle anderen PreStudenten der Person durchsuchen
 		if ($zgv_code == '')
 		{
+			$prestudent_id_for_zgv = 0;
 			foreach ($pre->result as $row)
 			{
-				if ($row->prestudent_id > $prestudent_id
-					&& ($row->zgv_code != '' || $row->zgvmas_code != '')) // Höchste Prestudent ID mit ZGV suchen
+				if ($row->prestudent_id > $prestudent_id_for_zgv
+					&& ($row->zgv_code != '' || $row->zgvmas_code != '')
+					&& ($studiengaenge_arr[$row->studiengang_kz]['typ'] == 'b'
+						|| $studiengaenge_arr[$row->studiengang_kz]['typ'] == 'm')) // Höchste Prestudent ID in einem bachelor oder master mit ZGV suchen
 				{
-					$prestudent_id = $row->prestudent_id;
+					$prestudent_id_for_zgv = $row->prestudent_id;
 				}
 			}
-			if ($prestudent_id != 0)
+			if ($prestudent_id_for_zgv != 0)
 			{
-				$prestudent_help = $prestudent_id;
+				$prestudent_help = $prestudent_id_for_zgv;
 
 				$prestudent_zgv = new prestudent();
 				$prestudent_zgv->load($prestudent_help);
@@ -1217,13 +1229,8 @@ function getMailEmpfaenger($studiengang_kz, $studienplan_id = null, $orgform_kur
 	}
 	elseif(isset($empf_array[$studiengang_kz]))
 	{
-		// Mails an Lehrgänge gehen alle an den Shared Folder lehrgang@technikum-wien.at
-		if (CAMPUS_NAME == 'FH Technikum Wien' && $studiengang->typ == 'l' && $studiengang->lgartcode != '')
-		{
-			$empfaenger = 'lehrgang@technikum-wien.at';
-		}
 		// Pfuschloesung, damit bei BIF Dual die Mail an info.bid geht
-		elseif (CAMPUS_NAME == 'FH Technikum Wien' && $studiengang_kz == 257)
+		if (CAMPUS_NAME == 'FH Technikum Wien' && $studiengang_kz == 257)
 		{
 			if ((isset($studienplan) && $studienplan->orgform_kurzbz == 'DUA') ||
 				($orgform_kurzbz != '' && $orgform_kurzbz == 'DUA'))
@@ -1240,13 +1247,8 @@ function getMailEmpfaenger($studiengang_kz, $studienplan_id = null, $orgform_kur
 	}
 	else
 	{
-		// Mails an Lehrgänge gehen alle an den Shared Folder lehrgang@technikum-wien.at
-		if (CAMPUS_NAME == 'FH Technikum Wien' && $studiengang->typ == 'l' && $studiengang->lgartcode != '')
-		{
-			$empfaenger = 'lehrgang@technikum-wien.at';
-		}
 		// Pfuschloesung, damit bei BIF Dual die Mail an info.bid geht
-		elseif (CAMPUS_NAME == 'FH Technikum Wien' && $studiengang_kz == 257)
+		if (CAMPUS_NAME == 'FH Technikum Wien' && $studiengang_kz == 257)
 		{
 			if ((isset($studienplan) && $studienplan->orgform_kurzbz == 'DUA') ||
 				($orgform_kurzbz != '' && $orgform_kurzbz == 'DUA'))
@@ -1622,6 +1624,7 @@ function hasPersonStatusgrund($person_id, $studiensemester_kurzbz, $status_grund
  * Liefert die Stufe eines Prestudenten
  * Kein passender Status -> 0
  * Interessent -> 10
+ * Interessent Status bestätigt -> 15
  * Bewerber -> 20
  * Wartender -> 30
  * Aufgenommener -> 40
@@ -1636,7 +1639,7 @@ function getStufeBewerberFuerDokumente($prestudent_id, $studiensemester_kurzbz =
 {
 	$db = new basis_db();
 	$qry = "
-			SELECT status_kurzbz 
+			SELECT status_kurzbz, bestaetigtam
 			FROM public.tbl_prestudent
 			JOIN public.tbl_prestudentstatus USING (prestudent_id)
 			WHERE prestudent_id = ".$db->db_add_param($prestudent_id, FHC_INTEGER);
@@ -1655,8 +1658,16 @@ function getStufeBewerberFuerDokumente($prestudent_id, $studiensemester_kurzbz =
 			switch ($row->status_kurzbz)
 			{
 				case 'Interessent':
-					return 10;
-					break;
+					if ($row->bestaetigtam == '')
+					{
+						return 10;
+						break;
+					}
+					else
+					{
+						return 15;
+						break;
+					}
 				case 'Bewerber':
 					return 20;
 					break;
@@ -1717,28 +1728,56 @@ function getAktenListe($person_id, $dokument_kurzbz)
 										
 											'.$p->t('bewerbung/wirdNachgreichtAm').' '.$datum->formatDatum($akte->nachgereicht_am, 'd.m.Y').'
 										';
-			// An der FHTW wird beim Dokument "zgv_bakk" das vorläufiges ZGV-Dokument angezeigt, wenn eines vorhanden ist
-			if (CAMPUS_NAME == 'FH Technikum Wien' && $akte->dokument_kurzbz == 'zgv_bakk')
+			// An der FHTW wird beim Dokument "zgv_bakk" das vorläufiges ZGV-Dokument (ZgvBaPre) angezeigt, wenn eines vorhanden ist
+			// und das Dokument "ZgvMaPre" bei "zgv_mast"
+			if (CAMPUS_NAME == 'FH Technikum Wien')
 			{
-				// Checken, ob der Dokumenttyp ZgvBaPre in der DB vorhanden ist
-				$checkZgvBaPre = new dokument();
-				if ($checkZgvBaPre->loadDokumenttyp('ZgvBaPre'))
+				if ($akte->dokument_kurzbz == 'zgv_bakk')
 				{
-					// Laden des vorläufigen ZGV Dokuments der Person
-					$zgvBaPre = new akte();
-					$zgvBaPre->getAkten($person_id, 'ZgvBaPre');
-					if (isset($zgvBaPre->result[0]))
+					// Checken, ob der Dokumenttyp ZgvBaPre in der DB vorhanden ist
+					$checkZgvBaPre = new dokument();
+					if ($checkZgvBaPre->loadDokumenttyp('ZgvBaPre'))
 					{
-						$returnstring .= '  
-													
-													<br><span>'.$p->t('bewerbung/vorlaeufigesDokument').':<br> 
-													<span class="glyphicon glyphicon-file" aria-hidden="true"></span>'.cutString($zgvBaPre->result[0]->titel, 25, '...').'</span>
-													<button type="button" title="'.$p->t('bewerbung/dokumentHerunterladen').'" 
-															class="btn btn-default btn-sm" 
-															href="'.APP_ROOT.'cms/dms.php?id='.$zgvBaPre->result[0]->dms_id.'" 
-															onclick="FensterOeffnen(\''.APP_ROOT.'cms/dms.php?id='.$zgvBaPre->result[0]->dms_id.'&akte_id='.$zgvBaPre->result[0]->akte_id.'\'); return false;">
-														<span class="glyphicon glyphicon glyphicon-download-alt" aria-hidden="true" title="'.$p->t('bewerbung/dokumentHerunterladen').'"></span>
-													</button>';
+						// Laden des vorläufigen ZGV Dokuments der Person
+						$zgvBaPre = new akte();
+						$zgvBaPre->getAkten($person_id, 'ZgvBaPre');
+						if (isset($zgvBaPre->result[0]))
+						{
+							$returnstring .= '  
+														
+														<br><span>'.$p->t('bewerbung/vorlaeufigesDokument').':<br> 
+														<span class="glyphicon glyphicon-file" aria-hidden="true"></span>'.cutString($zgvBaPre->result[0]->titel, 25, '...').'</span>
+														<button type="button" title="'.$p->t('bewerbung/dokumentHerunterladen').'" 
+																class="btn btn-default btn-sm" 
+																href="'.APP_ROOT.'cms/dms.php?id='.$zgvBaPre->result[0]->dms_id.'" 
+																onclick="FensterOeffnen(\''.APP_ROOT.'cms/dms.php?id='.$zgvBaPre->result[0]->dms_id.'&akte_id='.$zgvBaPre->result[0]->akte_id.'\'); return false;">
+															<span class="glyphicon glyphicon glyphicon-download-alt" aria-hidden="true" title="'.$p->t('bewerbung/dokumentHerunterladen').'"></span>
+														</button>';
+						}
+					}
+				}
+				elseif ($akte->dokument_kurzbz == 'zgv_mast')
+				{
+					// Checken, ob der Dokumenttyp ZgvMaPre in der DB vorhanden ist
+					$checkZgvMaPre = new dokument();
+					if ($checkZgvMaPre->loadDokumenttyp('ZgvMaPre'))
+					{
+						// Laden des vorläufigen ZGV Dokuments der Person
+						$zgvMaPre = new akte();
+						$zgvMaPre->getAkten($person_id, 'ZgvMaPre');
+						if (isset($zgvMaPre->result[0]))
+						{
+							$returnstring .= '  
+														
+														<br><span>'.$p->t('bewerbung/vorlaeufigesDokument').':<br> 
+														<span class="glyphicon glyphicon-file" aria-hidden="true"></span>'.cutString($zgvMaPre->result[0]->titel, 25, '...').'</span>
+														<button type="button" title="'.$p->t('bewerbung/dokumentHerunterladen').'" 
+																class="btn btn-default btn-sm" 
+																href="'.APP_ROOT.'cms/dms.php?id='.$zgvMaPre->result[0]->dms_id.'" 
+																onclick="FensterOeffnen(\''.APP_ROOT.'cms/dms.php?id='.$zgvMaPre->result[0]->dms_id.'&akte_id='.$zgvMaPre->result[0]->akte_id.'\'); return false;">
+															<span class="glyphicon glyphicon glyphicon-download-alt" aria-hidden="true" title="'.$p->t('bewerbung/dokumentHerunterladen').'"></span>
+														</button>';
+						}
 					}
 				}
 			}
@@ -1806,7 +1845,7 @@ function getUploadButton($dokument_kurzbz, $nachreichbutton = false, $visible = 
 	{
 		$display = 'hidden';
 	}
-	$returnstring = '<form method="POST" enctype="multipart/form-data" action="'.$_SERVER['PHP_SELF'].'?active=dokumente" class="form-horizontal documentUploadForm">';
+	$returnstring = '<form method="POST" enctype="multipart/form-data" action="'.$_SERVER['PHP_SELF'].'?active=dokumente&fileupload=true" class="form-horizontal documentUploadForm">';
 	$returnstring .= '  <div class="dokumentUploadDiv_'.$dokument_kurzbz.' '.$display.'" >';
 	// Lichtbilder werden gesondert behandelt
 	if ($dokument_kurzbz == 'LichtbilXXX')
@@ -1867,11 +1906,11 @@ function getUploadButton($dokument_kurzbz, $nachreichbutton = false, $visible = 
 
 	if ((!defined('BEWERBERTOOL_DOKUMENTE_NACHREICHEN') || BEWERBERTOOL_DOKUMENTE_NACHREICHEN == true) && $nachreichbutton)
 	{
-		$returnstring .= '	<p class="text-muted">'.$p->t('bewerbung/dokumentNochNichtVorhanden').'</p>
-							<p>
-								<button type="button" title="'.$p->t('bewerbung/dokumentWirdNachgereicht').'" class="btn btn-primary" onclick="toggleNachreichdaten(\''.$studiengang.'_'.$dokument_kurzbz.'\');return false;">
+		$returnstring .= '	<p class="text-muted">
+								'.$p->t('bewerbung/dokumentNochNichtVorhanden').' 
+								<a href="#" onclick="toggleNachreichdaten(\''.$studiengang.'_'.$dokument_kurzbz.'\');return false;">
 									'.$p->t('bewerbung/dokumentWirdNachgereicht').'
-								</button>
+								</a>
 							</p>';
 	}
 	$returnstring .= '	</div>';
@@ -1907,7 +1946,7 @@ function getNachreichForm($dokument_kurzbz, $studiengang)
 														name="txt_anmerkung" 
 														onInput="zeichenCountdown(\'anmerkung_'.$studiengang.'_'.$dokument_kurzbz.'\',128)" 
 														placeholder="'.$p->t('bewerbung/placeholderOrtNachgereicht').'">
-												<span class="input-group-addon" style="color: grey;" id="countdown_anmerkung_'.$dokument_kurzbz.'">128</span>
+												<span class="input-group-addon" style="color: grey;" id="countdown_anmerkung_'.$studiengang.'_'.$dokument_kurzbz.'">128</span>
 											</div>
 										</div>
 										<div class="col-sm-4">
@@ -1923,10 +1962,10 @@ function getNachreichForm($dokument_kurzbz, $studiengang)
 								<div class="row">
 									<div class="col-sm-12">';
 
-	// An der FHTW wird beim nachreichen des Dokuments "zgv_bakk" ein vorläufiges ZGV-Dokument verlangt
+	// An der FHTW wird beim nachreichen des Dokuments "zgv_bakk" oder "zgv_mast" ein vorläufiges ZGV-Dokument verlangt
 	// Die Spaltenbreite wird daher angepasst
 	$colspan = 12;
-	if (CAMPUS_NAME == 'FH Technikum Wien' && $dokument_kurzbz == 'zgv_bakk')
+	if (CAMPUS_NAME == 'FH Technikum Wien' && ($dokument_kurzbz == 'zgv_bakk' || $dokument_kurzbz == 'zgv_mast'))
 	{
 		$returnstring .= '				<div class="col-sm-8">
 											<span>'.$p->t('bewerbung/infotextVorlaeufigesZgvDokument').':</span>

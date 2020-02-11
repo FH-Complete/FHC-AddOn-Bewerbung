@@ -52,24 +52,24 @@ if (! isset($person_id))
 	{
 		$c = $a->studiengang_kz - $b->studiengang_kz;
 		$c .= $a->anzahl_akten_vorhanden - $b->anzahl_akten_vorhanden;
+		$c .= $a->anzahl_dokumente_akzeptiert - $b->anzahl_dokumente_akzeptiert;
 		$c .= $b->pflicht - $a->pflicht;
 		$c .= $a->stufe - $b->stufe;
 		$c .= strcmp(strtolower($a->bezeichnung_mehrsprachig[getSprache()]), strtolower($b->bezeichnung_mehrsprachig[getSprache()]));
 		$c .= $a->anzahl_akten_formal_geprueft - $b->anzahl_akten_formal_geprueft;
-		$c .= $a->anzahl_dokumente_akzeptiert - $b->anzahl_dokumente_akzeptiert;
-
 
 		return $c;
 	}
 	if ($dokumente_abzugeben)
 		usort($dokumente_abzugeben, "sortDocuments");
 
+	$anzahlOffeneDokumente = 0;
 	if ($dokumente_abzugeben)
 	{
-		echo '<p>'.$p->t('bewerbung/bitteDokumenteHochladen').'</p>';
 		$currentStudiengangKz = '';
 		$stufePrestudent = 0;
 		$dokumentKurzbz = '';
+		$anzahlDokumente = 0;
 		foreach ($dokumente_abzugeben as $dok)
 		{
 			// Stufe des PreStudenten ermitteln. Wenn Stufe < Dokumentstufe, zum nächsten weitergehen.
@@ -86,12 +86,20 @@ if (! isset($person_id))
 			{
 				continue;
 			}
+			$anzahlDokumente++;
+
+			if ($anzahlDokumente == 1)
+			{
+				echo '<p>'.$p->t('bewerbung/bitteDokumenteHochladen').'</p>';
+			}
+
 			$dokumentKurzbz = $dok->dokument_kurzbz;
 
 			if ($dok->studiengang_kz != $currentStudiengangKz)
 			{
 				if ($currentStudiengangKz != '')
 				{
+					$dokumentKurzbz = '';
 					echo '	</div></fieldset>';
 				}
 				$currentStudiengangKz = $dok->studiengang_kz;
@@ -104,7 +112,8 @@ if (! isset($person_id))
 				else
 				{
 					$studiengang = new studiengang($dok->studiengang_kz);
-					echo '<legend>'.$p->t('bewerbung/dokumenteFuer').' '.$studiengang->bezeichnung_arr[getSprache()].'</legend>';
+					$studiengang->getStudiengangTyp($studiengang->typ);
+					echo '<legend>'.$p->t('bewerbung/dokumenteFuer').' '.$studiengang->bezeichnung.' '.$studiengang->bezeichnung_arr[getSprache()].'</legend>';
 				}
 				echo '<div class="panel-group">';
 			}
@@ -115,11 +124,7 @@ if (! isset($person_id))
 			{
 				$dokumentbezeichnung = $dok->bezeichnung_mehrsprachig[DEFAULT_LANGUAGE];
 			}
-			// Pflichtdokumente werden gekennzeichnet
-			if ($dok->pflicht)
-			{
-				//$dokumentbezeichnung .= '<span style="color: red"> *</span>';
-			}
+
 			// Detailbeschreibungen zu Dokumenten holen. Diese werden mit den allgemeinen Beschreibungen zusammengeführt
 			$details = new dokument();
 			$details->getBeschreibungenDokumente(array($dok->studiengang_kz), $dok->dokument_kurzbz);
@@ -158,7 +163,11 @@ if (! isset($person_id))
 			$statusInfotext = '';
 			$displayDetailsArrow = true;
 			// Panel-Header unterschiedlich stylen
-			if ($dok->anzahl_akten_vorhanden > 0)
+			// Wenn akten vorhanden sind oder das Dokument bereits akzeptiert wurde
+			if ($dok->anzahl_akten_vorhanden > 0
+				|| (defined('BEWERBERTOOL_UPLOAD_DOKUMENT_WENN_AKZEPTIERT')
+					&& BEWERBERTOOL_UPLOAD_DOKUMENT_WENN_AKZEPTIERT === false
+					&& $dok->anzahl_dokumente_akzeptiert > 0))
 			{
 				echo '<div class="panel panel-success">';
 				$collapseStatus = 'collapse';
@@ -175,6 +184,7 @@ if (! isset($person_id))
 				echo '<div class="panel panel-danger">';
 				$statusInfotext = '<div class="label label-danger">'.$p->t('bewerbung/dokumentErforderlich').'</div>';
 				$displayDetailsArrow = false;
+				$anzahlOffeneDokumente ++;
 			}
 			else
 			{
@@ -261,7 +271,7 @@ if (! isset($person_id))
 				{
 					$uploadButtonVisible = true;
 					$offsetAktenListe = '';
-					if ($dok->anzahl_akten_vorhanden >= BEWERBERTOOL_ANZAHL_DOKUMENTPLOAD_JE_TYP)
+					if (defined('BEWERBERTOOL_ANZAHL_DOKUMENTPLOAD_JE_TYP') && $dok->anzahl_akten_vorhanden >= BEWERBERTOOL_ANZAHL_DOKUMENTPLOAD_JE_TYP)
 					{
 						// Wenn ANZAHL_DOKUMENTPLOAD_JE_TYP erreicht ist, Upload-Button ausblenden
 						$uploadButtonVisible = false;
@@ -294,6 +304,16 @@ if (! isset($person_id))
 				}
 
 			}
+			// Wenn das Dokument bereits akzeptiert aber noch nichts hochgeladen wurde
+			elseif (defined('BEWERBERTOOL_UPLOAD_DOKUMENT_WENN_AKZEPTIERT')
+				&& BEWERBERTOOL_UPLOAD_DOKUMENT_WENN_AKZEPTIERT === false
+				&& $dok->anzahl_dokumente_akzeptiert > 0)
+			{
+				// Akten ausgeben
+				echo '	<div class="col-sm-3 col-sm-offset-3 aktenliste_'.$dok->dokument_kurzbz.'" style="padding-bottom: 5px">';
+				echo getAktenListe($person_id, $dok->dokument_kurzbz);
+				echo '	</div>';
+			}
 			// Noch keine Akte vorhanden
 			else
 			{
@@ -302,10 +322,6 @@ if (! isset($person_id))
 					echo getUploadButton($dok->dokument_kurzbz, $dok->nachreichbar, true, $dok->studiengang_kz, $dok->ausstellungsdetails);
 				echo '	</div>';
 			}
-
-			// Hier wird ein unsichtbares div mit der Anzahl an erforderlichen Dokumeten ausgegeben
-			// Auf dieses wird dann mit jquery abgefragt um den Menüpunkt einfärben zu können.
-			echo '<div id="anzahlOffeneDokumente" style="display: none">'.count($status_dokumente_arr).'</div>';
 
 			// Bei Lichtbildern wird zusätzlich ein Modal für den Bildzuschnitt mit Croppie angezeigt
 			if ($dok->dokument_kurzbz == 'LichtbilXXX')
@@ -344,43 +360,36 @@ if (! isset($person_id))
 					
 			';
 		}
-		echo '	</div></fieldset>';
+
+		if ($anzahlDokumente == 0)
+		{
+			echo '<div class="alert alert-info">'.$p->t('bewerbung/keineDokumenteErforderlich').'</div>';
+			echo '<div id="anzahlOffeneDokumente" style="display: none"></div>';
+		}
+		else
+		{
+			echo '	</div></fieldset>';
+		}
 	}
 	else
 	{
 		echo '<div class="alert alert-info">'.$p->t('bewerbung/keineDokumenteErforderlich').'</div>';
 		echo '<div id="anzahlOffeneDokumente" style="display: none"></div>';
 	}
+	// Hier wird ein unsichtbares div mit der Anzahl an erforderlichen Dokumenten ausgegeben
+	// Auf dieses wird dann mit jquery abgefragt um den Menüpunkt einfärben zu können.
+	echo '<div id="anzahlOffeneDokumente" style="display: none">'.$anzahlOffeneDokumente.'</div>';
 	?>
 
 	<button class="btn-nav btn btn-default" type="button"
 		data-jump-tab="<?php echo $tabs[array_search('dokumente', $tabs)-1] ?>">
 		<?php echo $p->t('global/zurueck') ?>
 	</button>
-	<?php 
-	if (CAMPUS_NAME == 'FH Technikum Wien')
-	{
-		if (check_person_statusbestaetigt($person_id, 'Interessent', $nextWinterSemester->studiensemester_kurzbz))
-		{
-			echo '	<button class="btn-nav btn btn-default" type="button"
-						data-jump-tab="'.$tabs[array_search('dokumente', $tabs)+1].'">
-						'.$p->t('bewerbung/weiter').'
-					</button>';
-		}
-		else
-		{
-			echo '	<button class="btn-nav btn btn-default" type="button" data-jump-tab="'.$tabs[array_search('dokumente', $tabs)+2].'">
-						'.$p->t('bewerbung/weiter').'
-					</button>';
-		}
-	}
-	else 
-	{
-		echo '	<button class="btn-nav btn btn-default" type="button"
-					data-jump-tab="'.$tabs[array_search('dokumente', $tabs)+1].'">
-					'.$p->t('bewerbung/weiter').'
-				</button>';
-	}
+	<?php
+	echo '	<button class="btn-nav btn btn-default" type="button"
+				data-jump-tab="'.$tabs[array_search('dokumente', $tabs)+1].'">
+				'.$p->t('bewerbung/weiter').'
+			</button>';
 	?>
 
 	<br /><br/><br/>

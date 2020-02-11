@@ -293,11 +293,13 @@ if(!isset($person_id))
 			echo '</ul></div></div></div></div></div>';
 		}
 	}
-	?>
-	<button class="btn-nav btn btn-default" type="button" data-jump-tab="<?php echo $tabs[array_search('aufnahme', $tabs)-1] ?>">
-		<?php echo $p->t('global/zurueck') ?>
-	</button>
-	<?php 
+
+	if (array_key_exists(array_search('aufnahme', $tabs)-1, $tabs))
+	{
+		echo '	<button class="btn-nav btn btn-default" type="button" data-jump-tab="'.$tabs[array_search('aufnahme', $tabs)-1].'">
+					'.$p->t('global/zurueck').'
+				</button>';
+	}
 	if (array_key_exists(array_search('aufnahme', $tabs)+1, $tabs))
 	{
 		echo '	<button class="btn-nav btn btn-default" type="button" data-jump-tab="'.$tabs[array_search('aufnahme', $tabs)+1].'">

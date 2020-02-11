@@ -81,7 +81,99 @@ $this->phrasen['bewerbung/mailtext']='Dear %4$s %1$s %2$s.<br><br>
 $this->phrasen['bewerbung/zugangsdatenFalsch']='The access code you have entered is incorrect or you have not yet registered.';
 $this->phrasen['bewerbung/mailFalsch']='The e-mail address you have entered is incorrect or you have not yet registered.';
 $this->phrasen['bewerbung/fehlerBeimSenden']='An error occured while sending the E-Mail.';
-$this->phrasen['bewerbung/emailgesendetan']='The e-mail with your access code has successfully been sent to %s.';
+$this->phrasen['bewerbung/emailgesendetan']='
+<style type="text/css">
+	#mail_icon
+		{
+			position:relative;
+			animation:mymove 2s  ;
+			animation-iteration-count:2;
+			/* Safari and Chrome */
+			-webkit-animation:mailsend_small 2s;
+			-webkit-animation-iteration-count:2;
+		}
+	@media (min-width: 576px)
+	{
+		#mail_icon
+		{
+			position:relative;
+			animation:mymove 2s  ;
+			animation-iteration-count:2;
+			/* Safari and Chrome */
+			-webkit-animation:mailsend_small 2s;
+			-webkit-animation-iteration-count:2;
+		}
+	}
+	@media (min-width: 768px)
+	{
+		#mail_icon
+		{
+			position:relative;
+			animation:mymove 2s  ;
+			animation-iteration-count:2;
+			/* Safari and Chrome */
+			-webkit-animation:mailsend_medium 2s;
+			-webkit-animation-iteration-count:2;
+		}
+	}
+	@media (min-width: 992px)
+	{
+		#mail_icon
+		{
+			position:relative;
+			animation:mymove 2s  ;
+			animation-iteration-count:2;
+			/* Safari and Chrome */
+			-webkit-animation:mailsend_large 2s;
+			-webkit-animation-iteration-count:2;
+		}
+	}
+	@keyframes mailsend_small 
+	{
+		0%%,30%% 
+		{
+			opacity: 1;
+			transform: translate(0, 0);
+		}
+		100%% 
+		{
+			opacity: 0;
+			transform: translate(200px, 0);
+		}
+	}
+	@keyframes mailsend_medium
+	{
+		0%%,30%% 
+		{
+			opacity: 1;
+			transform: translate(0, 0);
+		}
+		100%% 
+		{
+			opacity: 0;
+			transform: translate(300px, 0);
+		}
+	}
+	@keyframes mailsend_large
+	{
+		0%%,30%% 
+		{
+			opacity: 1;
+			transform: translate(0, 0);
+		}
+		100%% 
+		{
+			opacity: 0;
+			transform: translate(400px, 0);
+		}
+	}
+	
+</style>
+<span id="mail_icon" class="glyphicon glyphicon-envelope" style="font-size:50px;"></span>
+<br><br>
+The e-mail with your access code has successfully been sent to %s.
+<br><br>You should receive an e-mail within a few minutes. If you receive no e-mail within <b>24 hours</b> please contact 
+our <a href=\'https://www.technikum-wien.at/en/student-guide/admission-counselors/\' target=\'_blank\'>student counselling team</a>';
 $this->phrasen['bewerbung/zurueckZurAnmeldung']='Back to registration.';
 $this->phrasen['bewerbung/sicherheitscodeFalsch']='The access code is incorrect.';
 $this->phrasen['bewerbung/geplanterStudienbeginn']='Planned start of study period';
@@ -185,7 +277,7 @@ $this->phrasen['bewerbung/zahlungsinformation']='Payment information';
 $this->phrasen['bewerbung/bezahlt']='payed';
 $this->phrasen['bewerbung/zahlungsdetails']='Payment details';
 $this->phrasen['bewerbung/menuReihungstest']='Placement test';
-$this->phrasen['bewerbung/fuerReihungstestAnmelden']='Here are the next available placement tests. Please register for <b>one</b> and note that you need to take the test only once even if you have selected more than one bachelor degree programme.';
+$this->phrasen['bewerbung/fuerReihungstestAnmelden']='Here are the next available placement tests. <br>Please register for <b>one</b> and note that you need to take the test only once even if you have selected more than one bachelor degree programme.<br>The registration locks the prioritization of your degree programs.';
 $this->phrasen['bewerbung/fehler']='An error occurred';
 $this->phrasen['bewerbung/angemeldetPlaetze']='registered / places';
 $this->phrasen['bewerbung/uhrzeit']='Time';
@@ -475,6 +567,7 @@ $this->phrasen['bewerbung/bitteZGVausweahlen']='If you are applying for a Bachel
 $this->phrasen['bewerbung/allgemeineDokumente']='General Documents';
 $this->phrasen['bewerbung/akteBereitsVorhanden']='The maximum number of uploads for this document has been reached'; // Nur grob übersetzt
 $this->phrasen['bewerbung/vervollstaendigenSieIhreDaten']='Complete the data to send the application'; // Nur grob übersetzt
+$this->phrasen['bewerbung/datenUnvollstaendig']='Daten unvollständig'; // Noch zu übersetzen
 $this->phrasen['bewerbung/durchsuchen']='Browse...';
 $this->phrasen['bewerbung/infotextRegistrationBewerbungGesperrt']='Currently you can only apply for Certificate Programs for Further Education.<br>The application period for bachelor and master degree programs will start in September';
 $this->phrasen['bewerbung/mehr']='More';
@@ -484,13 +577,19 @@ $this->phrasen['bewerbung/menuUebersichtBewerbungAbschicken']='Overview / Send a
 $this->phrasen['bewerbung/logoutInfotext']='Your application has not been sent yet. Are you sure you want to logout?'; // Nur grob übersetzt
 $this->phrasen['bewerbung/menuMessages']='Messages';
 $this->phrasen['bewerbung/erklaerungMessages']='Hier können Sie Nachrichten abrufen';
+$this->phrasen['bewerbung/dateiUploadLeer']='File could not be uploaded. Maybe filesize exceeded 15MB'; // Nur grob übersetzt
+$this->phrasen['bewerbung/zustimmungAGB']='Zustimmung zu unseren allgemeinen Geschäftsbedingungen.'; // Noch zu übersetzen
+$this->phrasen['bewerbung/bitteAGBZustimmen']='Sie müssen den AGB zustimmen, um Ihre Bewerbung abschicken zu können'; // Noch zu übersetzen
+$this->phrasen['bewerbung/zahlungAusstaendig']='Es sind noch Zahlungen offen. Sie können die Bewerbung erst abschicken, wenn alle Zahlungen eingegangen sind.'; // Noch zu übersetzen
+$this->phrasen['bewerbung/microsoftMailWarning']='<b>Warning!</b> Currently e-mails from the UAS Technikum Wien can not be received via @hotmail, @outlook and @live adresses.<br>Please use an other e-mail address if possible.';
+$this->phrasen['bewerbung/herkunftDesBewerbers']='Herkunft';
 
 // Reihungstest
 $this->phrasen['bewerbung/anmeldungReihungstestMailBetreff']='Confirmation of registration to placement test UAS Technikum Wien';
 $this->phrasen['bewerbung/anmeldungReihungstestMail']='Dear %3$s %1$s %2$s,<br><br>
 You have successfully applied for the placement test on %4$s. The test begins at %5$s and lasts about 3.5 hours.<br><br>
 Please bring an official photo ID to verify your identity.<br>
-You will be able to see the room where the test will be held about a week beforehand in the Application Tool.<br>
+You will be able to see the room where the test will be held about 2 days beforehand in the Application Tool.<br>
 If you have any questions, please do not hesitate to contact the <a href="mailto:studienberatung@technikum-wien.at">InfoCenter team</a>.<br><br>
 Yours sincerely<br>
 UAS Technikum Wien';
@@ -501,7 +600,7 @@ $this->phrasen['bewerbung/reihungstestInfoTextAngemeldet']='<div class="alert al
 </div><br>';
 $this->phrasen['bewerbung/anmeldefrist']='Term of application';
 $this->phrasen['bewerbung/infoVorgemerktFuerQualifikationskurs']='You are pencilled in as a participant for the qualification courses. Once you are confirmed there, you can choose an appointment for the placement test here.';
-$this->phrasen['bewerbung/raumzuteilungFolgt']='One week prior to the test you will see here the room-number';
+$this->phrasen['bewerbung/raumzuteilungFolgt']='Two days prior to the test you will see here the room-number';
 $this->phrasen['bewerbung/sieHabenFolgendenTerminGewaehlt']='You have registered for the following placement test date';
 
 // Ausbildung

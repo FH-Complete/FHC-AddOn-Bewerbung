@@ -610,12 +610,25 @@ if ($aktionReihungstest)
 $save_error_abschicken = '';
 if (isset($_POST['btn_bewerbung_abschicken']))
 {
+	// Die BFI-KI nimmt automatisch Kontobelastungen vor, wenn es eine neue Bewerbung gibt.
+	// Wenn die Seite dazwischen nicht aktualisiert wird, kann man dennoch abschicken.
+	// Darum wird hier nochmal auf Belastungen gecheckt
+	if (defined('BEWERBERTOOL_ZAHLUNGEN_ANZEIGEN') && BEWERBERTOOL_ZAHLUNGEN_ANZEIGEN === true)
+	{
+		$konto = new konto();
+		if (! $konto->checkKontostand($person_id))
+		{
+			$message = $p->t('bewerbung/zahlungAusstaendig');
+			$save_error_abschicken = true;
+		}
+	}
+
 	// Mail an zuständige Assistenz schicken
 	$pr_id = isset($_POST['prestudent_id']) ? $_POST['prestudent_id'] : '';
 	$sendmail = false; // Damit das Mail beim Seitenreload nicht nochmal geschickt wird
 	$bewerbungszeitraum_gueltig = true;
 
-	if ($pr_id != '')
+	if ($pr_id != '' && $save_error_abschicken == '')
 	{
 		// Status Bewerber anlegen
 		$prestudent_status = new prestudent();
@@ -707,7 +720,7 @@ if (isset($_POST['btn_bewerbung_abschicken']))
 		$prestudent->load($pr_id);
 		$studiengang = new studiengang();
 		$studiengang->load($prestudent->studiengang_kz);
-		if ($sendmail == true && $bewerbungszeitraum_gueltig == true)
+		if ($sendmail == true && $bewerbungszeitraum_gueltig == true && $save_error_abschicken == '')
 		{
 			if (sendBewerbung($pr_id, $prestudent_status->studiensemester_kurzbz, $prestudent_status->orgform_kurzbz, $prestudent_status->studienplan_id))
 			{
@@ -807,21 +820,29 @@ if (isset($_POST['submit_nachgereicht']))
 
 
 
-			// An der FHTW wird ein vorläufiges ZGV-Dokument verlangt
-			if (CAMPUS_NAME == 'FH Technikum Wien' && $_POST['dok_kurzbz'] == 'zgv_bakk')
+			// An der FHTW wird ein vorläufiges ZGV-Dokument bei Bachelor und Master verlangt
+			if (CAMPUS_NAME == 'FH Technikum Wien' && ($_POST['dok_kurzbz'] == 'zgv_bakk' || $_POST['dok_kurzbz'] == 'zgv_mast'))
 			{
-				// Check, ob Dakumenttyp 'ZgvBaPre' schon existiert
+				if ($_POST['dok_kurzbz'] == 'zgv_bakk')
+				{
+					$preDokument = 'ZgvBaPre';
+				}
+				elseif ($_POST['dok_kurzbz'] == 'zgv_mast')
+				{
+					$preDokument = 'ZgvMaPre';
+				}
+				// Check, ob Dokumenttyp 'ZgvBaPre' bzw. 'ZgvMaPre' schon existiert
 				$dokument = new dokument();
-				if ($dokument->loadDokumenttyp('ZgvBaPre'))
+				if ($dokument->loadDokumenttyp($preDokument))
 				{
 					$error = false;
 					$message = '';
 					// Check, ob ein File gewaelt wurde
 					if (!empty($_FILES['filenachgereicht']['tmp_name']))
 					{
-						$dokumenttyp_upload = 'ZgvBaPre';
+						$dokumenttyp_upload = $preDokument;
 
-						// Es wird eine neue Akte vom Typ "ZgvBaPre" angelegt
+						// Es wird eine neue Akte vom Typ "ZgvBaPre" bzw. "ZgvMaPre" angelegt
 						// DMS-Eintrag erstellen
 						$ext = strtolower(pathinfo($_FILES['filenachgereicht']['name'], PATHINFO_EXTENSION));
 
@@ -883,9 +904,9 @@ if (isset($_POST['submit_nachgereicht']))
 							$akte->insertvon = 'online';
 
 							$dokument = new dokument();
-							$dokument->loadDokumenttyp('ZgvBaPre');
+							$dokument->loadDokumenttyp($preDokument);
 
-							$akte->dokument_kurzbz = 'ZgvBaPre';
+							$akte->dokument_kurzbz = $preDokument;
 							$akte->titel = cutString($_FILES['filenachgereicht']['name'], 32, '~', true); // Dateiname
 							$akte->bezeichnung = cutString($dokument->bezeichnung, 32); // Dokumentbezeichnung
 							$akte->person_id = $person_id;
@@ -1805,6 +1826,12 @@ if (isset($_POST['btn_new_accesscode']))
 	}
 }
 
+// Upload eines leeren Dokuments oder wenn die Datei zu groß ist
+if (empty($_POST) && isset($_GET['fileupload']) && $_GET['fileupload'] == 'true')
+{
+	$save_error_dokumente = true;
+	$message = $p->t('bewerbung/dateiUploadLeer');
+}
 // Upload eines Dokuments
 if (isset($_POST['submitfile']))
 {
@@ -1826,7 +1853,7 @@ if (isset($_POST['submitfile']))
 				||
 				(   $akte->result[0]->inhalt_vorhanden == false
 					&& $akte->result[0]->dms_id == '')))
-		// Wie verfahren wir mit Nachreichungen, wenn mehr als 1 Dokument verohanden ist??
+		// Wie verfahren wir mit Nachreichungen, wenn mehr als 1 Dokument vorhanden ist??
 		//if (!isset($akte->result[0]) || ($akte->result[0]->inhalt == '' && $akte->result[0]->dms_id == ''))
 		{
 			if ($dokumenttyp_upload != '')
@@ -2501,6 +2528,13 @@ else
 					var sprache = $(this).attr('data-sprache');
 					changeSprache(sprache);
 				});
+				// remove fileupload from get param
+				var uri = window.location.toString();
+				if (uri.indexOf("?") > 0)
+				{
+					var clean_uri = uri.substring(0, uri.indexOf("&fileupload"));
+					window.history.replaceState({}, document.title, clean_uri);
+				}
 			});
 		</script>
 	</head>
@@ -2549,61 +2583,11 @@ else
 						<?php
 						if(!defined('BEWERBERTOOL_DOKUMENTE_ANZEIGEN') || BEWERBERTOOL_DOKUMENTE_ANZEIGEN)
 						{
-							// An der FHTW werden Dokumente nur angezeigt wenn eine aktive Bewerbung vorliegt oder die Person einen aktiven Account hat
-							if (CAMPUS_NAME == 'FH Technikum Wien')
-							{
-								$standalone_masterbewerbung = false;
-								$masterbewerbung_bestaetigt = false;
-								$aktiverBenutzer = false;
-								$benutzer = new benutzer();
-								if ($benutzer->getBenutzerFromPerson($person_id, true))
-								{
-									if (count($benutzer->result) > 0)
-										$aktiverBenutzer = true;
-								}
-								if ($prestudent = getBewerbungen($person_id, true))
-								{
-									foreach ($prestudent as $row)
-									{
-										if ($row->studiengang_typ != 'm')
-										{
-											$standalone_masterbewerbung = false;
-											break;
-										}
-										if ($row->studiengang_typ == 'm')
-										{
-											$standalone_masterbewerbung = true;
-											if (check_person_statusbestaetigt($person_id, 'Interessent', null, $row->studiengang_kz))
-												$masterbewerbung_bestaetigt = true;
-										}
-									}
-									if (!$standalone_masterbewerbung || $masterbewerbung_bestaetigt)
-									{
-										echo '	<li>
-											<a id="tabDokumenteLink" href="#dokumente" aria-controls="dokumente" role="tab" data-toggle="tab">
-												'.$p->t('bewerbung/menuDokumente').' <br> <span id="tabDokumenteStatustext"></span>
-											</a>
-										</li>';
-									}
-								}
-								elseif ($aktiverBenutzer)
-								{
-									echo '	<li>
-										<a id="tabDokumenteLink" href="#dokumente" aria-controls="dokumente" role="tab" data-toggle="tab">
-											'.$p->t('bewerbung/menuDokumente').' <br> <span id="tabDokumenteStatustext"></span>
-										</a>
-									</li>';
-								}
-
-							}
-							else
-							{
-								echo '	<li>
-										<a id="tabDokumenteLink" href="#dokumente" aria-controls="dokumente" role="tab" data-toggle="tab">
-											'.$p->t('bewerbung/menuDokumente').' <br> <span id="tabDokumenteStatustext"></span>
-										</a>
-									</li>';
-							}
+							echo '	<li>
+									<a id="tabDokumenteLink" href="#dokumente" aria-controls="dokumente" role="tab" data-toggle="tab">
+										'.$p->t('bewerbung/menuDokumente').' <br> <span id="tabDokumenteStatustext"></span>
+									</a>
+								</li>';
 						}
 						 ?>
 
@@ -2653,15 +2637,59 @@ else
 						if(!defined('BEWERBERTOOL_REIHUNGSTEST_ANZEIGEN') || BEWERBERTOOL_REIHUNGSTEST_ANZEIGEN)
 						{
 							// An der FHTW wird der Punkt "Reihungstest" erst angezeigt, wenn der Status einer Bewerbung bestätigt wurde
+							// und es mindestens eine Bachelor-Bewerbung gibt
 							if (CAMPUS_NAME == 'FH Technikum Wien')
 							{
-								if (check_person_statusbestaetigt($person_id, 'Interessent', $nextWinterSemester->studiensemester_kurzbz))
+								$standalone_masterbewerbung = false;
+								if ($prestudent = getBewerbungen($person_id, true))
+								{
+									foreach ($prestudent as $row)
+									{
+										if ($row->studiengang_typ != 'm')
+										{
+											$standalone_masterbewerbung = false;
+											break;
+										}
+										else
+										{
+											$standalone_masterbewerbung = true;
+											$display = 'style="display: none"';
+										}
+									}
+									if ($standalone_masterbewerbung === false)
+									{
+										if (check_person_statusbestaetigt($person_id, 'Interessent', $nextWinterSemester->studiensemester_kurzbz))
+										{
+											$display = '';
+										}
+										else
+										{
+											$display = 'style="display: none"';
+											if (($key = array_search('aufnahme', $tabs)) !== false)
+											{
+												unset($tabs[$key]);
+											}
+											$tabs = array_values($tabs);
+										}
+									}
+								}
+							}
+							elseif (CAMPUS_NAME == 'FH BFI Wien')
+							{
+								$dokument = new dokument();
+
+								if ($dokument->akzeptiert('RTE', $person_id))
 								{
 									$display = '';
 								}
 								else
 								{
 									$display = 'style="display: none"';
+									if (($key = array_search('aufnahme', $tabs)) !== false)
+									{
+										unset($tabs[$key]);
+									}
+									$tabs = array_values($tabs);
 								}
 							}
 
@@ -2785,6 +2813,7 @@ else
 				?>
 			</div>
 		</div>
+		<div style="text-align:center; color:gray;"><?php echo $p->t('bewerbung/footerText')?></div>
 	</body>
 </html>
 
@@ -2862,7 +2891,7 @@ function sendBewerbung($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz,
 		$nation = new nation($adr_nation);
 
 		$notiz = new notiz();
-		$notiz->getBewerbungstoolNotizen($person_id);
+		$notiz->getBewerbungstoolNotizen($person_id, $prestudent_id);
 		$anmerkungen = '';
 		foreach ($notiz->result as $note)
 		{
@@ -2873,6 +2902,36 @@ function sendBewerbung($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz,
 				$anmerkungen .= '- ' . htmlspecialchars($note->text);
 			}
 		}
+
+		// Prüfen, ob der Bewerber schon Student an der FHTW war
+		// Wenn ja, Auflistung der Status, ansonsten "extern"
+		$herkunft = '';
+		$allPrestudents = new prestudent();
+		$allPrestudents->getPrestudenten($prestudent->person_id);
+		$stgPrestudent = new studiengang();
+		$stgPrestudent->getAll('typ, kurzbz', true);
+
+		foreach ($allPrestudents->result as $prestudentRow)
+		{
+			$prestudentLastStatus = new prestudent();
+			$prestudentLastStatus->getLastStatus($prestudentRow->prestudent_id);
+
+			if ($prestudentLastStatus->status_kurzbz == 'Student'
+				|| $prestudentLastStatus->status_kurzbz == 'Absolvent'
+				|| $prestudentLastStatus->status_kurzbz == 'Abbrecher'
+				|| $prestudentLastStatus->status_kurzbz == 'Incoming'
+				|| $prestudentLastStatus->status_kurzbz == 'Unterbrecher'
+				|| $prestudentLastStatus->status_kurzbz == 'Diplomand'
+				|| $prestudentLastStatus->status_kurzbz == 'Outgoing')
+			{
+				$herkunft .= $stgPrestudent->kuerzel_arr[$prestudentRow->studiengang_kz].' ('.$prestudentLastStatus->status_kurzbz.' '.$prestudentLastStatus->studiensemester_kurzbz.')<br/>';
+			}
+		}
+		if ($herkunft == '')
+		{
+			$herkunft = 'extern';
+		}
+
 		$sanchoMailHeader = base64_encode(file_get_contents(APP_ROOT . 'skin/images/sancho/sancho_header_min_bw.jpg'));
 		$sanchoMailFooter = base64_encode(file_get_contents(APP_ROOT . 'skin/images/sancho/sancho_footer_min_bw.jpg'));
 		$email = $p->t('bewerbung/emailBodyStart', array(VILESCI_ROOT . 'vilesci/personen/personendetails.php?id='.$person_id, $sanchoMailHeader));
@@ -2881,6 +2940,7 @@ function sendBewerbung($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz,
 		if(defined('MAIL_DEBUG') && MAIL_DEBUG != '')
 			$email .= '<br><br>Empfänger: '.$empfaenger.'<br><br>';
 		$email .= '<br><table style="font-size:small"><tbody>';
+		$email .= '<tr><td style="vertical-align:top"><b>' . $p->t('bewerbung/herkunftDesBewerbers') . '</b></td><td>'.$herkunft.'</td></tr>';
 		$email .= '<tr><td><b>' . $p->t('global/studiengang') . '</b></td><td>' . $typ->bezeichnung . ' ' . $studiengangsbezeichnung . ($orgform_kurzbz != '' ? ' (' . $orgform_kurzbz . ')' : '') . '</td></tr>';
 		$email .= '<tr><td><b>' . $p->t('global/studiensemester') . '</b></td><td>' . $studiensemester_kurzbz . '</td></tr>';
 		if ($studienplan_bezeichnung != '')
@@ -2989,8 +3049,12 @@ function sendBewerbung($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz,
 		}
 
 		$mail_bewerber->setHTMLContent($email_bewerber_content);
-		$mail_bewerber->addEmbeddedImage(APP_ROOT . 'skin/images/sancho/sancho_header_DEFAULT.jpg', 'image/jpg', 'header_image', 'sancho_header');
-		$mail_bewerber->addEmbeddedImage(APP_ROOT . 'skin/images/sancho/sancho_footer.jpg', 'image/jpg', 'footer_image', 'sancho_footer');
+		// BFI braucht keine eingebetteten Images
+		if (CAMPUS_NAME != 'FH BFI Wien')
+		{
+			$mail_bewerber->addEmbeddedImage(APP_ROOT.'skin/images/sancho/sancho_header_DEFAULT.jpg', 'image/jpg', 'header_image', 'sancho_header');
+			$mail_bewerber->addEmbeddedImage(APP_ROOT.'skin/images/sancho/sancho_footer.jpg', 'image/jpg', 'footer_image', 'sancho_footer');
+		}
 		if (! $mail_bewerber->send())
 			return false;
 	}
@@ -3064,7 +3128,7 @@ function sendAddStudiengang($prestudent_id, $studiensemester_kurzbz, $orgform_ku
 	$nation = new nation($adr_nation);
 
 	$notiz = new notiz();
-	$notiz->getBewerbungstoolNotizen($person_id);
+	$notiz->getBewerbungstoolNotizen($person_id, $prestudent_id);
 	$anmerkungen = '';
 	foreach ($notiz->result as $note)
 	{
