@@ -53,12 +53,12 @@ elseif($save_error_zugangscode===true)
 
 echo '<!-- 4:3 aspect ratio -->
 
-		<div id="responsiveDiv" class="embed-responsive" style="padding-bottom: 100%; height: 50%">
+		<div id="responsiveDiv" class="embed-responsive" style="padding-bottom: 100%; border: 1px solid lightgrey">
 		  <iframe   id="massagesIframe" 
 		            class="embed-responsive-item" 
 		            src="../../../index.ci.php/system/messages/MessageClient/read" 
 		            <!--onload="changeIframeSize()"-->
-		            style="height: 200px"></iframe>
+		            ></iframe>
 		</div>';
 
 //https://c3p0.kindlm.technikum-wien.at/fhcomplete/index.ci.php/system/messages/MessageClient/write
@@ -88,7 +88,10 @@ echo '<br><br>
 <script type="text/javascript">
 $('#massagesIframe').load(function()
 {
-	$('#responsiveDiv').height(this.contentWindow.document.body.offsetHeight + 'px');
+	$('#responsiveDiv').css('height','70%');
+	//$('#responsiveDiv').height(this.contentWindow.document.body.offsetHeight + 'px');
+
+
 	//this.style.height =
 	//this.contentWindow.document.body.offsetHeight + 'px';
 });
