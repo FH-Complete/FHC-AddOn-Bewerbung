@@ -168,14 +168,14 @@ $this->phrasen['bewerbung/emailgesendetan']='
 			-webkit-animation-iteration-count:2;
 		}
 	}
-	@keyframes mailsend_small 
+	@keyframes mailsend_small
 	{
-		0%%,30%% 
+		0%%,30%%
 		{
 			opacity: 1;
 			transform: translate(0, 0);
 		}
-		100%% 
+		100%%
 		{
 			opacity: 0;
 			transform: translate(200px, 0);
@@ -183,12 +183,12 @@ $this->phrasen['bewerbung/emailgesendetan']='
 	}
 	@keyframes mailsend_medium
 	{
-		0%%,30%% 
+		0%%,30%%
 		{
 			opacity: 1;
 			transform: translate(0, 0);
 		}
-		100%% 
+		100%%
 		{
 			opacity: 0;
 			transform: translate(300px, 0);
@@ -196,23 +196,23 @@ $this->phrasen['bewerbung/emailgesendetan']='
 	}
 	@keyframes mailsend_large
 	{
-		0%%,30%% 
+		0%%,30%%
 		{
 			opacity: 1;
 			transform: translate(0, 0);
 		}
-		100%% 
+		100%%
 		{
 			opacity: 0;
 			transform: translate(400px, 0);
 		}
 	}
-	
+
 </style>
 <span id="mail_icon" class="glyphicon glyphicon-envelope" style="font-size:50px;"></span>
 <br><br>
 Die E-Mail mit Ihrem Zugangscode wurde erfolgreich an %s verschickt.
-<br><br>In der Regel erhalten Sie das Mail in wenigen Minuten. Wenn Sie nach <b>24 Stunden</b> noch kein Mail erhalten haben, 
+<br><br>In der Regel erhalten Sie das Mail in wenigen Minuten. Wenn Sie nach <b>24 Stunden</b> noch kein Mail erhalten haben,
 kontaktieren Sie bitte unsere <a href=\'https://www.technikum-wien.at/studieninformationen/studienberatung-kontaktieren/\' target=\'_blank\'>Studienberatung</a>';
 $this->phrasen['bewerbung/zurueckZurAnmeldung']='Zurück zur Login-Seite.';
 $this->phrasen['bewerbung/sicherheitscodeFalsch']='Der eingegebene Sicherheitscode ist falsch.';
@@ -653,7 +653,7 @@ $this->phrasen['bewerbung/reihungstestInfoTextAngemeldet']='<div class="alert al
 $this->phrasen['bewerbung/anmeldefrist']='Anmeldefrist';
 $this->phrasen['bewerbung/infoVorgemerktFuerQualifikationskurs']='Sie sind als TeilnehmerIn für die Qualifikationskurse vorgemerkt. Sobald sie dort bestätigt wurden, können Sie hier einen Termin für den Reihungstest wählen.';
 $this->phrasen['bewerbung/raumzuteilungFolgt']='Raumzuteilung folgt spätestens 2 Tage vor Ihrem Termin';
-$this->phrasen['bewerbung/sieHabenFolgendenTerminGewaehlt']='Sie haben sich zu folgendem Reihungstesttermin angemeldet';
+$this->phrasen['bewerbung/sieHabenFolgendenTerminGewaehlt']='Danke für Ihre Anmeldung zum Reihungstest.<br>Ihre Priorisierung der Studiengänge ist fixiert und kann nur bis zur Anmeldefrist geändert werden.<br>Nach Absolvierung des Reihungstests kann die Priorisierung <b>NICHT</b> mehr geändert werden.';
 
 // Ausbildung
 $this->phrasen['bewerbung/menuAusbildung']='Ausbildung';
