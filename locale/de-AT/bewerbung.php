@@ -255,7 +255,7 @@ $this->phrasen['bewerbung/menuAllgemein']='Allgemein';
 $this->phrasen['bewerbung/loginmitAccount']='Wenn Sie bereits einen Account haben, können sie sich mit Ihrem Usernamen / Passwort anmelden';
 $this->phrasen['bewerbung/allgemeineErklaerung']='Wir freuen uns, dass Sie sich für unser Bildungsangebot interessieren.<br>
 	Sie können online bis zu '.(defined('BEWERBERTOOL_MAX_STUDIENGAENGE') && BEWERBERTOOL_MAX_STUDIENGAENGE != ''?BEWERBERTOOL_MAX_STUDIENGAENGE:'').' Studienrichtungen und beliebig viele Lehrgänge zur Weiterbildung auswählen.<br>
-	Klicken Sie auf den grünen Button, um Ihrer Bewerbung einen Studiengang oder Lehrgang hinzuzufügen. Bitte beachten Sie, dass Sie bei der Auswahl Ihrer Studiengänge eine Priorität abgeben müssen und diese nach dem Abschicken nicht mehr geändert werden kann.
+	Klicken Sie auf den grünen Button, um Ihrer Bewerbung einen Studiengang oder Lehrgang hinzuzufügen. Bitte beachten Sie, dass Sie bei der Auswahl Ihrer Studiengänge eine Priorität abgeben müssen. Nach Absolvierung des Reihungstests kann die Priorisierung <b>NICHT</b> mehr geändert werden.
 	<br><br>
 	Sind alle erforderlichen Daten ausgefüllt, können Sie durch einen Klick auf "Bewerbung abschicken", Ihre Bewerbung an uns übermitteln.
 	<br><br>

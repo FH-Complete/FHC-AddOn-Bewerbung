@@ -511,7 +511,12 @@ $studiensemester_array = array();
 										</div>
 										<div class="form-group">
 											<label for="status" class="col-sm-3 col-md-5 text-right">'.$p->t('bewerbung/status').':</label>
-											<div class="col-sm-9 col-md-7" id="status">'.$prestatus_help.'</div>
+											<div class="col-sm-9 col-md-7" id="status">'.$prestatus_help;
+										if ($prestatus_help == 'BewerberIn')
+										{
+											echo '<br>Innerhalb von ca. einer Woche nach Absolvierung Ihres Reihungstests erfahren Sie, ob Sie einen Studienplatz (Status Aufgenomme/r) erhalten oder Sie vorerst auf Warteliste (Status Wartende/r) gesetzt wurden.';
+										}
+										echo '	</div>
 										</div>
 										<!--<div class="form-group">
 											<label for="datum" class="col-sm-3 col-md-5 text-right">'.$p->t('global/datum').':</label>
