@@ -35,10 +35,14 @@ if(!isset($person_id))
 	{
 		$typ = new studiengang();
 		$typ->getStudiengangTyp($row->typ);
+		$oe=new organisationseinheit();
+		$oe->load($row->oe_kurzbz);
 		$stg_arr[$row->studiengang_kz]['kuerzel'] = $row->kuerzel;
 		$stg_arr[$row->studiengang_kz]['typ'] = $typ->bezeichnung;
 		$stg_arr[$row->studiengang_kz]['German'] = $row->bezeichnung_arr['German'];
 		$stg_arr[$row->studiengang_kz]['English'] = $row->bezeichnung_arr['English'];
+		$stg_arr[$row->studiengang_kz]['OE'] = $oe->organisationseinheittyp_kurzbz.' '.$oe->bezeichnung;
+		$stg_arr[$row->studiengang_kz]['oe_kurzbz'] = $oe->oe_kurzbz;
 	}
 
 	echo '<h2>'.$p->t('tools/zahlungen').'</h2>';
@@ -48,7 +52,9 @@ if(!isset($person_id))
 	$buchungstyp = array();
 
 	foreach ($konto->result as $row)
-		$buchungstyp[$row->buchungstyp_kurzbz]=$row->beschreibung;
+	{
+		$buchungstyp[$row->buchungstyp_kurzbz] = $row->beschreibung;
+	}
 
 	$konto = new konto();
 	$konto->getBuchungen($person_id);
@@ -57,8 +63,28 @@ if(!isset($person_id))
 		echo '<div class="panel-group" id="accordionZahlungen">';
 		foreach ($konto->result as $row)
 		{
-			$betrag = $row['parent']->betrag;
+			// Wenn eine Bewerbung für diesen Studiengang existiert, die Orgform der Bewerbung laden,
+			// um den richtigen IBAN ermitteln zu können.
+			$bewerbungen = getBewerbungen($person_id, true);
+			$orgform = '';
+			foreach ($bewerbungen AS $bewerbung)
+			{
+				if ($bewerbung->studiengang_kz == $row['parent']->studiengang_kz)
+				{
+					$prestudent_status = new prestudent();
+					$prestudent_status->getLastStatus($bewerbung->prestudent_id);
+					$orgform = $prestudent_status->orgform_kurzbz;
+				}
+			}
 
+			// IBAN und BIC ermitteln
+			$iban = '';
+			$bic = '';
+			$kontodaten = getBankverbindung($stg_arr[$row['parent']->studiengang_kz]['oe_kurzbz'], $orgform);
+			$iban = $kontodaten["iban"];
+			$bic = $kontodaten["bic"];
+
+			$betrag = $row['parent']->betrag;
 			if(isset($row['childs']))
 			{
 				foreach ($row['childs'] as $row_child)
@@ -66,18 +92,29 @@ if(!isset($person_id))
 					$betrag += $row_child->betrag;
 				}
 			}
-
+			// Ergebnis auf 4 Kommastellen runden, da PHP sonst einen float mit Rundungsproblemen erzeugt
+			// siehe https://www.php.net/manual/de/language.types.float.php
+			$betrag = round($betrag, 4);
+			$class = '';
+			$textclass = '';
+			// Wenn noch nichts eingezahlt wurde
 			if($betrag < 0)
 			{
 				$class = 'danger';
+				$textclass = 'danger';
 			}
-			elseif($betrag >= 0)
+			// Wenn ein Teilbetrag eingezahlt wurde
+			if ($betrag > $row['parent']->betrag)
+			{
+				$class = 'warning';
+				$textclass = 'danger';
+			}
+			if($betrag >= 0)
 			{
 				$class = 'success';
-			}
-			else
-			{
-				$class = '';
+				$textclass = '';
+				// Zu viel bezahlte Gebühren nicht anzeigen sondern 0
+				$betrag = 0;
 			}
 			echo '
 			
@@ -86,7 +123,7 @@ if(!isset($person_id))
 					<h4 class="panel-title">
 					<div class="row">
 						<div class="col-sm-6">
-							€'.($betrag < 0? '-' : '').sprintf('%.2f',abs($row['parent']->betrag)).' 
+							€'.sprintf('%.2f',abs($row['parent']->betrag)).' 
 							'.$buchungstyp[$row['parent']->buchungstyp_kurzbz].' - 
 							'.$stg_arr[$row['parent']->studiengang_kz]['German'].' - 
 							'.$row['parent']->studiensemester_kurzbz.'</div>
@@ -110,7 +147,7 @@ if(!isset($person_id))
 									</div>
 									<div class="form-group">
 										<label for="" class="col-sm-3 col-md-5 text-right">'.$p->t('bewerbung/offenerBetrag').'</label>
-										<div class="col-sm-9 col-md-7">€'.$betrag.'</div>
+										<div class="col-sm-9 col-md-7 '.($textclass != '' ? 'text-'.$textclass : '').'">€'.sprintf('%.2f',abs($betrag)).'</div>
 									</div>
 									<div class="form-group">
 										<label for="" class="col-sm-3 col-md-5 text-right">'.$p->t('buchungen/buchungsdatum').'</label>
@@ -129,7 +166,27 @@ if(!isset($person_id))
 										<label for="" class="col-sm-3 col-md-5 text-right">'.$p->t('tools/buchungstext').'</label>
 										<div class="col-sm-9 col-md-7">'.($row['parent']->buchungstext != '' ? $row['parent']->buchungstext : '-').'</div>
 									</div>
-								</form>
+									<legend>'.$p->t('bewerbung/zahlungsinformationen').'</legend>
+									<div class="form-group">
+										<label for="" class="col-sm-3 col-md-5 text-right">'.$p->t('bewerbung/empfaenger').'</label>
+										<div class="col-sm-9 col-md-7">'.$stg_arr[$row['parent']->studiengang_kz]['OE'].'</div>
+									</div>
+									<div class="form-group">
+										<label for="" class="col-sm-3 col-md-5 text-right">'.$p->t('bewerbung/iban').'</label>
+										<div class="col-sm-9 col-md-7">'.$iban.'</div>
+									</div>
+									<div class="form-group">
+										<label for="" class="col-sm-3 col-md-5 text-right">'.$p->t('bewerbung/bic').'</label>
+										<div class="col-sm-9 col-md-7">'.$bic.'</div>
+									</div>';
+									if ($row['parent']->zahlungsreferenz != '')
+									{
+										echo '<div class="form-group" >
+												<label for="" class="col-sm-3 col-md-5 text-right">'.$p->t('bewerbung/zahlungsreferenz').'</label >
+												<div class="col-sm-9 col-md-7">'.$row['parent']->zahlungsreferenz.'</div >
+											</div>';
+									}
+							echo '</form>
 							</div>
 						</div>
 					</div>
@@ -160,3 +217,42 @@ if(!isset($person_id))
 		<?php echo $p->t('bewerbung/weiter'); ?>
 	</button><br/><br/>
 </div>
+
+<?php
+
+function getBankverbindung($oe_kurzbz, $orgform_kurzbz = null)
+{
+	$iban = "";
+	$bic = "";
+	$result = array();
+	$bankverbindung=new bankverbindung();
+	if($bankverbindung->load_oe($oe_kurzbz, $orgform_kurzbz) && count($bankverbindung->result) > 0)
+	{
+		$result["iban"] = $bankverbindung->result[0]->iban;
+		$result["bic"] = $bankverbindung->result[0]->bic;
+		return $result;
+	}
+	// Nochmal ohne $orgform_kurzbz versuchen
+	elseif($bankverbindung->load_oe($oe_kurzbz) && count($bankverbindung->result) > 0)
+	{
+		$result["iban"] = $bankverbindung->result[0]->iban;
+		$result["bic"] = $bankverbindung->result[0]->bic;
+		return $result;
+	}
+	else
+	{
+		$organisationseinheit = new organisationseinheit();
+		$organisationseinheit->load($oe_kurzbz);
+		if($organisationseinheit->oe_parent_kurzbz !== NULL)
+		{
+			$result = getBankverbindung($organisationseinheit->oe_parent_kurzbz, $orgform_kurzbz);
+			return $result;
+		}
+		else
+		{
+			$result["iban"] = "";
+			$result["bic"] = "";
+		}
+	}
+}
+?>

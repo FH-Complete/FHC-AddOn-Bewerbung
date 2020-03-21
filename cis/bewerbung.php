@@ -71,6 +71,7 @@ require_once ('../../../include/adresse.class.php');
 require_once ('../../../include/akte.class.php');
 require_once ('../../../include/aufmerksamdurch.class.php');
 require_once ('../../../include/basis_db.class.php');
+require_once ('../../../include/bankverbindung.class.php');
 require_once ('../../../include/benutzer.class.php');
 require_once ('../../../include/benutzerberechtigung.class.php');
 require_once ('../../../include/bewerbungstermin.class.php');

@@ -298,6 +298,7 @@ $this->phrasen['bewerbung/empfaenger']='Recipient';
 $this->phrasen['bewerbung/iban']='IBAN';
 $this->phrasen['bewerbung/bic']='BIC';
 $this->phrasen['bewerbung/zahlungsreferenz']='Payment Reference';
+$this->phrasen['bewerbung/offenerBetrag']='Outstanding balance';
 $this->phrasen['bewerbung/buchungsnummerNichtVorhanden']='Booking number %s not present';
 $this->phrasen['bewerbung/teilweiseVollstaendig']='partially complete';
 $this->phrasen['bewerbung/vollstaendig']='complete';
