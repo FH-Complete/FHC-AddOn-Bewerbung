@@ -612,13 +612,16 @@ if (isset($_POST['btn_bewerbung_abschicken']))
 	// Die BFI-KI nimmt automatisch Kontobelastungen vor, wenn es eine neue Bewerbung gibt.
 	// Wenn die Seite dazwischen nicht aktualisiert wird, kann man dennoch abschicken.
 	// Darum wird hier nochmal auf Belastungen gecheckt
-	if (defined('BEWERBERTOOL_ZAHLUNGEN_ANZEIGEN') && BEWERBERTOOL_ZAHLUNGEN_ANZEIGEN === true)
+	if (CAMPUS_NAME != 'FH Technikum Wien')
 	{
-		$konto = new konto();
-		if (! $konto->checkKontostand($person_id))
+		if (defined('BEWERBERTOOL_ZAHLUNGEN_ANZEIGEN') && BEWERBERTOOL_ZAHLUNGEN_ANZEIGEN === true)
 		{
-			$message = $p->t('bewerbung/zahlungAusstaendig');
-			$save_error_abschicken = true;
+			$konto = new konto();
+			if (!$konto->checkKontostand($person_id))
+			{
+				$message = $p->t('bewerbung/zahlungAusstaendig');
+				$save_error_abschicken = true;
+			}
 		}
 	}
 
