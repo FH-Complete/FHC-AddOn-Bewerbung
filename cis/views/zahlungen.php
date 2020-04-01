@@ -122,7 +122,7 @@ if(!isset($person_id))
 				<div class="panel-heading" data-toggle="collapse" data-parent="#accordionZahlungen" href="#zahlung'.$row['parent']->buchungsnr.'">
 					<h4 class="panel-title">
 					<div class="row">
-						<div class="col-sm-6">
+						<div class="col-sm-12">
 							€'.sprintf('%.2f',abs($row['parent']->betrag)).' 
 							'.$buchungstyp[$row['parent']->buchungstyp_kurzbz].' - 
 							'.$stg_arr[$row['parent']->studiengang_kz]['German'].' - 
