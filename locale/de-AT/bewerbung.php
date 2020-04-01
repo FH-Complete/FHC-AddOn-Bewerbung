@@ -328,7 +328,7 @@ $this->phrasen['bewerbung/zahlungsinformation']='Zahlungsinformation';
 $this->phrasen['bewerbung/bezahlt']='bezahlt';
 $this->phrasen['bewerbung/zahlungsdetails']='Zahlungsdetails';
 $this->phrasen['bewerbung/menuReihungstest']='Reihungstest';
-$this->phrasen['bewerbung/fuerReihungstestAnmelden']='Es werden Ihnen die nächsten verfügbaren Reihungstesttermine angezeigt. Bitte melden Sie sich für <b>einen</b> dieser an.<br>Unabhängig von der Anzahl Ihrer Bachelor-Bewerbungen brauchen Sie den Reihungstest nur <b>einmal</b> an der FHTW absolvieren.<br>Die Anmeldung zum Reihungstest fixiert die Priorisierung Ihrer gewählten Studiengänge.';
+$this->phrasen['bewerbung/fuerReihungstestAnmelden']='Es werden Ihnen die nächsten verfügbaren Online-Reihungstesttermine angezeigt. Bitte melden Sie sich für <b>einen</b> dieser an.<br>Unabhängig von der Anzahl Ihrer Bachelor-Bewerbungen brauchen Sie den Reihungstest nur <b>einmal</b> zu absolvieren.<br>Die Anmeldung zum Reihungstest <b>fixiert die Priorisierung</b> Ihrer gewählten Studiengänge.';
 $this->phrasen['bewerbung/fehler']='Es ist ein Fehler aufgetreten';
 $this->phrasen['bewerbung/angemeldetPlaetze']='angemeldet / Plätze';
 $this->phrasen['bewerbung/uhrzeit']='Uhrzeit';
@@ -636,6 +636,7 @@ $this->phrasen['bewerbung/bitteAGBZustimmen']='Sie müssen den AGB zustimmen, um
 $this->phrasen['bewerbung/zahlungAusstaendig']='Es sind noch Zahlungen offen. Sie können die Bewerbung erst abschicken, wenn alle Zahlungen eingegangen sind.';
 $this->phrasen['bewerbung/microsoftMailWarning']='<b>Achtung!</b> Derzeit kommt es bei E-Mail Zustellungen an @hotmail, @outlook und @live Adressen zu Empfangsproblemen seitens Microsoft. Eine Zustellung kann nicht garantiert werden! <br>Bitte verwenden Sie nach Möglichkeit eine andere E-Mail Adresse.';
 $this->phrasen['bewerbung/herkunftDesBewerbers']='Herkunft';
+$this->phrasen['bewerbung/ort']='Anmerkung';
 
 // Reihungstest
 $this->phrasen['bewerbung/anmeldungReihungstestMailBetreff']='Bestätigung Reihungstestanmeldung Fachhochschule Technikum Wien';
@@ -647,12 +648,11 @@ Sollten Sie Fragen haben, kontaktieren Sie bitte unser Infocenter <a href="mailt
 Mit freundlichen Grüßen<br>
 Fachhochschule Technikum Wien';
 $this->phrasen['bewerbung/reihungstestInfoTextAngemeldet']='<div class="alert alert-info">
-<p>Bitte finden Sie sich 15 Minuten vor dem gewählten Termin in den Räumlichkeiten der FH Technikum Wien, Höchstädtplatz 6, 1200 Wien ein.</p>
-<p>Zur Feststellung der Identität ist unbedingt ein Lichtbildausweis (Reisepass, Personalausweis) nötig.</p>
+<p>Bitte stellen Sie sicher, dass Sie 15 Minuten vor dem gewählten Termin bereit sind, den Online-Reihungstest zu beginnen.</p>
 </div><br>';
 $this->phrasen['bewerbung/anmeldefrist']='Anmeldefrist';
 $this->phrasen['bewerbung/infoVorgemerktFuerQualifikationskurs']='Sie sind als TeilnehmerIn für die Qualifikationskurse vorgemerkt. Sobald sie dort bestätigt wurden, können Sie hier einen Termin für den Reihungstest wählen.';
-$this->phrasen['bewerbung/raumzuteilungFolgt']='Raumzuteilung folgt spätestens 2 Tage vor Ihrem Termin';
+$this->phrasen['bewerbung/raumzuteilungFolgt']='Details folgen 2 Werktage vor Testbeginn per E-Mail';
 $this->phrasen['bewerbung/sieHabenFolgendenTerminGewaehlt']='Danke für Ihre Anmeldung zum Reihungstest.<br>Ihre Priorisierung der Studiengänge ist fixiert und kann nur bis zur Anmeldefrist geändert werden.<br>Nach Absolvierung des Reihungstests kann die Priorisierung <b>NICHT</b> mehr geändert werden.';
 
 // Ausbildung

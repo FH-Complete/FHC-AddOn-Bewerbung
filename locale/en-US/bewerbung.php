@@ -277,7 +277,7 @@ $this->phrasen['bewerbung/zahlungsinformation']='Payment information';
 $this->phrasen['bewerbung/bezahlt']='payed';
 $this->phrasen['bewerbung/zahlungsdetails']='Payment details';
 $this->phrasen['bewerbung/menuReihungstest']='Placement test';
-$this->phrasen['bewerbung/fuerReihungstestAnmelden']='Here are the next available placement tests. <br>Please register for <b>one</b> and note that you need to take the test only once even if you have selected more than one bachelor degree programme.<br>The registration locks the prioritization of your degree programs.';
+$this->phrasen['bewerbung/fuerReihungstestAnmelden']='Here are the next available online-placement tests. <br>Please register for <b>one</b> and note that you need to take the test only once even if you have selected more than one bachelor degree programme.<br>The registration <b>locks the prioritization</b> of your degree programs.';
 $this->phrasen['bewerbung/fehler']='An error occurred';
 $this->phrasen['bewerbung/angemeldetPlaetze']='registered / places';
 $this->phrasen['bewerbung/uhrzeit']='Time';
@@ -581,6 +581,7 @@ $this->phrasen['bewerbung/bitteAGBZustimmen']='Sie müssen den AGB zustimmen, um
 $this->phrasen['bewerbung/zahlungAusstaendig']='Es sind noch Zahlungen offen. Sie können die Bewerbung erst abschicken, wenn alle Zahlungen eingegangen sind.'; // Noch zu übersetzen
 $this->phrasen['bewerbung/microsoftMailWarning']='<b>Warning!</b> Currently e-mails from the UAS Technikum Wien can not be received via @hotmail, @outlook and @live adresses.<br>Please use an other e-mail address if possible.';
 $this->phrasen['bewerbung/herkunftDesBewerbers']='Herkunft';
+$this->phrasen['bewerbung/ort']='Note';
 
 // Reihungstest
 $this->phrasen['bewerbung/anmeldungReihungstestMailBetreff']='Confirmation of registration to placement test UAS Technikum Wien';
@@ -593,13 +594,12 @@ Yours sincerely<br>
 UAS Technikum Wien';
 
 $this->phrasen['bewerbung/reihungstestInfoTextAngemeldet']='<div class="alert alert-info">
-<p>Please make sure that you arrive 15 minutes prior to the placement test at the UAS, 1200 Wien, Höchstädtplatz 6.</p>
-<p>Please bring an official photo ID (passport, identity card, etc.) on the day of your placement test.</p>
+<p>Please make sure that you are ready for the online-placement test 15 minutes before the beginning.</p>
 </div><br>';
 $this->phrasen['bewerbung/anmeldefrist']='Term of application';
 $this->phrasen['bewerbung/infoVorgemerktFuerQualifikationskurs']='You are pencilled in as a participant for the qualification courses. Once you are confirmed there, you can choose an appointment for the placement test here.';
-$this->phrasen['bewerbung/raumzuteilungFolgt']='Two days prior to the test you will see here the room-number';
-$this->phrasen['bewerbung/sieHabenFolgendenTerminGewaehlt']='You have registered for the following placement test date';
+$this->phrasen['bewerbung/raumzuteilungFolgt']='Details follow 2 working days before the test per e-mail';
+$this->phrasen['bewerbung/sieHabenFolgendenTerminGewaehlt']='Thank you for registering for the online-placement test.<br>Your prioritization of degree programs is fixed and can only be changed before the registration deadline.<br>Once the placement test has been completed, the prioritization can <b>no longer</b> be changed.';
 
 // Ausbildung
 $this->phrasen['bewerbung/menuAusbildung']='Ausbildung';
