@@ -654,6 +654,9 @@ $this->phrasen['bewerbung/anmeldefrist']='Anmeldefrist';
 $this->phrasen['bewerbung/infoVorgemerktFuerQualifikationskurs']='Sie sind als TeilnehmerIn für die Qualifikationskurse vorgemerkt. Sobald sie dort bestätigt wurden, können Sie hier einen Termin für den Reihungstest wählen.';
 $this->phrasen['bewerbung/raumzuteilungFolgt']='Details folgen 2 Werktage vor Testbeginn per E-Mail';
 $this->phrasen['bewerbung/sieHabenFolgendenTerminGewaehlt']='Danke für Ihre Anmeldung zum Reihungstest.<br>Ihre Priorisierung der Studiengänge ist fixiert und kann nur bis zur Anmeldefrist geändert werden.<br>Nach Absolvierung des Reihungstests kann die Priorisierung <b>NICHT</b> mehr geändert werden.';
+$this->phrasen['bewerbung/loginReihungstest']='<h3>Online-Reihungstest</h3>Klicken Sie auf den folgenden Button, um zum Reihungstest zu gelangen. <br>
+												Bitte beachten Sie, dass Sie <u>Mozilla Firefox</u> als Browser verwenden, da es sonst zu Darstellungsproblemen kommen kann.<br><br>
+												<a href="'.APP_ROOT.'cis/testtool/index.php?prestudent=%s" class="btn btn-primary" role="button" target="_blank">Zum Reihungstest</a>';
 
 // Ausbildung
 $this->phrasen['bewerbung/menuAusbildung']='Ausbildung';
