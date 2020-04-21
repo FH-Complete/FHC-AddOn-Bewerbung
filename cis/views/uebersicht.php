@@ -455,6 +455,11 @@ $studiensemester_array = array();
 							<div class="row">
 								<div class="col-xs-12">
 									<form class="form-horizontal">';
+			// RT-Link zum Login ins Testtool anzeigen
+			if (defined('TESTTOOL_LOGIN_BEWERBUNGSTOOL') && TESTTOOL_LOGIN_BEWERBUNGSTOOL == true)
+			{
+				echo '	<div class="alert alert-info">'.$p->t('bewerbung/loginReihungstest', array($row->prestudent_id)).'</div>';
+			}
 			// Status anzeigen
 			if ($lastInteressentenStatus->bewerbung_abgeschicktamum != '' || $lastInteressentenStatus->bestaetigtam != '')
 			{
