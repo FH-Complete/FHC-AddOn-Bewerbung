@@ -216,7 +216,8 @@ $this->phrasen['bewerbung/loginmitAccount']='Login with account';
 $this->phrasen['bewerbung/dokumentOhneUploadGeprueft'] = 'Approved without upload.';
 $this->phrasen['bewerbung/allgemeineErklaerung']='We are pleased that you are interested in the study programs we offer.<br><br>
 You may select - online - up to 3 study programs and as many further education courses as you like.<br>
-Click the green button to add a study program or course to your application.<br>
+Click the green button to add a study program or course to your application.
+Please note that you have to prioritize when choosing your degree programs. <br>Once the placement test has been completed, the prioritization can <b>no longer</b> be changed.<br>
 Should you require any additional information, please do not hesitate to contact our <a href=\'https://www.technikum-wien.at/en/student-guide/admission-counselors/\' target=\'_blank\'>student counselling team</a> in person, by phone, or via e-mail or WhatsApp.<br><br>
 Complete the form in full. Once you have entered all details, send in your application by clicking "Send application".<br><br>
 Application deadlines for third countries (outside the EU) see:<br>
@@ -298,6 +299,7 @@ $this->phrasen['bewerbung/empfaenger']='Recipient';
 $this->phrasen['bewerbung/iban']='IBAN';
 $this->phrasen['bewerbung/bic']='BIC';
 $this->phrasen['bewerbung/zahlungsreferenz']='Payment Reference';
+$this->phrasen['bewerbung/offenerBetrag']='Outstanding balance';
 $this->phrasen['bewerbung/buchungsnummerNichtVorhanden']='Booking number %s not present';
 $this->phrasen['bewerbung/teilweiseVollstaendig']='partially complete';
 $this->phrasen['bewerbung/vollstaendig']='complete';
@@ -599,7 +601,7 @@ $this->phrasen['bewerbung/reihungstestInfoTextAngemeldet']='<div class="alert al
 $this->phrasen['bewerbung/anmeldefrist']='Term of application';
 $this->phrasen['bewerbung/infoVorgemerktFuerQualifikationskurs']='You are pencilled in as a participant for the qualification courses. Once you are confirmed there, you can choose an appointment for the placement test here.';
 $this->phrasen['bewerbung/raumzuteilungFolgt']='Two days prior to the test you will see here the room-number';
-$this->phrasen['bewerbung/sieHabenFolgendenTerminGewaehlt']='You have registered for the following placement test date';
+$this->phrasen['bewerbung/sieHabenFolgendenTerminGewaehlt']='Thank you for registering for the placement test.<br>Your prioritization of degree programs is fixed and can only be changed before the registration deadline.<br>Once the placement test has been completed, the prioritization can <b>no longer</b> be changed.';
 
 // Ausbildung
 $this->phrasen['bewerbung/menuAusbildung']='Ausbildung';
