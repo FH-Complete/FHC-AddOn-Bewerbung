@@ -350,6 +350,7 @@ $this->phrasen['bewerbung/empfaenger']='Empfänger';
 $this->phrasen['bewerbung/iban']='IBAN';
 $this->phrasen['bewerbung/bic']='BIC';
 $this->phrasen['bewerbung/zahlungsreferenz']='Zahlungsreferenz';
+$this->phrasen['bewerbung/offenerBetrag']='Offener Betrag';
 $this->phrasen['bewerbung/buchungsnummerNichtVorhanden']='Buchungsnummer %s nicht vorhanden';
 $this->phrasen['bewerbung/teilweiseVollstaendig']='teilweise vollständig';
 $this->phrasen['bewerbung/vollstaendig']='vollständig';
