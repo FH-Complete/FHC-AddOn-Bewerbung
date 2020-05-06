@@ -124,7 +124,6 @@ $studiensemester_array = array();
 			$disabledAbschicken = true;
 			if ($status_person == true &&
 				$status_kontakt == true &&
-				$status_zahlungen == true &&
 				$status_zgv_bak == true &&
 				$status_ausbildung == true)
 			{
@@ -134,6 +133,14 @@ $studiensemester_array = array();
 					$disabledAbschicken = false;
 				}*/
 				$disabledAbschicken = false;
+			}
+			// An der FHTW sind die Zahlungen zum Abschicken nicht verpflichtend
+			if (CAMPUS_NAME != 'FH Technikum Wien')
+			{
+				if ($status_zahlungen == true)
+				{
+					$disabledAbschicken = false;
+				}
 			}
 
 			if ($stg->typ == 'm' && $status_zgv_mas == false)
