@@ -75,13 +75,13 @@ elseif($save_error_zgv===true)
 	<?php else: ?>
 	<form method="POST" class="form-horizontal" action="<?php echo $_SERVER['PHP_SELF'] ?>?active=zgv">
 		<?php foreach ($zgv as $stufe => $attribute):
-			if ($stufe === 'master' && !in_array('m', $types, true)) 
+			if ($stufe === 'master' && !in_array('m', $types, true))
 			{
 				continue;
 			}
 			if (count($zgv[$stufe])>0)
 				$gesperrt = true;
-			
+
 			// Hack um $stufe mit Phrasen zu überschreiben
 			$stufe_bezeichung = '';
 
@@ -139,6 +139,7 @@ elseif($save_error_zgv===true)
 					<div class="col-sm-9">
 						<input type="text" name="<?php echo $stufe ?>_zgv_ort" id="<?php echo $stufe ?>_zgv_ort"
 							   class="form-control"
+							   maxlength="64"
 							   value="<?php echo isset($attribute['ort']) ? $attribute['ort'] : '' ?>"
 							   placeholder="<?php echo $p->t('bewerbung/woWurdeUrkundeAusgestellt'); ?>" <?php echo ($stufe!=='master' && $eingabegesperrt==true || isset($attribute['ort'])?'readonly="readonly"':'') ?>>
 					</div>
