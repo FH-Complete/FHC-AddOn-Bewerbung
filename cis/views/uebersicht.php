@@ -431,8 +431,26 @@ $studiensemester_array = array();
 				echo '				<div class="col-xs-4 col-sm-3 col-md-5 text-right action-buttons">';
 				if ($lastInteressentenStatus->bewerbung_abgeschicktamum != '' || $lastInteressentenStatus->bestaetigtam != '')
 				{
-					echo '	<div class="label label-info hidden-md hidden-lg bg-danger"><span class="glyphicon glyphicon-info-sign hidden-md hidden-lg"></div>';
+					echo '	<div class="label label-info hidden-md hidden-lg"><span class="glyphicon glyphicon-info-sign hidden-md hidden-lg"></div>';
 					echo '	<div class="label label-info hidden-sm hidden-xs">'.$p->t('bewerbung/BewerbungBereitsVerschickt').'</div>';
+					if (defined('TESTTOOL_LOGIN_BEWERBUNGSTOOL') && TESTTOOL_LOGIN_BEWERBUNGSTOOL == true)
+					{
+						// Nur für definierte Studiengänge anzeigen
+						if (defined('TESTTOOL_LOGIN_BEWERBUNGSTOOL_STUDIENGAENGE'))
+						{
+							$displayedStudiengaengeArray = unserialize(TESTTOOL_LOGIN_BEWERBUNGSTOOL_STUDIENGAENGE);
+							if (in_array($row->studiengang_kz, $displayedStudiengaengeArray) && $lastInteressentenStatus->bestaetigtam != '')
+							{
+								echo '	<div class="label label-warning hidden-md hidden-lg"><span class="glyphicon glyphicon-info-sign hidden-md hidden-lg"></div>';
+								echo '	<div class="label label-warning hidden-sm hidden-xs">'.$p->t('bewerbung/informationenRTvorhanden').'</div>';
+							}
+						}
+						elseif ($lastInteressentenStatus->bestaetigtam != '')
+						{
+							echo '	<div class="label label-warning hidden-md hidden-lg"><span class="glyphicon glyphicon-info-sign hidden-md hidden-lg"></div>';
+							echo '	<div class="label label-warning hidden-sm hidden-xs">'.$p->t('bewerbung/informationenRTvorhanden').'</div>';
+						}
+					}
 				}
 				elseif ($bewerbungszeitraum['frist_abgelaufen'] == true)
 				{
@@ -465,7 +483,18 @@ $studiensemester_array = array();
 			// RT-Link zum Login ins Testtool anzeigen
 			if (defined('TESTTOOL_LOGIN_BEWERBUNGSTOOL') && TESTTOOL_LOGIN_BEWERBUNGSTOOL == true)
 			{
-				echo '	<div class="alert alert-info">'.$p->t('bewerbung/loginReihungstest', array($row->prestudent_id)).'</div>';
+				// Nur für definierte Studiengänge anzeigen
+				if (defined('TESTTOOL_LOGIN_BEWERBUNGSTOOL_STUDIENGAENGE'))
+				{
+					$displayedStudiengaengeArray = unserialize(TESTTOOL_LOGIN_BEWERBUNGSTOOL_STUDIENGAENGE);
+					if (in_array($row->studiengang_kz, $displayedStudiengaengeArray))
+					{
+						if ($lastInteressentenStatus->bestaetigtam != '')
+						{
+							echo '	<div class="alert alert-info">'.$p->t('bewerbung/loginReihungstest', array($row->prestudent_id)).'</div>';
+						}
+					}
+				}
 			}
 			// Status anzeigen
 			if ($lastInteressentenStatus->bewerbung_abgeschicktamum != '' || $lastInteressentenStatus->bestaetigtam != '')

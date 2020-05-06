@@ -603,6 +603,7 @@ $this->phrasen['bewerbung/anmeldefrist']='Term of application';
 $this->phrasen['bewerbung/infoVorgemerktFuerQualifikationskurs']='You are pencilled in as a participant for the qualification courses. Once you are confirmed there, you can choose an appointment for the placement test here.';
 $this->phrasen['bewerbung/raumzuteilungFolgt']='Details follow 2 working days before the test per e-mail';
 $this->phrasen['bewerbung/sieHabenFolgendenTerminGewaehlt']='Thank you for registering for the online-placement test.<br>Your prioritization of degree programs is fixed and can only be changed before the registration deadline.<br>Once the placement test has been completed, the prioritization can <b>no longer</b> be changed.';
+$this->phrasen['bewerbung/informationenRTvorhanden']='Information for placement test';
 
 // Ausbildung
 $this->phrasen['bewerbung/menuAusbildung']='Ausbildung';

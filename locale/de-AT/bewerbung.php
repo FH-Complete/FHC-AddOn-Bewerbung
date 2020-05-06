@@ -659,7 +659,7 @@ $this->phrasen['bewerbung/sieHabenFolgendenTerminGewaehlt']='Danke für Ihre Anm
 $this->phrasen['bewerbung/loginReihungstest']='<h3>Online-Reihungstest</h3>Klicken Sie auf den folgenden Button, um zum Reihungstest zu gelangen. <br>
 												Bitte beachten Sie, dass Sie <u>Mozilla Firefox</u> als Browser verwenden, da es sonst zu Darstellungsproblemen kommen kann.<br><br>
 												<a href="'.APP_ROOT.'cis/testtool/index.php?prestudent=%s" class="btn btn-primary" role="button" target="_blank">Zum Reihungstest</a>';
-
+$this->phrasen['bewerbung/informationenRTvorhanden']='Informationen zum Reihungstest vorhanden';
 // Ausbildung
 $this->phrasen['bewerbung/menuAusbildung']='Ausbildung';
 $this->phrasen['bewerbung/ausbildung']='Ausbildung zu Ihrer Zugangsvoraussetzung';
