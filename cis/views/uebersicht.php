@@ -124,7 +124,6 @@ $studiensemester_array = array();
 			$disabledAbschicken = true;
 			if ($status_person == true &&
 				$status_kontakt == true &&
-				$status_zahlungen == true &&
 				$status_zgv_bak == true &&
 				$status_ausbildung == true)
 			{
@@ -134,6 +133,14 @@ $studiensemester_array = array();
 					$disabledAbschicken = false;
 				}*/
 				$disabledAbschicken = false;
+			}
+			// An der FHTW sind die Zahlungen zum Abschicken nicht verpflichtend
+			if (CAMPUS_NAME != 'FH Technikum Wien')
+			{
+				if ($status_zahlungen == true)
+				{
+					$disabledAbschicken = false;
+				}
 			}
 
 			if ($stg->typ == 'm' && $status_zgv_mas == false)
@@ -455,6 +462,11 @@ $studiensemester_array = array();
 							<div class="row">
 								<div class="col-xs-12">
 									<form class="form-horizontal">';
+			// RT-Link zum Login ins Testtool anzeigen
+			if (defined('TESTTOOL_LOGIN_BEWERBUNGSTOOL') && TESTTOOL_LOGIN_BEWERBUNGSTOOL == true)
+			{
+				echo '	<div class="alert alert-info">'.$p->t('bewerbung/loginReihungstest', array($row->prestudent_id)).'</div>';
+			}
 			// Status anzeigen
 			if ($lastInteressentenStatus->bewerbung_abgeschicktamum != '' || $lastInteressentenStatus->bestaetigtam != '')
 			{
@@ -511,7 +523,12 @@ $studiensemester_array = array();
 										</div>
 										<div class="form-group">
 											<label for="status" class="col-sm-3 col-md-5 text-right">'.$p->t('bewerbung/status').':</label>
-											<div class="col-sm-9 col-md-7" id="status">'.$prestatus_help.'</div>
+											<div class="col-sm-9 col-md-7" id="status">'.$prestatus_help;
+										if ($prestatus_help == 'BewerberIn')
+										{
+											echo '<br>Innerhalb von ca. einer Woche nach Absolvierung Ihres Reihungstests erfahren Sie, ob Sie einen Studienplatz (Status Aufgenomme/r) erhalten oder Sie vorerst auf Warteliste (Status Wartende/r) gesetzt wurden.';
+										}
+										echo '	</div>
 										</div>
 										<!--<div class="form-group">
 											<label for="datum" class="col-sm-3 col-md-5 text-right">'.$p->t('global/datum').':</label>

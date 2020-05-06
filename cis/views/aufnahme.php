@@ -48,7 +48,7 @@ if(!isset($person_id))
 							<div class="row">
 								<div class="col-xs-4 col-sm-3">'.$p->t('global/datum').'</div>
 								<div class="col-xs-3 col-sm-2">'.$p->t('bewerbung/uhrzeit').'</div>
-								<div class="col-xs-5 col-sm-7">'.$p->t('global/ort').'</div>
+								<div class="col-xs-5 col-sm-7">'.$p->t('bewerbung/ort').'</div>
 							</div>
 						</div>
 						<div id="listeTesttermine" class="panel-collapse collapse-in">
@@ -194,7 +194,51 @@ if(!isset($person_id))
 	{
 		// Mögliche Termine zur Anmeldung laden, für die die Person noch nicht angemeldet ist
 		// Studienpläne der Qualifikationskurse werden ausgenommen
-		$reihungstestTermine = getReihungstestsForOnlinebewerbung($studienplanReihungstest, $nextWinterSemester->studiensemester_kurzbz, 1, $studienplanQualikurse_arr);
+
+		// Vorrübergehender Hack für FHTW
+		// Wenn mindestens eine Bewerbung BEW DL ist, werden nur Termine mit diesem Studienplan zur Anmeldung angezeigt.
+		if (CAMPUS_NAME == 'FH Technikum Wien')
+		{
+			$qry = "SELECT count(*) as anzahl
+			FROM PUBLIC.tbl_person
+			JOIN PUBLIC.tbl_prestudent USING (person_id)
+			JOIN PUBLIC.tbl_prestudentstatus USING (prestudent_id)
+			JOIN lehre.tbl_studienplan USING (studienplan_id)
+			JOIN lehre.tbl_studienordnung USING (studienordnung_id)
+			JOIN PUBLIC.tbl_studiengang ON (tbl_studienordnung.studiengang_kz = tbl_studiengang.studiengang_kz)
+			WHERE person_id = ".$db->db_add_param($person_id, FHC_INTEGER)."
+				AND studiensemester_kurzbz = ".$db->db_add_param($nextWinterSemester->studiensemester_kurzbz)."
+				AND tbl_studiengang.typ = 'b'
+				AND bestaetigtam IS NOT NULL
+				AND (
+					SELECT status_kurzbz
+					FROM PUBLIC.tbl_prestudentstatus
+					WHERE prestudent_id = tbl_prestudent.prestudent_id
+						AND studiensemester_kurzbz = tbl_prestudentstatus.studiensemester_kurzbz
+					ORDER BY datum DESC,
+						tbl_prestudentstatus.insertamum DESC LIMIT 1
+					) IN ('Interessent') 
+				AND tbl_prestudentstatus.studienplan_id IN (5,486)";
+
+			if($result = $db->db_query($qry))
+			{
+				if($row = $db->db_fetch_object($result))
+				{
+					if (intval($row->anzahl) > 0)
+					{
+						$reihungstestTermine = getReihungstestsForOnlinebewerbung(5, $nextWinterSemester->studiensemester_kurzbz, 1, $studienplanQualikurse_arr);
+					}
+					else
+					{
+						$reihungstestTermine = getReihungstestsForOnlinebewerbung($studienplanReihungstest, $nextWinterSemester->studiensemester_kurzbz, 1, $studienplanQualikurse_arr);
+					}
+				}
+			}
+		}
+		else
+		{
+			$reihungstestTermine = getReihungstestsForOnlinebewerbung($studienplanReihungstest, $nextWinterSemester->studiensemester_kurzbz, 1, $studienplanQualikurse_arr);
+		}
 	}
 
 	$terminauswahl = true;
