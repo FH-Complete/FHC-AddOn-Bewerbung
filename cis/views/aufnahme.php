@@ -218,7 +218,7 @@ if(!isset($person_id))
 					ORDER BY datum DESC,
 						tbl_prestudentstatus.insertamum DESC LIMIT 1
 					) IN ('Interessent') 
-				AND tbl_prestudentstatus.studienplan_id = 5";
+				AND tbl_prestudentstatus.studienplan_id IN (5,486)";
 
 			if($result = $db->db_query($qry))
 			{
