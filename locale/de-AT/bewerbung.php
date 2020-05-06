@@ -77,6 +77,7 @@ $this->phrasen['bewerbung/fallsVorhanden']='(falls vorhanden)';
 $this->phrasen['bewerbung/mailtextHtml']='Bitte sehen Sie sich die Nachricht in der HTML-Ansicht an um den Link vollständig darzustellen.';
 $this->phrasen['bewerbung/anredeMaennlich']='geehrter Herr';
 $this->phrasen['bewerbung/anredeWeiblich']='geehrte Frau';
+$this->phrasen['bewerbung/anredeNeutral']='geehrte/r Herr/Frau';
 $this->phrasen['bewerbung/mailtext']='
 <html>
 	<head>

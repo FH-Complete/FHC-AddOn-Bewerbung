@@ -71,6 +71,7 @@ $this->phrasen['bewerbung/fallsVorhanden']='(if available)';
 $this->phrasen['bewerbung/mailtextHtml']='Please look at the message in the HTML view, in order to display the link fully.';
 $this->phrasen['bewerbung/anredeMaennlich']='Mr';
 $this->phrasen['bewerbung/anredeWeiblich']='Ms';
+$this->phrasen['bewerbung/anredeNeutral']='Mr/Ms';
 $this->phrasen['bewerbung/mailtext']='Dear %4$s %1$s %2$s.<br><br>
                                         Thank you for your interest in a degree program at '.CAMPUS_NAME.'. <br>
                                         To apply for a course, please use the following link and access code:<br><br>
