@@ -54,8 +54,9 @@ elseif($save_error_zugangscode===true)
 echo '<!-- 4:3 aspect ratio -->
 
 		<div id="responsiveDiv" class="embed-responsive" style="padding-bottom: 100%; border: 1px solid lightgrey">
-		  <iframe   id="massagesIframe" 
-		            class="embed-responsive-item" 
+		  <iframe   id="massagesIframe"
+		            class="embed-responsive-item"
+		            style="padding-bottom: 50%; border: 1px solid lightgrey"
 		            src="../../../index.ci.php/system/messages/MessageClient/read" 
 		            <!--onload="changeIframeSize()"-->
 		            ></iframe>
@@ -83,6 +84,13 @@ $('#massagesIframe').load(function()
 	//this.style.height =
 	//this.contentWindow.document.body.offsetHeight + 'px';
 });
+
+$(document).ready(function () {
+    
+    // color message frame white
+    $('#massagesIframe').css('background-color', 'white');
+});
+
 /*function changeIframeSize()
 {
 	$('#massagesIframe').height =
