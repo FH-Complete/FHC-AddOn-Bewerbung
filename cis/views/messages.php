@@ -71,18 +71,6 @@ echo '<!-- 4:3 aspect ratio -->
 	</form><br>';
 
 */
-echo '<br><br>
-	<button class="btn-nav btn btn-default" type="button"
-		data-jump-tab="'.$tabs[array_search('dokumente', $tabs)-1].'">
-		'.$p->t('global/zurueck').'
-	</button>
-	<button class="btn-nav btn btn-default" type="button"
-		data-jump-tab="'.$tabs[array_search('dokumente', $tabs)+1].'">
-		'.$p->t('bewerbung/weiter').'
-	</button>
-	<br/><br/><br/><br/>
-</div>
-';
 
 ?>
 <script type="text/javascript">
