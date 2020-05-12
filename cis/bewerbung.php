@@ -2931,7 +2931,7 @@ function sendBewerbung($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz,
 	$typ->getStudiengangTyp($studiengang->typ);
 	$empfaenger = getMailEmpfaenger($studiengang->studiengang_kz);
 
-	if (CAMPUS_NAME == 'FH Technikum Wien')
+	if (CAMPUS_NAME == 'FH Technikum Wien' && $person->geschlecht == 'x')
 	{
 		// Wenn Geschlecht "Divers" ist wird eine Notiz als Hinweis angelegt
 		$notiz = new notiz();
