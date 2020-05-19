@@ -67,13 +67,16 @@ if(!isset($person_id))
 			// um den richtigen IBAN ermitteln zu können.
 			$bewerbungen = getBewerbungen($person_id, true);
 			$orgform = '';
-			foreach ($bewerbungen AS $bewerbung)
+			if ($bewerbungen)
 			{
-				if ($bewerbung->studiengang_kz == $row['parent']->studiengang_kz)
+				foreach ($bewerbungen AS $bewerbung)
 				{
-					$prestudent_status = new prestudent();
-					$prestudent_status->getLastStatus($bewerbung->prestudent_id);
-					$orgform = $prestudent_status->orgform_kurzbz;
+					if ($bewerbung->studiengang_kz == $row['parent']->studiengang_kz)
+					{
+						$prestudent_status = new prestudent();
+						$prestudent_status->getLastStatus($bewerbung->prestudent_id);
+						$orgform = $prestudent_status->orgform_kurzbz;
+					}
 				}
 			}
 

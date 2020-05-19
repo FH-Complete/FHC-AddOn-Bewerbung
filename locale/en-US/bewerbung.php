@@ -570,7 +570,7 @@ $this->phrasen['bewerbung/bitteZGVausweahlen']='If you are applying for a Bachel
 $this->phrasen['bewerbung/allgemeineDokumente']='General Documents';
 $this->phrasen['bewerbung/akteBereitsVorhanden']='The maximum number of uploads for this document has been reached'; // Nur grob übersetzt
 $this->phrasen['bewerbung/vervollstaendigenSieIhreDaten']='Complete the data to send the application'; // Nur grob übersetzt
-$this->phrasen['bewerbung/datenUnvollstaendig']='Daten unvollständig'; // Noch zu übersetzen
+$this->phrasen['bewerbung/datenUnvollstaendig']='Data incomplete'; // Noch zu übersetzen
 $this->phrasen['bewerbung/durchsuchen']='Browse...';
 $this->phrasen['bewerbung/infotextRegistrationBewerbungGesperrt']='Currently you can only apply for Certificate Programs for Further Education.<br>The application period for bachelor and master degree programs will start in September';
 $this->phrasen['bewerbung/mehr']='More';
@@ -579,12 +579,24 @@ $this->phrasen['bewerbung/keineDokumenteErforderlich']='Currently no documents a
 $this->phrasen['bewerbung/menuUebersichtBewerbungAbschicken']='Overview / Send application';
 $this->phrasen['bewerbung/logoutInfotext']='Your application has not been sent yet. Are you sure you want to logout?'; // Nur grob übersetzt
 $this->phrasen['bewerbung/dateiUploadLeer']='File could not be uploaded. Maybe filesize exceeded 15MB'; // Nur grob übersetzt
-$this->phrasen['bewerbung/zustimmungAGB']='Zustimmung zu unseren allgemeinen Geschäftsbedingungen.'; // Noch zu übersetzen
-$this->phrasen['bewerbung/bitteAGBZustimmen']='Sie müssen den AGB zustimmen, um Ihre Bewerbung abschicken zu können'; // Noch zu übersetzen
-$this->phrasen['bewerbung/zahlungAusstaendig']='Es sind noch Zahlungen offen. Sie können die Bewerbung erst abschicken, wenn alle Zahlungen eingegangen sind.'; // Noch zu übersetzen
+$this->phrasen['bewerbung/zustimmungAGB']='Agreement to our general terms and conditions.';
+$this->phrasen['bewerbung/bitteAGBZustimmen']='You must agree to the AGB in order to send your application';
+$this->phrasen['bewerbung/zahlungAusstaendig']='Payments are still outstanding. You can only send the application once all payments have been received.';
 $this->phrasen['bewerbung/microsoftMailWarning']='<b>Warning!</b> Currently e-mails from the UAS Technikum Wien can not be received via @hotmail, @outlook and @live adresses.<br>Please use an other e-mail address if possible.';
-$this->phrasen['bewerbung/herkunftDesBewerbers']='Herkunft';
-$this->phrasen['bewerbung/ort']='Note';
+$this->phrasen['bewerbung/herkunftDesBewerbers']='Origin';
+$this->phrasen['bewerbung/ort']='Room';
+$this->phrasen['bewerbung/akten']='Files';
+$this->phrasen['bewerbung/herunterladen']='Download %s';
+$this->phrasen['bewerbung/akzeptieren']='Sign %s';
+$this->phrasen['bewerbung/akzeptiert']='%s accepted';
+$this->phrasen['bewerbung/keineAktenVorhanden']='Currently there are no downloadable files available';
+$this->phrasen['bewerbung/textRuecktrittsrecht']='I take note that I have the right to cancel this contract within fourteen days without giving any reason.
+								<br><p class="alert alert-info">
+								<b>Information:</b><br>
+								In order to exercise this right of withdrawal, you must inform the UAS Technikum Wien within 14 days of entering into the 
+								contract by means of a clear declaration by email to your degree program’s administrative assistant about your decision to cancel this contract.</p>';
+$this->phrasen['bewerbung/textAusbildungsvertrag']='I have read the training contract and agree to the content of the contract.';
+$this->phrasen['bewerbung/informationDatenverwendungStudierende']='<a href=\''.APP_ROOT.'cms/dms.php?id=149169\' target=\'_blank\'><span class="glyphicon glyphicon-file"></span>Information on the use of student personal data</a>';
 
 // Reihungstest
 $this->phrasen['bewerbung/anmeldungReihungstestMailBetreff']='Confirmation of registration to placement test UAS Technikum Wien';

@@ -452,7 +452,6 @@ $this->phrasen['bewerbung/studierenOderArbeitenSieBereits']='Studieren oder arbe
 $this->phrasen['bewerbung/zugangscodeVergessen']='Zugangscode vergessen?';
 $this->phrasen['bewerbung/dannHiermitAccountEinloggen']='Dann loggen Sie sich hier mit Ihrem CIS-Account ein';
 $this->phrasen['bewerbung/dannHierEinloggen']='Dann loggen Sie sich hier ein';
-$this->phrasen['bewerbung/dokumentHerunterladen']='Dokument herunterladen';
 $this->phrasen['bewerbung/hinweisZGVdatenaenderung']='<b>Hinweis:</b> Aus organisatorischen Gründen können gespeicherte Angaben hier nicht mehr verändert werden. Sollten Angaben fehlerhaft sein, verwenden Sie bitte das Notizfeld im Schritt "Abschließen" oder kontaktieren Sie die Assistenz per E-Mail.';
 $this->phrasen['bewerbung/statusBestaetigen']='Status direkt bestätigen';
 $this->phrasen['bewerbung/footerText']='';
@@ -639,6 +638,19 @@ $this->phrasen['bewerbung/zahlungAusstaendig']='Es sind noch Zahlungen offen. Si
 $this->phrasen['bewerbung/microsoftMailWarning']='<b>Achtung!</b> Derzeit kommt es bei E-Mail Zustellungen an @hotmail, @outlook und @live Adressen zu Empfangsproblemen seitens Microsoft. Eine Zustellung kann nicht garantiert werden! <br>Bitte verwenden Sie nach Möglichkeit eine andere E-Mail Adresse.';
 $this->phrasen['bewerbung/herkunftDesBewerbers']='Herkunft';
 $this->phrasen['bewerbung/ort']='Anmerkung';
+$this->phrasen['bewerbung/akten']='Akten';
+$this->phrasen['bewerbung/herunterladen']='%s herunterladen';
+$this->phrasen['bewerbung/akzeptieren']='%s abschließen';
+$this->phrasen['bewerbung/akzeptiert']='%s akzeptiert';
+$this->phrasen['bewerbung/keineAktenVorhanden']='Derzeit sind keine Akten zum Herunterladen vorhanden';
+$this->phrasen['bewerbung/textRuecktrittsrecht']='Ich nehme zur Kenntnis, dass mir das Recht zusteht, binnen vierzehn Tagen ohne Angabe von Gründen diesen Vertrag zu widerrufen.
+								<br><p class="alert alert-info">
+								<b>Information:</b><br>
+								Um dieses Widerrufsrecht auszuüben, müssen Sie die Fachhochschule Technikum Wien innerhalb 
+								der vierzehn Tage ab Abschluss mittels einer eindeutigen Erklärung per E-Mail an Ihre 
+								Studiengangsassistenz über Ihren Entschluss, diesen Vertrag zu widerrufen, informieren.</p>';
+$this->phrasen['bewerbung/textAusbildungsvertrag']='Ich habe den Ausbildungsvertrag gelesen und erkläre mich mit dem Vertragsinhalt einverstanden.';
+$this->phrasen['bewerbung/informationDatenverwendungStudierende']='<a href=\''.APP_ROOT.'cms/dms.php?id=149169\' target=\'_blank\'><span class="glyphicon glyphicon-file"></span>Information über die Verwendung personenbezogener Daten von Studierenden</a>';
 
 // Reihungstest
 $this->phrasen['bewerbung/anmeldungReihungstestMailBetreff']='Bestätigung Reihungstestanmeldung Fachhochschule Technikum Wien';

@@ -30,9 +30,9 @@ session_start();
 // Die Tabs werden in der definierten Reihenfolge ausgegeben aber in der Indexreihenfolge geladen
 $tabs = array();
 if(defined('BEWERBERTOOL_UEBERSICHT_ANZEIGEN') && BEWERBERTOOL_UEBERSICHT_ANZEIGEN)
-	$tabs[10]='uebersicht';
+	$tabs[11]='uebersicht';
 if(!defined('BEWERBERTOOL_ALLGEMEIN_ANZEIGEN') || BEWERBERTOOL_ALLGEMEIN_ANZEIGEN)
-	$tabs[11]='allgemein';
+	$tabs[12]='allgemein';
 
 $tabs[0]='daten';
 $tabs[1]='kontakt';
@@ -53,6 +53,8 @@ if(!defined('BEWERBERTOOL_ABSCHICKEN_ANZEIGEN') || BEWERBERTOOL_ABSCHICKEN_ANZEI
 	$tabs[8]='abschicken';
 if(defined('BEWERBERTOOL_SICHERHEIT_ANZEIGEN') && BEWERBERTOOL_SICHERHEIT_ANZEIGEN)
 	$tabs[9]='sicherheit';
+if(defined('BEWERBERTOOL_AKTEN_ANZEIGEN') && BEWERBERTOOL_AKTEN_ANZEIGEN)
+	$tabs[10]='akten';
 
 $tabLadefolge = $tabs;
 ksort($tabLadefolge);
@@ -987,6 +989,64 @@ if (isset($_POST['submit_nachgereicht']))
 	}
 }
 
+if(isset($_POST['action']) && $_POST['action']=='downloadAkte')
+{
+	$id = $_POST['akte_id'];
+	$akte = new akte();
+	$akte->load($id);
+	if ($akte->person_id == $person_id
+		&& $akte->stud_selfservice)
+	{
+		if($akte->inhalt!='')
+		{
+			//Header fuer Datei schicken
+			header("Content-type: $akte->mimetype");
+			header('Content-Disposition: attachment; filename="'.$akte->titel.'"');
+			echo base64_decode($akte->inhalt);
+			exit;
+		}
+		else
+		{
+			die('Akte ist ohne Inhalt');
+		}
+	}
+	else
+	{
+		die('Person ID stimmt nicht überein');
+	}
+}
+
+if(isset($_POST['action']) && $_POST['action']=='acceptAkte')
+{
+	$id = $_POST['akte_id'];
+	$akte = new akte();
+	$akte->load($id);
+	if ($akte->person_id == $person_id
+		&& $akte->stud_selfservice)
+	{
+		$akte->akzeptiertamum = date('Y-m-d H:i:s');
+
+		if (!$akte->save())
+		{
+			$message .= $p->t('global/fehleraufgetreten') . ": $akte->errormsg";
+			// Logeintrag schreiben
+			$log->log($person_id, 'Action', array(
+				'name' => 'Akte '.$akte->bezeichnung.' accepted',
+				'success' => true,
+				'message' => 'Akte '.$akte->bezeichnung.' accepted'
+			), 'bewerbung', 'bewerbung', null, 'online');
+		}
+		else
+		{
+			$message .= $p->t('global/erfolgreichgespeichert');
+		}
+	}
+	else
+	{
+		die('Person ID stimmt nicht überein');
+	}
+}
+
 // gibt an welcher Tab gerade aktiv ist
 $active = filter_input(INPUT_GET, 'active');
 
@@ -996,60 +1056,36 @@ if (! $active)
 }
 $save_error_daten = '';
 // Persönliche Daten speichern
-if (isset($_POST['btn_person']) && ! $eingabegesperrt)
+if (isset($_POST['btn_person']))
 {
-	$person->titelpre = $_POST['titel_pre'];
-	$person->vorname = $_POST['vorname'];
-	$person->nachname = $_POST['nachname'];
-	$person->titelpost = $_POST['titelPost'];
-	$person->gebdatum = $datum->formatDatum($_POST['geburtsdatum'], 'Y-m-d');
-	$person->staatsbuergerschaft = $_POST['staatsbuergerschaft'];
-	$person->geschlecht = $_POST['geschlecht'];
-	if ($_POST['geschlecht'] == 'm')
+	// Wenn Eingabe gesperrt darf nur die SVNR gespeichert werden
+	if (!$eingabegesperrt)
 	{
-		$person->anrede = 'Herr';
+		$person->titelpre = $_POST['titel_pre'];
+		$person->vorname = $_POST['vorname'];
+		$person->nachname = $_POST['nachname'];
+		$person->titelpost = $_POST['titelPost'];
+		$person->gebdatum = $datum->formatDatum($_POST['geburtsdatum'], 'Y-m-d');
+		$person->staatsbuergerschaft = $_POST['staatsbuergerschaft'];
+		$person->geschlecht = $_POST['geschlecht'];
+		if ($_POST['geschlecht'] == 'm')
+		{
+			$person->anrede = 'Herr';
+		}
+		elseif ($_POST['geschlecht'] == 'w')
+		{
+			$person->anrede = 'Frau';
+		}
+		else
+		{
+			$person->anrede = '';
+		}
+		$person->gebort = $_POST['gebort'];
+		$person->geburtsnation = $_POST['geburtsnation'];
 	}
-	elseif ($_POST['geschlecht'] == 'w')
-	{
-		$person->anrede = 'Frau';
-	}
-	else
-	{
-		$person->anrede = '';
-	}
-	$person->svnr = isset($_POST['svnr']) ? $_POST['svnr'] : '';
-	$person->gebort = $_POST['gebort'];
-	$person->geburtsnation = $_POST['geburtsnation'];
-
-	$person->new = false;
-
-	if (! $person->save())
-	{
-		$message = $person->errormsg;
-		$save_error_daten = true;
-		// Geparkten Logeintrag löschen
-		$log->deleteParked($person_id);
-		// Logeintrag schreiben
-		$log->log($person_id, 'Action', array(
-			'name' => 'Personal data saved',
-			'success' => false,
-			'message' => 'Error saving personal data. Error message says: ' . $person->errormsg
-		), 'bewerbung', 'bewerbung', null, 'online');
-	}
-	else
-	{
-		$save_error_daten = false;
-		// Geparkten Logeintrag löschen
-		$log->deleteParked($person_id);
-		// Logeintrag schreiben
-		$log->log($person_id, 'Action', array(
-			'name' => 'Personal data saved',
-			'success' => true,
-			'message' => 'Personal data has been saved or changed'
-		), 'bewerbung', 'bewerbung', null, 'online');
-	}
-
-	if (! $save_error_daten && $person->checkSvnr($person->svnr, $person_id))
+	$svnr = isset($_POST['svnr']) ? $_POST['svnr'] : '';
+	// Check SVNR
+	if ($svnr != '' && $person->checkSvnr($svnr, $person_id))
 	{
 		$message = $p->t('bewerbung/svnrBereitsVorhanden');
 		$save_error_daten = true;
@@ -1059,8 +1095,43 @@ if (isset($_POST['btn_person']) && ! $eingabegesperrt)
 		$log->log($person_id, 'Action', array(
 			'name' => 'Error saving Sozialversicherungsnummer',
 			'success' => false,
-			'message' => 'Sozialversicherungsnummer ' . $person->svnr . ' already present in database'
+			'message' => 'Sozialversicherungsnummer ' . $svnr . ' already present in database'
 		), 'bewerbung', 'bewerbung', null, 'online');
+	}
+	else
+	{
+		$person->svnr = $svnr;
+	}
+
+	$person->new = false;
+
+	if (!$save_error_daten)
+	{
+		if (!$person->save())
+		{
+			$message = $person->errormsg;
+			$save_error_daten = true;
+			// Geparkten Logeintrag löschen
+			$log->deleteParked($person_id);
+			// Logeintrag schreiben
+			$log->log($person_id, 'Action', array(
+				'name' => 'Personal data saved',
+				'success' => false,
+				'message' => 'Error saving personal data. Error message says: '.$person->errormsg
+			), 'bewerbung', 'bewerbung', null, 'online');
+		}
+		else
+		{
+			$save_error_daten = false;
+			// Geparkten Logeintrag löschen
+			$log->deleteParked($person_id);
+			// Logeintrag schreiben
+			$log->log($person_id, 'Action', array(
+				'name' => 'Personal data saved',
+				'success' => true,
+				'message' => 'Personal data has been saved or changed'
+			), 'bewerbung', 'bewerbung', null, 'online');
+		}
 	}
 
 	$berufstaetig = filter_input(INPUT_POST, 'berufstaetig');
@@ -1082,22 +1153,25 @@ if (isset($_POST['btn_person']) && ! $eingabegesperrt)
 		$notiz->insertamum = date('c');
 		$notiz->start = date('Y-m-d');
 		$notiz->titel = 'Berufstätigkeit';
-		$notiz->text = 'Berufstätig: ' . $berufstaetig . '; Dienstgeber: ' . $berufstaetig_dienstgeber . '; Art der Tätigkeit: ' . $berufstaetig_art;
+		$notiz->text = 'Berufstätig: '.$berufstaetig.'; Dienstgeber: '.$berufstaetig_dienstgeber.'; Art der Tätigkeit: '.$berufstaetig_art;
 		$notiz->save(true);
 		$notiz->saveZuordnung();
 	}
 
-	$aufmerksamdurch = filter_input(INPUT_POST, 'aufmerksamdurch');
-
-	// Aufmerksamdurch speichern
-	$prestudent = new prestudent();
-	$prestudent->getPrestudenten($person_id);
-
-	foreach ($prestudent->result as $prestudent_eintrag)
+	if (!$eingabegesperrt)
 	{
-		$prestudent_eintrag->new = false;
-		$prestudent_eintrag->aufmerksamdurch_kurzbz = $aufmerksamdurch;
-		$prestudent_eintrag->save();
+		$aufmerksamdurch = filter_input(INPUT_POST, 'aufmerksamdurch');
+
+		// Aufmerksamdurch speichern
+		$prestudent = new prestudent();
+		$prestudent->getPrestudenten($person_id);
+
+		foreach ($prestudent->result as $prestudent_eintrag)
+		{
+			$prestudent_eintrag->new = false;
+			$prestudent_eintrag->aufmerksamdurch_kurzbz = $aufmerksamdurch;
+			$prestudent_eintrag->save();
+		}
 	}
 }
 
@@ -2778,6 +2852,13 @@ else
 								<?php echo $p->t('bewerbung/menuAbschließen') ?> <br> <?php echo $status_abschicken_text;?>
 							</a>
 						</li>
+						<?php endif; ?>
+						<?php if(defined('BEWERBERTOOL_AKTEN_ANZEIGEN') && BEWERBERTOOL_AKTEN_ANZEIGEN):	?>
+							<li>
+								<a href="#akten" id="tabAktenLink" aria-controls="akten" role="tab" data-toggle="tab">
+									<?php echo $p->t('bewerbung/akten') ?> <br> <span id="tabAktenStatustext"></span>
+								</a>
+							</li>
 						<?php endif; ?>
 						<?php if(defined('BEWERBERTOOL_SICHERHEIT_ANZEIGEN') && BEWERBERTOOL_SICHERHEIT_ANZEIGEN):	?>
 						<li>
