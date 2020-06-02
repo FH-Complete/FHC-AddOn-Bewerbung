@@ -1029,16 +1029,16 @@ if(isset($_POST['action']) && $_POST['action']=='acceptAkte')
 		if (!$akte->save())
 		{
 			$message .= $p->t('global/fehleraufgetreten') . ": $akte->errormsg";
-			// Logeintrag schreiben
-			$log->log($person_id, 'Action', array(
-				'name' => 'Akte '.$akte->bezeichnung.' accepted',
-				'success' => true,
-				'message' => 'Akte '.$akte->bezeichnung.' accepted'
-			), 'bewerbung', 'bewerbung', null, 'online');
 		}
 		else
 		{
 			$message .= $p->t('global/erfolgreichgespeichert');
+			// Logeintrag schreiben
+			$log->log($person_id, 'Action', array(
+				'name' => 'Akte '.$akte->bezeichnung.' accepted',
+				'success' => true,
+				'message' => 'Akte '.$akte->bezeichnung.' (ID '.$akte->akte_id.') accepted'
+			), 'bewerbung', 'bewerbung', null, 'online');
 		}
 	}
 	else
