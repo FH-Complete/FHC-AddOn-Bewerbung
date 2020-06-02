@@ -267,21 +267,25 @@ if(!isset($person_id))
 			$notiz = new notiz;
 			$notiz->getBewerbungstoolNotizen($person_id);
 			$counter = 0;
-			if(count($notiz->result)>0):
-				foreach($notiz->result as $berufstaetig): ?>
-					<?php if($berufstaetig->insertvon == 'online'): $counter++ ?>
-						<div class="form-group">
-							<label for="berufstaetig" class="col-sm-3 control-label">
-								<?php echo $p->t('bewerbung/eintragVom') ?> <?php echo date('j.n.y H:i', strtotime($berufstaetig->insertamum)) ?>
-							</label>
-							<div class="col-sm-9">
-								<input type="text" class="form-control" disabled value="<?php echo htmlspecialchars($berufstaetig->text) ?>">
-							</div>
-						</div>
-					<?php endif; ?>
-				<?php endforeach;
+			if(count($notiz->result) > 0):
+				foreach($notiz->result as $berufstaetig)
+				{
+					$letztesDatum = $berufstaetig->insertamum;
+					if($berufstaetig->insertvon == 'online')
+					{
+						$counter++;
+						echo '	<div class="form-group">
+									<label for="berufstaetig" class="col-sm-3 control-label">
+										'.$p->t('bewerbung/eintragVom').' '.date('j.n.y H:i', strtotime($berufstaetig->insertamum)).'
+									</label>
+									<div class="col-sm-9">
+										<input type="text" class="form-control" disabled value="'.htmlspecialchars($berufstaetig->text).'">
+									</div>
+								</div>';
+					}
+				}
 				$berufstaetigkeit_code='';
-				if($counter == 0)
+				//if($counter == 0)
 				{
 					foreach($prestudent->result AS $row)
 					{
@@ -307,13 +311,13 @@ if(!isset($person_id))
 					}
 				}
 			endif;	?>
-			<?php if($counter == 0): ?>
+
 				<div class="form-group">
 					<label for="berufstaetig" class="col-sm-3 control-label"><?php echo $p->t('bewerbung/berufstaetig') ?></label>
 					<div class="col-sm-9">
-						<?php echo $p->t('bewerbung/orgform/VZ') ?>: <input type="radio" name="berufstaetig" value="Vollzeit">
-						<?php echo $p->t('bewerbung/orgform/teilzeit') ?>: <input type="radio" name="berufstaetig" value="Teilzeit">
-						<?php echo $p->t('global/nein') ?>: <input type="radio" name="berufstaetig" value="n" checked>
+						<?php echo $p->t('bewerbung/vollzeit') ?>: <input type="radio" name="berufstaetig" value="Vollzeit">
+						<?php echo $p->t('bewerbung/teilzeit') ?>: <input type="radio" name="berufstaetig" value="Teilzeit">
+						<?php echo $p->t('global/nein') ?>: <input type="radio" name="berufstaetig" value="n">
 					</div>
 				</div>
 				<div class="form-group">
@@ -328,7 +332,7 @@ if(!isset($person_id))
 						<input type="text" name="berufstaetig_art" id="berufstaetig_art" class="form-control">
 					</div>
 				</div>
-			<?php endif; ?>
+
 		</fieldset>
 		<?php
 		endif;
