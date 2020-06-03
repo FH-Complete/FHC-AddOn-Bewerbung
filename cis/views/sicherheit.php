@@ -55,5 +55,7 @@ echo '<br><br>
 	<button class="btn-nav btn btn-default" type="button" data-jump-tab="'.$tabs[0].'">
 		'.$p->t('bewerbung/menuUebersichtBewerbungAbschicken').'
 	</button>
-</div>';
+	<br/><br/><br/><br/>
+</div>
+';
 ?>
