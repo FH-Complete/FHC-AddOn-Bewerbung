@@ -30,9 +30,9 @@ session_start();
 // Die Tabs werden in der definierten Reihenfolge ausgegeben aber in der Indexreihenfolge geladen
 $tabs = array();
 if(defined('BEWERBERTOOL_UEBERSICHT_ANZEIGEN') && BEWERBERTOOL_UEBERSICHT_ANZEIGEN)
-	$tabs[11]='uebersicht';
+	$tabs[12]='uebersicht';
 if(!defined('BEWERBERTOOL_ALLGEMEIN_ANZEIGEN') || BEWERBERTOOL_ALLGEMEIN_ANZEIGEN)
-	$tabs[12]='allgemein';
+	$tabs[13]='allgemein';
 
 $tabs[0]='daten';
 $tabs[1]='kontakt';
@@ -54,9 +54,9 @@ if(!defined('BEWERBERTOOL_ABSCHICKEN_ANZEIGEN') || BEWERBERTOOL_ABSCHICKEN_ANZEI
 if(defined('BEWERBERTOOL_MESSAGES_ANZEIGEN') && BEWERBERTOOL_MESSAGES_ANZEIGEN)
 	$tabs[9]='messages';
 if(defined('BEWERBERTOOL_SICHERHEIT_ANZEIGEN') && BEWERBERTOOL_SICHERHEIT_ANZEIGEN)
-	$tabs[9]='sicherheit';
+	$tabs[10]='sicherheit';
 if(defined('BEWERBERTOOL_AKTEN_ANZEIGEN') && BEWERBERTOOL_AKTEN_ANZEIGEN)
-	$tabs[10]='akten';
+	$tabs[11]='akten';
 
 $tabLadefolge = $tabs;
 ksort($tabLadefolge);
@@ -2805,11 +2805,11 @@ else
 							</li>
 						<?php endif; ?>
 						<?php if(defined('BEWERBERTOOL_MESSAGES_ANZEIGEN') && BEWERBERTOOL_MESSAGES_ANZEIGEN):	?>
-						<li>
-							<a href="#messages" aria-controls="messages" role="tab" data-toggle="tab">
-								<?php echo $p->t('bewerbung/menuMessages') ?> <br> &nbsp;
-							</a>
-						</li>
+							<li>
+								<a href="#messages" aria-controls="messages" role="tab" data-toggle="tab">
+									<?php echo $p->t('bewerbung/menuMessages') ?> <br> &nbsp;
+								</a>
+							</li>
 						<?php endif; ?>
 						<?php if(defined('BEWERBERTOOL_SICHERHEIT_ANZEIGEN') && BEWERBERTOOL_SICHERHEIT_ANZEIGEN):	?>
 							<li>

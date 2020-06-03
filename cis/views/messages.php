@@ -35,23 +35,7 @@ echo '<div role="tabpanel" class="tab-pane" id="messages">
 	<h2>'.$p->t('bewerbung/menuMessages').'</h2>';
 
 echo '<p>'.$p->t('bewerbung/erklaerungMessages').'</p>';
-
-/*if($save_error_zugangscode===false)
-{
-	echo '	<div class="alert alert-success" id="success-alert_abschicken">
-				<button type="button" class="close" data-dismiss="alert">x</button>
-					<strong>'.$message.'</strong>
-				</div>';
-}
-elseif($save_error_zugangscode===true)
-{
-	echo '	<div class="alert alert-danger" id="danger-alert">
-			<button type="button" class="close" data-dismiss="alert">x</button>
-				<strong>'.$p->t('global/fehleraufgetreten').' </strong>'.$message.'
-			</div>';
-}*/
-
-echo '<!-- 4:3 aspect ratio -->
+echo '
 
 		<div id="responsiveDiv" class="embed-responsive" style="padding-bottom: 100%; border: 1px solid lightgrey">
 		  <iframe   id="massagesIframe"
@@ -60,18 +44,8 @@ echo '<!-- 4:3 aspect ratio -->
 		            src="../../../index.ci.php/system/messages/MessageClient/read" 
 		            <!--onload="changeIframeSize()"-->
 		            ></iframe>
-		</div>';
-
-//https://c3p0.kindlm.technikum-wien.at/fhcomplete/index.ci.php/system/messages/MessageClient/write
-
-
-/*echo '	<form method="POST" action="'.$_SERVER['PHP_SELF'].'?active=sicherheit">
-		<button class="btn btn-primary" type="submit" name="btn_new_accesscode">
-			'.$p->t('bewerbung/buttonNeuerZugangscode').'
-		</button>
-	</form><br>';
-
-*/
+		</div>
+	</div>';
 
 ?>
 <script type="text/javascript">
