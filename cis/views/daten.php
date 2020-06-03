@@ -173,11 +173,16 @@ if(!isset($person_id))
 		</div>
 		<?php
 		if(!defined('BEWERBERTOOL_SOZIALVERSICHERUNGSNUMMER_ANZEIGEN') || BEWERBERTOOL_SOZIALVERSICHERUNGSNUMMER_ANZEIGEN == true || is_string(BEWERBERTOOL_SOZIALVERSICHERUNGSNUMMER_ANZEIGEN)):
+			$svnrDisabled = 'disabled="disabled"';
+			if ($svnr == '')
+			{
+				$svnrDisabled = '';
+			}
 		?>
 		<div id="input_svnr" class="form-group" <?php echo ($svnr == '' && !in_array($person->staatsbuergerschaft, explode(";", BEWERBERTOOL_SOZIALVERSICHERUNGSNUMMER_ANZEIGEN)) && is_string(BEWERBERTOOL_SOZIALVERSICHERUNGSNUMMER_ANZEIGEN)?'style="display: none;"':'') ?>>
 			<label for="svnr" class="col-sm-3 control-label"><?php echo $p->t('bewerbung/svnr').' '.$p->t('bewerbung/fallsVorhanden') ?></label>
 			<div class="col-sm-9">
-				<input type="text" name="svnr" id="svnr"  <?php echo $disabled; ?> value="<?php echo $svnr ?>" class="form-control">
+				<input type="text" name="svnr" id="svnr"  <?php echo $svnrDisabled; ?> value="<?php echo $svnr ?>" class="form-control">
 			</div>
 		</div>
 		<?php endif; ?>
@@ -185,11 +190,26 @@ if(!isset($person_id))
 			<label for="geschlecht" class="col-sm-3 control-label"><?php echo $p->t('global/geschlecht') ?></label>
 			<div class="col-sm-9">
 				<?php
-				$geschl_m = ($person->geschlecht == 'm') ? 'checked' : '';
-				$geschl_w = ($person->geschlecht == 'w') ? 'checked' : '';
+				$geschlechter = new geschlecht();
+				$geschlechter->getAll();
+
+				foreach ($geschlechter->result AS $gsch)
+				{
+					if ($gsch->geschlecht == 'u')
+					{
+						continue;
+					}
+					$checked = '';
+					if ($gsch->geschlecht == $person->geschlecht)
+					{
+						$checked = 'checked';
+					}
+					echo '	<label class="radio-inline">
+								<input type="radio" name="geschlecht" class="radio-inline" '.$disabled.' value="'.$gsch->geschlecht.'" '.$checked.'>
+								'.$gsch->bezeichnung_mehrsprachig_arr[$sprache].'
+							</label>';
+				}
 				?>
-				<?php echo $p->t('bewerbung/maennlich') ?>: <input type="radio" name="geschlecht"  <?php echo $disabled; ?> value="m" <?php echo $geschl_m ?>>
-				<?php echo $p->t('bewerbung/weiblich') ?>: <input type="radio" name="geschlecht"  <?php echo $disabled; ?> value="w" <?php echo $geschl_w ?>>
 			</div>
 		</div>
 		<?php 
@@ -316,7 +336,7 @@ if(!isset($person_id))
 		<button class="btn-nav btn btn-default" type="submit" name="btn_person" data-jump-tab="<?php echo $tabs[array_search('daten', $tabs)-1] ?>" onclick="this.form.action='<?php echo $_SERVER['PHP_SELF'] ?>?active=<?php echo $tabs[array_search('daten', $tabs)-1] ?>'">
 			<?php echo $p->t('global/zurueck') ?>
 		</button>
-		<button class="btn btn-success" type="submit"  <?php echo $disabled; ?> name="btn_person">
+		<button class="btn btn-success" type="submit"  <?php /*echo ($svnrDisabled == '' ? '' : $disabled);*/ ?> name="btn_person">
 			<?php echo $p->t('global/speichern') ?>
 		</button>
 		<button class="btn-nav btn btn-default" type="submit" name="btn_person" data-jump-tab="<?php echo $tabs[array_search('daten', $tabs)+1] ?>" onclick="this.form.action='<?php echo $_SERVER['PHP_SELF'] ?>?active=<?php echo $tabs[array_search('daten', $tabs)+1] ?>'">

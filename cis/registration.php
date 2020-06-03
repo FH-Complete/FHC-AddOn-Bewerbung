@@ -27,6 +27,7 @@ require_once('../../../include/bewerbungstermin.class.php');
 require_once('../../../include/datum.class.php');
 require_once('../../../include/datum.class.php');
 require_once('../../../include/functions.inc.php');
+require_once('../../../include/geschlecht.class.php');
 require_once('../../../include/kontakt.class.php');
 require_once('../../../include/konto.class.php');
 require_once('../../../include/mail.class.php');
@@ -523,12 +524,23 @@ elseif($username && $password)
 
 							$zugangscode = substr(md5(openssl_random_pseudo_bytes(20)), 0, 15);
 
+							//Anrede ermitteln
+							$anrede = '';
+							if ($geschlecht == 'm')
+							{
+								$anrede = 'Herr';
+							}
+							if ($geschlecht == 'w')
+							{
+								$anrede = 'Frau';
+							}
+
 							$person->nachname = $nachname;
 							$person->vorname = $vorname;
 							$person->gebdatum = $geb_datum;
 							$person->geschlecht = $geschlecht;
 							$person->staatsbuergerschaft = $staatsbuergerschaft;
-							$person->anrede = ($geschlecht=='m'?'Herr':'Frau');
+							$person->anrede = $anrede;
 							$person->aktiv = true;
 							$person->zugangscode = $zugangscode;
 							$person->insertamum = date('Y-m-d H:i:s');
@@ -711,15 +723,28 @@ elseif($username && $password)
 						<label class="col-sm-3 control-label">
 							<?php echo $p->t('global/geschlecht') ?>
 						</label>
-						<div class="col-sm-4 text-center">
-							<label class="radio-inline">
-								<input type="radio" name="geschlecht" id="geschlechtm" value="m" <?php echo $geschlecht == 'm' ? 'checked' : '' ?>>
-								<?php echo $p->t('bewerbung/maennlich'); ?>
-							</label>
-							<label class="radio-inline">
-								<input type="radio" name="geschlecht" id="geschlechtw" value="w" <?php echo $geschlecht == 'w' ? 'checked' : '' ?>>
-								<?php echo $p->t('bewerbung/weiblich') ?>
-							</label>
+						<div class="col-sm-4">
+							<?php
+							$geschlechter = new geschlecht();
+							$geschlechter->getAll();
+
+							foreach ($geschlechter->result AS $gsch)
+							{
+								if ($gsch->geschlecht == 'u')
+								{
+									continue;
+								}
+								$checked = '';
+								if ($gsch->geschlecht == $geschlecht)
+								{
+									$checked = 'checked';
+								}
+								echo '	<label class="radio-inline">
+											<input type="radio" name="geschlecht" class="geschlechter" value="'.$gsch->geschlecht.'" '.$checked.' >
+												'.$gsch->bezeichnung_mehrsprachig_arr[$sprache].'
+										</label>';
+							}
+							?>
 						</div>
 					</div>
 
@@ -1387,7 +1412,8 @@ elseif($username && $password)
 
 
 			}
-			if((document.getElementById('geschlechtm').checked == false) && (document.getElementById('geschlechtw').checked == false))
+			var checkedGeschlecht = $("input[type=radio][class=geschlechter]:checked");
+			if(checkedGeschlecht.length == 0)
 			{
 				alert("<?php echo $p->t('bewerbung/bitteGeschlechtWaehlen')?>");
 				return false;
@@ -1683,10 +1709,12 @@ function sendMail($zugangscode, $email, $person_id=null)
 		$nachname  = $person->nachname;
 		$geschlecht = $person->geschlecht;
 	}
-	if($geschlecht=='m')
-		$anrede=$p->t('bewerbung/anredeMaennlich');
+	if($geschlecht == 'm')
+		$anrede = $p->t('bewerbung/anredeMaennlich');
+	elseif($geschlecht == 'w')
+		$anrede = $p->t('bewerbung/anredeWeiblich');
 	else
-		$anrede=$p->t('bewerbung/anredeWeiblich');
+		$anrede = $p->t('bewerbung/anredeNeutral');
 
 	$mail = new mail($email, 'no-reply', $p->t('bewerbung/registration'), $p->t('bewerbung/mailtextHtml'));
 	$text = $p->t('bewerbung/mailtext',array($vorname, $nachname, $zugangscode, $anrede, $email));
@@ -1719,10 +1747,12 @@ function resendMail($zugangscode, $email, $person_id=null)
 		$nachname  = $person->nachname;
 		$geschlecht = $person->geschlecht;
 	}
-	if($geschlecht=='m')
-		$anrede=$p->t('bewerbung/anredeMaennlich');
+	if($geschlecht == 'm')
+		$anrede = $p->t('bewerbung/anredeMaennlich');
+	elseif($geschlecht == 'w')
+		$anrede = $p->t('bewerbung/anredeWeiblich');
 	else
-		$anrede=$p->t('bewerbung/anredeWeiblich');
+		$anrede = $p->t('bewerbung/anredeNeutral');
 
 	$mail = new mail($email, 'no-reply', $p->t('bewerbung/registration'), $p->t('bewerbung/mailtextHtml'));
 	$text = $p->t('bewerbung/mailtext',array($vorname, $nachname, $zugangscode, $anrede, $email));

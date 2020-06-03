@@ -71,6 +71,7 @@ $this->phrasen['bewerbung/fallsVorhanden']='(if available)';
 $this->phrasen['bewerbung/mailtextHtml']='Please look at the message in the HTML view, in order to display the link fully.';
 $this->phrasen['bewerbung/anredeMaennlich']='Mr';
 $this->phrasen['bewerbung/anredeWeiblich']='Ms';
+$this->phrasen['bewerbung/anredeNeutral']='Mr/Ms';
 $this->phrasen['bewerbung/mailtext']='Dear %4$s %1$s %2$s.<br><br>
                                         Thank you for your interest in a degree program at '.CAMPUS_NAME.'. <br>
                                         To apply for a course, please use the following link and access code:<br><br>
@@ -216,7 +217,8 @@ $this->phrasen['bewerbung/loginmitAccount']='Login with account';
 $this->phrasen['bewerbung/dokumentOhneUploadGeprueft'] = 'Approved without upload.';
 $this->phrasen['bewerbung/allgemeineErklaerung']='We are pleased that you are interested in the study programs we offer.<br><br>
 You may select - online - up to 3 study programs and as many further education courses as you like.<br>
-Click the green button to add a study program or course to your application.<br>
+Click the green button to add a study program or course to your application.
+Please note that you have to prioritize when choosing your degree programs. <br>Once the placement test has been completed, the prioritization can <b>no longer</b> be changed.<br>
 Should you require any additional information, please do not hesitate to contact our <a href=\'https://www.technikum-wien.at/en/student-guide/admission-counselors/\' target=\'_blank\'>student counselling team</a> in person, by phone, or via e-mail or WhatsApp.<br><br>
 Complete the form in full. Once you have entered all details, send in your application by clicking "Send application".<br><br>
 Application deadlines for third countries (outside the EU) see:<br>
@@ -277,7 +279,7 @@ $this->phrasen['bewerbung/zahlungsinformation']='Payment information';
 $this->phrasen['bewerbung/bezahlt']='payed';
 $this->phrasen['bewerbung/zahlungsdetails']='Payment details';
 $this->phrasen['bewerbung/menuReihungstest']='Placement test';
-$this->phrasen['bewerbung/fuerReihungstestAnmelden']='Here are the next available placement tests. <br>Please register for <b>one</b> and note that you need to take the test only once even if you have selected more than one bachelor degree programme.<br>The registration locks the prioritization of your degree programs.';
+$this->phrasen['bewerbung/fuerReihungstestAnmelden']='Here are the next available online-placement tests. <br>Please register for <b>one</b> and note that you need to take the test only once even if you have selected more than one bachelor degree programme.<br>The registration <b>locks the prioritization</b> of your degree programs.';
 $this->phrasen['bewerbung/fehler']='An error occurred';
 $this->phrasen['bewerbung/angemeldetPlaetze']='registered / places';
 $this->phrasen['bewerbung/uhrzeit']='Time';
@@ -298,6 +300,7 @@ $this->phrasen['bewerbung/empfaenger']='Recipient';
 $this->phrasen['bewerbung/iban']='IBAN';
 $this->phrasen['bewerbung/bic']='BIC';
 $this->phrasen['bewerbung/zahlungsreferenz']='Payment Reference';
+$this->phrasen['bewerbung/offenerBetrag']='Outstanding balance';
 $this->phrasen['bewerbung/buchungsnummerNichtVorhanden']='Booking number %s not present';
 $this->phrasen['bewerbung/teilweiseVollstaendig']='partially complete';
 $this->phrasen['bewerbung/vollstaendig']='complete';
@@ -567,7 +570,7 @@ $this->phrasen['bewerbung/bitteZGVausweahlen']='If you are applying for a Bachel
 $this->phrasen['bewerbung/allgemeineDokumente']='General Documents';
 $this->phrasen['bewerbung/akteBereitsVorhanden']='The maximum number of uploads for this document has been reached'; // Nur grob übersetzt
 $this->phrasen['bewerbung/vervollstaendigenSieIhreDaten']='Complete the data to send the application'; // Nur grob übersetzt
-$this->phrasen['bewerbung/datenUnvollstaendig']='Daten unvollständig'; // Noch zu übersetzen
+$this->phrasen['bewerbung/datenUnvollstaendig']='Data incomplete'; // Noch zu übersetzen
 $this->phrasen['bewerbung/durchsuchen']='Browse...';
 $this->phrasen['bewerbung/infotextRegistrationBewerbungGesperrt']='Currently you can only apply for Certificate Programs for Further Education.<br>The application period for bachelor and master degree programs will start in September';
 $this->phrasen['bewerbung/mehr']='More';
@@ -578,11 +581,24 @@ $this->phrasen['bewerbung/logoutInfotext']='Your application has not been sent y
 $this->phrasen['bewerbung/menuMessages']='Messages';
 $this->phrasen['bewerbung/erklaerungMessages']='Hier können Sie Nachrichten abrufen';
 $this->phrasen['bewerbung/dateiUploadLeer']='File could not be uploaded. Maybe filesize exceeded 15MB'; // Nur grob übersetzt
-$this->phrasen['bewerbung/zustimmungAGB']='Zustimmung zu unseren allgemeinen Geschäftsbedingungen.'; // Noch zu übersetzen
-$this->phrasen['bewerbung/bitteAGBZustimmen']='Sie müssen den AGB zustimmen, um Ihre Bewerbung abschicken zu können'; // Noch zu übersetzen
-$this->phrasen['bewerbung/zahlungAusstaendig']='Es sind noch Zahlungen offen. Sie können die Bewerbung erst abschicken, wenn alle Zahlungen eingegangen sind.'; // Noch zu übersetzen
+$this->phrasen['bewerbung/zustimmungAGB']='Agreement to our general terms and conditions.';
+$this->phrasen['bewerbung/bitteAGBZustimmen']='You must agree to the AGB in order to send your application';
+$this->phrasen['bewerbung/zahlungAusstaendig']='Payments are still outstanding. You can only send the application once all payments have been received.';
 $this->phrasen['bewerbung/microsoftMailWarning']='<b>Warning!</b> Currently e-mails from the UAS Technikum Wien can not be received via @hotmail, @outlook and @live adresses.<br>Please use an other e-mail address if possible.';
-$this->phrasen['bewerbung/herkunftDesBewerbers']='Herkunft';
+$this->phrasen['bewerbung/herkunftDesBewerbers']='Origin';
+$this->phrasen['bewerbung/ort']='Room';
+$this->phrasen['bewerbung/akten']='Files';
+$this->phrasen['bewerbung/herunterladen']='Download %s';
+$this->phrasen['bewerbung/akzeptieren']='Sign %s';
+$this->phrasen['bewerbung/akzeptiert']='%s accepted';
+$this->phrasen['bewerbung/keineAktenVorhanden']='Currently there are no downloadable files available';
+$this->phrasen['bewerbung/textRuecktrittsrecht']='I take note that I have the right to cancel this contract within fourteen days without giving any reason.
+								<br><p class="alert alert-info">
+								<b>Information:</b><br>
+								In order to exercise this right of withdrawal, you must inform the UAS Technikum Wien within 14 days of entering into the 
+								contract by means of a clear declaration by email to your degree program’s administrative assistant about your decision to cancel this contract.</p>';
+$this->phrasen['bewerbung/textAusbildungsvertrag']='I have read the training contract and agree to the content of the contract.';
+$this->phrasen['bewerbung/informationDatenverwendungStudierende']='<a href=\''.APP_ROOT.'cms/dms.php?id=149169\' target=\'_blank\'><span class="glyphicon glyphicon-file"></span>Information on the use of student personal data</a>';
 
 // Reihungstest
 $this->phrasen['bewerbung/anmeldungReihungstestMailBetreff']='Confirmation of registration to placement test UAS Technikum Wien';
@@ -595,13 +611,13 @@ Yours sincerely<br>
 UAS Technikum Wien';
 
 $this->phrasen['bewerbung/reihungstestInfoTextAngemeldet']='<div class="alert alert-info">
-<p>Please make sure that you arrive 15 minutes prior to the placement test at the UAS, 1200 Wien, Höchstädtplatz 6.</p>
-<p>Please bring an official photo ID (passport, identity card, etc.) on the day of your placement test.</p>
+<p>Please make sure that you are ready for the online-placement test 15 minutes before the beginning.</p>
 </div><br>';
 $this->phrasen['bewerbung/anmeldefrist']='Term of application';
 $this->phrasen['bewerbung/infoVorgemerktFuerQualifikationskurs']='You are pencilled in as a participant for the qualification courses. Once you are confirmed there, you can choose an appointment for the placement test here.';
-$this->phrasen['bewerbung/raumzuteilungFolgt']='Two days prior to the test you will see here the room-number';
-$this->phrasen['bewerbung/sieHabenFolgendenTerminGewaehlt']='You have registered for the following placement test date';
+$this->phrasen['bewerbung/raumzuteilungFolgt']='Details follow 2 working days before the test per e-mail';
+$this->phrasen['bewerbung/sieHabenFolgendenTerminGewaehlt']='Thank you for registering for the online-placement test.<br>Your prioritization of degree programs is fixed and can only be changed before the registration deadline.<br>Once the placement test has been completed, the prioritization can <b>no longer</b> be changed.';
+$this->phrasen['bewerbung/informationenRTvorhanden']='Information for placement test';
 
 // Ausbildung
 $this->phrasen['bewerbung/menuAusbildung']='Ausbildung';

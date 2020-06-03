@@ -54,7 +54,9 @@ if(!defined('BEWERBERTOOL_ABSCHICKEN_ANZEIGEN') || BEWERBERTOOL_ABSCHICKEN_ANZEI
 if(defined('BEWERBERTOOL_MESSAGES_ANZEIGEN') && BEWERBERTOOL_MESSAGES_ANZEIGEN)
 	$tabs[9]='messages';
 if(defined('BEWERBERTOOL_SICHERHEIT_ANZEIGEN') && BEWERBERTOOL_SICHERHEIT_ANZEIGEN)
-	$tabs[10]='sicherheit';
+	$tabs[9]='sicherheit';
+if(defined('BEWERBERTOOL_AKTEN_ANZEIGEN') && BEWERBERTOOL_AKTEN_ANZEIGEN)
+	$tabs[10]='akten';
 
 $tabLadefolge = $tabs;
 ksort($tabLadefolge);
@@ -73,6 +75,7 @@ require_once ('../../../include/adresse.class.php');
 require_once ('../../../include/akte.class.php');
 require_once ('../../../include/aufmerksamdurch.class.php');
 require_once ('../../../include/basis_db.class.php');
+require_once ('../../../include/bankverbindung.class.php');
 require_once ('../../../include/benutzer.class.php');
 require_once ('../../../include/benutzerberechtigung.class.php');
 require_once ('../../../include/bewerbungstermin.class.php');
@@ -83,6 +86,7 @@ require_once ('../../../include/dokument.class.php');
 require_once ('../../../include/fotostatus.class.php');
 require_once ('../../../include/functions.inc.php');
 require_once ('../../../include/gemeinde.class.php');
+require_once ('../../../include/geschlecht.class.php');
 require_once ('../../../include/kontakt.class.php');
 require_once ('../../../include/konto.class.php');
 require_once ('../../../include/mail.class.php');
@@ -613,13 +617,16 @@ if (isset($_POST['btn_bewerbung_abschicken']))
 	// Die BFI-KI nimmt automatisch Kontobelastungen vor, wenn es eine neue Bewerbung gibt.
 	// Wenn die Seite dazwischen nicht aktualisiert wird, kann man dennoch abschicken.
 	// Darum wird hier nochmal auf Belastungen gecheckt
-	if (defined('BEWERBERTOOL_ZAHLUNGEN_ANZEIGEN') && BEWERBERTOOL_ZAHLUNGEN_ANZEIGEN === true)
+	if (CAMPUS_NAME != 'FH Technikum Wien')
 	{
-		$konto = new konto();
-		if (! $konto->checkKontostand($person_id))
+		if (defined('BEWERBERTOOL_ZAHLUNGEN_ANZEIGEN') && BEWERBERTOOL_ZAHLUNGEN_ANZEIGEN === true)
 		{
-			$message = $p->t('bewerbung/zahlungAusstaendig');
-			$save_error_abschicken = true;
+			$konto = new konto();
+			if (!$konto->checkKontostand($person_id))
+			{
+				$message = $p->t('bewerbung/zahlungAusstaendig');
+				$save_error_abschicken = true;
+			}
 		}
 	}
 
@@ -957,6 +964,64 @@ if (isset($_POST['submit_nachgereicht']))
 	}
 }
 
+if(isset($_POST['action']) && $_POST['action']=='downloadAkte')
+{
+	$id = $_POST['akte_id'];
+	$akte = new akte();
+	$akte->load($id);
+	if ($akte->person_id == $person_id
+		&& $akte->stud_selfservice)
+	{
+		if($akte->inhalt!='')
+		{
+			//Header fuer Datei schicken
+			header("Content-type: $akte->mimetype");
+			header('Content-Disposition: attachment; filename="'.$akte->titel.'"');
+			echo base64_decode($akte->inhalt);
+			exit;
+		}
+		else
+		{
+			die('Akte ist ohne Inhalt');
+		}
+	}
+	else
+	{
+		die('Person ID stimmt nicht überein');
+	}
+}
+
+if(isset($_POST['action']) && $_POST['action']=='acceptAkte')
+{
+	$id = $_POST['akte_id'];
+	$akte = new akte();
+	$akte->load($id);
+	if ($akte->person_id == $person_id
+		&& $akte->stud_selfservice)
+	{
+		$akte->akzeptiertamum = date('Y-m-d H:i:s');
+
+		if (!$akte->save())
+		{
+			$message .= $p->t('global/fehleraufgetreten') . ": $akte->errormsg";
+		}
+		else
+		{
+			$message .= $p->t('global/erfolgreichgespeichert');
+			// Logeintrag schreiben
+			$log->log($person_id, 'Action', array(
+				'name' => 'Akte '.$akte->bezeichnung.' accepted',
+				'success' => true,
+				'message' => 'Akte '.$akte->bezeichnung.' (ID '.$akte->akte_id.') accepted'
+			), 'bewerbung', 'bewerbung', null, 'online');
+		}
+	}
+	else
+	{
+		die('Person ID stimmt nicht überein');
+	}
+}
+
 // gibt an welcher Tab gerade aktiv ist
 $active = filter_input(INPUT_GET, 'active');
 
@@ -966,49 +1031,36 @@ if (! $active)
 }
 $save_error_daten = '';
 // Persönliche Daten speichern
-if (isset($_POST['btn_person']) && ! $eingabegesperrt)
+if (isset($_POST['btn_person']))
 {
-	$person->titelpre = $_POST['titel_pre'];
-	$person->vorname = $_POST['vorname'];
-	$person->nachname = $_POST['nachname'];
-	$person->titelpost = $_POST['titelPost'];
-	$person->gebdatum = $datum->formatDatum($_POST['geburtsdatum'], 'Y-m-d');
-	$person->staatsbuergerschaft = $_POST['staatsbuergerschaft'];
-	$person->geschlecht = $_POST['geschlecht'];
-	$person->anrede = ($_POST['geschlecht'] == 'm' ? 'Herr' : 'Frau');
-	$person->svnr = isset($_POST['svnr']) ? $_POST['svnr'] : '';
-	$person->gebort = $_POST['gebort'];
-	$person->geburtsnation = $_POST['geburtsnation'];
-
-	$person->new = false;
-
-	if (! $person->save())
+	// Wenn Eingabe gesperrt darf nur die SVNR gespeichert werden
+	if (!$eingabegesperrt)
 	{
-		$message = $person->errormsg;
-		$save_error_daten = true;
-		// Geparkten Logeintrag löschen
-		$log->deleteParked($person_id);
-		// Logeintrag schreiben
-		$log->log($person_id, 'Action', array(
-			'name' => 'Personal data saved',
-			'success' => false,
-			'message' => 'Error saving personal data. Error message says: ' . $person->errormsg
-		), 'bewerbung', 'bewerbung', null, 'online');
+		$person->titelpre = $_POST['titel_pre'];
+		$person->vorname = $_POST['vorname'];
+		$person->nachname = $_POST['nachname'];
+		$person->titelpost = $_POST['titelPost'];
+		$person->gebdatum = $datum->formatDatum($_POST['geburtsdatum'], 'Y-m-d');
+		$person->staatsbuergerschaft = $_POST['staatsbuergerschaft'];
+		$person->geschlecht = $_POST['geschlecht'];
+		if ($_POST['geschlecht'] == 'm')
+		{
+			$person->anrede = 'Herr';
+		}
+		elseif ($_POST['geschlecht'] == 'w')
+		{
+			$person->anrede = 'Frau';
+		}
+		else
+		{
+			$person->anrede = '';
+		}
+		$person->gebort = $_POST['gebort'];
+		$person->geburtsnation = $_POST['geburtsnation'];
 	}
-	else
-	{
-		$save_error_daten = false;
-		// Geparkten Logeintrag löschen
-		$log->deleteParked($person_id);
-		// Logeintrag schreiben
-		$log->log($person_id, 'Action', array(
-			'name' => 'Personal data saved',
-			'success' => true,
-			'message' => 'Personal data has been saved or changed'
-		), 'bewerbung', 'bewerbung', null, 'online');
-	}
-
-	if (! $save_error_daten && $person->checkSvnr($person->svnr, $person_id))
+	$svnr = isset($_POST['svnr']) ? $_POST['svnr'] : '';
+	// Check SVNR
+	if ($svnr != '' && $person->checkSvnr($svnr, $person_id))
 	{
 		$message = $p->t('bewerbung/svnrBereitsVorhanden');
 		$save_error_daten = true;
@@ -1018,8 +1070,43 @@ if (isset($_POST['btn_person']) && ! $eingabegesperrt)
 		$log->log($person_id, 'Action', array(
 			'name' => 'Error saving Sozialversicherungsnummer',
 			'success' => false,
-			'message' => 'Sozialversicherungsnummer ' . $person->svnr . ' already present in database'
+			'message' => 'Sozialversicherungsnummer ' . $svnr . ' already present in database'
 		), 'bewerbung', 'bewerbung', null, 'online');
+	}
+	else
+	{
+		$person->svnr = $svnr;
+	}
+
+	$person->new = false;
+
+	if (!$save_error_daten)
+	{
+		if (!$person->save())
+		{
+			$message = $person->errormsg;
+			$save_error_daten = true;
+			// Geparkten Logeintrag löschen
+			$log->deleteParked($person_id);
+			// Logeintrag schreiben
+			$log->log($person_id, 'Action', array(
+				'name' => 'Personal data saved',
+				'success' => false,
+				'message' => 'Error saving personal data. Error message says: '.$person->errormsg
+			), 'bewerbung', 'bewerbung', null, 'online');
+		}
+		else
+		{
+			$save_error_daten = false;
+			// Geparkten Logeintrag löschen
+			$log->deleteParked($person_id);
+			// Logeintrag schreiben
+			$log->log($person_id, 'Action', array(
+				'name' => 'Personal data saved',
+				'success' => true,
+				'message' => 'Personal data has been saved or changed'
+			), 'bewerbung', 'bewerbung', null, 'online');
+		}
 	}
 
 	$berufstaetig = filter_input(INPUT_POST, 'berufstaetig');
@@ -1041,22 +1128,25 @@ if (isset($_POST['btn_person']) && ! $eingabegesperrt)
 		$notiz->insertamum = date('c');
 		$notiz->start = date('Y-m-d');
 		$notiz->titel = 'Berufstätigkeit';
-		$notiz->text = 'Berufstätig: ' . $berufstaetig . '; Dienstgeber: ' . $berufstaetig_dienstgeber . '; Art der Tätigkeit: ' . $berufstaetig_art;
+		$notiz->text = 'Berufstätig: '.$berufstaetig.'; Dienstgeber: '.$berufstaetig_dienstgeber.'; Art der Tätigkeit: '.$berufstaetig_art;
 		$notiz->save(true);
 		$notiz->saveZuordnung();
 	}
 
-	$aufmerksamdurch = filter_input(INPUT_POST, 'aufmerksamdurch');
-
-	// Aufmerksamdurch speichern
-	$prestudent = new prestudent();
-	$prestudent->getPrestudenten($person_id);
-
-	foreach ($prestudent->result as $prestudent_eintrag)
+	if (!$eingabegesperrt)
 	{
-		$prestudent_eintrag->new = false;
-		$prestudent_eintrag->aufmerksamdurch_kurzbz = $aufmerksamdurch;
-		$prestudent_eintrag->save();
+		$aufmerksamdurch = filter_input(INPUT_POST, 'aufmerksamdurch');
+
+		// Aufmerksamdurch speichern
+		$prestudent = new prestudent();
+		$prestudent->getPrestudenten($person_id);
+
+		foreach ($prestudent->result as $prestudent_eintrag)
+		{
+			$prestudent_eintrag->new = false;
+			$prestudent_eintrag->aufmerksamdurch_kurzbz = $aufmerksamdurch;
+			$prestudent_eintrag->save();
+		}
 	}
 }
 
@@ -2707,6 +2797,13 @@ else
 							</a>
 						</li>
 						<?php endif; ?>
+						<?php if(defined('BEWERBERTOOL_AKTEN_ANZEIGEN') && BEWERBERTOOL_AKTEN_ANZEIGEN):	?>
+							<li>
+								<a href="#akten" id="tabAktenLink" aria-controls="akten" role="tab" data-toggle="tab">
+									<?php echo $p->t('bewerbung/akten') ?> <br> <span id="tabAktenStatustext"></span>
+								</a>
+							</li>
+						<?php endif; ?>
 						<?php if(defined('BEWERBERTOOL_MESSAGES_ANZEIGEN') && BEWERBERTOOL_MESSAGES_ANZEIGEN):	?>
 						<li>
 							<a href="#messages" aria-controls="messages" role="tab" data-toggle="tab">
@@ -2866,6 +2963,21 @@ function sendBewerbung($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz,
 	$typ->getStudiengangTyp($studiengang->typ);
 	$empfaenger = getMailEmpfaenger($studiengang->studiengang_kz);
 
+	if (CAMPUS_NAME == 'FH Technikum Wien' && $person->geschlecht == 'x')
+	{
+		// Wenn Geschlecht "Divers" ist wird eine Notiz als Hinweis angelegt
+		$notiz = new notiz();
+		$notiz->person_id = $person_id;
+		$notiz->verfasser_uid = '';
+		$notiz->erledigt = false;
+		$notiz->insertvon = 'online_notiz';
+		$notiz->insertamum = date('c');
+		$notiz->start = date('Y-m-d');
+		$notiz->titel = 'ACHTUNG! Geschlecht: "Divers"';
+		$notiz->text = 'Dokumente prüfen. Nur gültig, wenn auf offiziellem Dokument ebenfalls "Divers" angeführt wird';
+		$notiz->save(true);
+		$notiz->saveZuordnung();
+	}
 	if (CAMPUS_NAME == 'FH Technikum Wien' && $studiengang->typ != 'b')
 	{
 		$kontakt = new kontakt();
@@ -2947,7 +3059,9 @@ function sendBewerbung($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz,
 			$email.= '<tr><td><b>'.$p->t('studienplan/studienplan').'</b></td><td>'.$studienplan_bezeichnung.'</td></tr>';
 		else
 			$email.= '<tr><td><b>'.$p->t('studienplan/studienplan').'</b></td><td><span style="color: red">Es konnte kein passender Studienplan ermittelt werden</span></td></tr>';
-		$email.= '<tr><td><b>'.$p->t('global/geschlecht').'</b></td><td>'.($person->geschlecht=='m'?$p->t('bewerbung/maennlich'):$p->t('bewerbung/weiblich')).'</td></tr>';
+
+		$geschlecht = new geschlecht($person->geschlecht);
+		$email.= '<tr><td><b>'.$p->t('global/geschlecht').'</b></td><td>'.$geschlecht->bezeichnung_mehrsprachig_arr[$sprache].'</td></tr>';
 		//$email.= '<tr><td><b>'.$p->t('global/titel').'</b></td><td>'.$person->titelpre.'</td></tr>';
 		//$email.= '<tr><td><b>'.$p->t('global/postnomen').'</b></td><td>'.$person->titelpost.'</td></tr>';
 		$email.= '<tr><td><b>'.$p->t('global/vorname').'</b></td><td>'.$person->vorname.'</td></tr>';
@@ -3032,8 +3146,10 @@ function sendBewerbung($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz,
 
 		if($person->geschlecht == 'm')
 			$anrede = $p->t('bewerbung/anredeMaennlich');
-		else
+		elseif($person->geschlecht == 'w')
 			$anrede = $p->t('bewerbung/anredeWeiblich');
+		else
+			$anrede = $p->t('bewerbung/anredeNeutral');
 
 		$mail_bewerber = new mail($mailadresse, 'no-reply', $p->t('bewerbung/erfolgreichBeworbenMailBetreff'), 'Bitte sehen Sie sich die Nachricht in HTML Sicht an, um den Inhalt vollständig darzustellen.');
 		// Unterschiedliche Ansprechpersonen für Bachelor und Master
@@ -3077,13 +3193,13 @@ function sendBewerbung($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz,
 		if (! $mail->send())
 			return false;
 		else
-			return true;;
+			return true;
 	}
 }
 // sendet eine Email an die Assistenz, wenn nachträglich eine Bewerbung hinzugefügt wird
 function sendAddStudiengang($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz)
 {
-	global $person_id;
+	global $person_id, $sprache;
 	$p = new phrasen(DEFAULT_LANGUAGE);
 
 	// Array fuer Mailempfaenger. Vorruebergehende Loesung. Kindlm am 28.10.2015
@@ -3140,11 +3256,12 @@ function sendAddStudiengang($prestudent_id, $studiensemester_kurzbz, $orgform_ku
 		}
 	}
 
-	$email = 'Es hat sich ' . ($person->geschlecht == 'm' ? 'ein Bewerber' : 'eine Bewerberin') . ' am System registriert<br>';
+	$email = 'Es hat sich ein Bewerber/eine Bewerberin am System registriert<br>';
 	$email .= '<br><table style="font-size:small"><tbody>';
 	$email .= '<tr><td><b>' . $p->t('global/studiengang') . '</b></td><td>' . $typ->bezeichnung . ' ' . $studiengang->bezeichnung . ($orgform_kurzbz != '' ? ' (' . $orgform_kurzbz . ')' : '') . '</td></tr>';
 	$email .= '<tr><td><b>' . $p->t('global/studiensemester') . '</b></td><td>' . $studiensemester_kurzbz . '</td></tr>';
-	$email .= '<tr><td><b>' . $p->t('global/geschlecht') . '</b></td><td>' . ($person->geschlecht == 'm' ? $p->t('bewerbung/maennlich') : $p->t('bewerbung/weiblich')) . '</td></tr>';
+	$geschlecht = new geschlecht($person->geschlecht);
+	$email .= '<tr><td><b>' . $p->t('global/geschlecht') . '</b></td><td>'.$geschlecht->bezeichnung_mehrsprachig_arr[$sprache].'</td></tr>';
 	// $email.= '<tr><td><b>'.$p->t('global/titel').'</b></td><td>'.$person->titelpre.'</td></tr>';
 	// $email.= '<tr><td><b>'.$p->t('global/postnomen').'</b></td><td>'.$person->titelpost.'</td></tr>';
 	$email .= '<tr><td><b>' . $p->t('global/vorname') . '</b></td><td>' . $person->vorname . '</td></tr>';
@@ -3159,7 +3276,7 @@ function sendAddStudiengang($prestudent_id, $studiensemester_kurzbz, $orgform_ku
 	$email = wordwrap($email, 70); // Bricht den Code um, da es sonst zu Anzeigefehlern im Mail kommen kann
 
 	$empfaenger = getMailEmpfaenger($prestudent->studiengang_kz);
-	$mail = new mail($empfaenger, 'no-reply', ($person->geschlecht == 'm' ? 'Neuer Bewerber ' : 'Neue Bewerberin ') . $person->vorname . ' ' . $person->nachname . ' registriert', 'Bitte sehen Sie sich die Nachricht in HTML Sicht an, um den Inhalt vollständig darzustellen.');
+	$mail = new mail($empfaenger, 'no-reply', ($person->geschlecht == 'm' ? 'Neuer Bewerber ' : $person->geschlecht == 'w' ? 'Neue Bewerberin ' : 'Neue/r Bewerber/in ') . $person->vorname . ' ' . $person->nachname . ' registriert', 'Bitte sehen Sie sich die Nachricht in HTML Sicht an, um den Inhalt vollständig darzustellen.');
 	$mail->setHTMLContent($email);
 	if (! $mail->send())
 		return false;

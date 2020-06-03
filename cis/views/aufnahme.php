@@ -48,7 +48,7 @@ if(!isset($person_id))
 							<div class="row">
 								<div class="col-xs-4 col-sm-3">'.$p->t('global/datum').'</div>
 								<div class="col-xs-3 col-sm-2">'.$p->t('bewerbung/uhrzeit').'</div>
-								<div class="col-xs-5 col-sm-7">'.$p->t('global/ort').'</div>
+								<div class="col-xs-5 col-sm-7">'.$p->t('bewerbung/ort').'</div>
 							</div>
 						</div>
 						<div id="listeTesttermine" class="panel-collapse collapse-in">
@@ -218,7 +218,7 @@ if(!isset($person_id))
 					ORDER BY datum DESC,
 						tbl_prestudentstatus.insertamum DESC LIMIT 1
 					) IN ('Interessent') 
-				AND tbl_prestudentstatus.studienplan_id = 5";
+				AND tbl_prestudentstatus.studienplan_id IN (5,486)";
 
 			if($result = $db->db_query($qry))
 			{
