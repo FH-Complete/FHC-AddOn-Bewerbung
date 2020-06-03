@@ -54,7 +54,6 @@ $('#massagesIframe').load(function()
 	$('#responsiveDiv').css('height','70%');
 	//$('#responsiveDiv').height(this.contentWindow.document.body.offsetHeight + 'px');
 
-
 	//this.style.height =
 	//this.contentWindow.document.body.offsetHeight + 'px';
 });
