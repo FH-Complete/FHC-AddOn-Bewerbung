@@ -30,9 +30,9 @@ session_start();
 // Die Tabs werden in der definierten Reihenfolge ausgegeben aber in der Indexreihenfolge geladen
 $tabs = array();
 if(defined('BEWERBERTOOL_UEBERSICHT_ANZEIGEN') && BEWERBERTOOL_UEBERSICHT_ANZEIGEN)
-	$tabs[11]='uebersicht';
+	$tabs[12]='uebersicht';
 if(!defined('BEWERBERTOOL_ALLGEMEIN_ANZEIGEN') || BEWERBERTOOL_ALLGEMEIN_ANZEIGEN)
-	$tabs[12]='allgemein';
+	$tabs[13]='allgemein';
 
 $tabs[0]='daten';
 $tabs[1]='kontakt';
@@ -51,10 +51,12 @@ if(!defined('BEWERBERTOOL_REIHUNGSTEST_ANZEIGEN') || BEWERBERTOOL_REIHUNGSTEST_A
 	$tabs[7]='aufnahme';
 if(!defined('BEWERBERTOOL_ABSCHICKEN_ANZEIGEN') || BEWERBERTOOL_ABSCHICKEN_ANZEIGEN)
 	$tabs[8]='abschicken';
+if(defined('BEWERBERTOOL_MESSAGES_ANZEIGEN') && BEWERBERTOOL_MESSAGES_ANZEIGEN)
+	$tabs[9]='messages';
 if(defined('BEWERBERTOOL_SICHERHEIT_ANZEIGEN') && BEWERBERTOOL_SICHERHEIT_ANZEIGEN)
-	$tabs[9]='sicherheit';
+	$tabs[10]='sicherheit';
 if(defined('BEWERBERTOOL_AKTEN_ANZEIGEN') && BEWERBERTOOL_AKTEN_ANZEIGEN)
-	$tabs[10]='akten';
+	$tabs[11]='akten';
 
 $tabLadefolge = $tabs;
 ksort($tabLadefolge);
@@ -939,33 +941,6 @@ if (isset($_POST['submit_nachgereicht']))
 									'success' => true,
 									'message' => 'Document ' . $akte->bezeichnung . ' "' . $akte->titel . '" uploaded'
 								), 'bewerbung', 'bewerbung', null, 'online');
-							}
-
-							if (! defined('BEWERBERTOOL_SEND_UPLOAD_EMPFAENGER') || BEWERBERTOOL_SEND_UPLOAD_EMPFAENGER)
-							{
-								// Wenn nach dem Bestätigen einer Bewerbung ein Dokument hochgeladen wird, wird ein Infomail verschickt
-								$prestudent = new prestudent();
-								$prestudent->getPrestudenten($person_id);
-
-								// Beim verschicken der Infomail wird auch das vorvorige Studiensemester hinzugefügt, damit auch Infomails für Studiensemester verschickt werden, für die man sich nicht mehr bewerben aber noch Dokumente hochladen kann.
-								if (isset($stsem_array[0]))
-									array_unshift($stsem_array, $studiensemester->jump($stsem_array[0], - 2));
-
-									foreach ($prestudent->result as $prest)
-									{
-										$prestudent2 = new prestudent();
-										$prestudent2->getPrestudentRolle($prest->prestudent_id, 'Interessent');
-										foreach ($prestudent2->result as $row)
-										{
-											if (in_array($row->studiensemester_kurzbz, $stsem_array))
-											{
-												if ($row->bestaetigtam != '' && in_array($prest->studiengang_kz, $benoetigt))
-												{
-													sendDokumentupload($prest->studiengang_kz, $dokument->dokument_kurzbz, $row->orgform_kurzbz, $row->studiensemester_kurzbz, $row->prestudent_id, $dms_id);
-												}
-											}
-										}
-									}
 							}
 							echo "<script>
 									var loc = window.opener.location;
@@ -2178,37 +2153,6 @@ if (isset($_POST['submitfile']))
 						}
 					}
 				}
-
-				if (! defined('BEWERBERTOOL_SEND_UPLOAD_EMPFAENGER') || BEWERBERTOOL_SEND_UPLOAD_EMPFAENGER)
-				{
-					// Wenn nach dem Bestätigen einer Bewerbung ein Dokument hochgeladen wird, wird ein Infomail verschickt
-					$prestudent = new prestudent();
-					$prestudent->getPrestudenten($person_id);
-
-					// Beim verschicken der Infomail wird auch das vorvorige Studiensemester hinzugefügt, damit auch Infomails für Studiensemester verschickt werden, für die man sich nicht mehr bewerben aber noch Dokumente hochladen kann.
-					if (isset($stsem_array[0]))
-						array_unshift($stsem_array, $studiensemester->jump($stsem_array[0], - 2));
-
-					foreach ($prestudent->result as $prest)
-					{
-						$prestudent2 = new prestudent();
-						$prestudent2->getPrestudentRolle($prest->prestudent_id, 'Interessent');
-						foreach ($prestudent2->result as $row)
-						{
-							if (in_array($row->studiensemester_kurzbz, $stsem_array))
-							{
-								if ($row->bestaetigtam != '' && in_array($prest->studiengang_kz, $benoetigt))
-								{
-									sendDokumentupload($prest->studiengang_kz, $dokument->dokument_kurzbz, $row->orgform_kurzbz, $row->studiensemester_kurzbz, $row->prestudent_id, $dms_id);
-								}
-							}
-						}
-					}
-				}
-				/*echo "<script>
-				var loc = window.opener.location;
-				window.opener.location = 'bewerbung.php?active=dokumente';
-				</script>"*/;
 			}
 		}
 		else
@@ -2860,12 +2804,19 @@ else
 								</a>
 							</li>
 						<?php endif; ?>
+						<?php if(defined('BEWERBERTOOL_MESSAGES_ANZEIGEN') && BEWERBERTOOL_MESSAGES_ANZEIGEN):	?>
+							<li>
+								<a href="#messages" aria-controls="messages" role="tab" data-toggle="tab">
+									<?php echo $p->t('bewerbung/menuMessages') ?> <br> &nbsp;
+								</a>
+							</li>
+						<?php endif; ?>
 						<?php if(defined('BEWERBERTOOL_SICHERHEIT_ANZEIGEN') && BEWERBERTOOL_SICHERHEIT_ANZEIGEN):	?>
-						<li>
-							<a href="#sicherheit" aria-controls="sicherheit" role="tab" data-toggle="tab">
-								<?php echo $p->t('bewerbung/menuSicherheit') ?> <br> &nbsp;
-							</a>
-						</li>
+							<li>
+								<a href="#sicherheit" aria-controls="sicherheit" role="tab" data-toggle="tab">
+									<?php echo $p->t('bewerbung/menuSicherheit') ?> <br> &nbsp;
+								</a>
+							</li>
 						<?php endif; ?>
 						<li>
 							<?php

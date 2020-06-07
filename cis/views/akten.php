@@ -59,7 +59,7 @@ if(!isset($person_id))
 	{
 		usort($akten->result, "sortAkten");
 	}
-	$anzahlAkzeptierte = 0;
+	$anzahlZuAkzeptieren = 0;
 	if(count($akten->result) > 0)
 	{
 		echo '<ul class="list-group">';
@@ -74,7 +74,6 @@ if(!isset($person_id))
 			elseif ($row->dokument_kurzbz == 'Ausbvert' && $row->akzeptiertamum != '')
 			{
 				$class = '';
-				$anzahlAkzeptierte++;
 			}
 			echo '
 				<li class="list-group-item" '.$class.'>
@@ -92,6 +91,7 @@ if(!isset($person_id))
 							<h4>'.$row->bezeichnung.'</h4>';
 							if ($row->dokument_kurzbz == 'Ausbvert')
 							{
+								$anzahlZuAkzeptieren++;
 								echo '
 								<br>
 								'.$p->t('bewerbung/informationDatenverwendungStudierende').'
@@ -122,14 +122,14 @@ if(!isset($person_id))
 				</li>';
 		}
 		echo '</ul> ';
+		// Hier wird ein unsichtbares div mit der Anzahl der akzeptierten Akten ausgegeben
+		// Auf dieses wird dann mit jquery abgefragt um den Menüpunkt einfärben zu können.
+		echo '<div id="anzahlAktenZuAkzeptieren" style="display: none">'.$anzahlZuAkzeptieren.'</div>';
 	}
 	else
 	{
 		echo '<p>'.$p->t('bewerbung/keineAktenVorhanden').'</p>';
 	}
-	// Hier wird ein unsichtbares div mit der Anzahl der akzeptierten Akten ausgegeben
-	// Auf dieses wird dann mit jquery abgefragt um den Menüpunkt einfärben zu können.
-	echo '<div id="anzahlAkzeptierteAkten" style="display: none">'.$anzahlAkzeptierte.'</div>';
 	?>
 
 </div>
@@ -148,13 +148,13 @@ if(!isset($person_id))
 			}
 		});
 
-		var anzahlAkzeptierteAkten = $('#anzahlAkzeptierteAkten').html();
+		var anzahlAktenZuAkzeptieren = $('#anzahlAktenZuAkzeptieren').html();
 
-		if (anzahlAkzeptierteAkten != '')
+		if (anzahlAktenZuAkzeptieren != '')
 		{
-			anzahlAkzeptierteAkten = parseInt(anzahlAkzeptierteAkten);
+			anzahlAktenZuAkzeptieren = parseInt(anzahlAktenZuAkzeptieren);
 
-			if (anzahlAkzeptierteAkten == 0)
+			if (anzahlAktenZuAkzeptieren > 0)
 			{
 				$('#tabAktenLink').css('background-color','#F2DEDE');
 				$('#tabAktenLink').hover(
