@@ -255,8 +255,9 @@ $this->phrasen['bewerbung/menuDokumente']='Documents';
 $this->phrasen['bewerbung/dokument']='Document';
 $this->phrasen['bewerbung/bitteDokumenteHochladen']='In order to be able to send in your application, you need to upload all documents marked as "required".
 													If the document is not yet available at the respective time, you may submit the same at a later date.
-													To do so, click "submit document later" and specify when you are going to submit the document as well as the institution issuing the same.<br><br>
-													You may be prompted to upload more documents here in the course of your application.';
+													To do so, click "submit document later" and specify when you are going to submit the document as well as the institution issuing the same.<br>
+													You may be prompted to upload more documents here in the course of your application.<br><br>
+													Please note that verified documents cannot be uploaded again. If a more recent document is available, please contact the Administrative Assistant.';
 $this->phrasen['bewerbung/linkDokumenteHochladen']='Upload Documents';
 $this->phrasen['bewerbung/dokumenteZumHochladen']='Required documents:';
 $this->phrasen['bewerbung/dokumentName']='Name';
@@ -618,6 +619,7 @@ $this->phrasen['bewerbung/infoVorgemerktFuerQualifikationskurs']='You are pencil
 $this->phrasen['bewerbung/raumzuteilungFolgt']='Details follow 2 working days before the test per e-mail';
 $this->phrasen['bewerbung/sieHabenFolgendenTerminGewaehlt']='Thank you for registering for the online-placement test.<br>Your prioritization of degree programs is fixed and can only be changed before the registration deadline.<br>Once the placement test has been completed, the prioritization can <b>no longer</b> be changed.';
 $this->phrasen['bewerbung/informationenRTvorhanden']='Information for placement test';
+$this->phrasen['bewerbung/anmerkungBerufstaetigkeit']='<b>ONLY</b> obligatory for part-time degree programs<br>&nbsp;&nbsp;&nbsp;&nbsp;We would like to point out that a professional activity is not mandatory!';
 
 // Ausbildung
 $this->phrasen['bewerbung/menuAusbildung']='Ausbildung';
