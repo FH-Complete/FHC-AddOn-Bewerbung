@@ -291,7 +291,7 @@ $this->phrasen['bewerbung/geburtsnation']='Geburtsnation';
 $this->phrasen['bewerbung/svnr']='Österr. Sozialversicherungsnr.';
 $this->phrasen['bewerbung/maennlich']='männlich';
 $this->phrasen['bewerbung/weiblich']='weiblich';
-$this->phrasen['bewerbung/berufstaetigkeit']='Aktuelle Berufstätigkeit (Angabe verpflichtend für Abendformen)';
+$this->phrasen['bewerbung/berufstaetigkeit']='Aktuelle Berufstätigkeit **';
 $this->phrasen['bewerbung/berufstaetig']='berufstätig';
 $this->phrasen['bewerbung/dienstgeber']='Dienstgeber';
 $this->phrasen['bewerbung/artDerTaetigkeit']='Art der Tätigkeit';
@@ -307,8 +307,9 @@ $this->phrasen['bewerbung/menuDokumente']='Dokumente';
 $this->phrasen['bewerbung/dokument']='Dokument';
 $this->phrasen['bewerbung/bitteDokumenteHochladen']='Um Ihre Bewerbung abschicken zu können, müssen Sie Dokumente, die als „erforderlich“ markiert sind, hochladen.<br>
 	Sollte das Dokument zum gegenwärtigen Zeitpunkt noch nicht verfügbar sein, haben Sie die Möglichkeit, das Dokument nachzureichen.<br>
-	Klicken Sie dazu auf "Dokument wird nachgereicht" und geben Sie an, bis zu welchem Zeitpunkt Sie das Dokument nachreichen werden und welche Institution das Dokument ausstellen wird.<br><br>
-	Gegebenenfalls werden Sie im weiteren Verlauf der Bewerbung aufgefordert, hier weitere Dokumente hochzuladen.';
+	Klicken Sie dazu auf "Dokument wird nachgereicht" und geben Sie an, bis zu welchem Zeitpunkt Sie das Dokument nachreichen werden und welche Institution das Dokument ausstellen wird.<br>
+	Gegebenenfalls werden Sie im weiteren Verlauf der Bewerbung aufgefordert, hier weitere Dokumente hochzuladen.<br><br>
+	Bitte beachten Sie, dass überprüfte Dokumente nicht erneut hochgeladen werden können. Sollte ein aktuelleres Dokument vorliegen, so wenden Sie sich bitte an die Studiengangsassistenz.';
 $this->phrasen['bewerbung/linkDokumenteHochladen']='Dokumente hochladen';
 $this->phrasen['bewerbung/dokumenteZumHochladen']='Benötigte Dokumente:';
 $this->phrasen['bewerbung/dokumentName']='Name';
@@ -676,6 +677,7 @@ $this->phrasen['bewerbung/loginReihungstest']='<h3>Online-Reihungstest</h3>Klick
 												Bitte beachten Sie, dass Sie <u>Mozilla Firefox</u> als Browser verwenden, da es sonst zu Darstellungsproblemen kommen kann.<br><br>
 												<a href="'.APP_ROOT.'cis/testtool/index.php?prestudent=%s" class="btn btn-primary" role="button" target="_blank">Zum Reihungstest</a>';
 $this->phrasen['bewerbung/informationenRTvorhanden']='Informationen zum Reihungstest vorhanden';
+$this->phrasen['bewerbung/anmerkungBerufstaetigkeit']='<b>NUR</b> für Studiengänge in Abendform (berufsbegleitend) verpflichtend<br>&nbsp;&nbsp;&nbsp;&nbsp;Wir weisen darauf hin, dass eine Berufstätigkeit nicht zwingend erforderlich ist!';
 // Ausbildung
 $this->phrasen['bewerbung/menuAusbildung']='Ausbildung';
 $this->phrasen['bewerbung/ausbildung']='Ausbildung zu Ihrer Zugangsvoraussetzung';
