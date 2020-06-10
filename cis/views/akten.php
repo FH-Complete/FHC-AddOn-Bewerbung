@@ -91,7 +91,10 @@ if(!isset($person_id))
 							<h4>'.$row->bezeichnung.'</h4>';
 							if ($row->dokument_kurzbz == 'Ausbvert')
 							{
-								$anzahlZuAkzeptieren++;
+								if ($row->akzeptiertamum == '')
+								{
+									$anzahlZuAkzeptieren++;
+								}
 								echo '
 								<br>
 								'.$p->t('bewerbung/informationDatenverwendungStudierende').'
