@@ -281,6 +281,7 @@ if(!isset($person_id))
 										<input type="text" class="form-control" disabled value="'.htmlspecialchars($berufstaetig->text).'">
 									</div>
 								</div>';
+						break;
 					}
 				}
 				$berufstaetigkeit_code='';
@@ -314,9 +315,9 @@ if(!isset($person_id))
 				<div class="form-group">
 					<label for="berufstaetig" class="col-sm-3 control-label"><?php echo $p->t('bewerbung/berufstaetig') ?></label>
 					<div class="col-sm-9">
-						<label class="radio-inline"><input type="radio" name="berufstaetig" checked value="Vollzeit"><?php echo $p->t('bewerbung/vollzeit') ?></label>
-						<label class="radio-inline"><input type="radio" name="berufstaetig" checked value="Teilzeit"><?php echo $p->t('bewerbung/teilzeit') ?></label>
-						<label class="radio-inline"><input type="radio" name="berufstaetig" checked><?php echo $p->t('global/nein') ?></label>
+						<label class="radio-inline"><input type="radio" name="berufstaetig" value="Vollzeit"><?php echo $p->t('bewerbung/vollzeit') ?></label>
+						<label class="radio-inline"><input type="radio" name="berufstaetig" value="Teilzeit"><?php echo $p->t('bewerbung/teilzeit') ?></label>
+						<label class="radio-inline"><input type="radio" name="berufstaetig"><?php echo $p->t('global/nein') ?></label>
 						<label class="radio-inline"></label>
 
 					</div>
