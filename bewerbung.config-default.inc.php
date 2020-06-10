@@ -92,4 +92,8 @@ define('BEWERBERTOOL_ANZAHL_DOKUMENTPLOAD_JE_TYP', 100);
 
 // Darf bei Dokumenten, die bereits akzeptiert oder formal geprüft wurden noch etwas hochgalden werden? Boolean
 define('BEWERBERTOOL_UPLOAD_DOKUMENT_WENN_AKZEPTIERT', true);
+
+//Für welche Studiengänge (Kennzahlen) soll die Option "Reihungstest-Login" angezeigt werden?
+define('TESTTOOL_LOGIN_BEWERBUNGSTOOL_STUDIENGAENGE', serialize(
+	array()));
 ?>
