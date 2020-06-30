@@ -511,7 +511,7 @@ $this->phrasen['bewerbung/hackStufeBezeichnungBachelor']=''; // Überschreibt di
 $this->phrasen['bewerbung/hackStufeBezeichnungMaster']=''; // Überschreibt die ZGV Stufen-Bezeichnung "Master". Leer lassen, wenn nicht benötigt
 $this->phrasen['bewerbung/prioritaet']='Priorität';
 $this->phrasen['bewerbung/studierendenDaten']='Aktuelle Studierendendaten';
-$this->phrasen['bewerbung/keineRtTermineZurAuswahl']='Derzeit stehen keine Reihungstesttermine zur Auswahl.<br><br>Sobald unsere Reihungstesttermine für das Frühjahr 2020 feststehen, voraussichtlich im Jänner 2020, informieren wir Sie gerne darüber.';
+$this->phrasen['bewerbung/keineRtTermineZurAuswahl']='Derzeit stehen keine Reihungstesttermine zur Auswahl.';
 $this->phrasen['bewerbung/erfolgreichBeworbenMailBachelor']='
 <html>
 	<head>

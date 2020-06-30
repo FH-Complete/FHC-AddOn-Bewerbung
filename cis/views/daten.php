@@ -295,7 +295,7 @@ if(!isset($person_id))
 							$counter++;
 						}
 					}
-					if($berufstaetigkeit_code!='')
+					if(CAMPUS_NAME != 'FH Technikum Wien' && $berufstaetigkeit_code!='')
 					{
 						$berufstaetigkeit = new bisberufstaetigkeit();
 						$berufstaetigkeit->load($berufstaetigkeit_code);
@@ -315,9 +315,9 @@ if(!isset($person_id))
 				<div class="form-group">
 					<label for="berufstaetig" class="col-sm-3 control-label"><?php echo $p->t('bewerbung/berufstaetig') ?></label>
 					<div class="col-sm-9">
-						<label class="radio-inline"><input type="radio" name="berufstaetig" value="Vollzeit"><?php echo $p->t('bewerbung/vollzeit') ?></label>
-						<label class="radio-inline"><input type="radio" name="berufstaetig" value="Teilzeit"><?php echo $p->t('bewerbung/teilzeit') ?></label>
-						<label class="radio-inline"><input type="radio" name="berufstaetig"><?php echo $p->t('global/nein') ?></label>
+						<label class="radio-inline"><input type="radio" class="inputBerufstaetig" name="berufstaetig" value="Vollzeit"><?php echo $p->t('bewerbung/vollzeit') ?></label>
+						<label class="radio-inline"><input type="radio" class="inputBerufstaetig" name="berufstaetig" value="Teilzeit"><?php echo $p->t('bewerbung/teilzeit') ?></label>
+						<label class="radio-inline"><input type="radio" class="inputBerufstaetig" name="berufstaetig" value="Nein"><?php echo $p->t('global/nein') ?></label>
 						<label class="radio-inline"></label>
 
 					</div>
@@ -356,10 +356,12 @@ if(!isset($person_id))
 		</button><br/><br/>
 	</form>
 	<script type="text/javascript">
-		<?php
-		if(defined('BEWERBERTOOL_SOZIALVERSICHERUNGSNUMMER_ANZEIGEN') && is_string(BEWERBERTOOL_SOZIALVERSICHERUNGSNUMMER_ANZEIGEN)):
-		?>
-		$(function() {
+
+		$(function()
+		{
+			<?php
+			if(defined('BEWERBERTOOL_SOZIALVERSICHERUNGSNUMMER_ANZEIGEN') && is_string(BEWERBERTOOL_SOZIALVERSICHERUNGSNUMMER_ANZEIGEN)):
+			?>
 			$('#staatsbuergerschaft').change(function() {
 				var arrayFromPHP = <?php echo json_encode(explode(";", BEWERBERTOOL_SOZIALVERSICHERUNGSNUMMER_ANZEIGEN)) ?>;
 				if(jQuery.inArray($('#staatsbuergerschaft').val(), arrayFromPHP) > -1 ) {
@@ -369,9 +371,22 @@ if(!isset($person_id))
 					$('#input_svnr').hide();
 				}
 			});
+			<?php endif; ?>
+
+			$('.inputBerufstaetig').change(function()
+			{
+				if($(this).val() == 'Nein')
+				{
+					$('#berufstaetig_dienstgeber').attr("disabled", true);
+					$('#berufstaetig_art').attr("disabled", true);
+				}
+				else
+				{
+					$('#berufstaetig_dienstgeber').attr("disabled", false);
+					$('#berufstaetig_art').attr("disabled", false);
+				}
+			});
 		});
-		<?php
-		endif;
-		?>
+
 	</script>
 </div>

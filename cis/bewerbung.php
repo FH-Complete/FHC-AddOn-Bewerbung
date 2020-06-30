@@ -1058,24 +1058,30 @@ if (isset($_POST['btn_person']))
 		$person->gebort = $_POST['gebort'];
 		$person->geburtsnation = $_POST['geburtsnation'];
 	}
-	$svnr = isset($_POST['svnr']) ? $_POST['svnr'] : '';
-	// Check SVNR
-	if ($svnr != '' && $person->checkSvnr($svnr, $person_id))
+
+	if ($person->svnr == ''
+		&& isset($_POST['svnr'])
+		&& $_POST['svnr'] != '')
 	{
-		$message = $p->t('bewerbung/svnrBereitsVorhanden');
-		$save_error_daten = true;
-		// Geparkten Logeintrag löschen
-		$log->deleteParked($person_id);
-		// Logeintrag schreiben
-		$log->log($person_id, 'Action', array(
-			'name' => 'Error saving Sozialversicherungsnummer',
-			'success' => false,
-			'message' => 'Sozialversicherungsnummer ' . $svnr . ' already present in database'
-		), 'bewerbung', 'bewerbung', null, 'online');
-	}
-	else
-	{
-		$person->svnr = $svnr;
+		$svnr = $_POST['svnr'];
+		// Check SVNR
+		if ($person->checkSvnr($svnr, $person_id))
+		{
+			$message = $p->t('bewerbung/svnrBereitsVorhanden');
+			$save_error_daten = true;
+			// Geparkten Logeintrag löschen
+			$log->deleteParked($person_id);
+			// Logeintrag schreiben
+			$log->log($person_id, 'Action', array(
+				'name' => 'Error saving Sozialversicherungsnummer',
+				'success' => false,
+				'message' => 'Sozialversicherungsnummer ' . $svnr . ' already present in database'
+			), 'bewerbung', 'bewerbung', null, 'online');
+		}
+		else
+		{
+			$person->svnr = $svnr;
+		}
 	}
 
 	$person->new = false;
@@ -1129,6 +1135,23 @@ if (isset($_POST['btn_person']))
 		$notiz->start = date('Y-m-d');
 		$notiz->titel = 'Berufstätigkeit';
 		$notiz->text = 'Berufstätig: '.$berufstaetig.'; Dienstgeber: '.$berufstaetig_dienstgeber.'; Art der Tätigkeit: '.$berufstaetig_art;
+		$notiz->save(true);
+		$notiz->saveZuordnung();
+	}
+	elseif (in_array($berufstaetig, array('Nein'), true))
+	{
+		$berufstaetig_art = filter_input(INPUT_POST, 'berufstaetig_art');
+		$berufstaetig_dienstgeber = filter_input(INPUT_POST, 'berufstaetig_dienstgeber');
+
+		$notiz = new notiz();
+		$notiz->person_id = $person_id;
+		$notiz->verfasser_uid = '';
+		$notiz->erledigt = false;
+		$notiz->insertvon = 'online'; // Nicht aendern, da in notiz.class.php nach insertvon abgefragt wird
+		$notiz->insertamum = date('c');
+		$notiz->start = date('Y-m-d');
+		$notiz->titel = 'Berufstätigkeit';
+		$notiz->text = 'Nicht Berufstätig';
 		$notiz->save(true);
 		$notiz->saveZuordnung();
 	}
