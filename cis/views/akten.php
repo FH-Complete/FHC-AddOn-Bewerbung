@@ -103,15 +103,15 @@ if(!isset($person_id))
 									<label><input id="checkbox1ausbildungsvertrag" type="checkbox" class="checkboxAusbildungsvertrag"
 									'.($row->akzeptiertamum != '' ? 'checked="checked" disabled="disabled"' : '').'>
 									'.$p->t('bewerbung/textAusbildungsvertrag').'</label>
-								</div>
-								<div class="checkbox">
+								</div>';
+								/*echo '<div class="checkbox">
 									<label>
 										<input id="checkbox2ausbildungsvertrag" type="checkbox" class="checkboxAusbildungsvertrag"
 										'.($row->akzeptiertamum != '' ? 'checked="checked" disabled="disabled"' : '').'>
 										'.$p->t('bewerbung/textRuecktrittsrecht').'
 									</label>
-								</div>
-								<form method="POST" action="'.$_SERVER['PHP_SELF'].'?active=akten" class="form-horizontal">
+								</div>';*/
+								echo '<form method="POST" action="'.$_SERVER['PHP_SELF'].'?active=akten" class="form-horizontal">
 									<input type="hidden" name="action" value="acceptAkte">
 									<input type="hidden" name="akte_id" value="'.$row->akte_id.'">
 									<button type="submit" id="acceptAkteButton" title="" 
@@ -141,7 +141,8 @@ if(!isset($person_id))
 	{
 		$(".checkboxAusbildungsvertrag").click(function()
 		{
-			if ($("#checkbox1ausbildungsvertrag").is(':checked') && $("#checkbox2ausbildungsvertrag").is(':checked'))
+			//if ($("#checkbox1ausbildungsvertrag").is(':checked') && $("#checkbox2ausbildungsvertrag").is(':checked'))
+			if ($("#checkbox1ausbildungsvertrag").is(':checked'))
 			{
 				$("#acceptAkteButton").attr("disabled", false);
 			}
