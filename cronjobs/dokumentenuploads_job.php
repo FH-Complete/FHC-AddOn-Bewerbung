@@ -121,13 +121,23 @@ JOIN
 	public.tbl_akte USING (person_id)
 JOIN
 	public.tbl_dokument USING (dokument_kurzbz)
+JOIN
+	public.tbl_studiengang USING (studiengang_kz)
 WHERE
 	tbl_akte.insertvon='online'
 AND (tbl_akte.insertamum >= (SELECT (CURRENT_DATE -1||' '||'03:00:00')::timestamp))
 AND tbl_prestudentstatus.bestaetigtam IS NOT NULL
 AND studiensemester_kurzbz IN (".$db->implode4SQL($studiensemester_arr).")
 AND (SELECT get_rolle_prestudent(tbl_prestudent.prestudent_id, NULL)) NOT IN ('Abgewiesener', 'Abbrecher', 'Absolvent')
-AND dokument_kurzbz NOT IN ('zgv_bakk', 'identity', 'SprachB2')
+AND CASE 
+		WHEN tbl_studiengang.typ = 'b'
+			THEN dokument_kurzbz NOT IN (
+					'zgv_bakk',
+					'identity',
+					'SprachB2'
+					)
+		ELSE 1=1
+		END
 
 -- Upload nach Nachreichung
 UNION
@@ -282,7 +292,7 @@ if($result = $db->db_query($qry))
 				$mailcontent = wordwrap($mailcontent,70);
 
 				$mail = new mail($empfaenger, 'no-reply', 'Neue Dokumentenuploads '.$bezeichnung.' '.$orgform, 'Bitte sehen Sie sich die Nachricht in HTML Sicht an, um den Inhalt vollständig darzustellen.');
-				//$mail->setBCCRecievers('kindlm@technikum-wien.at');
+				$mail->setBCCRecievers('kindlm@technikum-wien.at');
 				$mail->setHTMLContent($mailcontent);
 				$mail->send();
 				
@@ -386,7 +396,7 @@ if($result = $db->db_query($qry))
 		$mailcontent = wordwrap($mailcontent,70);
 
 		$mail = new mail($empfaenger, 'no-reply', 'Neue Dokumentenuploads '.$bezeichnung.' '.$orgform, 'Bitte sehen Sie sich die Nachricht in HTML Sicht an, um den Inhalt vollständig darzustellen.');
-		//$mail->setBCCRecievers('kindlm@technikum-wien.at');
+		$mail->setBCCRecievers('kindlm@technikum-wien.at');
 		$mail->setHTMLContent($mailcontent);
 		$mail->send();
 		
