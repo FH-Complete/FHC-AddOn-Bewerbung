@@ -46,9 +46,10 @@ if(!isset($person_id))
 					<div class="panel panel-default">
 						<div class="panel-heading">
 							<div class="row">
-								<div class="col-xs-4 col-sm-3">'.$p->t('global/datum').'</div>
+								<div class="col-xs-4 col-sm-2">'.$p->t('global/datum').'</div>
 								<div class="col-xs-3 col-sm-2">'.$p->t('bewerbung/uhrzeit').'</div>
-								<div class="col-xs-5 col-sm-7">'.$p->t('bewerbung/ort').'</div>
+								<div class="col-xs-3 col-sm-2">'.$p->t('bewerbung/zeitzone').'</div>
+								<div class="col-xs-5 col-sm-6">'.$p->t('bewerbung/ort').'</div>
 							</div>
 						</div>
 						<div id="listeTesttermine" class="panel-collapse collapse-in">
@@ -99,9 +100,10 @@ if(!isset($person_id))
 			}
 			echo '	<li class="list-group-item">
 						<div class="row">
-							<div class="col-xs-4 col-sm-3">'.substr($tagbez[$spracheIndex][$datum->formatDatum($row->datum, 'N')], 0, 2).', '.$datum->formatDatum($row->datum, 'd.m.Y').'</div>
+							<div class="col-xs-4 col-sm-2">'.substr($tagbez[$spracheIndex][$datum->formatDatum($row->datum, 'N')], 0, 2).', '.$datum->formatDatum($row->datum, 'd.m.Y').'</div>
 							<div class="col-xs-3 col-sm-2">'.$uhrzeit.'</div>
-							<div class="col-xs-5 col-sm-7">'.($row->ort_kurzbz != '' ? $raumbezeichnung : $p->t('bewerbung/raumzuteilungFolgt')).'</div>
+							<div class="col-xs-3 col-sm-2">'.$p->t('bewerbung/zeitzoneMEZ').'</div>
+							<div class="col-xs-5 col-sm-6">'.($row->ort_kurzbz != '' ? $raumbezeichnung : $p->t('bewerbung/raumzuteilungFolgt')).'</div>
 						</div>
 						</li>';
 			$angemeldeteRtArray[] = $row->reihungstest_id;
