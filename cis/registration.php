@@ -719,6 +719,15 @@ elseif($username && $password)
 						</div>
 					</div>
 
+					<div>
+						<div class="col-sm-3">
+							<div></div>
+						</div>	
+						<div id="danger-alert" class="col-sm-9 font-weight-bold">
+							<div id="response"></div>
+						</div>			
+					</div>
+
 					<div class="form-group">
 						<label class="col-sm-3 control-label">
 							<?php echo $p->t('global/geschlecht') ?>
@@ -1374,7 +1383,9 @@ elseif($username && $password)
 			}
 			else
 			{
+
 				var gebDat = document.RegistrationLoginForm.geburtsdatum.value;
+
 				gebDat = gebDat.split(".");
 
 				if(gebDat.length !== 3)
@@ -1684,6 +1695,74 @@ elseif($username && $password)
 			});
 			<?php endif; ?>
 		});
+
+			/**
+	 * Prueft, ob es sich um ein gültiges Datum handelt
+	 * @return true wenn gültig, false wenn nicht gültig (zum Beispiel 30.2.2020)
+	 */
+	function checkValidDate(datum)
+	{
+		// console.log(datum);
+
+		// datum.toString() != 'Invalid Date' ? response.innerHTML='' : response.innerHTML="<?php 
+		// 	echo $p->t('bewerbung/datumUngueltig');
+		// 	?>";
+
+		// mit bootstrap-format
+		if (datum.toString() == 'Invalid Date')
+		{
+			response.innerHTML="<?php echo $p->t('bewerbung/datumUngueltig');?>";
+			$('#danger-alert').addClass('alert');
+			$('#danger-alert').addClass('alert-danger');
+
+		}
+		else
+		{
+			response.innerHTML='';
+			$('#danger-alert').removeClass('alert');
+			$('#danger-alert').removeClass('alert-danger');
+		}
+	}
+
+	//test Manu
+	var validateDate = document.getElementById('geburtsdatum');
+	var response = document.getElementById('response');
+
+	validateDate.onchange = function() 
+	{
+		var testDate = validateDate.value;
+		var regex1 = new RegExp("([0-9]{2}).([0-9]{2}).([0-9]{4})$");
+		var regex2 = new RegExp("([0-9]{4})-([0-9]{2})-([0-9]{2})$");
+
+
+		if (regex1.test(testDate))
+		{
+			var day = testDate.substr(0,2);
+			var month = testDate.substr(3,2);
+			var year = testDate.substr(6,4);
+			//console.log("DATE Test: " + year + "-" + month + "-" + day);
+			var d = new Date (year + '-' + month + '-'+ day);
+
+			//console.log(d);
+			
+			checkValidDate(d);		
+
+
+		}
+
+		else if (regex2.test(testDate))
+		{
+			var d = new Date (testDate);
+			checkValidDate(d);
+
+		}
+		else
+		{
+			response.innerHTML="<?php echo $p->t('bewerbung/datumsformatUngueltig');?>";
+			$('#danger-alert').addClass('alert');
+			$('#danger-alert').addClass('alert-danger');
+		}
+	}
 
 		window.setTimeout(function() {
 			$("#success-alert").fadeTo(500, 0).slideUp(500, function(){

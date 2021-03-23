@@ -27,6 +27,7 @@ if(!isset($person_id))
 
 <div role="tabpanel" class="tab-pane" id="daten">
 	<h2><?php echo $p->t('bewerbung/menuPersDaten') ?></h2>
+	
 	<?php
 
 	$nation = new nation();
@@ -118,11 +119,21 @@ if(!isset($person_id))
 			<input type="hidden" name="titelPost" id="titelPost">
 		<?php endif; ?>
 		<div class="form-group <?php echo ($geburtstag==''?'has-error':'') ?>">
-			<label for="gebdatum" class="col-sm-3 control-label"><?php echo $p->t('global/geburtsdatum') ?>* (<?php echo $p->t('bewerbung/datumFormat') ?>)</label>
+			<label for="gebdatum" class="col-sm-3 control-label"><?php echo $p->t('global/geburtsdatum') ?>*(<?php echo $p->t('bewerbung/datumFormat') ?>)</label>
 			<div class="col-sm-9">
 				<input type="text" name="geburtsdatum" id="gebdatum"  <?php echo $disabled; ?> value="<?php echo $geburtstag ?>" class="form-control">
-			</div>
+			</div>			
 		</div>
+
+		<div>
+			<div class="col-sm-3">
+				<div></div>
+			</div>	
+			<div id="danger-alert" class="col-sm-9 font-weight-bold">
+				<div id="response"></div>
+			</div>			
+		</div>
+			
 		<div class="form-group <?php echo (defined('BEWERBERTOOL_GEBURTSORT_PFLICHT') && BEWERBERTOOL_GEBURTSORT_PFLICHT === true && $gebort == '' ?'has-error':'') ?>">
 			<label for="gebort" class="col-sm-3 control-label"><?php echo $p->t('global/geburtsort');echo (defined('BEWERBERTOOL_GEBURTSORT_PFLICHT') && BEWERBERTOOL_GEBURTSORT_PFLICHT === true?'*':''); ?></label>
 			<div class="col-sm-9">
@@ -386,7 +397,71 @@ if(!isset($person_id))
 					$('#berufstaetig_art').attr("disabled", false);
 				}
 			});
+	
 		});
+
+	//Test Manu
+	var validateDate = document.getElementById('gebdatum');
+	var response = document.getElementById('response');
+
+	/**
+	 * Prueft, ob es sich um ein gültiges Datum handelt
+	 * @return true wenn gültig, false wenn nicht gültig (zum Beispiel 30.2.2020)
+	 */
+	function checkValidDate(datum)
+	{
+
+		// mit bootstrap-format
+		if (datum.toString() == 'Invalid Date')
+		{
+			response.innerHTML="<?php echo $p->t('bewerbung/datumUngueltig');?>";
+			$('#danger-alert').addClass('alert');
+			$('#danger-alert').addClass('alert-danger');
+
+		}
+		else
+		{
+			response.innerHTML='';
+			$('#danger-alert').removeClass('alert');
+			$('#danger-alert').removeClass('alert-danger');
+		}
+	}
+
+	validateDate.onchange = function() 
+	{
+		var testDate = validateDate.value;
+		var regex1 = new RegExp("([0-9]{2}).([0-9]{2}).([0-9]{4})$");
+		var regex2 = new RegExp("([0-9]{4})-([0-9]{2})-([0-9]{2})$");
+
+
+		if (regex1.test(testDate))
+		{
+			var day = testDate.substr(0,2);
+			var month = testDate.substr(3,2);
+			var year = testDate.substr(6,4);
+			//console.log("DATE Test: " + year + "-" + month + "-" + day);
+			var d = new Date (year + '-' + month + '-'+ day);
+
+			//console.log(d);
+			
+			checkValidDate(d);		
+
+
+		}
+
+		else if (regex2.test(testDate))
+		{
+			var d = new Date (testDate);
+			checkValidDate(d);
+
+		}
+		else
+		{
+			response.innerHTML="<?php echo $p->t('bewerbung/datumsformatUngueltig');?>";
+			$('#danger-alert').addClass('alert');
+			$('#danger-alert').addClass('alert-danger');
+		}
+	}
 
 	</script>
 </div>

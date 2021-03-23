@@ -1040,7 +1040,20 @@ if (isset($_POST['btn_person']))
 		$person->vorname = $_POST['vorname'];
 		$person->nachname = $_POST['nachname'];
 		$person->titelpost = $_POST['titelPost'];
-		$person->gebdatum = $datum->formatDatum($_POST['geburtsdatum'], 'Y-m-d');
+
+		
+		if(!$datum->checkDatum($_POST['geburtsdatum']))
+		{
+			$save_error_daten=true;
+			$message = $_POST['geburtsdatum']. "<br>" . $p->t('bewerbung/datumUngueltig');;
+			$person->gebdatum = '';
+		}
+		else
+		{
+			//korrigiertes Geburtsdatum speichern
+			$person->gebdatum = $datum->formatDatum($_POST['geburtsdatum'], 'Y-m-d');
+		}
+
 		$person->staatsbuergerschaft = $_POST['staatsbuergerschaft'];
 		$person->geschlecht = $_POST['geschlecht'];
 		if ($_POST['geschlecht'] == 'm')
