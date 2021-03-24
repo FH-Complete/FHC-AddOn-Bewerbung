@@ -1711,7 +1711,6 @@ elseif($username && $password)
 			responseGeb.innerHTML="<?php echo $p->t('bewerbung/datumUngueltig');?>";
 			$('#danger-alert').addClass('alert');
 			$('#danger-alert').addClass('alert-danger');
-
 		}
 		else
 		{
@@ -1719,8 +1718,6 @@ elseif($username && $password)
 			$('#danger-alert').removeClass('alert');
 			$('#danger-alert').removeClass('alert-danger');
 		}
-		
-
 	}
 
 		window.setTimeout(function() {

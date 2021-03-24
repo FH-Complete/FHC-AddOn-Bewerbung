@@ -420,7 +420,6 @@ if(!isset($person_id))
 				$('#danger-alert').removeClass('alert');
 				$('#danger-alert').removeClass('alert-danger');
 			}
-
 		}
 
 	

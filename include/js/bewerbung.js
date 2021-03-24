@@ -345,7 +345,6 @@ function checkValidDate(datum)
 {
 	var output;
 	datum.toString() =='Invalid Date' ? output = false : output = true;
-	console.log(output);
 
 	return output;
 
@@ -356,7 +355,6 @@ function checkFormat(datum)
 	var regex1 = new RegExp("([0-9]{2}).([0-9]{2}).([0-9]{4})$");
 	var regex2 = new RegExp("([0-9]{4})-([0-9]{2})-([0-9]{2})$");
 
-
 	if (regex1.test(datum))
 	{
 		var day = datum.substr(0,2);
@@ -364,9 +362,7 @@ function checkFormat(datum)
 		var year = datum.substr(6,4);
 		var d = new Date (year + '-' + month + '-'+ day);
 
-		return checkValidDate(d);
-	
-		
+		return checkValidDate(d);	
 	}
 	else if (regex2.test(datum))
 	{
