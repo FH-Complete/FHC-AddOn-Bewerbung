@@ -200,6 +200,7 @@ elseif($username && $password)
 		<link href="../../../vendor/twbs/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" type="text/css">
 		<link rel="stylesheet" type="text/css" href="../../../vendor/twbs/bootstrap/dist/css/bootstrap.min.css">
 		<link href="../include/css/registration.css" rel="stylesheet" type="text/css">
+		<script src="../include/js/bewerbung.js"></script>
 	</head>
 	<body class="main">
 		<div class="container">
@@ -724,7 +725,7 @@ elseif($username && $password)
 							<div></div>
 						</div>	
 						<div id="danger-alert" class="col-sm-9 font-weight-bold">
-							<div id="response"></div>
+							<div id="responseGeb"></div>
 						</div>			
 					</div>
 
@@ -1696,72 +1697,30 @@ elseif($username && $password)
 			<?php endif; ?>
 		});
 
-			/**
-	 * Prueft, ob es sich um ein gültiges Datum handelt
-	 * @return true wenn gültig, false wenn nicht gültig (zum Beispiel 30.2.2020)
-	 */
-	function checkValidDate(datum)
+
+
+	var validateGeb = document.getElementById('geburtsdatum');
+	var responseGeb = document.getElementById('responseGeb');
+
+	validateGeb.onchange = function() 
 	{
-		// console.log(datum);
+		var response = checkFormat(validateGeb.value);
 
-		// datum.toString() != 'Invalid Date' ? response.innerHTML='' : response.innerHTML="<?php 
-		// 	echo $p->t('bewerbung/datumUngueltig');
-		// 	?>";
-
-		// mit bootstrap-format
-		if (datum.toString() == 'Invalid Date')
+		if (response == false)
 		{
-			response.innerHTML="<?php echo $p->t('bewerbung/datumUngueltig');?>";
+			responseGeb.innerHTML="<?php echo $p->t('bewerbung/datumUngueltig');?>";
 			$('#danger-alert').addClass('alert');
 			$('#danger-alert').addClass('alert-danger');
 
 		}
 		else
 		{
-			response.innerHTML='';
+			responseGeb.innerHTML='';
 			$('#danger-alert').removeClass('alert');
 			$('#danger-alert').removeClass('alert-danger');
 		}
-	}
+		
 
-	//test Manu
-	var validateDate = document.getElementById('geburtsdatum');
-	var response = document.getElementById('response');
-
-	validateDate.onchange = function() 
-	{
-		var testDate = validateDate.value;
-		var regex1 = new RegExp("([0-9]{2}).([0-9]{2}).([0-9]{4})$");
-		var regex2 = new RegExp("([0-9]{4})-([0-9]{2})-([0-9]{2})$");
-
-
-		if (regex1.test(testDate))
-		{
-			var day = testDate.substr(0,2);
-			var month = testDate.substr(3,2);
-			var year = testDate.substr(6,4);
-			//console.log("DATE Test: " + year + "-" + month + "-" + day);
-			var d = new Date (year + '-' + month + '-'+ day);
-
-			//console.log(d);
-			
-			checkValidDate(d);		
-
-
-		}
-
-		else if (regex2.test(testDate))
-		{
-			var d = new Date (testDate);
-			checkValidDate(d);
-
-		}
-		else
-		{
-			response.innerHTML="<?php echo $p->t('bewerbung/datumsformatUngueltig');?>";
-			$('#danger-alert').addClass('alert');
-			$('#danger-alert').addClass('alert-danger');
-		}
 	}
 
 		window.setTimeout(function() {

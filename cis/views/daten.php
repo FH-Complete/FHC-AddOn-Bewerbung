@@ -130,7 +130,7 @@ if(!isset($person_id))
 				<div></div>
 			</div>	
 			<div id="danger-alert" class="col-sm-9 font-weight-bold">
-				<div id="response"></div>
+				<div id="responseGeb"></div>
 			</div>			
 		</div>
 			
@@ -400,68 +400,30 @@ if(!isset($person_id))
 	
 		});
 
-	//Test Manu
-	var validateDate = document.getElementById('gebdatum');
-	var response = document.getElementById('response');
 
-	/**
-	 * Prueft, ob es sich um ein gültiges Datum handelt
-	 * @return true wenn gültig, false wenn nicht gültig (zum Beispiel 30.2.2020)
-	 */
-	function checkValidDate(datum)
-	{
+		var validateGeb = document.getElementById('gebdatum');
+		var responseGeb = document.getElementById('responseGeb');
 
-		// mit bootstrap-format
-		if (datum.toString() == 'Invalid Date')
+		validateGeb.onchange = function() 
 		{
-			response.innerHTML="<?php echo $p->t('bewerbung/datumUngueltig');?>";
-			$('#danger-alert').addClass('alert');
-			$('#danger-alert').addClass('alert-danger');
+			var response = checkFormat(validateGeb.value);
 
-		}
-		else
-		{
-			response.innerHTML='';
-			$('#danger-alert').removeClass('alert');
-			$('#danger-alert').removeClass('alert-danger');
-		}
-	}
-
-	validateDate.onchange = function() 
-	{
-		var testDate = validateDate.value;
-		var regex1 = new RegExp("([0-9]{2}).([0-9]{2}).([0-9]{4})$");
-		var regex2 = new RegExp("([0-9]{4})-([0-9]{2})-([0-9]{2})$");
-
-
-		if (regex1.test(testDate))
-		{
-			var day = testDate.substr(0,2);
-			var month = testDate.substr(3,2);
-			var year = testDate.substr(6,4);
-			//console.log("DATE Test: " + year + "-" + month + "-" + day);
-			var d = new Date (year + '-' + month + '-'+ day);
-
-			//console.log(d);
-			
-			checkValidDate(d);		
-
+			if (response == false)
+			{
+				responseGeb.innerHTML="<?php echo $p->t('bewerbung/datumUngueltig');?>";
+			 	$('#danger-alert').addClass('alert');
+				$('#danger-alert').addClass('alert-danger');
+			}
+			else
+			{
+				responseGeb.innerHTML='';
+				$('#danger-alert').removeClass('alert');
+				$('#danger-alert').removeClass('alert-danger');
+			}
 
 		}
 
-		else if (regex2.test(testDate))
-		{
-			var d = new Date (testDate);
-			checkValidDate(d);
-
-		}
-		else
-		{
-			response.innerHTML="<?php echo $p->t('bewerbung/datumsformatUngueltig');?>";
-			$('#danger-alert').addClass('alert');
-			$('#danger-alert').addClass('alert-danger');
-		}
-	}
+	
 
 	</script>
 </div>

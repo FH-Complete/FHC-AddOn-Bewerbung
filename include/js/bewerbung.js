@@ -336,3 +336,44 @@ function checkImageProperties(input, callback)
 		}
 	};
 };
+
+/**
+ * Prueft, ob es sich um ein gültiges Datum im korrekten Format (dd.mm.yyyy bzw. yyyy-mm-jj) handelt
+ * @return true wenn korrekt und gültig, false wenn nicht korrekt und gültig (zum Beispiel 30.2.2020)
+ */
+function checkValidDate(datum)
+{
+	var output;
+	datum.toString() =='Invalid Date' ? output = false : output = true;
+	console.log(output);
+
+	return output;
+
+}
+
+function checkFormat(datum)
+{
+	var regex1 = new RegExp("([0-9]{2}).([0-9]{2}).([0-9]{4})$");
+	var regex2 = new RegExp("([0-9]{4})-([0-9]{2})-([0-9]{2})$");
+
+
+	if (regex1.test(datum))
+	{
+		var day = datum.substr(0,2);
+		var month = datum.substr(3,2);
+		var year = datum.substr(6,4);
+		var d = new Date (year + '-' + month + '-'+ day);
+
+		return checkValidDate(d);
+	
+		
+	}
+	else if (regex2.test(datum))
+	{
+		return checkValidDate(new Date (datum));
+	}
+	else
+	{
+		return false;
+	}
+}
