@@ -344,7 +344,7 @@ function checkImageProperties(input, callback)
 function checkValidDate(datum)
 {
 	var output;
-	datum.toString() =='Invalid Date' ? output = false : output = true;
+	datum.toString() == 'Invalid Date' ? output = false : output = true;
 
 	return output;
 
@@ -360,13 +360,13 @@ function checkFormat(datum)
 		var day = datum.substr(0,2);
 		var month = datum.substr(3,2);
 		var year = datum.substr(6,4);
-		var d = new Date (year + '-' + month + '-'+ day);
+		var d = new Date(year + '-' + month + '-' + day);
 
-		return checkValidDate(d);	
+		return checkValidDate(d);
 	}
 	else if (regex2.test(datum))
 	{
-		return checkValidDate(new Date (datum));
+		return checkValidDate(new Date(datum));
 	}
 	else
 	{
