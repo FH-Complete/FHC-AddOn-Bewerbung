@@ -129,14 +129,14 @@ $this->phrasen['bewerbung/emailgesendetan']='
 			-webkit-animation-iteration-count:2;
 		}
 	}
-	@keyframes mailsend_small 
+	@keyframes mailsend_small
 	{
-		0%%,30%% 
+		0%%,30%%
 		{
 			opacity: 1;
 			transform: translate(0, 0);
 		}
-		100%% 
+		100%%
 		{
 			opacity: 0;
 			transform: translate(200px, 0);
@@ -144,12 +144,12 @@ $this->phrasen['bewerbung/emailgesendetan']='
 	}
 	@keyframes mailsend_medium
 	{
-		0%%,30%% 
+		0%%,30%%
 		{
 			opacity: 1;
 			transform: translate(0, 0);
 		}
-		100%% 
+		100%%
 		{
 			opacity: 0;
 			transform: translate(300px, 0);
@@ -157,23 +157,23 @@ $this->phrasen['bewerbung/emailgesendetan']='
 	}
 	@keyframes mailsend_large
 	{
-		0%%,30%% 
+		0%%,30%%
 		{
 			opacity: 1;
 			transform: translate(0, 0);
 		}
-		100%% 
+		100%%
 		{
 			opacity: 0;
 			transform: translate(400px, 0);
 		}
 	}
-	
+
 </style>
 <span id="mail_icon" class="glyphicon glyphicon-envelope" style="font-size:50px;"></span>
 <br><br>
 The e-mail with your access code has successfully been sent to %s.
-<br><br>You should receive an e-mail within a few minutes. If you receive no e-mail within <b>24 hours</b> please contact 
+<br><br>You should receive an e-mail within a few minutes. If you receive no e-mail within <b>24 hours</b> please contact
 our <a href=\'https://www.technikum-wien.at/en/student-guide/admission-counselors/\' target=\'_blank\'>student counselling team</a>';
 $this->phrasen['bewerbung/zurueckZurAnmeldung']='Back to registration.';
 $this->phrasen['bewerbung/sicherheitscodeFalsch']='The access code is incorrect.';
@@ -589,7 +589,7 @@ $this->phrasen['bewerbung/microsoftMailWarning']='<b>Warning!</b> Currently e-ma
 $this->phrasen['bewerbung/herkunftDesBewerbers']='Origin';
 $this->phrasen['bewerbung/ort']='Room';
 $this->phrasen['bewerbung/zeitzone']='Timezone';
-$this->phrasen['bewerbung/zeitzoneMEZ']='Vienna (CEZ)';
+$this->phrasen['bewerbung/zeitzoneMEZ']='Vienna (CET)';
 $this->phrasen['bewerbung/akten']='Files';
 $this->phrasen['bewerbung/herunterladen']='Download %s';
 $this->phrasen['bewerbung/akzeptieren']='Sign %s';
@@ -598,7 +598,7 @@ $this->phrasen['bewerbung/keineAktenVorhanden']='Currently there are no download
 $this->phrasen['bewerbung/textRuecktrittsrecht']='I take note that I have the right to cancel this contract within fourteen days without giving any reason.
 								<br><p class="alert alert-info">
 								<b>Information:</b><br>
-								In order to exercise this right of withdrawal, you must inform the UAS Technikum Wien within 14 days of entering into the 
+								In order to exercise this right of withdrawal, you must inform the UAS Technikum Wien within 14 days of entering into the
 								contract by means of a clear declaration by email to your degree program’s administrative assistant about your decision to cancel this contract.</p>';
 $this->phrasen['bewerbung/textAusbildungsvertrag']='I have read the training contract and agree to the content of the contract.';
 $this->phrasen['bewerbung/informationDatenverwendungStudierende']='<a href=\''.APP_ROOT.'cms/dms.php?id=149169\' target=\'_blank\'><span class="glyphicon glyphicon-file"></span>Information on the use of student personal data</a>';
@@ -618,7 +618,7 @@ $this->phrasen['bewerbung/reihungstestInfoTextAngemeldet']='<div class="alert al
 </div><br>';
 $this->phrasen['bewerbung/anmeldefrist']='Term of application';
 $this->phrasen['bewerbung/infoVorgemerktFuerQualifikationskurs']='You are pencilled in as a participant for the qualification courses. Once you are confirmed there, you can choose an appointment for the placement test here.';
-$this->phrasen['bewerbung/raumzuteilungFolgt']='Details follow 2 working days before the test per e-mail';
+$this->phrasen['bewerbung/raumzuteilungFolgt']='Details follow 2 working days before the test per e-mail (Please check your spam folder, too!)';
 $this->phrasen['bewerbung/sieHabenFolgendenTerminGewaehlt']='Thank you for registering for the online-placement test.<br>Your prioritization of degree programs is fixed and can only be changed before the registration deadline.<br>Once the placement test has been completed, the prioritization can <b>no longer</b> be changed.';
 $this->phrasen['bewerbung/informationenRTvorhanden']='Information for placement test';
 $this->phrasen['bewerbung/anmerkungBerufstaetigkeit']='<b>ONLY</b> obligatory for part-time degree programs<br>&nbsp;&nbsp;&nbsp;&nbsp;We would like to point out that a professional activity is not mandatory!';

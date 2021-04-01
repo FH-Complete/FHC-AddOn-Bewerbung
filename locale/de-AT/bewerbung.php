@@ -653,8 +653,8 @@ $this->phrasen['bewerbung/keineAktenVorhanden']='Derzeit sind keine Akten zum He
 $this->phrasen['bewerbung/textRuecktrittsrecht']='Ich nehme zur Kenntnis, dass mir das Recht zusteht, binnen vierzehn Tagen ohne Angabe von Gründen diesen Vertrag zu widerrufen.
 								<br><p class="alert alert-info">
 								<b>Information:</b><br>
-								Um dieses Widerrufsrecht auszuüben, müssen Sie die Fachhochschule Technikum Wien innerhalb 
-								der vierzehn Tage ab Abschluss mittels einer eindeutigen Erklärung per E-Mail an Ihre 
+								Um dieses Widerrufsrecht auszuüben, müssen Sie die Fachhochschule Technikum Wien innerhalb
+								der vierzehn Tage ab Abschluss mittels einer eindeutigen Erklärung per E-Mail an Ihre
 								Studiengangsassistenz über Ihren Entschluss, diesen Vertrag zu widerrufen, informieren.</p>';
 $this->phrasen['bewerbung/textAusbildungsvertrag']='Ich habe den Ausbildungsvertrag gelesen und erkläre mich mit dem Vertragsinhalt einverstanden.';
 $this->phrasen['bewerbung/informationDatenverwendungStudierende']='<a href=\''.APP_ROOT.'cms/dms.php?id=149169\' target=\'_blank\'><span class="glyphicon glyphicon-file"></span>Information über die Verwendung personenbezogener Daten von Studierenden</a>';
@@ -673,7 +673,7 @@ $this->phrasen['bewerbung/reihungstestInfoTextAngemeldet']='<div class="alert al
 </div><br>';
 $this->phrasen['bewerbung/anmeldefrist']='Anmeldefrist';
 $this->phrasen['bewerbung/infoVorgemerktFuerQualifikationskurs']='Sie sind als TeilnehmerIn für die Qualifikationskurse vorgemerkt. Sobald sie dort bestätigt wurden, können Sie hier einen Termin für den Reihungstest wählen.';
-$this->phrasen['bewerbung/raumzuteilungFolgt']='Details folgen 2 Werktage vor Testbeginn per E-Mail';
+$this->phrasen['bewerbung/raumzuteilungFolgt']='Details folgen 2 Werktage vor Testbeginn per E-Mail (Bitte auch Spamordner überprüfen!)';
 $this->phrasen['bewerbung/sieHabenFolgendenTerminGewaehlt']='Danke für Ihre Anmeldung zum Reihungstest.<br>Ihre Priorisierung der Studiengänge ist fixiert und kann nur bis zur Anmeldefrist geändert werden.<br>Nach Absolvierung des Reihungstests kann die Priorisierung <b>NICHT</b> mehr geändert werden.';
 $this->phrasen['bewerbung/loginReihungstest']='<h3>Online-Reihungstest</h3>Klicken Sie auf den folgenden Button, um zum Reihungstest zu gelangen. <br>
 												Bitte beachten Sie, dass Sie <u>Mozilla Firefox</u> als Browser verwenden, da es sonst zu Darstellungsproblemen kommen kann.<br><br>

@@ -46,8 +46,8 @@ if(!isset($person_id))
 					<div class="panel panel-default">
 						<div class="panel-heading">
 							<div class="row">
-								<div class="col-xs-4 col-sm-2">'.$p->t('global/datum').'</div>
-								<div class="col-xs-3 col-sm-2">'.$p->t('bewerbung/uhrzeit').'</div>
+								<div class="col-xs-4 col-sm-3">'.$p->t('global/datum').'</div>
+								<div class="col-xs-3 col-sm-1">'.$p->t('bewerbung/uhrzeit').'</div>
 								<div class="col-xs-3 col-sm-2">'.$p->t('bewerbung/zeitzone').'</div>
 								<div class="col-xs-5 col-sm-6">'.$p->t('bewerbung/ort').'</div>
 							</div>
@@ -100,8 +100,8 @@ if(!isset($person_id))
 			}
 			echo '	<li class="list-group-item">
 						<div class="row">
-							<div class="col-xs-4 col-sm-2">'.substr($tagbez[$spracheIndex][$datum->formatDatum($row->datum, 'N')], 0, 2).', '.$datum->formatDatum($row->datum, 'd.m.Y').'</div>
-							<div class="col-xs-3 col-sm-2">'.$uhrzeit.'</div>
+							<div class="col-xs-4 col-sm-3">'.substr($tagbez[$spracheIndex][$datum->formatDatum($row->datum, 'N')], 0, 2).', '.$datum->formatDatum($row->datum, 'd.m.Y').'</div>
+							<div class="col-xs-3 col-sm-1">'.$uhrzeit.'</div>
 							<div class="col-xs-3 col-sm-2">'.$p->t('bewerbung/zeitzoneMEZ').'</div>
 							<div class="col-xs-5 col-sm-6">'.($row->ort_kurzbz != '' ? $raumbezeichnung : $p->t('bewerbung/raumzuteilungFolgt')).'</div>
 						</div>
@@ -153,7 +153,7 @@ if(!isset($person_id))
 	{
 		$isStudentQuali = $prestudent->existsPrestudentstatus($person_id, STUDIENGANG_KZ_QUALIFIKATIONKURSE, $nextSummerSemester);
 	}
-	
+
 	$reihungstestTermine = '';
 
 	//Reihungstesttermine der Qualifikationskurse laden, wenn STUDIENGANG_KZ_QUALIFIKATIONKURSE gesetzt ist
@@ -219,7 +219,7 @@ if(!isset($person_id))
 						AND studiensemester_kurzbz = tbl_prestudentstatus.studiensemester_kurzbz
 					ORDER BY datum DESC,
 						tbl_prestudentstatus.insertamum DESC LIMIT 1
-					) IN ('Interessent') 
+					) IN ('Interessent')
 				AND tbl_prestudentstatus.studienplan_id IN (5,486)";
 
 			if($result = $db->db_query($qry))
@@ -267,7 +267,7 @@ if(!isset($person_id))
 		echo '<div class="col-xs-12 alert alert-info">'.$p->t('bewerbung/keineRtTermineZurAuswahl').'</div>';
 		$terminauswahl = false;
 	}
-	
+
 	if ($terminauswahl == true)
 	{
 		//Wenn bereits eine Anmeldung existiert, keine Terminauswahl anzeigen
@@ -352,7 +352,7 @@ if(!isset($person_id))
 					'.$p->t('bewerbung/weiter').'
 				</button>';
 	}
-	else 
+	else
 	{
 		echo '	<button class="btn-nav btn btn-default" type="button" data-jump-tab="'.$tabs[0].'">
 					'.$p->t('bewerbung/menuUebersicht').'
