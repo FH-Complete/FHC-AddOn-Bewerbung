@@ -192,8 +192,9 @@ if (! isset($person_id))
 				$displayDetailsArrow = false;
 			}
 
-			// Invitation-Letter an der FHTW immer anzeigen
-			if (CAMPUS_NAME == 'FH Technikum Wien' && $dok->dokument_kurzbz == 'InvitLet')
+			// Invitation-Letter und Zeitbestätigung an der FHTW immer anzeigen
+			if (CAMPUS_NAME == 'FH Technikum Wien' &&
+				($dok->dokument_kurzbz == 'InvitLet' || $dok->dokument_kurzbz == 'bst_zeit'))
 			{
 				$collapseStatus = 'collapse in';
 			}
@@ -232,8 +233,8 @@ if (! isset($person_id))
 			echo '			<div class="col-sm-6" style="padding-bottom: 5px">';
 			if ($detailstring_original != '')
 			{
-					echo '      <div id="details_'.$dok->studiengang_kz.'_'.$dok->dokument_kurzbz.'" 
-									class="dokumentdetails fade-out" 
+					echo '      <div id="details_'.$dok->studiengang_kz.'_'.$dok->dokument_kurzbz.'"
+									class="dokumentdetails fade-out"
 									onclick="showDetails(\'details_'.$dok->studiengang_kz.'_'.$dok->dokument_kurzbz.'\')">
 									'.$detailstring_original.'
 								</div>
@@ -278,8 +279,9 @@ if (! isset($person_id))
 						$offsetAktenListe = 'col-sm-offset-3';
 					}
 
-					// Upload-Button ausblenden wenn FHTW und Invitation-Letter und offset auf 3
-					if (CAMPUS_NAME == 'FH Technikum Wien' && $dok->dokument_kurzbz == 'InvitLet')
+					// Upload-Button ausblenden wenn FHTW und Invitation-Letter oder Zeitbestätigung und offset auf 3
+					if (CAMPUS_NAME == 'FH Technikum Wien' &&
+					($dok->dokument_kurzbz == 'InvitLet' || $dok->dokument_kurzbz == 'bst_zeit'))
 					{
 						$uploadButtonVisible = false;
 						$offsetAktenListe = 'col-sm-offset-3';
@@ -338,14 +340,14 @@ if (! isset($person_id))
 									    Lichtbild hochladen -> Phrase
 								    </div>
 								    <div class="modal-body">
-								        
+
 								        <img id="croppie-container" src="#" />
 							        </div>
 							        <div class="modal-footer">
 							            <button type="button" class="btn btn-default" data-dismiss="modal">' . $p->t('global/abbrechen') . '</button>
-							            <button id="submitimage" 
-												type="submit" 
-												name="submitimage" 
+							            <button id="submitimage"
+												type="submit"
+												name="submitimage"
 												class="btn btn-labeled btn-primary">
 											'.$p->t('bewerbung/upload').'
 										</button>
@@ -355,9 +357,9 @@ if (! isset($person_id))
 						</div>';
 			}
 
-			echo '		
+			echo '
 					</div><!--Ende Body --></div><!--Ende Collapsive--></div><!--Ende Panel -->
-					
+
 			';
 		}
 

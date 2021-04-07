@@ -2445,8 +2445,6 @@ if (CAMPUS_NAME == 'FH Technikum Wien')
 	}
 }
 
-//manu
-//feature-12338/Zeitbestätigung
 // "Zeitbestätigung" zum Download angeboten, wenn bei der Person vorhanden
 if (CAMPUS_NAME == 'FH Technikum Wien')
 {
