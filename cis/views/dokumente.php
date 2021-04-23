@@ -272,6 +272,7 @@ if (! isset($person_id))
 				{
 					$uploadButtonVisible = true;
 					$offsetAktenListe = '';
+					$colSizeDetails = "col-sm-3";
 					if (defined('BEWERBERTOOL_ANZAHL_DOKUMENTPLOAD_JE_TYP') && $dok->anzahl_akten_vorhanden >= BEWERBERTOOL_ANZAHL_DOKUMENTPLOAD_JE_TYP)
 					{
 						// Wenn ANZAHL_DOKUMENTPLOAD_JE_TYP erreicht ist, Upload-Button ausblenden
@@ -279,16 +280,18 @@ if (! isset($person_id))
 						$offsetAktenListe = 'col-sm-offset-3';
 					}
 
-					// Upload-Button ausblenden wenn FHTW und Invitation-Letter oder Zeitbestätigung und offset auf 3
+					// Upload-Button ausblenden, offset auf 6 und colsize verdoppeln
+					// wenn FHTW und Invitation-Letter oder Zeitbestätigung
 					if (CAMPUS_NAME == 'FH Technikum Wien' &&
 					($dok->dokument_kurzbz == 'InvitLet' || $dok->dokument_kurzbz == 'bst_zeit'))
 					{
 						$uploadButtonVisible = false;
-						$offsetAktenListe = 'col-sm-offset-3';
+						$offsetAktenListe = 'col-sm-offset-6';
+						$colSizeDetails = 'col-sm-6';
 					}
 
 					// Akten ausgeben
-					echo '	<div class="col-sm-3 aktenliste_'.$dok->dokument_kurzbz.' '.$offsetAktenListe.'" style="padding-bottom: 5px">';
+					echo '	<div class="'.$colSizeDetails.' aktenliste_'.$dok->dokument_kurzbz.' '.$offsetAktenListe.'" style="padding-bottom: 5px">';
 						echo getAktenListe($person_id, $dok->dokument_kurzbz);
 					echo '	</div>';
 
