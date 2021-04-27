@@ -449,9 +449,9 @@ $this->phrasen['bewerbung/bitteOrgformWaehlen']='Wenn Sie einen Studiengang mit 
 $this->phrasen['bewerbung/orgformWaehlen']='Organisationsform wählen';
 $this->phrasen['bewerbung/orgformBeschreibungstext']='Bitte geben Sie an, für welche Organisationsform Sie sich interessieren. Für den Fall, dass alle Plätze in Ihrer gewünschten Organisationsform vergeben sind, können Sie optional eine Alternative angeben';
 $this->phrasen['bewerbung/menuAbschließen']='Abschließen';
-$this->phrasen['bewerbung/sieHabenNochKeinenZugangscode']='Sie haben noch keinen Zugangscode oder Account an der FH Technikum Wien?';
-$this->phrasen['bewerbung/habenSieBereitsEinenZugangscode']='Sie haben bereits einen Zugangscode?';
-$this->phrasen['bewerbung/studierenOderArbeitenSieBereits']='Studieren oder arbeiten Sie bereits an der FH Technikum Wien?';
+$this->phrasen['bewerbung/sieHabenNochKeinenZugangscode']='<b>Neue/r</b> BewerberIn? Sie haben noch keinen Zugangscode oder Account an der FH Technikum Wien?';
+$this->phrasen['bewerbung/habenSieBereitsEinenZugangscode']='<b>Registrierte/r</b> BewerberIn? Sie haben sich bereits registriert und einen Zugangscode zu unserem Online-Bewerbungsportal erhalten? Dann loggen Sie sich mit Ihren Zugangsdaten ein.';
+$this->phrasen['bewerbung/studierenOderArbeitenSieBereits']='Neue/r BewerberIn <b>und</b> bereits StudentIn der FHTW? Sie haben bereits einen aktiven CIS Account an der FHTW (StudentIn). Dann loggen Sie sich mit Ihren bestehenden CIS Zugangsdaten ein.';
 $this->phrasen['bewerbung/zugangscodeVergessen']='Zugangscode vergessen?';
 $this->phrasen['bewerbung/dannHiermitAccountEinloggen']='Dann loggen Sie sich hier mit Ihrem CIS-Account ein';
 $this->phrasen['bewerbung/dannHierEinloggen']='Dann loggen Sie sich hier ein';
@@ -651,8 +651,8 @@ $this->phrasen['bewerbung/keineAktenVorhanden']='Derzeit sind keine Akten zum He
 $this->phrasen['bewerbung/textRuecktrittsrecht']='Ich nehme zur Kenntnis, dass mir das Recht zusteht, binnen vierzehn Tagen ohne Angabe von Gründen diesen Vertrag zu widerrufen.
 								<br><p class="alert alert-info">
 								<b>Information:</b><br>
-								Um dieses Widerrufsrecht auszuüben, müssen Sie die Fachhochschule Technikum Wien innerhalb 
-								der vierzehn Tage ab Abschluss mittels einer eindeutigen Erklärung per E-Mail an Ihre 
+								Um dieses Widerrufsrecht auszuüben, müssen Sie die Fachhochschule Technikum Wien innerhalb
+								der vierzehn Tage ab Abschluss mittels einer eindeutigen Erklärung per E-Mail an Ihre
 								Studiengangsassistenz über Ihren Entschluss, diesen Vertrag zu widerrufen, informieren.</p>';
 $this->phrasen['bewerbung/textAusbildungsvertrag']='Ich habe den Ausbildungsvertrag gelesen und erkläre mich mit dem Vertragsinhalt einverstanden.';
 $this->phrasen['bewerbung/informationDatenverwendungStudierende']='<a href=\''.APP_ROOT.'cms/dms.php?id=149169\' target=\'_blank\'><span class="glyphicon glyphicon-file"></span>Information über die Verwendung personenbezogener Daten von Studierenden</a>';
