@@ -253,10 +253,11 @@ $this->phrasen['bewerbung/kontakt']='Contact';
 $this->phrasen['bewerbung/nation']='Nation';
 $this->phrasen['bewerbung/menuDokumente']='Documents';
 $this->phrasen['bewerbung/dokument']='Document';
-$this->phrasen['bewerbung/bitteDokumenteHochladen']='In order to be able to send in your application, you need to upload all documents marked as "required".
-													If the document is not yet available at the respective time, you may submit the same at a later date.
-													To do so, click "submit document later" and specify when you are going to submit the document as well as the institution issuing the same.<br>
-													You may be prompted to upload more documents here in the course of your application.<br><br>
+$this->phrasen['bewerbung/bitteDokumenteHochladen']='In order to be able to send in your application, you need to upload all the documents marked as "required".
+													If the document is not yet available at the respective time, you may submit it at a later date.
+													To do so, click "submit document later" and specify when you are going to submit the document as well as the issuing institution.<br>
+													Probably you will be prompted to upload more documents here in the course of your application.<br><br>
+													Tip: To merge several individual pages into one file, we recommend free programmes such as PDF Merge. <br><br>
 													Please note that verified documents cannot be uploaded again. If a more recent document is available, please contact the Administrative Assistant.';
 $this->phrasen['bewerbung/linkDokumenteHochladen']='Upload Documents';
 $this->phrasen['bewerbung/dokumenteZumHochladen']='Required documents:';
