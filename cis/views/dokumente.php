@@ -194,7 +194,7 @@ if (! isset($person_id))
 
 			// Invitation-Letter und Zeitbestätigung an der FHTW immer anzeigen
 			if (CAMPUS_NAME == 'FH Technikum Wien' &&
-				($dok->dokument_kurzbz == 'InvitLet' || $dok->dokument_kurzbz == 'bst_zeit'))
+				($dok->dokument_kurzbz == 'InvitLet' || $dok->dokument_kurzbz == 'ZeitBest'))
 			{
 				$collapseStatus = 'collapse in';
 			}
@@ -283,7 +283,7 @@ if (! isset($person_id))
 					// Upload-Button ausblenden, offset auf 6 und colsize verdoppeln
 					// wenn FHTW und Invitation-Letter oder Zeitbestätigung
 					if (CAMPUS_NAME == 'FH Technikum Wien' &&
-					($dok->dokument_kurzbz == 'InvitLet' || $dok->dokument_kurzbz == 'bst_zeit'))
+					($dok->dokument_kurzbz == 'InvitLet' || $dok->dokument_kurzbz == 'ZeitBest'))
 					{
 						$uploadButtonVisible = false;
 						$offsetAktenListe = 'col-sm-offset-6';

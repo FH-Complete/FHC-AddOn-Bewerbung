@@ -2449,11 +2449,11 @@ if (CAMPUS_NAME == 'FH Technikum Wien')
 if (CAMPUS_NAME == 'FH Technikum Wien')
 {
 	$zeitBst = new akte();
-	$zeitBst ->getAkten($person_id, 'bst_zeit');
+	$zeitBst ->getAkten($person_id, 'ZeitBest');
 	if (count($zeitBst->result) > 0)
 	{
 		$zeitBstObj = new dokument();
-		$zeitBstObj->loadDokumenttyp('bst_zeit');
+		$zeitBstObj->loadDokumenttyp('ZeitBest');
 		$zeitBstObj->studiengang_kz = '0';
 		$zeitBstObj->stufe = '0';
 		$zeitBstObj->anzahl_akten_vorhanden = 1;

@@ -1806,7 +1806,7 @@ function getAktenListe($person_id, $dokument_kurzbz)
 									</button>';
 			// Löschen nur bei nicht-akzeptierten Dokumenten möglich
 			// Invitation letter dürfen nie gelöscht werden
-			if (!akteAkzeptiert($akte->akte_id) && ($akte->dokument_kurzbz != 'InvitLet' && $akte->dokument_kurzbz != 'bst_zeit'))
+			if (!akteAkzeptiert($akte->akte_id) && ($akte->dokument_kurzbz != 'InvitLet' && $akte->dokument_kurzbz != 'ZeitBest'))
 			{
 				$returnstring .= '	<button type="button"
 											title="'.$p->t('global/löschen').'"
