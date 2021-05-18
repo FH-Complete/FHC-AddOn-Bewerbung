@@ -2445,6 +2445,25 @@ if (CAMPUS_NAME == 'FH Technikum Wien')
 	}
 }
 
+// "Zeitbestätigung" zum Download angeboten, wenn bei der Person vorhanden
+if (CAMPUS_NAME == 'FH Technikum Wien')
+{
+	$zeitBst = new akte();
+	$zeitBst ->getAkten($person_id, 'ZeitBest');
+	if (count($zeitBst->result) > 0)
+	{
+		$zeitBstObj = new dokument();
+		$zeitBstObj->loadDokumenttyp('ZeitBest');
+		$zeitBstObj->studiengang_kz = '0';
+		$zeitBstObj->stufe = '0';
+		$zeitBstObj->anzahl_akten_vorhanden = 1;
+		$zeitBstObj->anzahl_akten_formal_geprueft = 1;
+		$zeitBstObj->anzahl_dokumente_akzeptiert = 1;
+		$zeitBstObj->anzahl_akten_wird_nachgereicht = 0;
+		array_push($dokumente_abzugeben, $zeitBstObj);
+	}
+}
+
 // $dokumente_abzugeben = new dokument();
 // $dokumente_abzugeben->getAllDokumenteForPerson($person_id, true);
 
