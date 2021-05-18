@@ -120,15 +120,15 @@ if(!isset($person_id))
 				$betrag = 0;
 			}
 			echo '
-			
+
 			<div class="panel panel-'.$class.'">
 				<div class="panel-heading" data-toggle="collapse" data-parent="#accordionZahlungen" href="#zahlung'.$row['parent']->buchungsnr.'">
 					<h4 class="panel-title">
 					<div class="row">
 						<div class="col-sm-12">
-							€'.sprintf('%.2f',abs($row['parent']->betrag)).' 
-							'.$buchungstyp[$row['parent']->buchungstyp_kurzbz].' - 
-							'.$stg_arr[$row['parent']->studiengang_kz]['German'].' - 
+							€'.sprintf('%.2f',abs($row['parent']->betrag)).'
+							'.$buchungstyp[$row['parent']->buchungstyp_kurzbz].' -
+							'.$stg_arr[$row['parent']->studiengang_kz]['German'].' -
 							'.$row['parent']->studiensemester_kurzbz.'</div>
 					</div>
 					<div class="row details-arrow">
@@ -168,26 +168,32 @@ if(!isset($person_id))
 									<div class="form-group">
 										<label for="" class="col-sm-3 col-md-5 text-right">'.$p->t('tools/buchungstext').'</label>
 										<div class="col-sm-9 col-md-7">'.($row['parent']->buchungstext != '' ? $row['parent']->buchungstext : '-').'</div>
-									</div>
-									<legend>'.$p->t('bewerbung/zahlungsinformationen').'</legend>
-									<div class="form-group">
-										<label for="" class="col-sm-3 col-md-5 text-right">'.$p->t('bewerbung/empfaenger').'</label>
-										<div class="col-sm-9 col-md-7">'.$stg_arr[$row['parent']->studiengang_kz]['OE'].'</div>
-									</div>
-									<div class="form-group">
-										<label for="" class="col-sm-3 col-md-5 text-right">'.$p->t('bewerbung/iban').'</label>
-										<div class="col-sm-9 col-md-7">'.$iban.'</div>
-									</div>
-									<div class="form-group">
-										<label for="" class="col-sm-3 col-md-5 text-right">'.$p->t('bewerbung/bic').'</label>
-										<div class="col-sm-9 col-md-7">'.$bic.'</div>
 									</div>';
-									if ($row['parent']->zahlungsreferenz != '')
+
+									if (!defined('BEWERBERTOOL_ZAHLUNGEN_ZAHLUNGSINFORMATIONEN_ANZEIGEN')
+									 || BEWERBERTOOL_ZAHLUNGEN_ZAHLUNGSINFORMATIONEN_ANZEIGEN==true)
 									{
-										echo '<div class="form-group" >
-												<label for="" class="col-sm-3 col-md-5 text-right">'.$p->t('bewerbung/zahlungsreferenz').'</label >
-												<div class="col-sm-9 col-md-7">'.$row['parent']->zahlungsreferenz.'</div >
-											</div>';
+										echo ';
+										<legend>'.$p->t('bewerbung/zahlungsinformationen').'</legend>
+										<div class="form-group">
+											<label for="" class="col-sm-3 col-md-5 text-right">'.$p->t('bewerbung/empfaenger').'</label>
+											<div class="col-sm-9 col-md-7">'.$stg_arr[$row['parent']->studiengang_kz]['OE'].'</div>
+										</div>
+										<div class="form-group">
+											<label for="" class="col-sm-3 col-md-5 text-right">'.$p->t('bewerbung/iban').'</label>
+											<div class="col-sm-9 col-md-7">'.$iban.'</div>
+										</div>
+										<div class="form-group">
+											<label for="" class="col-sm-3 col-md-5 text-right">'.$p->t('bewerbung/bic').'</label>
+											<div class="col-sm-9 col-md-7">'.$bic.'</div>
+										</div>';
+										if ($row['parent']->zahlungsreferenz != '')
+										{
+											echo '<div class="form-group" >
+													<label for="" class="col-sm-3 col-md-5 text-right">'.$p->t('bewerbung/zahlungsreferenz').'</label >
+													<div class="col-sm-9 col-md-7">'.$row['parent']->zahlungsreferenz.'</div >
+												</div>';
+										}
 									}
 							echo '</form>
 							</div>
