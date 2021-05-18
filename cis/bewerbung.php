@@ -19,9 +19,9 @@
  * 			Manfred Kindl 	<kindlm@technikum-wien.at>
  */
 
-require_once ('../../../config/cis.config.inc.php');
-require_once ('../../../config/global.config.inc.php');
-require_once ('../bewerbung.config.inc.php');
+require_once('../../../config/cis.config.inc.php');
+require_once('../../../config/global.config.inc.php');
+require_once('../bewerbung.config.inc.php');
 
 session_cache_limiter('none'); // muss gesetzt werden sonst funktioniert der Download mit IE8 nicht
 session_start();
@@ -29,15 +29,15 @@ session_start();
 // Definiert die verwendeten views (Tabreiter)
 // Die Tabs werden in der definierten Reihenfolge ausgegeben aber in der Indexreihenfolge geladen
 $tabs = array();
-if(defined('BEWERBERTOOL_UEBERSICHT_ANZEIGEN') && BEWERBERTOOL_UEBERSICHT_ANZEIGEN)
-	$tabs[12]='uebersicht';
-if(!defined('BEWERBERTOOL_ALLGEMEIN_ANZEIGEN') || BEWERBERTOOL_ALLGEMEIN_ANZEIGEN)
-	$tabs[13]='allgemein';
+if (defined('BEWERBERTOOL_UEBERSICHT_ANZEIGEN') && BEWERBERTOOL_UEBERSICHT_ANZEIGEN)
+	$tabs[12] = 'uebersicht';
+if (!defined('BEWERBERTOOL_ALLGEMEIN_ANZEIGEN') || BEWERBERTOOL_ALLGEMEIN_ANZEIGEN)
+	$tabs[13] = 'allgemein';
 
 $tabs[0]='daten';
 $tabs[1]='kontakt';
 
-if(!defined('BEWERBERTOOL_DOKUMENTE_ANZEIGEN') || BEWERBERTOOL_DOKUMENTE_ANZEIGEN)
+if (!defined('BEWERBERTOOL_DOKUMENTE_ANZEIGEN') || BEWERBERTOOL_DOKUMENTE_ANZEIGEN)
 	$tabs[2]='dokumente';
 if(defined('BEWERBERTOOL_AUSBILDUNG_ANZEIGEN') && BEWERBERTOOL_AUSBILDUNG_ANZEIGEN)
 	$tabs[3]='ausbildung';
@@ -71,8 +71,8 @@ if (! isset($_SESSION['bewerbung/user']) || $_SESSION['bewerbung/user'] == '')
 	exit();
 }
 
-require_once ('../../../include/adresse.class.php');
-require_once ('../../../include/akte.class.php');
+require_once('../../../include/adresse.class.php');
+require_once('../../../include/akte.class.php');
 require_once ('../../../include/aufmerksamdurch.class.php');
 require_once ('../../../include/basis_db.class.php');
 require_once ('../../../include/bankverbindung.class.php');
@@ -116,7 +116,7 @@ if (isset($_GET['logout']))
 	header('Location: registration.php');
 }
 
-$person_id = (int) $_SESSION['bewerbung/personId'];
+$person_id = (int)$_SESSION['bewerbung/personId'];
 $akte_id = isset($_POST['akte_id']) ? $_POST['akte_id'] : '';
 $method = isset($_POST['method']) ? $_POST['method'] : '';
 $datum = new datum();
@@ -184,7 +184,7 @@ $message = '&nbsp;';
 
 // $vollstaendig = '<span class="badge alert-success">'.$p->t('bewerbung/vollstaendig').' <span class="glyphicon glyphicon-ok"></span></span>';
 // $unvollstaendig = '<span class="badge alert-danger">'.$p->t('bewerbung/unvollstaendig').' <span class="glyphicon glyphicon-remove"></span></span>';
-$vollstaendig = '<span style="color: #3c763d;">' . $p->t('bewerbung/vollstaendig') . '</span>';
+$vollstaendig = '<span style="color: #3c763d;">'.$p->t('bewerbung/vollstaendig').'</span>';
 $unvollstaendig = '<span style="color: #a94442;">' . $p->t('bewerbung/unvollstaendig') . '</span>';
 $teilvollstaendig = '<span style="color: #8A6D3B;">' . $p->t('bewerbung/teilweiseVollstaendig') . '</span>';
 
@@ -1040,7 +1040,20 @@ if (isset($_POST['btn_person']))
 		$person->vorname = $_POST['vorname'];
 		$person->nachname = $_POST['nachname'];
 		$person->titelpost = $_POST['titelPost'];
-		$person->gebdatum = $datum->formatDatum($_POST['geburtsdatum'], 'Y-m-d');
+
+
+		if(!$datum->checkDatum($_POST['geburtsdatum']))
+		{
+			$save_error_daten=true;
+			$message = $_POST['geburtsdatum']. "<br>" . $p->t('bewerbung/datumUngueltig');;
+			$person->gebdatum = '';
+		}
+		else
+		{
+			//korrigiertes Geburtsdatum speichern
+			$person->gebdatum = $datum->formatDatum($_POST['geburtsdatum'], 'Y-m-d');
+		}
+
 		$person->staatsbuergerschaft = $_POST['staatsbuergerschaft'];
 		$person->geschlecht = $_POST['geschlecht'];
 		if ($_POST['geschlecht'] == 'm')
