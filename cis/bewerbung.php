@@ -2445,6 +2445,22 @@ if (CAMPUS_NAME == 'FH Technikum Wien')
 	}
 }
 
+
+//Prüfung ob es zur betreffenden $person_id für weitere Bewerbungen bereits eine interne ZGV gibt
+$zgvFHTW = $prestudent-> existsZGVIntern($person_id);
+echo "ZGV intern: ". $zgvFHTW;
+
+$zgvMaster = new dokument();
+
+if ($zgvFHTW){
+	// echo " akzeptiere Dok zgv_mast: ";
+	// $zgvMaster -> akzeptiereDokument('zgv_mast', $person_id);
+
+	echo " entakzeptiere Meldezettel: ";
+	$zgvMaster -> entakzeptiereDokument('Meldezet', $person_id);
+	
+}
+
 // $dokumente_abzugeben = new dokument();
 // $dokumente_abzugeben->getAllDokumenteForPerson($person_id, true);
 
