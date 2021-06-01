@@ -179,12 +179,19 @@ if (! isset($person_id))
 				$statusInfotext = '<div class="label label-warning">'.$p->t('bewerbung/dokumentWirdNachgereicht').'</div>';
 				$displayDetailsArrow = false;
 			}
-			elseif ($dok->pflicht)
+			elseif ($dok->pflicht && $dok->anzahl_dokumente_akzeptiert == 0)
 			{
 				echo '<div class="panel panel-danger">';
 				$statusInfotext = '<div class="label label-danger">'.$p->t('bewerbung/dokumentErforderlich').'</div>';
 				$displayDetailsArrow = false;
 				$anzahlOffeneDokumente ++;
+			}
+			elseif ($dok->pflicht && $dok->anzahl_dokumente_akzeptiert > 0) //Fall: bereits akzeptiertes Dokument
+			{
+				echo '<div class="panel panel-info">';
+				$statusInfotext = '<div class="label label-info">'.$p->t('bewerbung/dokumentNichtErforderlich').'</div>';
+				$displayDetailsArrow = false;
+				//$anzahlOffeneDokumente ++;
 			}
 			else
 			{
@@ -232,8 +239,8 @@ if (! isset($person_id))
 			echo '			<div class="col-sm-6" style="padding-bottom: 5px">';
 			if ($detailstring_original != '')
 			{
-					echo '      <div id="details_'.$dok->studiengang_kz.'_'.$dok->dokument_kurzbz.'" 
-									class="dokumentdetails fade-out" 
+					echo '      <div id="details_'.$dok->studiengang_kz.'_'.$dok->dokument_kurzbz.'"
+									class="dokumentdetails fade-out"
 									onclick="showDetails(\'details_'.$dok->studiengang_kz.'_'.$dok->dokument_kurzbz.'\')">
 									'.$detailstring_original.'
 								</div>
@@ -338,14 +345,14 @@ if (! isset($person_id))
 									    Lichtbild hochladen -> Phrase
 								    </div>
 								    <div class="modal-body">
-								        
+
 								        <img id="croppie-container" src="#" />
 							        </div>
 							        <div class="modal-footer">
 							            <button type="button" class="btn btn-default" data-dismiss="modal">' . $p->t('global/abbrechen') . '</button>
-							            <button id="submitimage" 
-												type="submit" 
-												name="submitimage" 
+							            <button id="submitimage"
+												type="submit"
+												name="submitimage"
 												class="btn btn-labeled btn-primary">
 											'.$p->t('bewerbung/upload').'
 										</button>
@@ -355,9 +362,9 @@ if (! isset($person_id))
 						</div>';
 			}
 
-			echo '		
+			echo '
 					</div><!--Ende Body --></div><!--Ende Collapsive--></div><!--Ende Panel -->
-					
+
 			';
 		}
 

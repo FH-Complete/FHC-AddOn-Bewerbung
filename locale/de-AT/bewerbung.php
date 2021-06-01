@@ -316,6 +316,7 @@ $this->phrasen['bewerbung/dokumentName']='Name';
 $this->phrasen['bewerbung/benoetigtFuer']='Benötigt für';
 $this->phrasen['bewerbung/dokumenteFuer']='Dokumente für';
 $this->phrasen['bewerbung/dokumentErforderlich']='Dokument erforderlich';
+$this->phrasen['bewerbung/dokumentNichtErforderlich']='Dokument nicht erforderlich';
 $this->phrasen['bewerbung/dokumentOffen']='Dokument hochladen';
 $this->phrasen['bewerbung/dokumentNichtUeberprueft']='Dokument wurde abgegeben aber noch nicht überprüft';
 $this->phrasen['bewerbung/dokumentWirdNachgereicht']='Dokument wird nachgereicht';
@@ -651,8 +652,8 @@ $this->phrasen['bewerbung/keineAktenVorhanden']='Derzeit sind keine Akten zum He
 $this->phrasen['bewerbung/textRuecktrittsrecht']='Ich nehme zur Kenntnis, dass mir das Recht zusteht, binnen vierzehn Tagen ohne Angabe von Gründen diesen Vertrag zu widerrufen.
 								<br><p class="alert alert-info">
 								<b>Information:</b><br>
-								Um dieses Widerrufsrecht auszuüben, müssen Sie die Fachhochschule Technikum Wien innerhalb 
-								der vierzehn Tage ab Abschluss mittels einer eindeutigen Erklärung per E-Mail an Ihre 
+								Um dieses Widerrufsrecht auszuüben, müssen Sie die Fachhochschule Technikum Wien innerhalb
+								der vierzehn Tage ab Abschluss mittels einer eindeutigen Erklärung per E-Mail an Ihre
 								Studiengangsassistenz über Ihren Entschluss, diesen Vertrag zu widerrufen, informieren.</p>';
 $this->phrasen['bewerbung/textAusbildungsvertrag']='Ich habe den Ausbildungsvertrag gelesen und erkläre mich mit dem Vertragsinhalt einverstanden.';
 $this->phrasen['bewerbung/informationDatenverwendungStudierende']='<a href=\''.APP_ROOT.'cms/dms.php?id=149169\' target=\'_blank\'><span class="glyphicon glyphicon-file"></span>Information über die Verwendung personenbezogener Daten von Studierenden</a>';

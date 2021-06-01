@@ -129,14 +129,14 @@ $this->phrasen['bewerbung/emailgesendetan']='
 			-webkit-animation-iteration-count:2;
 		}
 	}
-	@keyframes mailsend_small 
+	@keyframes mailsend_small
 	{
-		0%%,30%% 
+		0%%,30%%
 		{
 			opacity: 1;
 			transform: translate(0, 0);
 		}
-		100%% 
+		100%%
 		{
 			opacity: 0;
 			transform: translate(200px, 0);
@@ -144,12 +144,12 @@ $this->phrasen['bewerbung/emailgesendetan']='
 	}
 	@keyframes mailsend_medium
 	{
-		0%%,30%% 
+		0%%,30%%
 		{
 			opacity: 1;
 			transform: translate(0, 0);
 		}
-		100%% 
+		100%%
 		{
 			opacity: 0;
 			transform: translate(300px, 0);
@@ -157,23 +157,23 @@ $this->phrasen['bewerbung/emailgesendetan']='
 	}
 	@keyframes mailsend_large
 	{
-		0%%,30%% 
+		0%%,30%%
 		{
 			opacity: 1;
 			transform: translate(0, 0);
 		}
-		100%% 
+		100%%
 		{
 			opacity: 0;
 			transform: translate(400px, 0);
 		}
 	}
-	
+
 </style>
 <span id="mail_icon" class="glyphicon glyphicon-envelope" style="font-size:50px;"></span>
 <br><br>
 The e-mail with your access code has successfully been sent to %s.
-<br><br>You should receive an e-mail within a few minutes. If you receive no e-mail within <b>24 hours</b> please contact 
+<br><br>You should receive an e-mail within a few minutes. If you receive no e-mail within <b>24 hours</b> please contact
 our <a href=\'https://www.technikum-wien.at/en/student-guide/admission-counselors/\' target=\'_blank\'>student counselling team</a>';
 $this->phrasen['bewerbung/zurueckZurAnmeldung']='Back to registration.';
 $this->phrasen['bewerbung/sicherheitscodeFalsch']='The access code is incorrect.';
@@ -264,6 +264,7 @@ $this->phrasen['bewerbung/dokumentName']='Name';
 $this->phrasen['bewerbung/benoetigtFuer']='Required for';
 $this->phrasen['bewerbung/dokumenteFuer']='Documents for';
 $this->phrasen['bewerbung/dokumentErforderlich']='Required document';
+$this->phrasen['bewerbung/dokumentNichtErforderlich']='Not required document';
 $this->phrasen['bewerbung/dokumentOffen']='Document not yet submitted (open)';
 $this->phrasen['bewerbung/dokumentNichtUeberprueft']='Document has been submitted but not yet examined';
 $this->phrasen['bewerbung/dokumentWirdNachgereicht']='Document will be submitted later';
@@ -596,7 +597,7 @@ $this->phrasen['bewerbung/keineAktenVorhanden']='Currently there are no download
 $this->phrasen['bewerbung/textRuecktrittsrecht']='I take note that I have the right to cancel this contract within fourteen days without giving any reason.
 								<br><p class="alert alert-info">
 								<b>Information:</b><br>
-								In order to exercise this right of withdrawal, you must inform the UAS Technikum Wien within 14 days of entering into the 
+								In order to exercise this right of withdrawal, you must inform the UAS Technikum Wien within 14 days of entering into the
 								contract by means of a clear declaration by email to your degree program’s administrative assistant about your decision to cancel this contract.</p>';
 $this->phrasen['bewerbung/textAusbildungsvertrag']='I have read the training contract and agree to the content of the contract.';
 $this->phrasen['bewerbung/informationDatenverwendungStudierende']='<a href=\''.APP_ROOT.'cms/dms.php?id=149169\' target=\'_blank\'><span class="glyphicon glyphicon-file"></span>Information on the use of student personal data</a>';
