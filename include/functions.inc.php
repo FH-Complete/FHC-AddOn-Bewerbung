@@ -37,12 +37,12 @@ function BewerbungPersonAddStudiengang($studiengang_kz, $anmerkung, $person, $st
 	$zgvmaort = '';
 	$zgvmadatum = '';
 	$zgvmanation = '';
-	
+
 	// Erstellen eines Array mit allen Studiengängen
 	$studiengaenge_obj = new studiengang();
 	$studiengaenge_obj->getAll();
 	$studiengaenge_arr = array();
-	
+
 	foreach ($studiengaenge_obj->result as $row)
 	{
 		$studiengaenge_arr[$row->studiengang_kz]['kurzbz'] = $row->kurzbz;
@@ -53,7 +53,7 @@ function BewerbungPersonAddStudiengang($studiengang_kz, $anmerkung, $person, $st
 		$studiengaenge_arr[$row->studiengang_kz]['oe_kurzbz'] = $row->oe_kurzbz;
 	}
 
-	// Wenn BEWERBERTOOL_ALWAYS_CREATE_NEW_PRESTUDENT_FOR_APPLICATION nicht definiert oder false ist, 
+	// Wenn BEWERBERTOOL_ALWAYS_CREATE_NEW_PRESTUDENT_FOR_APPLICATION nicht definiert oder false ist,
 	// wird ein bestehender PreStudent gesucht und ein neuer Status an diesen angefügt
 	// Ansonsten wird immer ein neuer PreStudent-Datensatz erzeugt
 	if(!defined('BEWERBERTOOL_ALWAYS_CREATE_NEW_PRESTUDENT_FOR_APPLICATION') || BEWERBERTOOL_ALWAYS_CREATE_NEW_PRESTUDENT_FOR_APPLICATION == false)
@@ -72,10 +72,10 @@ function BewerbungPersonAddStudiengang($studiengang_kz, $anmerkung, $person, $st
 			if ($pre->result[0]->prestudent_id != '')
 			{
 				$prestudent_help = $pre->result[0]->prestudent_id;
-				
+
 				$prestudent_zgv = new prestudent();
 				$prestudent_zgv->load($prestudent_help);
-				
+
 				$zgv_code = $prestudent_zgv->zgv_code;
 				$zgvort = $prestudent_zgv->zgvort;
 				$zgvdatum = $prestudent_zgv->zgvdatum;
@@ -87,19 +87,19 @@ function BewerbungPersonAddStudiengang($studiengang_kz, $anmerkung, $person, $st
 			}
 		}
 	}
-	else 
+	else
 	{
 		$prestudent_id = 0;
 	}
-	
-	
+
+
 	if ($prestudent_id == 0) // Wenn kein PreStudent-Datensatz gefunden wurde, neuen Prestudenten anlegen
 	{
 		if ($std) // Wenn Person schon Student war, ZGV-Daten von dort holen
 		{
 			$prestudent_zgv = new prestudent();
 			$prestudent_zgv->load($student->prestudent_id);
-			
+
 			$zgv_code = $prestudent_zgv->zgv_code;
 			$zgvort = $prestudent_zgv->zgvort;
 			$zgvdatum = $prestudent_zgv->zgvdatum;
@@ -122,7 +122,7 @@ function BewerbungPersonAddStudiengang($studiengang_kz, $anmerkung, $person, $st
 			$zgvmanation = '';
 		}
 		$prestudent = new prestudent();
-		
+
 		$prestudent->studiengang_kz = $studiengang_kz;
 		$prestudent->person_id = $person->person_id;
 		$prestudent->zgv_code = $zgv_code;
@@ -140,25 +140,25 @@ function BewerbungPersonAddStudiengang($studiengang_kz, $anmerkung, $person, $st
 		$prestudent->updatevon = 'online';
 		$prestudent->reihungstestangetreten = false;
 		$prestudent->new = true;
-		
+
 		if (! $prestudent->save())
 		{
 			return $prestudent->errormsg;
 		}
-		
+
 		$prestudent_id = $prestudent->prestudent_id;
 	}
-	
+
 	// Richtigen Studienplan ermitteln
 	$studienplan = new studienplan();
 	$studienplan->getStudienplaeneFromSem($studiengang_kz, $studiensemester_kurzbz, '1', $orgform_kurzbz, $sprache);
-	
+
 	// Wenn kein passender Studienplan gefunden wird, wird er NULL gesetzt
 	if (isset($studienplan->result[0]))
 		$studienplan_id = $studienplan->result[0]->studienplan_id;
 	else
 		$studienplan_id = '';
-	
+
 	// Interessenten Status anlegen
 	$prestudent_status = new prestudent();
 	$prestudent_status->load($prestudent_id);
@@ -174,12 +174,12 @@ function BewerbungPersonAddStudiengang($studiengang_kz, $anmerkung, $person, $st
 	$prestudent_status->anmerkung_status = $anmerkung;
 	$prestudent_status->orgform_kurzbz = $orgform_kurzbz;
 	$prestudent_status->studienplan_id = $studienplan_id;
-	
+
 	if (! $prestudent_status->save_rolle())
 	{
 		return $prestudent_status->errormsg;
 	}
-	else 
+	else
 	{
 		// Logeintrag schreiben
 		$log = new personlog();
@@ -202,7 +202,7 @@ function BewerbungPersonAddStudienplan($studienplan_id, $person, $studiensemeste
 	$studienordnung = new studienordnung();
 	$studienordnung->loadStudienordnung($studienplan->studienordnung_id);
 	$studiengang_kz = $studienordnung->studiengang_kz;
-	
+
 	// Wenn es für das gewählte Studiensemester schon eine Bewerbung gibt, kann man sich nicht mehr dafür bewerben
 	// Es wird true zurückgegeben aber kein PreStudent erstellt
 	$existPrestudentstatus = new prestudent();
@@ -210,7 +210,7 @@ function BewerbungPersonAddStudienplan($studienplan_id, $person, $studiensemeste
 	{
 		return true;
 	}
-	
+
 	// PreStudent_id des aktuellsten PreStudenten (hoechste ID) ermitteln und Interessentenstatus zu diesem hinzufuegen,
 	// sonst nach irgendeiner prestudent_id suchen, um dessen ZGV uebernehmen zu koennen.
 	$student = new student();
@@ -224,12 +224,12 @@ function BewerbungPersonAddStudienplan($studienplan_id, $person, $studiensemeste
 	$zgvmaort = '';
 	$zgvmadatum = '';
 	$zgvmanation = '';
-	
+
 	// Erstellen eines Array mit allen Studiengängen
 	$studiengaenge_obj = new studiengang();
 	$studiengaenge_obj->getAll();
 	$studiengaenge_arr = array();
-	
+
 	foreach ($studiengaenge_obj->result as $row)
 	{
 		$studiengaenge_arr[$row->studiengang_kz]['kurzbz'] = $row->kurzbz;
@@ -239,7 +239,7 @@ function BewerbungPersonAddStudienplan($studienplan_id, $person, $studiensemeste
 		$studiengaenge_arr[$row->studiengang_kz]['orgform_kurzbz'] = $row->orgform_kurzbz;
 		$studiengaenge_arr[$row->studiengang_kz]['oe_kurzbz'] = $row->oe_kurzbz;
 	}
-	
+
 	// Höchsten PreStudenten ermitteln, um ggf ZGV übernehmen zu können
 	$pre = new prestudent();
 	$pre->getPrestudenten($person->person_id); // Alle Prestudenten der Person laden
@@ -249,7 +249,7 @@ function BewerbungPersonAddStudienplan($studienplan_id, $person, $studiensemeste
 		if ($row->studiengang_kz == $studiengang_kz && $row->prestudent_id > $prestudent_id && $row->prestudent_id != $student->prestudent_id)
 			$prestudent_id = $row->prestudent_id;
 	}
-	// Wenn die Person noch kein Student in diesem Studiengang war, 
+	// Wenn die Person noch kein Student in diesem Studiengang war,
 	// nach der höchsten prestudent_id mit ZGV suchen, um dessen ZGV uebernehmen zu koennen
 	if ($prestudent_id == 0)
 	{
@@ -268,10 +268,10 @@ function BewerbungPersonAddStudienplan($studienplan_id, $person, $studiensemeste
 		if ($prestudent_id_for_zgv != 0)
 		{
 			$prestudent_help = $prestudent_id_for_zgv;
-			
+
 			$prestudent_zgv = new prestudent();
 			$prestudent_zgv->load($prestudent_help);
-			
+
 			$zgv_code = $prestudent_zgv->zgv_code;
 			$zgvort = $prestudent_zgv->zgvort;
 			$zgvdatum = $prestudent_zgv->zgvdatum;
@@ -374,10 +374,10 @@ function BewerbungPersonAddStudienplan($studienplan_id, $person, $studiensemeste
 		$prestudent = new prestudent();
 		$hoechstePrio = new prestudent();
 		$hoechstePrio->getPriorisierungPersonStudiensemester($person->person_id, $studiensemester_kurzbz);
-		
+
 		if ($hoechstePrio->priorisierung == '')
 			$hoechstePrio->priorisierung = 0;
-		
+
 		$prestudent->studiengang_kz = $studiengang_kz;
 		$prestudent->person_id = $person->person_id;
 		$prestudent->zgv_code = $zgv_code;
@@ -401,10 +401,10 @@ function BewerbungPersonAddStudienplan($studienplan_id, $person, $studiensemeste
 		{
 			return $prestudent->errormsg;
 		}
-		
+
 		$prestudent_id = $prestudent->prestudent_id;
 	}
-		
+
 	// Interessenten Status anlegen
 	$prestudent_status = new prestudent();
 	$prestudent_status->load($prestudent_id);
@@ -420,7 +420,7 @@ function BewerbungPersonAddStudienplan($studienplan_id, $person, $studiensemeste
 	$prestudent_status->anmerkung_status = '';
 	$prestudent_status->orgform_kurzbz = $studienplan->orgform_kurzbz;
 	$prestudent_status->studienplan_id = $studienplan_id;
-	
+
 	if (! $prestudent_status->save_rolle())
 	{
 		return $prestudent_status->errormsg;
@@ -443,7 +443,7 @@ function BewerbungPersonAddStudienplan($studienplan_id, $person, $studiensemeste
  * Prueft, ob fuer die uebergebene Mailadresse, schon eine Person im System ist und laedt ggf.
  * den entsprechenden Personendatensatz.
  * Optional kann eine studiensemester_kurzbz uebergeben werden. Dann wird ueber PreStudentstatus gejoined und nur ein bestimmtes Studiensemester ueberprueft.
- * 
+ *
  * @param string $mailadresse Zu pruefende E-Mail-Adresse.
  * @param string $studiensemester_kurzbz. Optional. Studiensemester fuer welches eine Bewerbung vorliegt.
  * @return integer person_id und zugangscode; False im Fehlerfall
@@ -452,33 +452,33 @@ function check_load_bewerbungen($mailadresse, $studiensemester_kurzbz = null)
 {
 	$mailadresse = strtolower(trim($mailadresse));
 	$db = new basis_db();
-	
+
 	$qry = "SELECT DISTINCT tbl_person.person_id,tbl_person.zugangscode,tbl_person.insertamum
-				FROM public.tbl_kontakt 
-					JOIN public.tbl_person USING (person_id) 
+				FROM public.tbl_kontakt
+					JOIN public.tbl_person USING (person_id)
 					LEFT JOIN public.tbl_benutzer USING (person_id) ";
 	if ($studiensemester_kurzbz != '')
-		$qry .= "	JOIN public.tbl_prestudent USING (person_id) 
+		$qry .= "	JOIN public.tbl_prestudent USING (person_id)
 							JOIN public.tbl_prestudentstatus USING (prestudent_id) ";
 	$qry .= "
-				WHERE kontakttyp='email' 
-				AND (	LOWER(kontakt)=" . $db->db_add_param($mailadresse, FHC_STRING) . " 
+				WHERE kontakttyp='email'
+				AND (	LOWER(kontakt)=" . $db->db_add_param($mailadresse, FHC_STRING) . "
 						OR LOWER(alias||'@" . DOMAIN . "')=" . $db->db_add_param($mailadresse, FHC_STRING) . "
 			 			OR LOWER(uid||'@" . DOMAIN . "')=" . $db->db_add_param($mailadresse, FHC_STRING) . ")";
 	if ($studiensemester_kurzbz != '')
 		$qry .= " AND studiensemester_kurzbz=" . $db->db_add_param($studiensemester_kurzbz, FHC_STRING);
-	
+
 	$qry .= " ORDER BY tbl_person.insertamum DESC LIMIT 1;";
-	
+
 	if ($db->db_query($qry))
 	{
 		if ($row = $db->db_fetch_object())
 		{
 			$obj = new stdClass();
-			
+
 			$obj->person_id = $row->person_id;
 			$obj->zugangscode = $row->zugangscode;
-			
+
 			return $obj;
 		}
 		else
@@ -498,7 +498,7 @@ function check_load_bewerbungen($mailadresse, $studiensemester_kurzbz = null)
  * Prueft, ob eine Person schon einen Bewerbung abgeschickt hat.
  * Notwendig um herauszufinden, ob die Eingabe der Stammdaten gesperrt werden soll.
  * Optional kann eine studiensemester_kurzbz uebergeben werden, ob speziell dafuer schon eine Bewerbung abgeschickt wurde.
- * 
+ *
  * @param integer $person_id Zu pruefende Person.
  * @param string $studiensemester_kurzbz. Optional. Studiensemester fuer welches eine abgeschickte Bewerbung vorliegt.
  * @return true, wenn vorhanden, false im Fehlerfall
@@ -506,7 +506,7 @@ function check_load_bewerbungen($mailadresse, $studiensemester_kurzbz = null)
 function check_person_bewerbungabgeschickt($person_id, $studiensemester_kurzbz = null)
 {
 	$db = new basis_db();
-	
+
 	$qry = "SELECT *
 			FROM PUBLIC.tbl_person
 			JOIN PUBLIC.tbl_prestudent USING (person_id)
@@ -514,10 +514,10 @@ function check_person_bewerbungabgeschickt($person_id, $studiensemester_kurzbz =
 			WHERE person_id=" . $db->db_add_param($person_id, FHC_INTEGER) . "
 				AND status_kurzbz = 'Interessent'
 				AND bewerbung_abgeschicktamum IS NOT NULL";
-	
+
 	if ($studiensemester_kurzbz != '')
 		$qry .= " AND studiensemester_kurzbz=" . $db->db_add_param($studiensemester_kurzbz, FHC_STRING);
-	
+
 	if ($result = $db->db_query($qry))
 	{
 		if ($db->db_num_rows($result) > 0)
@@ -536,7 +536,7 @@ function check_person_bewerbungabgeschickt($person_id, $studiensemester_kurzbz =
  * Prueft, ob der uebergebene Status der Person bestaetigt ist.
  * Optional kann eine studiensemester_kurzbz uebergeben werden, ob speziell dafuer schon eine Bestaetigung vorliegt.
  * Optional kann eine studiengang_kz uebergeben werden, ob speziell in diesem Studiengang der Status bestaetigt wurde
- * 
+ *
  * @param integer $person_id Zu pruefende Person.
  * @param string $status_kurzbz Status_kurzbz, welche geprueft werden soll zB "Interessent".
  * @param string $studiensemester_kurzbz. Optional. Studiensemester fuer welches eine Bewerbung vorliegt.
@@ -546,7 +546,7 @@ function check_person_bewerbungabgeschickt($person_id, $studiensemester_kurzbz =
 function check_person_statusbestaetigt($person_id, $status_kurzbz, $studiensemester_kurzbz = null, $studiengang_kz = null)
 {
 	$db = new basis_db();
-	
+
 	$qry = "SELECT *
 			FROM PUBLIC.tbl_person
 			JOIN PUBLIC.tbl_prestudent USING (person_id)
@@ -554,13 +554,13 @@ function check_person_statusbestaetigt($person_id, $status_kurzbz, $studiensemes
 			WHERE person_id=" . $db->db_add_param($person_id, FHC_INTEGER) . "
 				AND status_kurzbz = " . $db->db_add_param($status_kurzbz, FHC_STRING) . "
 				AND bestaetigtam IS NOT NULL";
-	
+
 	if ($studiensemester_kurzbz != '')
 		$qry .= " AND studiensemester_kurzbz=" . $db->db_add_param($studiensemester_kurzbz, FHC_STRING);
-	
+
 	if ($studiengang_kz != '')
 		$qry .= " AND tbl_prestudent.studiengang_kz=" . $db->db_add_param($studiengang_kz, FHC_INTEGER);
-	
+
 	if ($result = $db->db_query($qry))
 	{
 		if ($db->db_num_rows($result) > 0)
@@ -577,7 +577,7 @@ function check_person_statusbestaetigt($person_id, $status_kurzbz, $studiensemes
 
 /**
  * Holt die aktiven Studienplaene, bei denen das Attribut onlinebewerbung_studienplan TRUE ist.
- * 
+ *
  * @param integer $studiengang_kz Optional. Studiengang_kz eines bestimmten Studiengangs.
  * @param array $studiensemester_kurzbz Optional. Array von Studiensemestern, in deren Gueltigkeit die Studienplaene liegen.
  * @param string $ausbildungssemester Optional. Kommaseparierter String mit Ausbildungssemestern, in deren Gueltigkeit die Studienplaene liegen.
@@ -600,9 +600,9 @@ function alt_getStudienplaeneForOnlinebewerbung($studiengang_kz = null, $studien
 					JOIN lehre.tbl_studienplan_semester USING(studienplan_id)
 				WHERE
 					tbl_studienplan.aktiv
-				AND 
+				AND
 					tbl_studienplan.onlinebewerbung_studienplan=TRUE ";
-	
+
 	if ($studiengang_kz != '')
 	{
 		$qry .= " AND tbl_studienordnung.studiengang_kz=" . $db->db_add_param($studiengang_kz, FHC_INTEGER);
@@ -627,7 +627,7 @@ function alt_getStudienplaeneForOnlinebewerbung($studiengang_kz = null, $studien
 		while ($row = $db->db_fetch_object($result))
 		{
 			$obj = new studienplan();
-			
+
 			$obj->studienplan_id = $row->studienplan_id;
 			$obj->studienordnung_id = $row->studienordnung_id;
 			$obj->orgform_kurzbz = $row->orgform_kurzbz;
@@ -648,9 +648,9 @@ function alt_getStudienplaeneForOnlinebewerbung($studiengang_kz = null, $studien
 			$obj->studiengangbezeichnung_englisch = $row->studiengangbezeichnung_englisch;
 			$obj->studiengangkurzbzlang = $row->studiengangkurzbzlang;
 			$obj->akadgrad_id = $row->akadgrad_id;
-			
+
 			$obj->new = true;
-			
+
 			$db->result[] = $obj;
 		}
 		return $db->result;
@@ -661,7 +661,7 @@ function alt_getStudienplaeneForOnlinebewerbung($studiengang_kz = null, $studien
 
 /**
  * Holt die aktiven Studienplaene, bei denen das Attribut onlinebewerbung_studienplan TRUE ist.
- * Wenn keiner vorhanden ist, wird ein Studiengang ohne Studienplan geliefert. 
+ * Wenn keiner vorhanden ist, wird ein Studiengang ohne Studienplan geliefert.
  *
  * @param integer $studiengang_kz Optional. Studiengang_kz eines bestimmten Studiengangs.
  * @param array $studiensemester_kurzbz Optional. Array von Studiensemestern, in deren Gueltigkeit die Studienplaene liegen.
@@ -712,18 +712,18 @@ function getStudienplaeneForOnlinebewerbung($studiensemester_kurzbz = null, $aus
 	{
 		$qry .= " AND orgform_kurzbz=" . $db->db_add_param($orgform_kurzbz);
 	}
-	
+
 	$qry .= " ORDER BY ".$order;
-	
+
 //echo $qry;
-	
+
 	if ($result = $db->db_query($qry))
 	{
 		$db->result = '';
 		while ($row = $db->db_fetch_object($result))
 		{
 			$obj = new studienplan();
-			
+
 			$obj->studienplan_id = $row->studienplan_id;
 			$obj->studienordnung_id = $row->studienordnung_id;
 			$obj->orgform_kurzbz = $row->orgform_kurzbz;
@@ -749,9 +749,9 @@ function getStudienplaeneForOnlinebewerbung($studiensemester_kurzbz = null, $aus
 			$obj->akadgrad_id = $row->akadgrad_id;
 			$obj->lgartcode = $row->lgartcode;
 			$obj->lehrgangsart = $row->lehrgangsart;
-			
+
 			$obj->new = true;
-			
+
 			$db->result[] = $obj;
 		}
 		return $db->result;
@@ -762,7 +762,7 @@ function getStudienplaeneForOnlinebewerbung($studiensemester_kurzbz = null, $aus
 
 /**
  * Holt die vorkommenden Orgform/Sprache Kombinationen aus den aktiven Studienplänen, bei denen das Attribut onlinebewerbung_studienplan TRUE ist.
- * 
+ *
  * @param integer $studiengang_kz optional
  * @param array $studiensemester_kurzbz Array von Studiensemestern, in deren Gueltigkeit die Studienplaene liegen
  * @param string $ausbildungssemester Kommaseparierter String mit Ausbildungssemestern, in deren Gueltigkeit die Studienplaene liegen
@@ -781,9 +781,9 @@ function getOrgformSpracheForOnlinebewerbung($studiengang_kz = null, $studiensem
 				    tbl_studienplan.orgform_kurzbz IS NOT NULL
 				AND
 					tbl_studienplan.aktiv
-				AND 
+				AND
 					tbl_studienplan.onlinebewerbung_studienplan=TRUE ";
-	
+
 	if ($studiengang_kz != '')
 	{
 		$qry .= " AND tbl_studienordnung.studiengang_kz=" . $db->db_add_param($studiengang_kz, FHC_INTEGER);
@@ -803,7 +803,7 @@ function getOrgformSpracheForOnlinebewerbung($studiengang_kz = null, $studiensem
 		$qry .= " AND orgform_kurzbz=" . $db->db_add_param($orgform_kurzbz);
 	}
 	$qry .= " ORDER by orgform_kurzbz,sprache";
-	
+
 	if ($result = $db->db_query($qry))
 	{
 		$db->result = '';
@@ -812,9 +812,9 @@ function getOrgformSpracheForOnlinebewerbung($studiengang_kz = null, $studiensem
 			$obj = new studienplan();
 			$obj->orgform_kurzbz = $row->orgform_kurzbz;
 			$obj->sprache = $row->sprache;
-			
+
 			$obj->new = true;
-			
+
 			$db->result[] = $obj;
 		}
 		return $db->result;
@@ -824,7 +824,7 @@ function getOrgformSpracheForOnlinebewerbung($studiengang_kz = null, $studiensem
 }
 /**
  * Laedt alle Gemeinden zu einer PLZ
- * 
+ *
  * @param integer $plz PLZ
  * @return boolean Objekt mit den Gemeinden, sonst false
  */
@@ -841,7 +841,7 @@ function BewerbungGetGemeinden($plz)
 				WHERE
 					plz = " . $db->db_add_param($plz, FHC_INTEGER) . "
 				 ORDER BY anzahl DESC";
-	
+
 	if ($result = $db->db_query($qry))
 	{
 		$db->result = '';
@@ -854,9 +854,9 @@ function BewerbungGetGemeinden($plz)
 			$obj->ortschaftsname = $row->ortschaftsname;
 			$obj->bulacode = $row->bulacode;
 			$obj->bulabez = $row->bulabez;
-			
+
 			$obj->new = true;
-			
+
 			$db->result[] = $obj;
 		}
 		return $db->result;
@@ -1019,11 +1019,11 @@ function getBewerbungszeitraum($studiengang_kz, $studiensemester, $studienplan_i
 		$infoDiv = '';
 		$bewerbungszeitraum = $p->t('bewerbung/unbegrenzt');
 	}
-	
+
 	// Wenn es eine Anmerkung zur Bewerbungsfrist gibt, diese trotzdem Anzeigen
 	if ($bewerbungsfristen->anmerkung != '')
 		$infoDiv .= '<br><div class="panel panel-info"><div class="panel-heading">' . nl2br($bewerbungsfristen->anmerkung) . '</div></div>';
-	
+
 	return array(
 		'infoDiv' => $infoDiv,
 		'frist_abgelaufen' => $fristAbgelaufen,
@@ -1034,7 +1034,7 @@ function getBewerbungszeitraum($studiengang_kz, $studiensemester, $studienplan_i
 
 /**
  * Liefert alle Dokumente die eine Person im Bewerbungstool abzugeben hat.
- * 
+ *
  * @param integer $person_id
  * @param array $studiensemester_array
  */
@@ -1044,7 +1044,7 @@ function getAllDokumenteBewerbungstoolForPerson($person_id, $studiensemester_arr
 	$sprache = new sprache();
 	$bezeichnung_mehrsprachig = $sprache->getSprachQuery('bezeichnung_mehrsprachig');
 	$dokumentbeschreibung_mehrsprachig = $sprache->getSprachQuery('dokumentbeschreibung_mehrsprachig');
-	
+
 	if(isset($studiensemester_array) && !is_array($studiensemester_array))
 	{
 		$db->errormsg = '$studiensemester_array is not an array';
@@ -1052,7 +1052,7 @@ function getAllDokumenteBewerbungstoolForPerson($person_id, $studiensemester_arr
 	}
 
 	// $beschreibung_mehrsprachig = $sprache->getSprachQuery('beschreibung_mehrsprachig');
-	$qry = "SELECT DISTINCT 
+	$qry = "SELECT DISTINCT
 			tbl_prestudent.prestudent_id,
 			dok_stg.studiengang_kz,
 			dok_stg.stufe,
@@ -1112,9 +1112,9 @@ function getAllDokumenteBewerbungstoolForPerson($person_id, $studiensemester_arr
 				}
 				$qry .= " ) ";
 			}
-			else 
+			else
 				$qry .= " AND get_rolle_prestudent (tbl_prestudent.prestudent_id, null) NOT IN ('Abgewiesener','Abbrecher')";
-			
+
 			$qry .= " ORDER BY studiengang_kz,stufe,dokument_kurzbz,
 				pflicht DESC";
 	//echo $qry;
@@ -1138,9 +1138,9 @@ function getAllDokumenteBewerbungstoolForPerson($person_id, $studiensemester_arr
 			$dok->bezeichnung_mehrsprachig = $sprache->parseSprachResult('bezeichnung_mehrsprachig', $row);
 			$dok->dokumentbeschreibung_mehrsprachig = $sprache->parseSprachResult('dokumentbeschreibung_mehrsprachig', $row);
 			$dok->beschreibung_mehrsprachig = $sprache->parseSprachResult('beschreibung_mehrsprachig', $row);
-			
+
 			$dok->new = true;
-			
+
 			$db->result[] = $dok;
 		}
 		if (isset($db->result))
@@ -1170,9 +1170,9 @@ function akteAkzeptiert($akte_id)
 			FROM PUBLIC.tbl_akte
 			WHERE tbl_akte.akte_id = " . $db->db_add_param($akte_id) . "
 				AND tbl_akte.formal_geprueft_amum IS NOT NULL
-			
+
 			UNION
-			
+
 			SELECT akte_id
 			FROM PUBLIC.tbl_akte akte
 			WHERE EXISTS (
@@ -1186,7 +1186,7 @@ function akteAkzeptiert($akte_id)
 							)
 					)
 				AND akte.akte_id = " . $db->db_add_param($akte_id);
-	
+
 	if ($result = $db->db_query($qry))
 	{
 		if ($db->db_num_rows($result) > 0)
@@ -1198,7 +1198,7 @@ function akteAkzeptiert($akte_id)
 
 /**
  * Liefert die interne Empfangsadresse des Studiengangs fuer den Mailversand.
- * Wenn BEWERBERTOOL_MAILEMPFANG gesetzt ist, wird diese genommen, 
+ * Wenn BEWERBERTOOL_MAILEMPFANG gesetzt ist, wird diese genommen,
  * sonst diejenige aus BEWERBERTOOL_BEWERBUNG_EMPFAENGER,
  * sonst die Mailadresse des Studiengangs
  *
@@ -1210,7 +1210,7 @@ function akteAkzeptiert($akte_id)
 function getMailEmpfaenger($studiengang_kz, $studienplan_id = null, $orgform_kurzbz = null)
 {
 	$studiengang = new studiengang($studiengang_kz);
-	
+
 	if ($studienplan_id != '')
 	{
 		$studienplan = new studienplan();
@@ -1237,7 +1237,7 @@ function getMailEmpfaenger($studiengang_kz, $studienplan_id = null, $orgform_kur
 			{
 				$empfaenger = 'info.bid@technikum-wien.at';
 			}
-			else 
+			else
 			{
 				$empfaenger = 'info.bif@technikum-wien.at';
 			}
@@ -1266,7 +1266,7 @@ function getMailEmpfaenger($studiengang_kz, $studienplan_id = null, $orgform_kur
 
 	if ($empfaenger != '')
 		return $empfaenger;
-	else 
+	else
 		return false;
 }
 
@@ -1275,7 +1275,7 @@ function getMailEmpfaenger($studiengang_kz, $studienplan_id = null, $orgform_kur
  * @param integer $person_id
  * @param boolean $aktive. 	Wenn true werden nur aktive Bewerbungen (Interessenten, Bewerber, ...) geliefert
  * 							Wenn false werden nur inaktive Bewerbungen mit Endstatus (Abgewiesene, Abbrecher, Absolvent, ...) geliefert
- * 							Wenn null werden alle Bewerbungen geliefert 
+ * 							Wenn null werden alle Bewerbungen geliefert
  * @return true wenn ok, false wenn Fehler
  */
 function getBewerbungen($person_id, $aktive = null)
@@ -1286,7 +1286,7 @@ function getBewerbungen($person_id, $aktive = null)
 		$db->errormsg='ID ist ungueltig';
 		return false;
 	}
-	
+
 	$qry = "SELECT tbl_prestudent.prestudent_id,
 			tbl_prestudent.studiengang_kz,
 			tbl_prestudent.priorisierung,
@@ -1295,7 +1295,7 @@ function getBewerbungen($person_id, $aktive = null)
 				FROM public.tbl_prestudentstatus
 				JOIN public.tbl_status USING (status_kurzbz)
 				WHERE tbl_status.status_kurzbz = tbl_prestudentstatus.status_kurzbz
-				AND prestudent_id=tbl_prestudent.prestudent_id 
+				AND prestudent_id=tbl_prestudent.prestudent_id
 				ORDER BY datum DESC, tbl_prestudentstatus.insertamum DESC LIMIT 1
 			) AS laststatus,
 			(
@@ -1303,7 +1303,7 @@ function getBewerbungen($person_id, $aktive = null)
 				FROM public.tbl_prestudentstatus
 				JOIN public.tbl_status USING (status_kurzbz)
 				WHERE tbl_status.status_kurzbz = tbl_prestudentstatus.status_kurzbz
-				AND prestudent_id=tbl_prestudent.prestudent_id 
+				AND prestudent_id=tbl_prestudent.prestudent_id
 				ORDER BY datum DESC, tbl_prestudentstatus.insertamum DESC LIMIT 1
 			) AS laststatus_kurzbz,
 			(
@@ -1311,7 +1311,7 @@ function getBewerbungen($person_id, $aktive = null)
 				FROM public.tbl_prestudentstatus
 				JOIN public.tbl_status USING (status_kurzbz)
 				WHERE tbl_status.status_kurzbz = tbl_prestudentstatus.status_kurzbz
-				AND prestudent_id=tbl_prestudent.prestudent_id 
+				AND prestudent_id=tbl_prestudent.prestudent_id
 				ORDER BY datum DESC, tbl_prestudentstatus.insertamum DESC LIMIT 1
 			) AS laststatus_studiensemester_kurzbz,
 			tbl_studiengang.bezeichnung,
@@ -1320,9 +1320,9 @@ function getBewerbungen($person_id, $aktive = null)
 			tbl_prestudent.zgvnation,
 			tbl_prestudent.zgvmanation,
 			tbl_studiengang.lgartcode
-			FROM public.tbl_prestudent 
+			FROM public.tbl_prestudent
 			JOIN public.tbl_studiengang USING (studiengang_kz)
-			WHERE person_id=".$db->db_add_param($person_id, FHC_INTEGER)." 
+			WHERE person_id=".$db->db_add_param($person_id, FHC_INTEGER)."
 			ORDER BY priorisierung ASC NULLS LAST, tbl_prestudent.insertamum DESC";
 
 	if($db->db_query($qry))
@@ -1370,7 +1370,7 @@ function getBewerbungen($person_id, $aktive = null)
  * Lädt den Studienplan der Bewerbung mit der höchsten Priorität, der für das übergebene Studiensemester abgeschickt und bestätigt ist.
  * Wenn keine Prio gesetzt ist, wird nach tbl_prestudent.insertamum absteigend (letzthinzugefügter zuerst) sortiert
  *
- * @param integer $person_id 
+ * @param integer $person_id
  * @param string $studiensemester_kurzbz Studiensemester des Termins
  *
  * @return $studienplan_id oder FALSE im Fehlerfall
@@ -1434,7 +1434,7 @@ function getPrioStudienplanForReihungstest($person_id, $studiensemester_kurzbz)
  * @param string $studiensemester_kurzbz Studiensemester des Termins
  * @param integer $stufe Optional. Default 1. Stufe, die der Termin haben soll.
  * @param array $excludedStudienplans. Array mit Studienplan_ids, deren Reihungstests von der Abfrage ausgenommen werden sollen
- * 
+ *
  * @return TRUE, FALSE im Fehlerfall
  */
 function getReihungstestsForOnlinebewerbung($studienplan_id, $studiensemester_kurzbz, $stufe = 1, $excludedStudienplans = null)
@@ -1448,7 +1448,7 @@ function getReihungstestsForOnlinebewerbung($studienplan_id, $studiensemester_ku
 
 	$qry = "
 			SELECT (
-					CASE 
+					CASE
 						WHEN (
 								SELECT max_teilnehmer
 								FROM PUBLIC.tbl_reihungstest
@@ -1474,14 +1474,14 @@ function getReihungstestsForOnlinebewerbung($studienplan_id, $studiensemester_ku
 									WHERE rt_id = rt.reihungstest_id
 									) plaetze";
 				}
-				else 
+				else
 				{
 					$qry .= "	SELECT sum(arbeitsplaetze) AS arbeitsplaetze
 								FROM PUBLIC.tbl_rt_ort
 								JOIN PUBLIC.tbl_ort USING (ort_kurzbz)
 								WHERE rt_id = rt.reihungstest_id";
 				}
-								
+
 				$qry .= "	)
 						END
 					) AS anzahl_plaetze,
@@ -1495,12 +1495,12 @@ function getReihungstestsForOnlinebewerbung($studienplan_id, $studiensemester_ku
 			JOIN PUBLIC.tbl_rt_studienplan USING (reihungstest_id)
 			WHERE studienplan_id = " . $db->db_add_param($studienplan_id, FHC_INTEGER) . "
 				AND studiensemester_kurzbz = " . $db->db_add_param($studiensemester_kurzbz);
-	
+
 			if ($stufe != 1 && $stufe != '')
 			{
 				$qry .= "	AND stufe = " . $db->db_add_param($stufe, FHC_INTEGER);
 			}
-			else 
+			else
 			{
 				$qry .= " 	AND (
 								stufe = 1
@@ -1521,7 +1521,7 @@ function getReihungstestsForOnlinebewerbung($studienplan_id, $studiensemester_ku
 			}
 	$qry .= "	AND oeffentlich = true
 				AND anmeldefrist >= now()::date
-				
+
 			ORDER BY datum,
 				uhrzeit ";
 // @todo: (stufe = 1 OR stufe IS NULL) ???
@@ -1551,7 +1551,7 @@ function getReihungstestsForOnlinebewerbung($studienplan_id, $studiensemester_ku
 			$obj->stufe = $row->stufe;
 			$obj->anmeldefrist = $row->anmeldefrist;
 			$obj->new = true;
-			
+
 			$db->result[] = $obj;
 		}
 		return $db->result;
@@ -1568,7 +1568,7 @@ function sortPrestudents($a, $b)
 		$c .= $a->priorisierung - $b->priorisierung;
 	else
 		$c .= $b->priorisierung - $a->priorisierung;
-		
+
 	$c .= strcmp(strtolower($a->typ), strtolower($b->typ));
 	$c .= strcmp(strtolower($a->bezeichnung_arr[$sprache]), strtolower($b->bezeichnung_arr[$sprache]));
 	return $c;
@@ -1602,7 +1602,7 @@ function hasPersonStatusgrund($person_id, $studiensemester_kurzbz, $status_grund
 			{
 				return true;
 			}
-			else 
+			else
 			{
 				return false;
 			}
@@ -1725,7 +1725,7 @@ function getAktenListe($person_id, $dokument_kurzbz)
 		{
 			//$returnstring = '';
 			$returnstring .= '		<div class="list-group-item listItem_'.$akte->akte_id.'">
-										
+
 											'.$p->t('bewerbung/wirdNachgreichtAm').' '.$datum->formatDatum($akte->nachgereicht_am, 'd.m.Y').'
 										';
 			// An der FHTW wird beim Dokument "zgv_bakk" das vorläufiges ZGV-Dokument (ZgvBaPre) angezeigt, wenn eines vorhanden ist
@@ -1743,13 +1743,13 @@ function getAktenListe($person_id, $dokument_kurzbz)
 						$zgvBaPre->getAkten($person_id, 'ZgvBaPre');
 						if (isset($zgvBaPre->result[0]))
 						{
-							$returnstring .= '  
-														
-														<br><span>'.$p->t('bewerbung/vorlaeufigesDokument').':<br> 
+							$returnstring .= '
+
+														<br><span>'.$p->t('bewerbung/vorlaeufigesDokument').':<br>
 														<span class="glyphicon glyphicon-file" aria-hidden="true"></span>'.cutString($zgvBaPre->result[0]->titel, 25, '...').'</span>
-														<button type="button" title="'.$p->t('bewerbung/dokumentHerunterladen').'" 
-																class="btn btn-default btn-sm" 
-																href="'.APP_ROOT.'cms/dms.php?id='.$zgvBaPre->result[0]->dms_id.'" 
+														<button type="button" title="'.$p->t('bewerbung/dokumentHerunterladen').'"
+																class="btn btn-default btn-sm"
+																href="'.APP_ROOT.'cms/dms.php?id='.$zgvBaPre->result[0]->dms_id.'"
 																onclick="FensterOeffnen(\''.APP_ROOT.'cms/dms.php?id='.$zgvBaPre->result[0]->dms_id.'&akte_id='.$zgvBaPre->result[0]->akte_id.'\'); return false;">
 															<span class="glyphicon glyphicon glyphicon-download-alt" aria-hidden="true" title="'.$p->t('bewerbung/dokumentHerunterladen').'"></span>
 														</button>';
@@ -1767,13 +1767,13 @@ function getAktenListe($person_id, $dokument_kurzbz)
 						$zgvMaPre->getAkten($person_id, 'ZgvMaPre');
 						if (isset($zgvMaPre->result[0]))
 						{
-							$returnstring .= '  
-														
-														<br><span>'.$p->t('bewerbung/vorlaeufigesDokument').':<br> 
+							$returnstring .= '
+
+														<br><span>'.$p->t('bewerbung/vorlaeufigesDokument').':<br>
 														<span class="glyphicon glyphicon-file" aria-hidden="true"></span>'.cutString($zgvMaPre->result[0]->titel, 25, '...').'</span>
-														<button type="button" title="'.$p->t('bewerbung/dokumentHerunterladen').'" 
-																class="btn btn-default btn-sm" 
-																href="'.APP_ROOT.'cms/dms.php?id='.$zgvMaPre->result[0]->dms_id.'" 
+														<button type="button" title="'.$p->t('bewerbung/dokumentHerunterladen').'"
+																class="btn btn-default btn-sm"
+																href="'.APP_ROOT.'cms/dms.php?id='.$zgvMaPre->result[0]->dms_id.'"
 																onclick="FensterOeffnen(\''.APP_ROOT.'cms/dms.php?id='.$zgvMaPre->result[0]->dms_id.'&akte_id='.$zgvMaPre->result[0]->akte_id.'\'); return false;">
 															<span class="glyphicon glyphicon glyphicon-download-alt" aria-hidden="true" title="'.$p->t('bewerbung/dokumentHerunterladen').'"></span>
 														</button>';
@@ -1798,8 +1798,8 @@ function getAktenListe($person_id, $dokument_kurzbz)
 			$returnstring .= '	<div class="list-group-item listItem_'.$akte->akte_id.'" title="'.$akte->titel.'">
 									<span><span class="glyphicon glyphicon-file" aria-hidden="true"></span>'.cutString($akte->titel, 25, '...').'</span>
 									<br>
-									<button type="button" 
-											title="'.$p->t('bewerbung/dokumentHerunterladen').'" 
+									<button type="button"
+											title="'.$p->t('bewerbung/dokumentHerunterladen').'"
 											class="btn btn-default btn-sm"
 											onclick="FensterOeffnen(\''.$downloadlink.'\'); return false;">
 										<span class="glyphicon glyphicon glyphicon-download-alt" aria-hidden="true" title="'.$p->t('bewerbung/dokumentHerunterladen').'"></span>
@@ -1865,14 +1865,14 @@ function getUploadButton($dokument_kurzbz, $nachreichbutton = false, $visible = 
 									<input type="text" class="form-control selectedFile" readonly="">
 									<input type="hidden" name="dokumenttyp" value="'.$dokument_kurzbz.'">
 									<div class="input-group-btn">
-										<button type="submit" 
-											name="submitfile" 
+										<button type="submit"
+											name="submitfile"
 											class="btn btn-labeled btn-default"
 											disabled>
 											'.$p->t('bewerbung/upload').'
 										</button>
 									</div>
-									
+
 								</div>
 							</p>';
 	}
@@ -1907,7 +1907,7 @@ function getUploadButton($dokument_kurzbz, $nachreichbutton = false, $visible = 
 	if ((!defined('BEWERBERTOOL_DOKUMENTE_NACHREICHEN') || BEWERBERTOOL_DOKUMENTE_NACHREICHEN == true) && $nachreichbutton)
 	{
 		$returnstring .= '	<p class="text-muted">
-								'.$p->t('bewerbung/dokumentNochNichtVorhanden').' 
+								'.$p->t('bewerbung/dokumentNochNichtVorhanden').'
 								<a href="#" onclick="toggleNachreichdaten(\''.$studiengang.'_'.$dokument_kurzbz.'\');return false;">
 									'.$p->t('bewerbung/dokumentWirdNachgereicht').'
 								</a>
@@ -1940,21 +1940,21 @@ function getNachreichForm($dokument_kurzbz, $studiengang)
 										<input type="checkbox" name="check_nachgereicht" checked="checked" style="display:none">
 										<div class="col-sm-8">
 											<div class="input-group">
-												<input  type="text" 
-														class="form-control" 
-														id="anmerkung_'.$studiengang.'_'.$dokument_kurzbz.'" 
-														name="txt_anmerkung" 
-														onInput="zeichenCountdown(\'anmerkung_'.$studiengang.'_'.$dokument_kurzbz.'\',128)" 
+												<input  type="text"
+														class="form-control"
+														id="anmerkung_'.$studiengang.'_'.$dokument_kurzbz.'"
+														name="txt_anmerkung"
+														onInput="zeichenCountdown(\'anmerkung_'.$studiengang.'_'.$dokument_kurzbz.'\',128)"
 														placeholder="'.$p->t('bewerbung/placeholderOrtNachgereicht').'">
 												<span class="input-group-addon" style="color: grey;" id="countdown_anmerkung_'.$studiengang.'_'.$dokument_kurzbz.'">128</span>
 											</div>
 										</div>
 										<div class="col-sm-4">
-											<input  type="text" 
-													class="form-control" 
-													id="nachreichungam_'.$studiengang.'_'.$dokument_kurzbz.'" 
-													name="nachreichungam" 
-													autofocus="autofocus" 
+											<input  type="text"
+													class="form-control"
+													id="nachreichungam_'.$studiengang.'_'.$dokument_kurzbz.'"
+													name="nachreichungam"
+													autofocus="autofocus"
 													placeholder="'.$p->t('bewerbung/datumFormat').'">
 										</div>
 									</div>
@@ -1962,31 +1962,33 @@ function getNachreichForm($dokument_kurzbz, $studiengang)
 								<div class="row">
 									<div class="col-sm-12">';
 
-	// An der FHTW wird beim nachreichen des Dokuments "zgv_bakk" oder "zgv_mast" ein vorläufiges ZGV-Dokument verlangt
+	// An der FHTW wird beim nachreichen des Dokuments "zgv_bakk", "zgv_mast" und "SprachB2" ein vorläufiges ZGV-Dokument verlangt
 	// Die Spaltenbreite wird daher angepasst
 	$colspan = 12;
-	if (CAMPUS_NAME == 'FH Technikum Wien' && ($dokument_kurzbz == 'zgv_bakk' || $dokument_kurzbz == 'zgv_mast'))
+	if (CAMPUS_NAME == 'FH Technikum Wien' && ($dokument_kurzbz == 'zgv_bakk' || $dokument_kurzbz == 'zgv_mast' || $dokument_kurzbz == 'SprachB2'))
 	{
+		$dokument_kurzbz == 'SprachB2' ? $infoText = 'bewerbung/infotextVorlaeufigesB2Dokument' : $infoText = 'bewerbung/infotextVorlaeufigesZgvDokument';
 		$returnstring .= '				<div class="col-sm-8">
-											<span>'.$p->t('bewerbung/infotextVorlaeufigesZgvDokument').':</span>
-											<input  id="filenachgereicht_'.$studiengang.'_'.$dokument_kurzbz.'" 
-													type="file" 
-													name="filenachgereicht" 
+											<span>'.$p->t($infoText).':</span>
+											<input  id="filenachgereicht_'.$studiengang.'_'.$dokument_kurzbz.'"
+													type="file"
+													name="filenachgereicht"
 													class=""
-													accept=".jpg, .jpeg, .pdf" 
+													accept=".jpg, .jpeg, .pdf"
 													style="display: inline">
 										</div>';
 		$colspan = 4;
 	}
+
 		$returnstring .= '				<div class="col-sm-'.$colspan.'">
 											<div class="btn-group pull-right">
-												<input  type="submit" 
-														value="OK" 
-														name="submit_nachgereicht" 
-														class="btn btn-primary" 
+												<input  type="submit"
+														value="OK"
+														name="submit_nachgereicht"
+														class="btn btn-primary"
 														onclick="return checkNachgereicht(\''.$studiengang.'_'.$dokument_kurzbz.'\')">
-												<input  type="button" 
-														value="'.$p->t('global/abbrechen').'" 
+												<input  type="button"
+														value="'.$p->t('global/abbrechen').'"
 														class="btn btn-default"
 														onclick="toggleNachreichdaten(\''.$studiengang.'_'.$dokument_kurzbz.'\');return false;">
 											</div>
