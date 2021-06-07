@@ -2423,10 +2423,17 @@ else
 	foreach ($stsem->studiensemester as $row)
 		$studiensemester_bewerbungen[] = $row->studiensemester_kurzbz;
 }
+
+
+//bei vorliegendem Status Interessent für Master/Diplomstudium werden Prüfungen/Aktionen ZGV durchgeführt
+if (CAMPUS_NAME == 'FH Technikum Wien' && ($prestudent->existsStatusInteressentMaster($person_id)))
+{
+	setDokumenteMasterZGV($person_id);
+}
+
 $studiensemester_bewerbungen =  array_unique($studiensemester_bewerbungen);
 
 $dokumente_abzugeben = getAllDokumenteBewerbungstoolForPerson($person_id, $studiensemester_bewerbungen);
-//echo var_dump($dokumente_abzugeben);
 
 // An der FHTW wird das Dokument "Invitation Letter" zum Download angeboten, wenn bei der Person vorhanden
 if (CAMPUS_NAME == 'FH Technikum Wien')
@@ -2445,32 +2452,6 @@ if (CAMPUS_NAME == 'FH Technikum Wien')
 		$invLetterObj->anzahl_akten_wird_nachgereicht = 0;
 		array_push($dokumente_abzugeben, $invLetterObj);
 	}
-}
-
-
-//Prüfung ob es zur betreffenden $person_id für weitere Bewerbungen bereits eine interne ZGV gibt
-$zgvFHTW = $prestudent->existsZGVIntern($person_id);
-echo "ZGV intern: ". $zgvFHTW;
-
-$zgvMaster = new dokument();
-$person = new person();
-$person->load($person_id);
-
-if ($zgvFHTW){
-	//echo " akzeptiere Dok zgv_mast: ";
-	$zgvMaster ->akzeptiereDokument('zgv_mast', $person_id);
-
-	//echo " entakzeptiere Meldezettel: ";
-	$zgvMaster ->entakzeptiereDokument('Meldezet', $person_id);
-
-	//echo "<br>";
-	//echo " befülle Masternation mit A: ";
-	$prestudent ->setManationZGV($person_id);
-
-	//VERSUCH, UM TAB ÜBERSICHT GRÜN ZU KRIEGEN
-	$status_zgv_mas = true;
-
-
 }
 
 // $dokumente_abzugeben = new dokument();

@@ -20,6 +20,8 @@ require_once ('../../../include/studienordnung.class.php');
 require_once ('../../../include/studiengang.class.php');
 require_once ('../../../include/personlog.class.php');
 require_once ('../../../config/global.config.inc.php');
+require_once ('../../../include/dokument.class.php');
+require_once ('../../../include/prestudent.class.php');
 
 // Fuegt einen Studiengang zu einem Bewerber hinzu
 function BewerbungPersonAddStudiengang($studiengang_kz, $anmerkung, $person, $studiensemester_kurzbz, $orgform_kurzbz, $sprache)
@@ -2038,4 +2040,41 @@ function resize($filename, $width, $height)
 	imagedestroy($image_p);
 	@imagedestroy($image);
 	return $tmpfname;
+}
+
+/**
+ * führt Aktionen für die Masterzentralisierung aus
+ *
+ * @param int $person_id PersonenID.
+ * @return boolean true wenn Prüfung ob interne ZGV vorhanden ist bzw. Aktionen erfolgreich durchgeführt wurden,
+ * false wenn nicht
+ */
+function setDokumenteMasterZGV($person_id)
+{
+	$prestudent = new prestudent();
+	if (! $prestudent->getPrestudenten($person_id))
+	{
+		die($p->t('global/fehlerBeimLadenDesDatensatzes'));
+	}
+
+	//Prüfung ob es zur betreffenden $person_id bereits eine interne ZGV gibt
+	$zgvFHTW = $prestudent->existsZGVIntern($person_id);
+	//echo "ZGV intern: ". $zgvFHTW;
+
+	if ($zgvFHTW)
+	{
+		$zgvMaster = new dokument();
+		$person = new person();
+		$person->load($person_id);
+
+		//echo " akzeptiere Dok zgv_mast: ";
+		$zgvMaster ->akzeptiereDokument('zgv_mast', $person_id);
+
+		//echo " entakzeptiere Meldezettel: ";
+		$zgvMaster ->entakzeptiereDokument('Meldezet', $person_id);
+
+		//echo " befülle Masternation mit A: ";
+		$prestudent ->setManationZGV($person_id);
+	}
+	return true;
 }
