@@ -829,7 +829,7 @@ if (isset($_POST['submit_nachgereicht']))
 
 
 			// An der FHTW wird ein vorläufiges ZGV-Dokument bei Bachelor und Master verlangt
-			if (CAMPUS_NAME == 'FH Technikum Wien' && ($_POST['dok_kurzbz'] == 'zgv_bakk' || $_POST['dok_kurzbz'] == 'zgv_mast'))
+			if (CAMPUS_NAME == 'FH Technikum Wien' && ($_POST['dok_kurzbz'] == 'zgv_bakk' || $_POST['dok_kurzbz'] == 'zgv_mast')|| $_POST['dok_kurzbz'] == 'SprachB2')
 			{
 				if ($_POST['dok_kurzbz'] == 'zgv_bakk')
 				{
@@ -839,7 +839,11 @@ if (isset($_POST['submit_nachgereicht']))
 				{
 					$preDokument = 'ZgvMaPre';
 				}
-				// Check, ob Dokumenttyp 'ZgvBaPre' bzw. 'ZgvMaPre' schon existiert
+				elseif ($_POST['dok_kurzbz'] == 'SprachB2')
+				{
+					$preDokument = 'VorlSpB2';
+				}
+				// Check, ob Dokumenttyp 'ZgvBaPre', 'ZgvMaPre' bzw. 'VorlSpB2' schon existiert
 				$dokument = new dokument();
 				if ($dokument->loadDokumenttyp($preDokument))
 				{
@@ -850,7 +854,7 @@ if (isset($_POST['submit_nachgereicht']))
 					{
 						$dokumenttyp_upload = $preDokument;
 
-						// Es wird eine neue Akte vom Typ "ZgvBaPre" bzw. "ZgvMaPre" angelegt
+						// Es wird eine neue Akte vom Typ 'ZgvBaPre', 'ZgvMaPre' bzw. 'VorlSpB2' angelegt
 						// DMS-Eintrag erstellen
 						$ext = strtolower(pathinfo($_FILES['filenachgereicht']['name'], PATHINFO_EXTENSION));
 
