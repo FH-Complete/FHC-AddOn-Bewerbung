@@ -265,6 +265,7 @@ $this->phrasen['bewerbung/dokumentName']='Name';
 $this->phrasen['bewerbung/benoetigtFuer']='Required for';
 $this->phrasen['bewerbung/dokumenteFuer']='Documents for';
 $this->phrasen['bewerbung/dokumentErforderlich']='Required document';
+$this->phrasen['bewerbung/dokumentNichtErforderlich']='Not required document';
 $this->phrasen['bewerbung/dokumentOffen']='Document not yet submitted (open)';
 $this->phrasen['bewerbung/dokumentNichtUeberprueft']='Document has been submitted but not yet examined';
 $this->phrasen['bewerbung/dokumentWirdNachgereicht']='Document will be submitted later';
@@ -440,6 +441,7 @@ $this->phrasen['bewerbung/infotextDisabled']='Since an application already exist
 $this->phrasen['bewerbung/bitteAnmerkungEintragen']='Please enter the name of the institution that will issue the document';
 $this->phrasen['bewerbung/nachreichDatumNichtVergangenheit']='The date of submission may not be in the past ';
 $this->phrasen['bewerbung/infotextVorlaeufigesZgvDokument']='Please upload the last semester certificate of your education';
+$this->phrasen['bewerbung/infotextVorlaeufigesB2Dokument']='Please upload the confirmation of registration of language course at level B2';
 $this->phrasen['bewerbung/bitteDateiAuswaehlen']='Please choose a file';
 $this->phrasen['bewerbung/zustimmungDatenuebermittlung']='If in exceptional cases the admission requirements can not be finally clarified by the UAS Technikum Wien, I give my consent that the UAS Technikum Wien can forward the documents to the competent authorities for verification.<br>
 I have been informed that I am under no obligation to consent to the transmission of my data. However, this consent is necessary in order for the application to be considered.';

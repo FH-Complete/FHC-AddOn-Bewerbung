@@ -20,6 +20,8 @@ require_once ('../../../include/studienordnung.class.php');
 require_once ('../../../include/studiengang.class.php');
 require_once ('../../../include/personlog.class.php');
 require_once ('../../../config/global.config.inc.php');
+require_once ('../../../include/dokument.class.php');
+require_once ('../../../include/prestudent.class.php');
 
 // Fuegt einen Studiengang zu einem Bewerber hinzu
 function BewerbungPersonAddStudiengang($studiengang_kz, $anmerkung, $person, $studiensemester_kurzbz, $orgform_kurzbz, $sprache)
@@ -1962,11 +1964,12 @@ function getNachreichForm($dokument_kurzbz, $studiengang)
 								<div class="row">
 									<div class="col-sm-12">';
 
-	// An der FHTW wird beim nachreichen des Dokuments "zgv_bakk" oder "zgv_mast" ein vorläufiges ZGV-Dokument verlangt
+	// An der FHTW wird beim nachreichen des Dokuments "zgv_bakk", "zgv_mast" und "SprachB2" ein vorläufiges ZGV-Dokument verlangt
 	// Die Spaltenbreite wird daher angepasst
 	$colspan = 12;
-	if (CAMPUS_NAME == 'FH Technikum Wien' && ($dokument_kurzbz == 'zgv_bakk' || $dokument_kurzbz == 'zgv_mast'))
+	if (CAMPUS_NAME == 'FH Technikum Wien' && ($dokument_kurzbz == 'zgv_bakk' || $dokument_kurzbz == 'zgv_mast' || $dokument_kurzbz == 'SprachB2'))
 	{
+		$dokument_kurzbz == 'SprachB2' ? $infoText = 'bewerbung/infotextVorlaeufigesB2Dokument' : $infoText = 'bewerbung/infotextVorlaeufigesZgvDokument';
 		$returnstring .= '				<div class="col-sm-8">
 											<span>'.$p->t('bewerbung/infotextVorlaeufigesZgvDokument').':</span>
 											<input  id="filenachgereicht_'.$studiengang.'_'.$dokument_kurzbz.'"
@@ -1978,6 +1981,7 @@ function getNachreichForm($dokument_kurzbz, $studiengang)
 										</div>';
 		$colspan = 4;
 	}
+
 		$returnstring .= '				<div class="col-sm-'.$colspan.'">
 											<div class="btn-group pull-right">
 												<input  type="submit"

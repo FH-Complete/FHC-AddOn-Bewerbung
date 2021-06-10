@@ -316,6 +316,7 @@ $this->phrasen['bewerbung/dokumentName']='Name';
 $this->phrasen['bewerbung/benoetigtFuer']='Benötigt für';
 $this->phrasen['bewerbung/dokumenteFuer']='Dokumente für';
 $this->phrasen['bewerbung/dokumentErforderlich']='Dokument erforderlich';
+$this->phrasen['bewerbung/dokumentNichtErforderlich']='Dokument nicht erforderlich';
 $this->phrasen['bewerbung/dokumentOffen']='Dokument hochladen';
 $this->phrasen['bewerbung/dokumentNichtUeberprueft']='Dokument wurde abgegeben aber noch nicht überprüft';
 $this->phrasen['bewerbung/dokumentWirdNachgereicht']='Dokument wird nachgereicht';
@@ -494,6 +495,7 @@ $this->phrasen['bewerbung/infotextDisabled']='Da bereits eine Bewerbung vorhande
 $this->phrasen['bewerbung/bitteAnmerkungEintragen']='Bitte geben Sie den Namen der Institution ein, die das Dokument ausstellen wird';
 $this->phrasen['bewerbung/nachreichDatumNichtVergangenheit']='Das Datum der Nachreichung darf nicht in der Vergangenheit liegen';
 $this->phrasen['bewerbung/infotextVorlaeufigesZgvDokument']='Bitte laden Sie das letzte erhaltene Semesterzeugnis Ihrer Ausbildung hoch';
+$this->phrasen['bewerbung/infotextVorlaeufigesB2Dokument']='Bitte laden Sie die Anmeldebestätigung für Ihren B2-Sprachzertifizierungskurs hoch';
 $this->phrasen['bewerbung/bitteDateiAuswaehlen']='Bitte wählen Sie eine Datei aus';
 $this->phrasen['bewerbung/zustimmungDatenuebermittlung']='Können in Ausnahmefällen die Zugangsvoraussetzungen von der FH Technikum Wien nicht abschließend abgeklärt werden, erteile ich die Zustimmung, dass die FH Technikum Wien die Dokumente zur Überprüfung an die zuständigen Behörden weiterleiten kann.<br>
 Ich wurde darüber informiert, dass ich nicht verpflichtet bin, der Übermittlung meiner Daten zuzustimmen. Diese Zustimmung ist allerdings notwendig, um die Bewerbung berücksichtigen zu können.';

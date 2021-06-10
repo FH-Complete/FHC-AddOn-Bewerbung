@@ -179,12 +179,19 @@ if (! isset($person_id))
 				$statusInfotext = '<div class="label label-warning">'.$p->t('bewerbung/dokumentWirdNachgereicht').'</div>';
 				$displayDetailsArrow = false;
 			}
-			elseif ($dok->pflicht)
+			elseif ($dok->pflicht && $dok->anzahl_dokumente_akzeptiert == 0)
 			{
 				echo '<div class="panel panel-danger">';
 				$statusInfotext = '<div class="label label-danger">'.$p->t('bewerbung/dokumentErforderlich').'</div>';
 				$displayDetailsArrow = false;
 				$anzahlOffeneDokumente ++;
+			}
+			elseif ($dok->pflicht && $dok->anzahl_dokumente_akzeptiert > 0) //Fall: bereits akzeptiertes Dokument
+			{
+				echo '<div class="panel panel-info">';
+				$statusInfotext = '<div class="label label-info">'.$p->t('bewerbung/dokumentNichtErforderlich').'</div>';
+				$displayDetailsArrow = false;
+				//$anzahlOffeneDokumente ++;
 			}
 			else
 			{

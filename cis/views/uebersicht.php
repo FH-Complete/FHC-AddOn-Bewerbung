@@ -395,8 +395,8 @@ $studiensemester_array = array();
 				$buttonAbschickenEnabled = false;
 			}
 
-			echo '					<a 	data-toggle="collapse" 
-									data-parent="#accordionBewerbungen'.$row->laststatus_studiensemester_kurzbz.'" 
+			echo '					<a 	data-toggle="collapse"
+									data-parent="#accordionBewerbungen'.$row->laststatus_studiensemester_kurzbz.'"
 									href="#panelCollapse'.$row->prestudent_id.'"
 									style="color: inherit">
 									<div class="col-xs-6 col-sm-7 col-md-6 panel-header-stgbez '.($lastInteressentenStatus->bewerbung_abgeschicktamum == '' && $fristAbgelaufen ? 'text-muted' : '').'">
@@ -408,7 +408,7 @@ $studiensemester_array = array();
 			if ($buttonAbschickenEnabled)
 			{
 				echo '				<div class="col-xs-4 col-sm-3 col-md-5 text-right action-buttons">
-									<button class="btn-nav btn btn-sm btn-success '.($buttonAbschickenEnabled ? '' : 'disabled hidden').'" 
+									<button class="btn-nav btn btn-sm btn-success '.($buttonAbschickenEnabled ? '' : 'disabled hidden').'"
 										type="button"
 										data-toggle="modal"
 										data-target="#abschickenModal_'.$row->prestudent_id.'"
@@ -416,7 +416,7 @@ $studiensemester_array = array();
 										<span class="glyphicon glyphicon-send hidden-md hidden-lg"></span>
 										<span class="hidden-sm hidden-xs">'.$p->t('bewerbung/bewerbungAbschicken').'</span>
 									</button>
-									<button class="btn-nav btn btn-sm btn-warning '.($buttonStornierenEnabled ? '' : 'disabled hidden').'" 
+									<button class="btn-nav btn btn-sm btn-warning '.($buttonStornierenEnabled ? '' : 'disabled hidden').'"
 										type="button"
 										data-toggle="modal"
 										data-target="#stornierenModalNeu_'.$row->prestudent_id.'"
@@ -463,8 +463,8 @@ $studiensemester_array = array();
 			}
 			echo '				</div>
 							<div class="row">
-								<a 	data-toggle="collapse" 
-									data-parent="#accordionBewerbungen'.$row->laststatus_studiensemester_kurzbz.'" 
+								<a 	data-toggle="collapse"
+									data-parent="#accordionBewerbungen'.$row->laststatus_studiensemester_kurzbz.'"
 									href="#panelCollapse'.$row->prestudent_id.'"
 									style="color: inherit">
 									<div class="col-xs-12 text-center">
@@ -602,18 +602,18 @@ $studiensemester_array = array();
 						$anmerkungDisabled = '';
 					}
 					echo '	<div id="notizForm_'.$row->prestudent_id.'">
-														<textarea   class="form-control" 
-																	name="anmerkung" 
-																	style="resize:none" 
-																	rows="3" 
-																	maxlength="1024" 
-																	id="anmerkungUebersicht_'.$row->prestudent_id.'" 
-																	style="width:80%" 
-																	placeholder="'.$p->t('bewerbung/anmerkungPlaceholder').'" 
+														<textarea   class="form-control"
+																	name="anmerkung"
+																	style="resize:none"
+																	rows="3"
+																	maxlength="1024"
+																	id="anmerkungUebersicht_'.$row->prestudent_id.'"
+																	style="width:80%"
+																	placeholder="'.$p->t('bewerbung/anmerkungPlaceholder').'"
 																	onInput="zeichenCountdown(\'anmerkungUebersicht_'.$row->prestudent_id.'\',1024)"
 																	'.$anmerkungDisabled.'></textarea>
-														<span   class="btn btn-primary '.$anmerkungDisabled.'" 
-																id="anmerkungSubmitButton" 
+														<span   class="btn btn-primary '.$anmerkungDisabled.'"
+																id="anmerkungSubmitButton"
 																'.($anmerkungDisabled != '' ? '' : 'onclick="saveNotiz('.$person_id.','.$row->prestudent_id.')"').'>'.$p->t('global/speichern').'</span>
 														<span style="color: grey; display: inline-block; width: 30px;" id="countdown_anmerkungUebersicht_'.$row->prestudent_id.'"></span>
 													</div>';
@@ -649,12 +649,12 @@ $studiensemester_array = array();
 								<div class="modal-footer">
 									<button type="button" class="btn btn-default" data-dismiss="modal">'.$p->t('global/abbrechen').'
 											</button>
-										
+
 									<button type="button" class="btn btn-warning"
 										onclick="bewerbungStornieren(\''.$row->prestudent_id.'\',\''.$lastInteressentenStatus->studiensemester_kurzbz.'\')">
 													'.$p->t('bewerbung/bewerbungStornierenBestaetigen').'
 												</button>
-				
+
 								</div>
 							</div>
 						</div>
@@ -1015,7 +1015,7 @@ $studiensemester_array = array();
 						WHEN 'b' THEN 1
 						WHEN 'm' THEN 2
 						ELSE 3
-					END, 
+					END,
 					CASE lgartcode
 						WHEN '1'
 							THEN 1

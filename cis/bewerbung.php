@@ -143,6 +143,7 @@ if(isset($spracheGet))
 }
 // $sprache = DEFAULT_LANGUAGE;
 $sprache = getSprache();
+//echo var_dump($sprache);
 $sprachindex = new sprache();
 $spracheIndex = $sprachindex->getIndexFromSprache($sprache);
 $p = new phrasen($sprache);
@@ -844,7 +845,7 @@ if (isset($_POST['submit_nachgereicht']))
 				{
 					$error = false;
 					$message = '';
-					// Check, ob ein File gewaelt wurde
+					// Check, ob ein File gewaehlt wurde
 					if (!empty($_FILES['filenachgereicht']['tmp_name']))
 					{
 						$dokumenttyp_upload = $preDokument;
@@ -1220,7 +1221,7 @@ if (isset($_POST['btn_kontakt']) && ! $eingabegesperrt)
 	if (count($kontakt->result) > 0)
 	{
 		/*
-		 * Eine bestehende Mailadress darf nicht bearbeitet oder entfernt werden
+		 * Eine bestehende Mailadresse darf nicht bearbeitet oder entfernt werden
 		 * // Es gibt bereits einen Emailkontakt
 		 * $kontakt_id = $kontakt->result[0]->kontakt_id;
 		 * if(isset($_POST['email']) && $_POST['email'] == '')
@@ -1487,7 +1488,7 @@ if (isset($_POST['btn_kontakt']) && ! $eingabegesperrt)
 }
 
 $save_error_rechnungskontakt = '';
-// Rechnjungsdaten speichern
+// Rechnungsdaten speichern
 if (isset($_POST['btn_rechnungskontakt']))
 {
 	$save_error_rechnungskontakt = false;
@@ -2435,6 +2436,14 @@ else
 	foreach ($stsem->studiensemester as $row)
 		$studiensemester_bewerbungen[] = $row->studiensemester_kurzbz;
 }
+
+
+//bei vorliegendem Status Interessent für Master/Diplomstudium werden Prüfungen/Aktionen ZGV durchgeführt
+if (CAMPUS_NAME == 'FH Technikum Wien' && ($prestudent->existsStatusInteressentMaster($person_id)))
+{
+	setDokumenteMasterZGV($person_id);
+}
+
 $studiensemester_bewerbungen =  array_unique($studiensemester_bewerbungen);
 
 $dokumente_abzugeben = getAllDokumenteBewerbungstoolForPerson($person_id, $studiensemester_bewerbungen);
@@ -2487,6 +2496,8 @@ $missing_document = false;
 $status_dokumente = false;
 $status_dokumente_arr = array();
 $akzeptierte_dokumente = array();
+
+
 $ben_kz = array();
 $ben_bezeichnung = array();
 // $ben_bezeichnung['German'][] = array();
@@ -2530,7 +2541,8 @@ if ($dokumente_abzugeben)
 				$ben_kz[$dok->dokument_kurzbz][] = $row->studiengang_kz;
 				if ($dok->pflicht
 					&& $dok->anzahl_akten_vorhanden == 0
-					&& $dok->anzahl_akten_wird_nachgereicht == 0 )
+					&& $dok->anzahl_akten_wird_nachgereicht == 0
+					&& $dok->anzahl_dokumente_akzeptiert == 0) //Ergänzung um nichtakzeptierte Doks
 				{
 					$status_dokumente_arr[$row->studiengang_kz][$row->stufe][] = $dok->dokument_kurzbz;
 				}
