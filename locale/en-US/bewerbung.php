@@ -254,11 +254,12 @@ $this->phrasen['bewerbung/nation']='Nation';
 $this->phrasen['bewerbung/menuDokumente']='Documents';
 $this->phrasen['bewerbung/dokument']='Document';
 $this->phrasen['bewerbung/bitteDokumenteHochladen']='In order to be able to send in your application, you need to upload all the documents marked as "required".
-													If the document is not yet available at the respective time, you may submit it at a later date.
+													If the <b>document</b> is not yet available at the respective time, you may <b>submit</b> it at a <b>later date</b>.
 													To do so, click "submit document later" and specify when you are going to submit the document as well as the issuing institution.<br>
 													Probably you will be prompted to upload more documents here in the course of your application.<br><br>
-													Tip: To merge several individual pages into one file, we recommend free programmes such as PDF Merge. <br><br>
-													Please note that verified documents cannot be uploaded again. If a more recent document is available, please contact the Administrative Assistant.';
+													<b>Students or graduates of the UAS Technikum Wien</b> who have logged in with their existing access data only need to upload a current CV for a Master\'s application. The other documents are already stored in the system and will be used for your application. Please note that verified documents cannot be uploaded again. If a more recent document is available, please contact the Administrative Assistant.<br><br>
+													Please note that verified documents cannot be uploaded again. If a more recent document is available, please contact the Administrative Assistant.<br>
+													<b>Tip:</b> To merge several individual pages into one file, we recommend free programmes such as PDF Merge.<br>';
 $this->phrasen['bewerbung/linkDokumenteHochladen']='Upload Documents';
 $this->phrasen['bewerbung/dokumenteZumHochladen']='Required documents:';
 $this->phrasen['bewerbung/dokumentName']='Name';
@@ -422,7 +423,7 @@ $this->phrasen['bewerbung/dateien']='File(s)';
 $this->phrasen['bewerbung/dokumentWirdGeprueft']='Document uploaded';
 $this->phrasen['bewerbung/dokumentUeberprueft']='Document examined';
 $this->phrasen['bewerbung/keineDateiAusgewaehlt']='No file selected or found';
-$this->phrasen['bewerbung/placeholderAnmerkungNachgereicht']='Please indicate which institution will issue the document and when you can probably submit it';
+$this->phrasen['bewerbung/placeholderAnmerkungNachgereicht']='Please indicate which institution will issue the document and by when you expect to be able to submit it:';
 $this->phrasen['bewerbung/bitteAusstellungsnationAuswaehlen']='-- Please select the country in which the document was issued --';
 $this->phrasen['bewerbung/sitzungAbgelaufen']='Seesion expired. Please log in again.';
 $this->phrasen['bewerbung/placeholderOrtNachgereicht']='Issuing institution (eg: TGM Wien)';
@@ -440,8 +441,8 @@ $this->phrasen['bewerbung/buttonStornierenDisabled']='Once the application has b
 $this->phrasen['bewerbung/infotextDisabled']='Since an application already exists or existed, you can no longer apply in %s for this degree program';
 $this->phrasen['bewerbung/bitteAnmerkungEintragen']='Please enter the name of the institution that will issue the document';
 $this->phrasen['bewerbung/nachreichDatumNichtVergangenheit']='The date of submission may not be in the past ';
-$this->phrasen['bewerbung/infotextVorlaeufigesZgvDokument']='Please upload the last semester certificate of your education';
-$this->phrasen['bewerbung/infotextVorlaeufigesB2Dokument']='Please upload the confirmation of registration of language course at level B2';
+$this->phrasen['bewerbung/infotextVorlaeufigesZgvDokument']='Please upload a file that credibly demonstrates that you will meet the admission requirements for the chosen degree program. This can be the last semester certificate, partial certificate, a collective certificate, a (registration) confirmation, etc.';
+$this->phrasen['bewerbung/infotextVorlaeufigesB2Dokument']='Please upload a file that credibly demonstrates that you will meet the admission requirements for the chosen degree program. This can be the last semester certificate, partial certificate, a collective certificate, a (registration) confirmation, etc.';
 $this->phrasen['bewerbung/bitteDateiAuswaehlen']='Please choose a file';
 $this->phrasen['bewerbung/zustimmungDatenuebermittlung']='If in exceptional cases the admission requirements can not be finally clarified by the UAS Technikum Wien, I give my consent that the UAS Technikum Wien can forward the documents to the competent authorities for verification.<br>
 I have been informed that I am under no obligation to consent to the transmission of my data. However, this consent is necessary in order for the application to be considered.';
