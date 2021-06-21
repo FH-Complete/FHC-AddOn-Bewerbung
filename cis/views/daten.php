@@ -27,6 +27,7 @@ if(!isset($person_id))
 
 <div role="tabpanel" class="tab-pane" id="daten">
 	<h2><?php echo $p->t('bewerbung/menuPersDaten') ?></h2>
+	
 	<?php
 
 	$nation = new nation();
@@ -118,11 +119,21 @@ if(!isset($person_id))
 			<input type="hidden" name="titelPost" id="titelPost">
 		<?php endif; ?>
 		<div class="form-group <?php echo ($geburtstag==''?'has-error':'') ?>">
-			<label for="gebdatum" class="col-sm-3 control-label"><?php echo $p->t('global/geburtsdatum') ?>* (<?php echo $p->t('bewerbung/datumFormat') ?>)</label>
+			<label for="gebdatum" class="col-sm-3 control-label"><?php echo $p->t('global/geburtsdatum') ?>*(<?php echo $p->t('bewerbung/datumFormat') ?>)</label>
 			<div class="col-sm-9">
 				<input type="text" name="geburtsdatum" id="gebdatum"  <?php echo $disabled; ?> value="<?php echo $geburtstag ?>" class="form-control">
-			</div>
+			</div>			
 		</div>
+
+		<div>
+			<div class="col-sm-3">
+				<div></div>
+			</div>	
+			<div id="danger-alert" class="col-sm-9 font-weight-bold">
+				<div id="responseGeb"></div>
+			</div>			
+		</div>
+			
 		<div class="form-group <?php echo (defined('BEWERBERTOOL_GEBURTSORT_PFLICHT') && BEWERBERTOOL_GEBURTSORT_PFLICHT === true && $gebort == '' ?'has-error':'') ?>">
 			<label for="gebort" class="col-sm-3 control-label"><?php echo $p->t('global/geburtsort');echo (defined('BEWERBERTOOL_GEBURTSORT_PFLICHT') && BEWERBERTOOL_GEBURTSORT_PFLICHT === true?'*':''); ?></label>
 			<div class="col-sm-9">
@@ -386,7 +397,32 @@ if(!isset($person_id))
 					$('#berufstaetig_art').attr("disabled", false);
 				}
 			});
+	
 		});
+
+
+		var validateGeb = document.getElementById('gebdatum');
+		var responseGeb = document.getElementById('responseGeb');
+
+		validateGeb.onchange = function() 
+		{
+			var response = checkFormat(validateGeb.value);
+
+			if (response == false)
+			{
+				responseGeb.innerHTML="<?php echo $p->t('bewerbung/datumUngueltig');?>";
+			 	$('#danger-alert').addClass('alert');
+				$('#danger-alert').addClass('alert-danger');
+			}
+			else
+			{
+				responseGeb.innerHTML='';
+				$('#danger-alert').removeClass('alert');
+				$('#danger-alert').removeClass('alert-danger');
+			}
+		}
+
+	
 
 	</script>
 </div>

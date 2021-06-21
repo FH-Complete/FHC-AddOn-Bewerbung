@@ -192,8 +192,9 @@ if (! isset($person_id))
 				$displayDetailsArrow = false;
 			}
 
-			// Invitation-Letter an der FHTW immer anzeigen
-			if (CAMPUS_NAME == 'FH Technikum Wien' && $dok->dokument_kurzbz == 'InvitLet')
+			// Invitation-Letter und Zeitbestätigung an der FHTW immer anzeigen
+			if (CAMPUS_NAME == 'FH Technikum Wien' &&
+				($dok->dokument_kurzbz == 'InvitLet' || $dok->dokument_kurzbz == 'ZeitBest'))
 			{
 				$collapseStatus = 'collapse in';
 			}
@@ -232,8 +233,8 @@ if (! isset($person_id))
 			echo '			<div class="col-sm-6" style="padding-bottom: 5px">';
 			if ($detailstring_original != '')
 			{
-					echo '      <div id="details_'.$dok->studiengang_kz.'_'.$dok->dokument_kurzbz.'" 
-									class="dokumentdetails fade-out" 
+					echo '      <div id="details_'.$dok->studiengang_kz.'_'.$dok->dokument_kurzbz.'"
+									class="dokumentdetails fade-out"
 									onclick="showDetails(\'details_'.$dok->studiengang_kz.'_'.$dok->dokument_kurzbz.'\')">
 									'.$detailstring_original.'
 								</div>
@@ -271,6 +272,7 @@ if (! isset($person_id))
 				{
 					$uploadButtonVisible = true;
 					$offsetAktenListe = '';
+					$colSizeDetails = "col-sm-3";
 					if (defined('BEWERBERTOOL_ANZAHL_DOKUMENTPLOAD_JE_TYP') && $dok->anzahl_akten_vorhanden >= BEWERBERTOOL_ANZAHL_DOKUMENTPLOAD_JE_TYP)
 					{
 						// Wenn ANZAHL_DOKUMENTPLOAD_JE_TYP erreicht ist, Upload-Button ausblenden
@@ -278,15 +280,18 @@ if (! isset($person_id))
 						$offsetAktenListe = 'col-sm-offset-3';
 					}
 
-					// Upload-Button ausblenden wenn FHTW und Invitation-Letter und offset auf 3
-					if (CAMPUS_NAME == 'FH Technikum Wien' && $dok->dokument_kurzbz == 'InvitLet')
+					// Upload-Button ausblenden, offset auf 6 und colsize verdoppeln
+					// wenn FHTW und Invitation-Letter oder Zeitbestätigung
+					if (CAMPUS_NAME == 'FH Technikum Wien' &&
+					($dok->dokument_kurzbz == 'InvitLet' || $dok->dokument_kurzbz == 'ZeitBest'))
 					{
 						$uploadButtonVisible = false;
-						$offsetAktenListe = 'col-sm-offset-3';
+						$offsetAktenListe = 'col-sm-offset-6';
+						$colSizeDetails = 'col-sm-6';
 					}
 
 					// Akten ausgeben
-					echo '	<div class="col-sm-3 aktenliste_'.$dok->dokument_kurzbz.' '.$offsetAktenListe.'" style="padding-bottom: 5px">';
+					echo '	<div class="'.$colSizeDetails.' aktenliste_'.$dok->dokument_kurzbz.' '.$offsetAktenListe.'" style="padding-bottom: 5px">';
 						echo getAktenListe($person_id, $dok->dokument_kurzbz);
 					echo '	</div>';
 
@@ -338,14 +343,14 @@ if (! isset($person_id))
 									    Lichtbild hochladen -> Phrase
 								    </div>
 								    <div class="modal-body">
-								        
+
 								        <img id="croppie-container" src="#" />
 							        </div>
 							        <div class="modal-footer">
 							            <button type="button" class="btn btn-default" data-dismiss="modal">' . $p->t('global/abbrechen') . '</button>
-							            <button id="submitimage" 
-												type="submit" 
-												name="submitimage" 
+							            <button id="submitimage"
+												type="submit"
+												name="submitimage"
 												class="btn btn-labeled btn-primary">
 											'.$p->t('bewerbung/upload').'
 										</button>
@@ -355,9 +360,9 @@ if (! isset($person_id))
 						</div>';
 			}
 
-			echo '		
+			echo '
 					</div><!--Ende Body --></div><!--Ende Collapsive--></div><!--Ende Panel -->
-					
+
 			';
 		}
 
