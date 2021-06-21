@@ -79,7 +79,7 @@ if(!isset($person_id))
 		?>
 		<div class="form-group">
 			<label for="titel_pre" class="col-sm-3 control-label"><?php echo $p->t('bewerbung/akademischeTitel') ?>
-				<a href="#" data-toggle="tooltip" data-placement="auto" title="" data-original-title="<?php echo $p->t('bewerbung/beschreibungTitelPre') ?>">
+				<a href="#" data-toggle="tooltip" data-html="true" data-placement="auto" title="" data-original-title="<?php echo $p->t('bewerbung/beschreibungTitelPre') ?>">
 					<span style="font-size: 1em;" class="glyphicon glyphicon-info-sign glyph" aria-hidden="true"></span>
 				</a>
 			</label>
@@ -107,7 +107,7 @@ if(!isset($person_id))
 		?>
 		<div class="form-group">
 			<label for="titelPost" class="col-sm-3 control-label"><?php echo $p->t('global/postnomen') ?>
-				<a href="#" data-toggle="tooltip" data-placement="auto" title="" data-original-title="<?php echo $p->t('bewerbung/beschreibungTitelPost') ?>">
+				<a href="#" data-toggle="tooltip" data-html="true" data-placement="auto" title="" data-original-title="<?php echo $p->t('bewerbung/beschreibungTitelPost') ?>">
 					<span style="font-size: 1em;" class="glyphicon glyphicon-info-sign glyph" aria-hidden="true"></span>
 				</a>
 			</label>
@@ -119,10 +119,10 @@ if(!isset($person_id))
 			<input type="hidden" name="titelPost" id="titelPost">
 		<?php endif; ?>
 		<div class="form-group <?php echo ($geburtstag==''?'has-error':'') ?>">
-			<label for="gebdatum" class="col-sm-3 control-label"><?php echo $p->t('global/geburtsdatum') ?>*(<?php echo $p->t('bewerbung/datumFormat') ?>)</label>
+			<label for="gebdatum" class="col-sm-3 control-label"><?php echo $p->t('global/geburtsdatum') ?>* (<?php echo $p->t('bewerbung/datumFormat') ?>)</label>
 			<div class="col-sm-9">
 				<input type="text" name="geburtsdatum" id="gebdatum"  <?php echo $disabled; ?> value="<?php echo $geburtstag ?>" class="form-control">
-			</div>			
+			</div>
 		</div>
 
 		<div>
