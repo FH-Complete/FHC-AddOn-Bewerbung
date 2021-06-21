@@ -253,11 +253,13 @@ $this->phrasen['bewerbung/kontakt']='Contact';
 $this->phrasen['bewerbung/nation']='Nation';
 $this->phrasen['bewerbung/menuDokumente']='Documents';
 $this->phrasen['bewerbung/dokument']='Document';
-$this->phrasen['bewerbung/bitteDokumenteHochladen']='In order to be able to send in your application, you need to upload all documents marked as "required".
-													If the document is not yet available at the respective time, you may submit the same at a later date.
-													To do so, click "submit document later" and specify when you are going to submit the document as well as the institution issuing the same.<br>
-													You may be prompted to upload more documents here in the course of your application.<br><br>
-													Please note that verified documents cannot be uploaded again. If a more recent document is available, please contact the Administrative Assistant.';
+$this->phrasen['bewerbung/bitteDokumenteHochladen']='In order to be able to send in your application, you need to upload all the documents marked as "required".
+													If the <b>document</b> is not yet available at the respective time, you may <b>submit</b> it at a <b>later date</b>.
+													To do so, click "submit document later" and specify when you are going to submit the document as well as the issuing institution.<br>
+													Probably you will be prompted to upload more documents here in the course of your application.<br><br>
+													<b>Students or graduates of the UAS Technikum Wien</b> who have logged in with their existing access data only need to upload a current CV for a Master\'s application. The other documents are already stored in the system and will be used for your application. Please note that verified documents cannot be uploaded again. If a more recent document is available, please contact the Administrative Assistant.<br><br>
+													Please note that verified documents cannot be uploaded again. If a more recent document is available, please contact the Administrative Assistant.<br>
+													<b>Tip:</b> To merge several individual pages into one file, we recommend free programmes such as PDF Merge.<br>';
 $this->phrasen['bewerbung/linkDokumenteHochladen']='Upload Documents';
 $this->phrasen['bewerbung/dokumenteZumHochladen']='Required documents:';
 $this->phrasen['bewerbung/dokumentName']='Name';
@@ -421,7 +423,7 @@ $this->phrasen['bewerbung/dateien']='File(s)';
 $this->phrasen['bewerbung/dokumentWirdGeprueft']='Document uploaded';
 $this->phrasen['bewerbung/dokumentUeberprueft']='Document examined';
 $this->phrasen['bewerbung/keineDateiAusgewaehlt']='No file selected or found';
-$this->phrasen['bewerbung/placeholderAnmerkungNachgereicht']='Please indicate which institution will issue the document and when you can probably submit it';
+$this->phrasen['bewerbung/placeholderAnmerkungNachgereicht']='Please indicate which institution will issue the document and by when you expect to be able to submit it:';
 $this->phrasen['bewerbung/bitteAusstellungsnationAuswaehlen']='-- Please select the country in which the document was issued --';
 $this->phrasen['bewerbung/sitzungAbgelaufen']='Seesion expired. Please log in again.';
 $this->phrasen['bewerbung/placeholderOrtNachgereicht']='Issuing institution (eg: TGM Wien)';
@@ -439,8 +441,8 @@ $this->phrasen['bewerbung/buttonStornierenDisabled']='Once the application has b
 $this->phrasen['bewerbung/infotextDisabled']='Since an application already exists or existed, you can no longer apply in %s for this degree program';
 $this->phrasen['bewerbung/bitteAnmerkungEintragen']='Please enter the name of the institution that will issue the document';
 $this->phrasen['bewerbung/nachreichDatumNichtVergangenheit']='The date of submission may not be in the past ';
-$this->phrasen['bewerbung/infotextVorlaeufigesZgvDokument']='Please upload the last semester certificate of your education';
-$this->phrasen['bewerbung/infotextVorlaeufigesB2Dokument']='Please upload the confirmation of registration of language course at level B2';
+$this->phrasen['bewerbung/infotextVorlaeufigesZgvDokument']='Please upload a file that credibly demonstrates that you will meet the admission requirements for the chosen degree program. This can be the last semester certificate, partial certificate, a collective certificate, a (registration) confirmation, etc.';
+$this->phrasen['bewerbung/infotextVorlaeufigesB2Dokument']='Please upload a file that credibly demonstrates that you will meet the admission requirements for the chosen degree program. This can be the last semester certificate, partial certificate, a collective certificate, a (registration) confirmation, etc.';
 $this->phrasen['bewerbung/bitteDateiAuswaehlen']='Please choose a file';
 $this->phrasen['bewerbung/zustimmungDatenuebermittlung']='If in exceptional cases the admission requirements can not be finally clarified by the UAS Technikum Wien, I give my consent that the UAS Technikum Wien can forward the documents to the competent authorities for verification.<br>
 I have been informed that I am under no obligation to consent to the transmission of my data. However, this consent is necessary in order for the application to be considered.';
@@ -590,6 +592,8 @@ $this->phrasen['bewerbung/zahlungAusstaendig']='Payments are still outstanding. 
 $this->phrasen['bewerbung/microsoftMailWarning']='<b>Warning!</b> Currently e-mails from the UAS Technikum Wien can not be received via @hotmail, @outlook and @live adresses.<br>Please use an other e-mail address if possible.';
 $this->phrasen['bewerbung/herkunftDesBewerbers']='Origin';
 $this->phrasen['bewerbung/ort']='Room';
+$this->phrasen['bewerbung/zeitzone']='Timezone';
+$this->phrasen['bewerbung/zeitzoneMEZ']='Vienna (CET)';
 $this->phrasen['bewerbung/akten']='Files';
 $this->phrasen['bewerbung/herunterladen']='Download %s';
 $this->phrasen['bewerbung/akzeptieren']='Sign %s';
@@ -618,7 +622,7 @@ $this->phrasen['bewerbung/reihungstestInfoTextAngemeldet']='<div class="alert al
 </div><br>';
 $this->phrasen['bewerbung/anmeldefrist']='Term of application';
 $this->phrasen['bewerbung/infoVorgemerktFuerQualifikationskurs']='You are pencilled in as a participant for the qualification courses. Once you are confirmed there, you can choose an appointment for the placement test here.';
-$this->phrasen['bewerbung/raumzuteilungFolgt']='Details follow 2 working days before the test per e-mail';
+$this->phrasen['bewerbung/raumzuteilungFolgt']='Details follow 2 working days before the test per e-mail (Please check your spam folder, too!)';
 $this->phrasen['bewerbung/sieHabenFolgendenTerminGewaehlt']='Thank you for registering for the online-placement test.<br>Your prioritization of degree programs is fixed and can only be changed before the registration deadline.<br>Once the placement test has been completed, the prioritization can <b>no longer</b> be changed.';
 $this->phrasen['bewerbung/informationenRTvorhanden']='Information for placement test';
 $this->phrasen['bewerbung/anmerkungBerufstaetigkeit']='<b>ONLY</b> obligatory for part-time degree programs<br>&nbsp;&nbsp;&nbsp;&nbsp;We would like to point out that a professional activity is not mandatory!';
