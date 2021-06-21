@@ -2069,6 +2069,7 @@ function setDokumenteMasterZGV($person_id)
 
 		//echo " akzeptiere Dok zgv_mast: ";
 		$zgvMaster ->akzeptiereDokument('zgv_mast', $person_id);
+		$zgvMaster ->akzeptiereDokument('identity', $person_id);
 
 		//echo " entakzeptiere Meldezettel: ";
 		$zgvMaster ->entakzeptiereDokument('Meldezet', $person_id);
