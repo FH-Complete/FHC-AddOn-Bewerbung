@@ -2067,15 +2067,15 @@ function setDokumenteMasterZGV($person_id)
 		$person = new person();
 		$person->load($person_id);
 
-		//echo " akzeptiere Dok zgv_mast: ";
+		//Dokumente akzeptieren
 		$zgvMaster ->akzeptiereDokument('zgv_mast', $person_id);
 		$zgvMaster ->akzeptiereDokument('identity', $person_id);
 
-		//echo " entakzeptiere Meldezettel: ";
+		//Dokumente entakzeptieren
 		$zgvMaster ->entakzeptiereDokument('Meldezet', $person_id);
 
-		//echo " befülle Masternation mit A: ";
-		$prestudent ->setManationZGV($person_id);
+		//Masternation, -art und -ort befüllen
+		$prestudent ->setZGVMasterFields($person_id);
 	}
 	return true;
 }
