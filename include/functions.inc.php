@@ -1732,6 +1732,7 @@ function getAktenListe($person_id, $dokument_kurzbz)
 										';
 			// An der FHTW wird beim Dokument "zgv_bakk" das vorläufiges ZGV-Dokument (ZgvBaPre) angezeigt, wenn eines vorhanden ist
 			// und das Dokument "ZgvMaPre" bei "zgv_mast"
+			// und das Dokument "VorlSpB2" bei "SprachB2"
 			if (CAMPUS_NAME == 'FH Technikum Wien')
 			{
 				if ($akte->dokument_kurzbz == 'zgv_bakk')
@@ -1777,6 +1778,30 @@ function getAktenListe($person_id, $dokument_kurzbz)
 																class="btn btn-default btn-sm"
 																href="'.APP_ROOT.'cms/dms.php?id='.$zgvMaPre->result[0]->dms_id.'"
 																onclick="FensterOeffnen(\''.APP_ROOT.'cms/dms.php?id='.$zgvMaPre->result[0]->dms_id.'&akte_id='.$zgvMaPre->result[0]->akte_id.'\'); return false;">
+															<span class="glyphicon glyphicon glyphicon-download-alt" aria-hidden="true" title="'.$p->t('bewerbung/dokumentHerunterladen').'"></span>
+														</button>';
+						}
+					}
+				}
+				elseif ($akte->dokument_kurzbz == 'SprachB2')
+				{
+					// Checken, ob der Dokumenttyp SprachB2 in der DB vorhanden ist
+					$checkVorlSpB2 = new dokument();
+					if ($checkVorlSpB2->loadDokumenttyp('VorlSpB2'))
+					{
+						// Laden des vorläufigen ZGV Dokuments der Person
+						$vorlSpB2 = new akte();
+						$vorlSpB2->getAkten($person_id, 'VorlSpB2');
+						if (isset($vorlSpB2->result[0]))
+						{
+							$returnstring .= '
+
+														<br><span>'.$p->t('bewerbung/vorlaeufigesDokument').':<br>
+														<span class="glyphicon glyphicon-file" aria-hidden="true"></span>'.cutString($vorlSpB2->result[0]->titel, 25, '...').'</span>
+														<button type="button" title="'.$p->t('bewerbung/dokumentHerunterladen').'"
+																class="btn btn-default btn-sm"
+																href="'.APP_ROOT.'cms/dms.php?id='.$vorlSpB2->result[0]->dms_id.'"
+																onclick="FensterOeffnen(\''.APP_ROOT.'cms/dms.php?id='.$vorlSpB2->result[0]->dms_id.'&akte_id='.$vorlSpB2->result[0]->akte_id.'\'); return false;">
 															<span class="glyphicon glyphicon glyphicon-download-alt" aria-hidden="true" title="'.$p->t('bewerbung/dokumentHerunterladen').'"></span>
 														</button>';
 						}
@@ -1969,9 +1994,11 @@ function getNachreichForm($dokument_kurzbz, $studiengang)
 	$colspan = 12;
 	if (CAMPUS_NAME == 'FH Technikum Wien' && ($dokument_kurzbz == 'zgv_bakk' || $dokument_kurzbz == 'zgv_mast' || $dokument_kurzbz == 'SprachB2'))
 	{
-		$dokument_kurzbz == 'SprachB2' ? $infoText = 'bewerbung/infotextVorlaeufigesB2Dokument' : $infoText = 'bewerbung/infotextVorlaeufigesZgvDokument';
+		// $dokument_kurzbz == 'SprachB2' ? $infoText = 'bewerbung/infotextVorlaeufigesB2Dokument' : $infoText = 'bewerbung/infotextVorlaeufigesZgvDokument';
+		$infoText = 'bewerbung/infotextVorlaeufigesZgvDokument';
+
 		$returnstring .= '				<div class="col-sm-8">
-											<span>'.$p->t($infoText).':</span>
+											<span>'.$p->t($infoText).'</span>
 											<input  id="filenachgereicht_'.$studiengang.'_'.$dokument_kurzbz.'"
 													type="file"
 													name="filenachgereicht"
