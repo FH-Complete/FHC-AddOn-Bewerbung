@@ -2086,7 +2086,6 @@ function setDokumenteMasterZGV($person_id)
 
 	//Prüfung ob es zur betreffenden $person_id bereits eine interne ZGV gibt
 	$zgvFHTW = $prestudent->existsZGVIntern($person_id);
-	//echo "ZGV intern: ". $zgvFHTW;
 
 	if ($zgvFHTW)
 	{
@@ -2102,7 +2101,7 @@ function setDokumenteMasterZGV($person_id)
 		$zgvMaster ->entakzeptiereDokument('Meldezet', $person_id);
 
 		//Masternation, -art und -ort befüllen
-		$prestudent ->setZGVMasterFields($person_id);
+		$prestudent ->setZGVMasterFields($person_id, 'Wien');
 	}
 	return true;
 }
