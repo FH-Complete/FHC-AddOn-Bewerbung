@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (C) 2015 fhcomplete.org
+ * Copyright (C) 2021 fhcomplete.org
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
  * published by the Free Software Foundation; either version 2 of the
@@ -13,6 +13,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
  * Authors: Andreas Oesterreicher <oesi@technikum-wien.at>
+ *			Manuela Thamer <manuela.thamer@technikum-wien.at>
  */
 require_once ('../../../include/student.class.php');
 require_once ('../../../include/studienplan.class.php');
@@ -2096,12 +2097,19 @@ function setDokumenteMasterZGV($person_id)
 		//Dokumente akzeptieren
 		$zgvMaster ->akzeptiereDokument('zgv_mast', $person_id);
 		$zgvMaster ->akzeptiereDokument('identity', $person_id);
+		$zgvMaster ->akzeptiereDokument('SprachB2', $person_id);
+		$zgvMaster ->akzeptiereDokument('UStatBla', $person_id);
+		$zgvMaster ->akzeptiereDokument('ecard', $person_id);
 
 		//Dokumente entakzeptieren
 		$zgvMaster ->entakzeptiereDokument('Meldezet', $person_id);
 
+		//ZGVMasterOrt abfragen
+		$ort = 'Fh Technikum ';
+		$ort .= $prestudent ->getZGVMasterStg($person_id);
+
 		//Masternation, -art und -ort befüllen
-		$prestudent ->setZGVMasterFields($person_id, 'Wien');
+		$prestudent ->setZGVMasterFields($person_id, $ort);
 	}
 	return true;
 }
