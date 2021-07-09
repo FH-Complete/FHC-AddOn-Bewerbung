@@ -2096,16 +2096,17 @@ function setDokumenteMasterZGV($person_id)
 
 		//Dokumente akzeptieren
 		$zgvMaster ->akzeptiereDokument('zgv_mast', $person_id);
+		$zgvMaster ->akzeptiereDokument('zgv_bakk', $person_id);
 		$zgvMaster ->akzeptiereDokument('identity', $person_id);
 		$zgvMaster ->akzeptiereDokument('SprachB2', $person_id);
-		$zgvMaster ->akzeptiereDokument('UStatBla', $person_id);
+		$zgvMaster ->akzeptiereDokument('Statisti', $person_id);
 		$zgvMaster ->akzeptiereDokument('ecard', $person_id);
 
 		//Dokumente entakzeptieren
 		$zgvMaster ->entakzeptiereDokument('Meldezet', $person_id);
 
 		//ZGVMasterOrt abfragen
-		$ort = 'Fh Technikum ';
+		$ort = 'FHTW ';
 		$ort .= $prestudent ->getZGVMasterStg($person_id);
 
 		//Masternation, -art und -ort befüllen
