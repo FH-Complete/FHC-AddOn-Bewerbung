@@ -309,7 +309,7 @@ $this->phrasen['bewerbung/bitteDokumenteHochladen']='Um Ihre Bewerbung abschicke
 	Sollte das Dokument zum gegenwärtigen Zeitpunkt noch nicht verfügbar sein, haben Sie die <b>Möglichkeit</b>, das <b>Dokument nachzureichen</b>.<br>
 	Klicken Sie dazu auf "Dokument wird nachgereicht" und geben Sie an, bis zu welchem Zeitpunkt Sie das Dokument nachreichen werden und welche Institution das Dokument ausstellen wird.<br>
 	Gegebenenfalls werden Sie im weiteren Verlauf der Bewerbung aufgefordert, hier weitere Dokumente hochzuladen.<br><br>
-	<b>Student*in oder Absolvent*in der FH Technikum Wien</b> die sich mit Ihrem bestehenden Zugangsdaten eingeloggt haben, müssen für eine Masterbewerbung <b>nur</b> einen aktuellen <b>Lebenslauf</b> hochladen. Die anderen Dokumente sind bereits im System gespeichert und werden für Ihre Bewerbung herangezogen.<br><br>
+	<b>Student*in oder Absolvent*in der FH Technikum Wien</b> die sich mit Ihrem bestehenden Zugangsdaten eingeloggt haben, müssen für eine Masterbewerbung <b>nur</b> einen aktuellen <b>Lebenslauf</b> (ggf Motivationsschreiben) hochladen. Die anderen Dokumente sind bereits im System gespeichert und werden für Ihre Bewerbung herangezogen.<br><br>
 	Bitte beachten Sie, dass überprüfte Dokumente nicht erneut hochgeladen werden können. Sollte ein aktuelleres Dokument vorliegen, so wenden Sie sich bitte an die Studiengangsassistenz.<br>
 	<b>Tipp:</b> Um mehrere Einzelseiten zu einer Datei zusammenfügen zu können, empfehlen wir Ihnen kostenlose Programme wie bspw. PDF Merge.';
 $this->phrasen['bewerbung/linkDokumenteHochladen']='Dokumente hochladen';

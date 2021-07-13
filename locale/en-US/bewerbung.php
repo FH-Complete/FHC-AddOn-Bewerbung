@@ -257,7 +257,7 @@ $this->phrasen['bewerbung/bitteDokumenteHochladen']='In order to be able to send
 													If the <b>document</b> is not yet available at the respective time, you may <b>submit</b> it at a <b>later date</b>.
 													To do so, click "submit document later" and specify when you are going to submit the document as well as the issuing institution.<br>
 													Probably you will be prompted to upload more documents here in the course of your application.<br><br>
-													<b>Students or graduates of the UAS Technikum Wien</b> who have logged in with their existing access data only need to upload a current CV for a Master\'s application. The other documents are already stored in the system and will be used for your application. Please note that verified documents cannot be uploaded again. If a more recent document is available, please contact the Administrative Assistant.<br><br>
+													<b>Students or graduates of the UAS Technikum Wien</b> who have logged in with their existing access data only need to upload a current CV (and a motivational letter if necessary) for a Master\'s application. The other documents are already stored in the system and will be used for your application. Please note that verified documents cannot be uploaded again. If a more recent document is available, please contact the Administrative Assistant.<br><br>
 													Please note that verified documents cannot be uploaded again. If a more recent document is available, please contact the Administrative Assistant.<br>
 													<b>Tip:</b> To merge several individual pages into one file, we recommend free programmes such as PDF Merge.<br>';
 $this->phrasen['bewerbung/linkDokumenteHochladen']='Upload Documents';
