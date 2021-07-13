@@ -197,7 +197,7 @@ if (! isset($person_id))
 			else
 			{
 				echo '<div class="panel panel-default">';
-				$statusInfotext = '<div class="label label-default">'.$p->t('bewerbung/dokumentNichtErforderlich').'</div>';
+				//$statusInfotext = '<div class="label label-default">'.$p->t('bewerbung/dokumentNichtErforderlich').'</div>';
 				$displayDetailsArrow = false;
 			}
 
