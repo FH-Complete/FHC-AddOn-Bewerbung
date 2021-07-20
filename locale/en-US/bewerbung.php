@@ -253,13 +253,6 @@ $this->phrasen['bewerbung/kontakt']='Contact';
 $this->phrasen['bewerbung/nation']='Nation';
 $this->phrasen['bewerbung/menuDokumente']='Documents';
 $this->phrasen['bewerbung/dokument']='Document';
-$this->phrasen['bewerbung/bitteDokumenteHochladen']='In order to be able to send in your application, you need to upload all the documents marked as "required".
-													If the <b>document</b> is not yet available at the respective time, you may <b>submit</b> it at a <b>later date</b>.
-													To do so, click "submit document later" and specify when you are going to submit the document as well as the issuing institution.<br>
-													Probably you will be prompted to upload more documents here in the course of your application.<br><br>
-													<b>Students or graduates of the UAS Technikum Wien</b> who have logged in with their existing access data only need to upload a current CV (and a motivational letter if necessary) for a Master\'s application. The other documents are already stored in the system and will be used for your application. Please note that verified documents cannot be uploaded again. If a more recent document is available, please contact the Administrative Assistant.<br><br>
-													Please note that verified documents cannot be uploaded again. If a more recent document is available, please contact the Administrative Assistant.<br>
-													<b>Tip:</b> To merge several individual pages into one file, we recommend free programmes such as PDF Merge.<br>';
 $this->phrasen['bewerbung/linkDokumenteHochladen']='Upload Documents';
 $this->phrasen['bewerbung/dokumenteZumHochladen']='Required documents:';
 $this->phrasen['bewerbung/dokumentName']='Name';
@@ -396,12 +389,35 @@ $this->phrasen['bewerbung/bitteOrgformWaehlen']='If you select a degree program 
 $this->phrasen['bewerbung/orgformWaehlen']='Select organization form';
 $this->phrasen['bewerbung/orgformBeschreibungstext']='Please enter the organization form(s) that interests you. If all the places in your chosen organization form have already been allocated, you are free to enter an alternative.';
 $this->phrasen['bewerbung/menuAbschließen']='Finish';
-$this->phrasen['bewerbung/sieHabenNochKeinenZugangscode']='You don\'t have an access code or account at the UAS Technikum Wien?';
-$this->phrasen['bewerbung/habenSieBereitsEinenZugangscode']='You already have an access code?';
-$this->phrasen['bewerbung/studierenOderArbeitenSieBereits']='You already study or work at the UAS Technikum Wien?';
-$this->phrasen['bewerbung/zugangscodeVergessen']='Forgot access code?';
-$this->phrasen['bewerbung/dannHiermitAccountEinloggen']='Then login here with your CIS account';
+
+$this->phrasen['bewerbung/habenSieBereitsEinenZugangscode']='Already registered? You have already registered and you have received an access code?';
+
+//Phrasen FHTW: temporaer hier abgebildet für Demodev
+// $this->phrasen['bewerbung/sieHabenNochKeinenZugangscode']='New applicant? You don\'t have an access code or account at the UAS Technikum Wien?';
+// $this->phrasen['bewerbung/studierenOderArbeitenSieBereits']='New applicant <b>AND</b> student at UAS Technikum Wien? You study already at the UAS and you have an active CIS account?';
+// $this->phrasen['bewerbung/dannHiermitAccountEinloggen']='';
+// $this->phrasen['bewerbung/dannHierEinloggen']='';
+// $this->phrasen['bewerbung/bitteDokumenteHochladen']='In order to be able to send in your application, you need to upload all the documents marked as "required".
+// 													If the <b>document</b> is not yet available at the respective time, you may <b>submit</b> it at a <b>later date</b>.
+// 													To do so, click "submit document later" and specify when you are going to submit the document as well as the issuing institution.<br>
+// 													Probably you will be prompted to upload more documents here in the course of your application.<br><br>
+// 													<b>Students or graduates of the UAS Technikum Wien</b> who have logged in with their existing access data only need to upload a current CV for a Master\'s application. The other documents are already stored in the system and will be used for your application. Please note that verified documents cannot be uploaded again. If a more recent document is available, please contact the Administrative Assistant.<br><br>
+// 													Please note that verified documents cannot be uploaded again. If a more recent document is available, please contact the Administrative Assistant.<br>
+// 													<b>Tip:</b> To merge several individual pages into one file, we recommend free programmes such as PDF Merge.<br>';
+
+// Allgemeine Phrasen
+$this->phrasen['bewerbung/sieHabenNochKeinenZugangscode']='New applicant? You don\'t have an access code or account?';
+$this->phrasen['bewerbung/studierenOderArbeitenSieBereits']='New applicant <b>AND</b> student? You study already at the UAS and you have an active CIS account?';
 $this->phrasen['bewerbung/dannHierEinloggen']='Then login here';
+$this->phrasen['bewerbung/dannHiermitAccountEinloggen']='Then login here with your CIS account';
+$this->phrasen['bewerbung/bitteDokumenteHochladen']='In order to be able to send in your application, you need to upload all the documents marked as "required".
+													If the <b>document</b> is not yet available at the respective time, you may <b>submit</b> it at a <b>later date</b>.
+													To do so, click "submit document later" and specify when you are going to submit the document as well as the issuing institution.<br>
+													Probably you will be prompted to upload more documents here in the course of your application.<br><br>
+													Please note that verified documents cannot be uploaded again. If a more recent document is available, please contact the Administrative Assistant.<br>
+													<b>Tip:</b> To merge several individual pages into one file, we recommend free programmes such as PDF Merge.<br>';
+
+$this->phrasen['bewerbung/zugangscodeVergessen']='Forgot access code?';
 $this->phrasen['bewerbung/dokumentHerunterladen']='Download document';
 $this->phrasen['bewerbung/hinweisZGVdatenaenderung']='<b>Notice:</b> Saved data cannot be changed afterwards due to organisational reasons. If there is incorrect data please use the comment-area under "Finish" or contact your administrative assistant responsible.';
 $this->phrasen['bewerbung/statusBestaetigen']='Confirm status directly';

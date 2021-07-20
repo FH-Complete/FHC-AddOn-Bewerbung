@@ -305,13 +305,6 @@ $this->phrasen['bewerbung/kontakt']='Kontakt';
 $this->phrasen['bewerbung/nation']='Nation';
 $this->phrasen['bewerbung/menuDokumente']='Dokumente';
 $this->phrasen['bewerbung/dokument']='Dokument';
-$this->phrasen['bewerbung/bitteDokumenteHochladen']='Um Ihre Bewerbung abschicken zu können, müssen Sie Dokumente, die als „erforderlich“ markiert sind, hochladen.<br>
-	Sollte das Dokument zum gegenwärtigen Zeitpunkt noch nicht verfügbar sein, haben Sie die <b>Möglichkeit</b>, das <b>Dokument nachzureichen</b>.<br>
-	Klicken Sie dazu auf "Dokument wird nachgereicht" und geben Sie an, bis zu welchem Zeitpunkt Sie das Dokument nachreichen werden und welche Institution das Dokument ausstellen wird.<br>
-	Gegebenenfalls werden Sie im weiteren Verlauf der Bewerbung aufgefordert, hier weitere Dokumente hochzuladen.<br><br>
-	<b>Student*in oder Absolvent*in der FH Technikum Wien</b> die sich mit Ihrem bestehenden Zugangsdaten eingeloggt haben, müssen für eine Masterbewerbung <b>nur</b> einen aktuellen <b>Lebenslauf</b> (ggf Motivationsschreiben) hochladen. Die anderen Dokumente sind bereits im System gespeichert und werden für Ihre Bewerbung herangezogen.<br><br>
-	Bitte beachten Sie, dass überprüfte Dokumente nicht erneut hochgeladen werden können. Sollte ein aktuelleres Dokument vorliegen, so wenden Sie sich bitte an die Studiengangsassistenz.<br>
-	<b>Tipp:</b> Um mehrere Einzelseiten zu einer Datei zusammenfügen zu können, empfehlen wir Ihnen kostenlose Programme wie bspw. PDF Merge.';
 $this->phrasen['bewerbung/linkDokumenteHochladen']='Dokumente hochladen';
 $this->phrasen['bewerbung/dokumenteZumHochladen']='Benötigte Dokumente:';
 $this->phrasen['bewerbung/dokumentName']='Name';
@@ -452,12 +445,34 @@ $this->phrasen['bewerbung/bitteOrgformWaehlen']='Wenn Sie einen Studiengang mit 
 $this->phrasen['bewerbung/orgformWaehlen']='Organisationsform wählen';
 $this->phrasen['bewerbung/orgformBeschreibungstext']='Bitte geben Sie an, für welche Organisationsform Sie sich interessieren. Für den Fall, dass alle Plätze in Ihrer gewünschten Organisationsform vergeben sind, können Sie optional eine Alternative angeben';
 $this->phrasen['bewerbung/menuAbschließen']='Abschließen';
-$this->phrasen['bewerbung/sieHabenNochKeinenZugangscode']='Sie haben noch keinen Zugangscode oder Account an der FH Technikum Wien?';
-$this->phrasen['bewerbung/habenSieBereitsEinenZugangscode']='Sie haben bereits einen Zugangscode?';
-$this->phrasen['bewerbung/studierenOderArbeitenSieBereits']='Studieren oder arbeiten Sie bereits an der FH Technikum Wien?';
-$this->phrasen['bewerbung/zugangscodeVergessen']='Zugangscode vergessen?';
+$this->phrasen['bewerbung/habenSieBereitsEinenZugangscode']='<b>Registrierte*r</b> Bewerber*in? <br>Sie haben sich bereits registriert und einen Zugangscode zu unserem Online-Bewerbungsportal erhalten?';
+
+//Phrasen FHTW: temporaer hier abgebildet für Demodev
+// $this->phrasen['bewerbung/sieHabenNochKeinenZugangscode']='<b>Neue*r</b> Bewerber*in? <br>Sie haben noch keinen Zugangscode oder Account an der FH Technikum Wien?';
+// $this->phrasen['bewerbung/studierenOderArbeitenSieBereits']='Neue*r Bewerber*in <b>und</b> bereits Student*in der FHTW? <br>Sie haben bereits einen aktiven CIS Account an der FHTW (Student*in).';
+// $this->phrasen['bewerbung/dannHiermitAccountEinloggen']='';
+// $this->phrasen['bewerbung/dannHierEinloggen']='';
+// $this->phrasen['bewerbung/bitteDokumenteHochladen']='Um Ihre Bewerbung abschicken zu können, müssen Sie Dokumente, die als „erforderlich“ markiert sind, hochladen.<br>
+// 	Sollte das Dokument zum gegenwärtigen Zeitpunkt noch nicht verfügbar sein, haben Sie die <b>Möglichkeit</b>, das <b>Dokument nachzureichen</b>.<br>
+// 	Klicken Sie dazu auf "Dokument wird nachgereicht" und geben Sie an, bis zu welchem Zeitpunkt Sie das Dokument nachreichen werden und welche Institution das Dokument ausstellen wird.<br>
+// 	Gegebenenfalls werden Sie im weiteren Verlauf der Bewerbung aufgefordert, hier weitere Dokumente hochzuladen.<br><br>
+// 	<b>Student*in oder Absolvent*in der FH Technikum Wien</b> die sich mit Ihrem bestehenden Zugangsdaten eingeloggt haben, müssen für eine Masterbewerbung <b>nur</b> einen aktuellen <b>Lebenslauf</b> hochladen. Die anderen Dokumente sind bereits im System gespeichert und werden für Ihre Bewerbung herangezogen.<br><br>
+// 	Bitte beachten Sie, dass überprüfte Dokumente nicht erneut hochgeladen werden können. Sollte ein aktuelleres Dokument vorliegen, so wenden Sie sich bitte an die Studiengangsassistenz.<br>
+// 	<b>Tipp:</b> Um mehrere Einzelseiten zu einer Datei zusammenfügen zu können, empfehlen wir Ihnen kostenlose Programme wie bspw. PDF Merge.';
+
+// Allgemeine Phrasen
+$this->phrasen['bewerbung/sieHabenNochKeinenZugangscode']='<b>Neue*r</b> Bewerber*in? <br>Sie haben noch keinen Zugangscode oder Account an der FH?';
 $this->phrasen['bewerbung/dannHiermitAccountEinloggen']='Dann loggen Sie sich hier mit Ihrem CIS-Account ein';
 $this->phrasen['bewerbung/dannHierEinloggen']='Dann loggen Sie sich hier ein';
+$this->phrasen['bewerbung/studierenOderArbeitenSieBereits']='Neue*r Bewerber*in <b>und</b> bereits Student*in? <br>Sie haben bereits einen aktiven CIS Account an der FH (Student*in).';
+$this->phrasen['bewerbung/bitteDokumenteHochladen']='Um Ihre Bewerbung abschicken zu können, müssen Sie Dokumente, die als „erforderlich“ markiert sind, hochladen.<br>
+	Sollte das Dokument zum gegenwärtigen Zeitpunkt noch nicht verfügbar sein, haben Sie die <b>Möglichkeit</b>, das <b>Dokument nachzureichen</b>.<br>
+	Klicken Sie dazu auf "Dokument wird nachgereicht" und geben Sie an, bis zu welchem Zeitpunkt Sie das Dokument nachreichen werden und welche Institution das Dokument ausstellen wird.<br>
+	Gegebenenfalls werden Sie im weiteren Verlauf der Bewerbung aufgefordert, hier weitere Dokumente hochzuladen.<br><br>
+	Bitte beachten Sie, dass überprüfte Dokumente nicht erneut hochgeladen werden können. Sollte ein aktuelleres Dokument vorliegen, so wenden Sie sich bitte an die Studiengangsassistenz.<br>
+	<b>Tipp:</b> Um mehrere Einzelseiten zu einer Datei zusammenfügen zu können, empfehlen wir Ihnen kostenlose Programme wie bspw. PDF Merge.';
+
+$this->phrasen['bewerbung/zugangscodeVergessen']='Zugangscode vergessen?';
 $this->phrasen['bewerbung/hinweisZGVdatenaenderung']='<b>Hinweis:</b> Aus organisatorischen Gründen können gespeicherte Angaben hier nicht mehr verändert werden. Sollten Angaben fehlerhaft sein, verwenden Sie bitte das Notizfeld im Schritt "Abschließen" oder kontaktieren Sie die Assistenz per E-Mail.';
 $this->phrasen['bewerbung/statusBestaetigen']='Status direkt bestätigen';
 $this->phrasen['bewerbung/footerText']='';
