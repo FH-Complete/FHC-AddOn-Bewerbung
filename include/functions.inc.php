@@ -2101,11 +2101,10 @@ function setDokumenteMasterZGV($person_id)
 		$zgvMaster ->akzeptiereDokument('SprachB2', $person_id);
 		$zgvMaster ->akzeptiereDokument('Statisti', $person_id);
 		$zgvMaster ->akzeptiereDokument('ecard', $person_id);
-		//Mail vom 12.7.2021
-		$zgvMaster ->akzeptiereDokument('Meldezet', $person_id);
+	
 
 		//Dokumente entakzeptieren
-		//$zgvMaster ->entakzeptiereDokument('Meldezet', $person_id);
+		$zgvMaster ->entakzeptiereDokument('Meldezet', $person_id);
 
 		//ZGVMasterOrt abfragen
 		$ort = 'FHTW ';
