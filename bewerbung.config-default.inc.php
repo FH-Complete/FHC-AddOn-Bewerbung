@@ -90,6 +90,9 @@ define('BEWERBERTOOL_SHOW_REGISTRATION_ZGVNATION', false);
 // Wieviele Dokumente dürfen pro Dokumenttyp hochgeladen werden? Integer
 define('BEWERBERTOOL_ANZAHL_DOKUMENTPLOAD_JE_TYP', 100);
 
+// Sollen Zusätzliche Zahlungsinformationen angezeigt werden (IBAN, BIC, ZaHlungsreferenz)
+define('BEWERBERTOOL_ZAHLUNGEN_ZAHLUNGSINFORMATIONEN_ANZEIGEN', false);
+
 // Darf bei Dokumenten, die bereits akzeptiert oder formal geprüft wurden noch etwas hochgalden werden? Boolean
 define('BEWERBERTOOL_UPLOAD_DOKUMENT_WENN_AKZEPTIERT', true);
 
