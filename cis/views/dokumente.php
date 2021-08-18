@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (C) 2015 fhcomplete.org
+ * Copyright (C) 2021 fhcomplete.org
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
  *
  * Authors: Robert Hofer <robert.hofer@technikum-wien.at>
  * 			Manfred Kindl <manfred.kindl@technikum-wien.at>
+ * 			Manuela Thamer <manuela.thamer@technikum-wien.at>
  */
 if (! isset($person_id))
 {
@@ -179,16 +180,24 @@ if (! isset($person_id))
 				$statusInfotext = '<div class="label label-warning">'.$p->t('bewerbung/dokumentWirdNachgereicht').'</div>';
 				$displayDetailsArrow = false;
 			}
-			elseif ($dok->pflicht)
+			elseif ($dok->pflicht && $dok->anzahl_dokumente_akzeptiert == 0)
 			{
 				echo '<div class="panel panel-danger">';
 				$statusInfotext = '<div class="label label-danger">'.$p->t('bewerbung/dokumentErforderlich').'</div>';
 				$displayDetailsArrow = false;
 				$anzahlOffeneDokumente ++;
 			}
+			elseif ($dok->pflicht && $dok->anzahl_dokumente_akzeptiert > 0) //Fall: bereits akzeptiertes Dokument
+			{
+				echo '<div class="panel panel-default">';
+				$statusInfotext = '<div class="label label-default">'.$p->t('bewerbung/dokumentNichtErforderlich').'</div>';
+				$displayDetailsArrow = false;
+				//$anzahlOffeneDokumente ++;
+			}
 			else
 			{
 				echo '<div class="panel panel-default">';
+				//$statusInfotext = '<div class="label label-default">'.$p->t('bewerbung/dokumentNichtErforderlich').'</div>';
 				$displayDetailsArrow = false;
 			}
 

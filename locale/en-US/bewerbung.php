@@ -265,6 +265,7 @@ $this->phrasen['bewerbung/dokumentName']='Name';
 $this->phrasen['bewerbung/benoetigtFuer']='Required for';
 $this->phrasen['bewerbung/dokumenteFuer']='Documents for';
 $this->phrasen['bewerbung/dokumentErforderlich']='Required document';
+$this->phrasen['bewerbung/dokumentNichtErforderlich']='Not required document';
 $this->phrasen['bewerbung/dokumentOffen']='Document not yet submitted (open)';
 $this->phrasen['bewerbung/dokumentNichtUeberprueft']='Document has been submitted but not yet examined';
 $this->phrasen['bewerbung/dokumentWirdNachgereicht']='Document will be submitted later';
@@ -394,12 +395,22 @@ $this->phrasen['bewerbung/bitteOrgformWaehlen']='If you select a degree program 
 $this->phrasen['bewerbung/orgformWaehlen']='Select organization form';
 $this->phrasen['bewerbung/orgformBeschreibungstext']='Please enter the organization form(s) that interests you. If all the places in your chosen organization form have already been allocated, you are free to enter an alternative.';
 $this->phrasen['bewerbung/menuAbschließen']='Finish';
-$this->phrasen['bewerbung/sieHabenNochKeinenZugangscode']='You don\'t have an access code or account at the UAS Technikum Wien?';
-$this->phrasen['bewerbung/habenSieBereitsEinenZugangscode']='You already have an access code?';
-$this->phrasen['bewerbung/studierenOderArbeitenSieBereits']='You already study or work at the UAS Technikum Wien?';
-$this->phrasen['bewerbung/zugangscodeVergessen']='Forgot access code?';
-$this->phrasen['bewerbung/dannHiermitAccountEinloggen']='Then login here with your CIS account';
+
+$this->phrasen['bewerbung/habenSieBereitsEinenZugangscode']='Already registered? You have already registered and you have received an access code?';
+
+// Allgemeine Phrasen
+$this->phrasen['bewerbung/sieHabenNochKeinenZugangscode']='New applicant? You don\'t have an access code or account?';
+$this->phrasen['bewerbung/studierenOderArbeitenSieBereits']='New applicant <b>AND</b> student? You study already at the UAS and you have an active CIS account?';
 $this->phrasen['bewerbung/dannHierEinloggen']='Then login here';
+$this->phrasen['bewerbung/dannHiermitAccountEinloggen']='Then login here with your CIS account';
+$this->phrasen['bewerbung/bitteDokumenteHochladen']='In order to be able to send in your application, you need to upload all the documents marked as "required".
+													If the <b>document</b> is not yet available at the respective time, you may <b>submit</b> it at a <b>later date</b>.
+													To do so, click "submit document later" and specify when you are going to submit the document as well as the issuing institution.<br>
+													Probably you will be prompted to upload more documents here in the course of your application.<br><br>
+													Please note that verified documents cannot be uploaded again. If a more recent document is available, please contact the Administrative Assistant.<br>
+													<b>Tip:</b> To merge several individual pages into one file, we recommend free programmes such as PDF Merge.<br>';
+
+$this->phrasen['bewerbung/zugangscodeVergessen']='Forgot access code?';
 $this->phrasen['bewerbung/dokumentHerunterladen']='Download document';
 $this->phrasen['bewerbung/hinweisZGVdatenaenderung']='<b>Notice:</b> Saved data cannot be changed afterwards due to organisational reasons. If there is incorrect data please use the comment-area under "Finish" or contact your administrative assistant responsible.';
 $this->phrasen['bewerbung/statusBestaetigen']='Confirm status directly';
@@ -421,7 +432,7 @@ $this->phrasen['bewerbung/dateien']='File(s)';
 $this->phrasen['bewerbung/dokumentWirdGeprueft']='Document uploaded';
 $this->phrasen['bewerbung/dokumentUeberprueft']='Document examined';
 $this->phrasen['bewerbung/keineDateiAusgewaehlt']='No file selected or found';
-$this->phrasen['bewerbung/placeholderAnmerkungNachgereicht']='Please indicate which institution will issue the document and when you can probably submit it';
+$this->phrasen['bewerbung/placeholderAnmerkungNachgereicht']='Please indicate which institution will issue the document and by when you expect to be able to submit it:';
 $this->phrasen['bewerbung/bitteAusstellungsnationAuswaehlen']='-- Please select the country in which the document was issued --';
 $this->phrasen['bewerbung/sitzungAbgelaufen']='Seesion expired. Please log in again.';
 $this->phrasen['bewerbung/placeholderOrtNachgereicht']='Issuing institution (eg: TGM Wien)';
@@ -439,7 +450,7 @@ $this->phrasen['bewerbung/buttonStornierenDisabled']='Once the application has b
 $this->phrasen['bewerbung/infotextDisabled']='Since an application already exists or existed, you can no longer apply in %s for this degree program';
 $this->phrasen['bewerbung/bitteAnmerkungEintragen']='Please enter the name of the institution that will issue the document';
 $this->phrasen['bewerbung/nachreichDatumNichtVergangenheit']='The date of submission may not be in the past ';
-$this->phrasen['bewerbung/infotextVorlaeufigesZgvDokument']='Please upload the last semester certificate of your education';
+$this->phrasen['bewerbung/infotextVorlaeufigesZgvDokument']='Please upload a file that credibly demonstrates that you will meet the admission requirements for the chosen degree program. This can be the last semester certificate, partial certificate, a collective certificate, a (registration) confirmation, etc.<br>';
 $this->phrasen['bewerbung/bitteDateiAuswaehlen']='Please choose a file';
 $this->phrasen['bewerbung/zustimmungDatenuebermittlung']='If in exceptional cases the admission requirements can not be finally clarified by the UAS Technikum Wien, I give my consent that the UAS Technikum Wien can forward the documents to the competent authorities for verification.<br>
 I have been informed that I am under no obligation to consent to the transmission of my data. However, this consent is necessary in order for the application to be considered.';

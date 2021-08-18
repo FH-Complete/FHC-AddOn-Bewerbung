@@ -1293,7 +1293,7 @@ elseif($username && $password)
 									</div>
 									<div class="form-group">
 										<div class="col-sm-offset-2 col-sm-8">
-											<button type="submit" class="btn btn-primary" name="submit_btn"><?php echo $p->t('bewerbung/login') ?></button>
+											<button type="submit" class="btn btn-primary btn-lg" style="width: 250px;" name="submit_btn"><?php echo $p->t('bewerbung/login') ?></button>
 										</div>
 									</div>
 									<div class="col-sm-4 col-sm-offset-4">
@@ -1324,8 +1324,8 @@ elseif($username && $password)
 									</div>
 								</div>
 								<div class="form-group">
-									<span class="col-sm-4 col-sm-offset-4">
-										<button class="btn btn-primary" type="submit" name="submit_btn">
+									<span class="col-sm-8 col-sm-offset-2">
+										<button class="btn btn-primary btn-lg" style="width: 250px;" type="submit" name="submit_btn">
 											<?php echo $p->t('bewerbung/login') ?>
 										</button>
 									</span>

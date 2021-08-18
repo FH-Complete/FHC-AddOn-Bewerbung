@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (C) 2015 fhcomplete.org
+ * Copyright (C) 2021 fhcomplete.org
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
  * published by the Free Software Foundation; either version 2 of the
@@ -13,6 +13,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
  * Authors: Andreas Oesterreicher <oesi@technikum-wien.at>
+ *			Manuela Thamer <manuela.thamer@technikum-wien.at>
  */
 require_once ('../../../include/student.class.php');
 require_once ('../../../include/studienplan.class.php');
@@ -20,6 +21,8 @@ require_once ('../../../include/studienordnung.class.php');
 require_once ('../../../include/studiengang.class.php');
 require_once ('../../../include/personlog.class.php');
 require_once ('../../../config/global.config.inc.php');
+require_once ('../../../include/dokument.class.php');
+require_once ('../../../include/prestudent.class.php');
 
 // Fuegt einen Studiengang zu einem Bewerber hinzu
 function BewerbungPersonAddStudiengang($studiengang_kz, $anmerkung, $person, $studiensemester_kurzbz, $orgform_kurzbz, $sprache)
@@ -1730,6 +1733,7 @@ function getAktenListe($person_id, $dokument_kurzbz)
 										';
 			// An der FHTW wird beim Dokument "zgv_bakk" das vorläufiges ZGV-Dokument (ZgvBaPre) angezeigt, wenn eines vorhanden ist
 			// und das Dokument "ZgvMaPre" bei "zgv_mast"
+			// und das Dokument "VorlSpB2" bei "SprachB2"
 			if (CAMPUS_NAME == 'FH Technikum Wien')
 			{
 				if ($akte->dokument_kurzbz == 'zgv_bakk')
@@ -1775,6 +1779,30 @@ function getAktenListe($person_id, $dokument_kurzbz)
 																class="btn btn-default btn-sm"
 																href="'.APP_ROOT.'cms/dms.php?id='.$zgvMaPre->result[0]->dms_id.'"
 																onclick="FensterOeffnen(\''.APP_ROOT.'cms/dms.php?id='.$zgvMaPre->result[0]->dms_id.'&akte_id='.$zgvMaPre->result[0]->akte_id.'\'); return false;">
+															<span class="glyphicon glyphicon glyphicon-download-alt" aria-hidden="true" title="'.$p->t('bewerbung/dokumentHerunterladen').'"></span>
+														</button>';
+						}
+					}
+				}
+				elseif ($akte->dokument_kurzbz == 'SprachB2')
+				{
+					// Checken, ob der Dokumenttyp SprachB2 in der DB vorhanden ist
+					$checkVorlSpB2 = new dokument();
+					if ($checkVorlSpB2->loadDokumenttyp('VorlSpB2'))
+					{
+						// Laden des vorläufigen ZGV Dokuments der Person
+						$vorlSpB2 = new akte();
+						$vorlSpB2->getAkten($person_id, 'VorlSpB2');
+						if (isset($vorlSpB2->result[0]))
+						{
+							$returnstring .= '
+
+														<br><span>'.$p->t('bewerbung/vorlaeufigesDokument').':<br>
+														<span class="glyphicon glyphicon-file" aria-hidden="true"></span>'.cutString($vorlSpB2->result[0]->titel, 25, '...').'</span>
+														<button type="button" title="'.$p->t('bewerbung/dokumentHerunterladen').'"
+																class="btn btn-default btn-sm"
+																href="'.APP_ROOT.'cms/dms.php?id='.$vorlSpB2->result[0]->dms_id.'"
+																onclick="FensterOeffnen(\''.APP_ROOT.'cms/dms.php?id='.$vorlSpB2->result[0]->dms_id.'&akte_id='.$vorlSpB2->result[0]->akte_id.'\'); return false;">
 															<span class="glyphicon glyphicon glyphicon-download-alt" aria-hidden="true" title="'.$p->t('bewerbung/dokumentHerunterladen').'"></span>
 														</button>';
 						}
@@ -1962,13 +1990,14 @@ function getNachreichForm($dokument_kurzbz, $studiengang)
 								<div class="row">
 									<div class="col-sm-12">';
 
-	// An der FHTW wird beim nachreichen des Dokuments "zgv_bakk" oder "zgv_mast" ein vorläufiges ZGV-Dokument verlangt
+	// An der FHTW wird beim nachreichen des Dokuments "zgv_bakk", "zgv_mast" und "SprachB2" ein vorläufiges ZGV-Dokument verlangt
 	// Die Spaltenbreite wird daher angepasst
 	$colspan = 12;
-	if (CAMPUS_NAME == 'FH Technikum Wien' && ($dokument_kurzbz == 'zgv_bakk' || $dokument_kurzbz == 'zgv_mast'))
+	if (CAMPUS_NAME == 'FH Technikum Wien' && ($dokument_kurzbz == 'zgv_bakk' || $dokument_kurzbz == 'zgv_mast' || $dokument_kurzbz == 'SprachB2'))
 	{
 		$returnstring .= '				<div class="col-sm-8">
 											<span>'.$p->t('bewerbung/infotextVorlaeufigesZgvDokument').':</span>
+
 											<input  id="filenachgereicht_'.$studiengang.'_'.$dokument_kurzbz.'"
 													type="file"
 													name="filenachgereicht"
@@ -1978,6 +2007,7 @@ function getNachreichForm($dokument_kurzbz, $studiengang)
 										</div>';
 		$colspan = 4;
 	}
+
 		$returnstring .= '				<div class="col-sm-'.$colspan.'">
 											<div class="btn-group pull-right">
 												<input  type="submit"
@@ -2036,4 +2066,50 @@ function resize($filename, $width, $height)
 	imagedestroy($image_p);
 	@imagedestroy($image);
 	return $tmpfname;
+}
+
+/**
+ * führt Aktionen für die Masterzentralisierung aus
+ *
+ * @param int $person_id PersonenID.
+ * @return boolean true wenn Prüfung ob interne ZGV vorhanden ist bzw. Aktionen erfolgreich durchgeführt wurden,
+ * false wenn nicht
+ */
+function setDokumenteMasterZGV($person_id)
+{
+	$prestudent = new prestudent();
+	if (! $prestudent->getPrestudenten($person_id))
+	{
+		die($p->t('global/fehlerBeimLadenDesDatensatzes'));
+	}
+
+	//Prüfung ob es zur betreffenden $person_id bereits eine interne ZGV gibt
+	$zgvFHTW = $prestudent->existsZGVIntern($person_id);
+
+	if ($zgvFHTW)
+	{
+		$zgvMaster = new dokument();
+		$person = new person();
+		$person->load($person_id);
+
+		//Dokumente akzeptieren
+		$zgvMaster ->akzeptiereDokument('zgv_mast', $person_id);
+		$zgvMaster ->akzeptiereDokument('zgv_bakk', $person_id);
+		$zgvMaster ->akzeptiereDokument('identity', $person_id);
+		$zgvMaster ->akzeptiereDokument('SprachB2', $person_id);
+		$zgvMaster ->akzeptiereDokument('Statisti', $person_id);
+		$zgvMaster ->akzeptiereDokument('ecard', $person_id);
+	
+
+		//Dokumente entakzeptieren
+		$zgvMaster ->entakzeptiereDokument('Meldezet', $person_id);
+
+		//ZGVMasterOrt abfragen
+		$ort = 'FHTW ';
+		$ort .= $prestudent ->getZGVMasterStg($person_id);
+
+		//Masternation, -art und -ort befüllen
+		$prestudent ->setZGVMasterFields($person_id, $ort);
+	}
+	return true;
 }
