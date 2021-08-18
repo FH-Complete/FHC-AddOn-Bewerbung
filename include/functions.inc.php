@@ -1834,7 +1834,7 @@ function getAktenListe($person_id, $dokument_kurzbz)
 									</button>';
 			// Löschen nur bei nicht-akzeptierten Dokumenten möglich
 			// Invitation letter dürfen nie gelöscht werden
-			if (!akteAkzeptiert($akte->akte_id) && $akte->dokument_kurzbz != 'InvitLet')
+			if (!akteAkzeptiert($akte->akte_id) && ($akte->dokument_kurzbz != 'InvitLet' && $akte->dokument_kurzbz != 'ZeitBest'))
 			{
 				$returnstring .= '	<button type="button"
 											title="'.$p->t('global/löschen').'"
@@ -1995,11 +1995,9 @@ function getNachreichForm($dokument_kurzbz, $studiengang)
 	$colspan = 12;
 	if (CAMPUS_NAME == 'FH Technikum Wien' && ($dokument_kurzbz == 'zgv_bakk' || $dokument_kurzbz == 'zgv_mast' || $dokument_kurzbz == 'SprachB2'))
 	{
-		// $dokument_kurzbz == 'SprachB2' ? $infoText = 'bewerbung/infotextVorlaeufigesB2Dokument' : $infoText = 'bewerbung/infotextVorlaeufigesZgvDokument';
-		$infoText = 'bewerbung/infotextVorlaeufigesZgvDokument';
-
 		$returnstring .= '				<div class="col-sm-8">
-											<span>'.$p->t($infoText).'</span>
+											<span>'.$p->t('bewerbung/infotextVorlaeufigesZgvDokument').':</span>
+
 											<input  id="filenachgereicht_'.$studiengang.'_'.$dokument_kurzbz.'"
 													type="file"
 													name="filenachgereicht"

@@ -200,6 +200,7 @@ elseif($username && $password)
 		<link href="../../../vendor/twbs/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" type="text/css">
 		<link rel="stylesheet" type="text/css" href="../../../vendor/twbs/bootstrap/dist/css/bootstrap.min.css">
 		<link href="../include/css/registration.css" rel="stylesheet" type="text/css">
+		<script src="../include/js/bewerbung.js"></script>
 	</head>
 	<body class="main">
 		<div class="container">
@@ -256,7 +257,7 @@ elseif($username && $password)
 				$vorname = filter_input(INPUT_POST, 'vorname');
 				$nachname = filter_input(INPUT_POST, 'nachname');
 				$geb_datum = filter_input(INPUT_POST, 'geb_datum');
-				if($geb_datum)
+				if($geb_datum && $datum->checkDatum($geb_datum))
 				{
 					$geb_datum = date('Y-m-d', strtotime($geb_datum));
 				}
@@ -714,8 +715,17 @@ elseif($username && $password)
 						</label>
 						<div class="col-sm-4">
 							<input type="text" name="geb_datum" id="geburtsdatum"
-								   value="<?php echo isset($geb_datum) && $geb_datum != ''? date('d.m.Y', strtotime($geb_datum)) : '' ?>"
+								   value="<?php echo $datum->checkDatum($geb_datum)? date('d.m.Y', strtotime($geb_datum)) : '' ?>"
 								   class="form-control" placeholder="<?php echo $p->t('bewerbung/datumFormat') ?>">
+						</div>
+					</div>
+
+					<div>
+						<div class="col-sm-3">
+							<div></div>
+						</div>
+						<div id="danger-alert" class="col-sm-9 font-weight-bold">
+							<div id="responseGeb"></div>
 						</div>
 					</div>
 
@@ -1372,9 +1382,16 @@ elseif($username && $password)
 				alert("<?php echo $p->t('bewerbung/bitteGeburtsdatumEintragen')?>");
 				return false;
 			}
+			else if(checkFormat(document.RegistrationLoginForm.geb_datum.value) != 1)
+			{
+				alert("<?php echo $p->t('bewerbung/datumUngueltig')?>");
+				return false;
+			}
 			else
 			{
+
 				var gebDat = document.RegistrationLoginForm.geburtsdatum.value;
+
 				gebDat = gebDat.split(".");
 
 				if(gebDat.length !== 3)
@@ -1684,6 +1701,29 @@ elseif($username && $password)
 			});
 			<?php endif; ?>
 		});
+
+
+
+	var validateGeb = document.getElementById('geburtsdatum');
+	var responseGeb = document.getElementById('responseGeb');
+
+	validateGeb.onchange = function()
+	{
+		var response = checkFormat(validateGeb.value);
+
+		if (response == false)
+		{
+			responseGeb.innerHTML="<?php echo $p->t('bewerbung/datumUngueltig');?>";
+			$('#danger-alert').addClass('alert');
+			$('#danger-alert').addClass('alert-danger');
+		}
+		else
+		{
+			responseGeb.innerHTML='';
+			$('#danger-alert').removeClass('alert');
+			$('#danger-alert').removeClass('alert-danger');
+		}
+	}
 
 		window.setTimeout(function() {
 			$("#success-alert").fadeTo(500, 0).slideUp(500, function(){

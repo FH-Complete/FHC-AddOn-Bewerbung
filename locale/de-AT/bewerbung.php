@@ -447,19 +447,6 @@ $this->phrasen['bewerbung/orgformBeschreibungstext']='Bitte geben Sie an, für w
 $this->phrasen['bewerbung/menuAbschließen']='Abschließen';
 $this->phrasen['bewerbung/habenSieBereitsEinenZugangscode']='<b>Registrierte*r</b> Bewerber*in? <br>Sie haben sich bereits registriert und einen Zugangscode zu unserem Online-Bewerbungsportal erhalten?';
 
-//Phrasen FHTW: temporaer hier abgebildet für Demodev
-// $this->phrasen['bewerbung/sieHabenNochKeinenZugangscode']='<b>Neue*r</b> Bewerber*in? <br>Sie haben noch keinen Zugangscode oder Account an der FH Technikum Wien?';
-// $this->phrasen['bewerbung/studierenOderArbeitenSieBereits']='Neue*r Bewerber*in <b>und</b> bereits Student*in der FHTW? <br>Sie haben bereits einen aktiven CIS Account an der FHTW (Student*in).';
-// $this->phrasen['bewerbung/dannHiermitAccountEinloggen']='';
-// $this->phrasen['bewerbung/dannHierEinloggen']='';
-// $this->phrasen['bewerbung/bitteDokumenteHochladen']='Um Ihre Bewerbung abschicken zu können, müssen Sie Dokumente, die als „erforderlich“ markiert sind, hochladen.<br>
-// 	Sollte das Dokument zum gegenwärtigen Zeitpunkt noch nicht verfügbar sein, haben Sie die <b>Möglichkeit</b>, das <b>Dokument nachzureichen</b>.<br>
-// 	Klicken Sie dazu auf "Dokument wird nachgereicht" und geben Sie an, bis zu welchem Zeitpunkt Sie das Dokument nachreichen werden und welche Institution das Dokument ausstellen wird.<br>
-// 	Gegebenenfalls werden Sie im weiteren Verlauf der Bewerbung aufgefordert, hier weitere Dokumente hochzuladen.<br><br>
-// 	<b>Student*in oder Absolvent*in der FH Technikum Wien</b> die sich mit Ihrem bestehenden Zugangsdaten eingeloggt haben, müssen für eine Masterbewerbung <b>nur</b> einen aktuellen <b>Lebenslauf</b> hochladen. Die anderen Dokumente sind bereits im System gespeichert und werden für Ihre Bewerbung herangezogen.<br><br>
-// 	Bitte beachten Sie, dass überprüfte Dokumente nicht erneut hochgeladen werden können. Sollte ein aktuelleres Dokument vorliegen, so wenden Sie sich bitte an die Studiengangsassistenz.<br>
-// 	<b>Tipp:</b> Um mehrere Einzelseiten zu einer Datei zusammenfügen zu können, empfehlen wir Ihnen kostenlose Programme wie bspw. PDF Merge.';
-
 // Allgemeine Phrasen
 $this->phrasen['bewerbung/sieHabenNochKeinenZugangscode']='<b>Neue*r</b> Bewerber*in? <br>Sie haben noch keinen Zugangscode oder Account an der FH?';
 $this->phrasen['bewerbung/dannHiermitAccountEinloggen']='Dann loggen Sie sich hier mit Ihrem CIS-Account ein';
@@ -480,8 +467,8 @@ $this->phrasen['bewerbung/vorbehaltlichAkkreditierung']='Vorbehaltlich der Akkre
 $this->phrasen['bewerbung/auswahlmöglichkeitenImNaechstenSchritt']='Auswahlmöglichkeiten im nächsten Schritt';
 $this->phrasen['bewerbung/sieKoennenMaximalXStudiengaengeWaehlen']='Sie können sich online für maximal %s Studiengänge im gleichen Studiensemester bewerben. Wenn Sie mehr Informationen benötigen, steht Ihnen unsere <a href=\'https://www.technikum-wien.at/studieninformationen/studienberatung-kontaktieren/\' target=\'_blank\'>Studienberatung</a> gerne persönlich, telefonisch oder per E-Mail zur Verfügung.<br><br><a href=\'#\' class=\'alert-link\' data-dismiss=\'alert\' aria-label=\'close\'>Schließen</a>'; // Link muss mit einfachen Hochkomma maskiert werden, das es sonst im Bewerbungstool zu Anzeigefehlern kommt
 $this->phrasen['bewerbung/bitteEineStudienrichtungWaehlen']='Bitte eine Studienrichtung auswählen.';
-$this->phrasen['bewerbung/beschreibungTitelPre']='Akademische Titel, die dem Namen vorangestellt werden. ZB.: DI, Mag., Dr.';
-$this->phrasen['bewerbung/beschreibungTitelPost']='Akademische Titel, die dem Namen nachgestellt werden. ZB.: BA, MA, PhD';
+$this->phrasen['bewerbung/beschreibungTitelPre']='Akademische Titel, die dem Namen vorangestellt werden. ZB.: DI, Mag., Dr. <br><br>Im Zuge dieser Angabe ist ein entsprechender Nachweis ergänzend zu Ihren erforderlichen Dokumenten hochzuladen!';
+$this->phrasen['bewerbung/beschreibungTitelPost']='Akademische Titel, die dem Namen nachgestellt werden. ZB.: BA, MA, PhD. <br><br>Im Zuge dieser Angabe ist ein entsprechender Nachweis ergänzend zu Ihren erforderlichen Dokumenten hochzuladen!';
 $this->phrasen['bewerbung/BilduploadInfotext']='Sie können Bilder in den Formaten JPG, PNG oder GIF mit einer Maximalgröße von 15MB hochladen.<br><br><b>Bitte beachten Sie die <a href=\''.APP_ROOT.'cms/content.php?content_id=%s\' target=\'_blank\'>Richtlinien für den Bildupload</a></b>';
 $this->phrasen['bewerbung/fotoAuswaehlen']='Klicken Sie auf die Grafik um ein Foto hochzuladen und zuzuschneiden<br>Falls der Upload fehlschlägt, oder ihr Browser den Bildzuschnitt nicht unterstützt, <br>können Sie <a href="dms_akteupload.php?person_id=%s&dokumenttyp=Lichtbil"><b>hier</b></a> die Datei direkt hochladen';
 $this->phrasen['bewerbung/akademischeTitel']='Akademische(r) Titel';
@@ -512,7 +499,6 @@ $this->phrasen['bewerbung/infotextDisabled']='Da bereits eine Bewerbung vorhande
 $this->phrasen['bewerbung/bitteAnmerkungEintragen']='Bitte geben Sie den Namen der Institution ein, die das Dokument ausstellen wird';
 $this->phrasen['bewerbung/nachreichDatumNichtVergangenheit']='Das Datum der Nachreichung darf nicht in der Vergangenheit liegen';
 $this->phrasen['bewerbung/infotextVorlaeufigesZgvDokument']='Bitte laden Sie eine Datei hoch, welche glaubhaft vermittelt, dass Sie die Zugangsvoraussetzung für den gewählten Studiengang erlangen werden. Das kann das letzte Semester-, Teil-, bzw. ein Sammelzeugnis, eine (Anmelde)bestätigung, etc. sein.<br>';
-// $this->phrasen['bewerbung/infotextVorlaeufigesB2Dokument']='Bitte laden Sie eine Datei hoch, welche glaubhaft vermittelt, dass Sie die Zugangsvoraussetzung für den gewählten Studiengang erlangen werden. Das kann das letzte Semester-, Teil-, bzw. ein Sammelzeugnis, eine (Anmelde)bestätigung, etc. sein.';
 $this->phrasen['bewerbung/bitteDateiAuswaehlen']='Bitte wählen Sie eine Datei aus';
 $this->phrasen['bewerbung/zustimmungDatenuebermittlung']='Können in Ausnahmefällen die Zugangsvoraussetzungen von der FH Technikum Wien nicht abschließend abgeklärt werden, erteile ich die Zustimmung, dass die FH Technikum Wien die Dokumente zur Überprüfung an die zuständigen Behörden weiterleiten kann.<br>
 Ich wurde darüber informiert, dass ich nicht verpflichtet bin, der Übermittlung meiner Daten zuzustimmen. Diese Zustimmung ist allerdings notwendig, um die Bewerbung berücksichtigen zu können.';
