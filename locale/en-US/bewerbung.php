@@ -253,12 +253,6 @@ $this->phrasen['bewerbung/kontakt']='Contact';
 $this->phrasen['bewerbung/nation']='Nation';
 $this->phrasen['bewerbung/menuDokumente']='Documents';
 $this->phrasen['bewerbung/dokument']='Document';
-$this->phrasen['bewerbung/bitteDokumenteHochladen']='In order to be able to send in your application, you need to upload all the documents marked as "required".
-													If the document is not yet available at the respective time, you may submit it at a later date.
-													To do so, click "submit document later" and specify when you are going to submit the document as well as the issuing institution.<br>
-													Probably you will be prompted to upload more documents here in the course of your application.<br><br>
-													Tip: To merge several individual pages into one file, we recommend free programmes such as PDF Merge. <br><br>
-													Please note that verified documents cannot be uploaded again. If a more recent document is available, please contact the Administrative Assistant.';
 $this->phrasen['bewerbung/linkDokumenteHochladen']='Upload Documents';
 $this->phrasen['bewerbung/dokumenteZumHochladen']='Required documents:';
 $this->phrasen['bewerbung/dokumentName']='Name';
@@ -408,7 +402,7 @@ $this->phrasen['bewerbung/bitteDokumenteHochladen']='In order to be able to send
 													To do so, click "submit document later" and specify when you are going to submit the document as well as the issuing institution.<br>
 													Probably you will be prompted to upload more documents here in the course of your application.<br><br>
 													Please note that verified documents cannot be uploaded again. If a more recent document is available, please contact the Administrative Assistant.<br>
-													<b>Tip:</b> To merge several individual pages into one file, we recommend free programmes such as PDF Merge.<br>';
+													<b>Tip:</b> To merge several individual pages into one file, we recommend free programmes such as pdf Merge.<br>';
 
 $this->phrasen['bewerbung/zugangscodeVergessen']='Forgot access code?';
 $this->phrasen['bewerbung/dokumentHerunterladen']='Download document';
@@ -450,7 +444,7 @@ $this->phrasen['bewerbung/buttonStornierenDisabled']='Once the application has b
 $this->phrasen['bewerbung/infotextDisabled']='Since an application already exists or existed, you can no longer apply in %s for this degree program';
 $this->phrasen['bewerbung/bitteAnmerkungEintragen']='Please enter the name of the institution that will issue the document';
 $this->phrasen['bewerbung/nachreichDatumNichtVergangenheit']='The date of submission may not be in the past ';
-$this->phrasen['bewerbung/infotextVorlaeufigesZgvDokument']='Please upload a file that credibly demonstrates that you will meet the admission requirements for the chosen degree program. This can be the last semester certificate, partial certificate, a collective certificate, a (registration) confirmation, etc.<br>';
+$this->phrasen['bewerbung/infotextVorlaeufigesZgvDokument']='Please upload a file that credibly demonstrates that you will meet the admission requirements for the chosen degree program. This can be the last semester certificate, partial certificate, a collective certificate, a registration confirmation, etc.<br>';
 $this->phrasen['bewerbung/bitteDateiAuswaehlen']='Please choose a file';
 $this->phrasen['bewerbung/zustimmungDatenuebermittlung']='If in exceptional cases the admission requirements can not be finally clarified by the UAS Technikum Wien, I give my consent that the UAS Technikum Wien can forward the documents to the competent authorities for verification.<br>
 I have been informed that I am under no obligation to consent to the transmission of my data. However, this consent is necessary in order for the application to be considered.';

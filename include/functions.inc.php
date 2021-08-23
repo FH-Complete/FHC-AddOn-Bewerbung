@@ -1996,7 +1996,7 @@ function getNachreichForm($dokument_kurzbz, $studiengang)
 	if (CAMPUS_NAME == 'FH Technikum Wien' && ($dokument_kurzbz == 'zgv_bakk' || $dokument_kurzbz == 'zgv_mast' || $dokument_kurzbz == 'SprachB2'))
 	{
 		$returnstring .= '				<div class="col-sm-8">
-											<span>'.$p->t('bewerbung/infotextVorlaeufigesZgvDokument').':</span>
+											<span>'.$p->t('bewerbung/infotextVorlaeufigesZgvDokument').'</span>
 
 											<input  id="filenachgereicht_'.$studiengang.'_'.$dokument_kurzbz.'"
 													type="file"
@@ -2099,7 +2099,7 @@ function setDokumenteMasterZGV($person_id)
 		$zgvMaster ->akzeptiereDokument('SprachB2', $person_id);
 		$zgvMaster ->akzeptiereDokument('Statisti', $person_id);
 		$zgvMaster ->akzeptiereDokument('ecard', $person_id);
-	
+
 
 		//Dokumente entakzeptieren
 		$zgvMaster ->entakzeptiereDokument('Meldezet', $person_id);

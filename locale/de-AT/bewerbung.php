@@ -457,7 +457,7 @@ $this->phrasen['bewerbung/bitteDokumenteHochladen']='Um Ihre Bewerbung abschicke
 	Klicken Sie dazu auf "Dokument wird nachgereicht" und geben Sie an, bis zu welchem Zeitpunkt Sie das Dokument nachreichen werden und welche Institution das Dokument ausstellen wird.<br>
 	Gegebenenfalls werden Sie im weiteren Verlauf der Bewerbung aufgefordert, hier weitere Dokumente hochzuladen.<br><br>
 	Bitte beachten Sie, dass überprüfte Dokumente nicht erneut hochgeladen werden können. Sollte ein aktuelleres Dokument vorliegen, so wenden Sie sich bitte an die Studiengangsassistenz.<br>
-	<b>Tipp:</b> Um mehrere Einzelseiten zu einer Datei zusammenfügen zu können, empfehlen wir Ihnen kostenlose Programme wie bspw. PDF Merge.';
+	<b>Tipp:</b> Um mehrere Einzelseiten zu einer Datei zusammenfügen zu können, empfehlen wir Ihnen kostenlose Programme wie bspw. pdf Merge.';
 
 $this->phrasen['bewerbung/zugangscodeVergessen']='Zugangscode vergessen?';
 $this->phrasen['bewerbung/hinweisZGVdatenaenderung']='<b>Hinweis:</b> Aus organisatorischen Gründen können gespeicherte Angaben hier nicht mehr verändert werden. Sollten Angaben fehlerhaft sein, verwenden Sie bitte das Notizfeld im Schritt "Abschließen" oder kontaktieren Sie die Assistenz per E-Mail.';
@@ -498,7 +498,7 @@ $this->phrasen['bewerbung/buttonStornierenDisabled']='Wenn die Bewerbung abgesch
 $this->phrasen['bewerbung/infotextDisabled']='Da bereits eine Bewerbung vorhanden ist oder war, können Sie sich im %s nicht mehr für diesen Studiengang bewerben';
 $this->phrasen['bewerbung/bitteAnmerkungEintragen']='Bitte geben Sie den Namen der Institution ein, die das Dokument ausstellen wird';
 $this->phrasen['bewerbung/nachreichDatumNichtVergangenheit']='Das Datum der Nachreichung darf nicht in der Vergangenheit liegen';
-$this->phrasen['bewerbung/infotextVorlaeufigesZgvDokument']='Bitte laden Sie eine Datei hoch, welche glaubhaft vermittelt, dass Sie die Zugangsvoraussetzung für den gewählten Studiengang erlangen werden. Das kann das letzte Semester-, Teil-, bzw. ein Sammelzeugnis, eine (Anmelde)bestätigung, etc. sein.<br>';
+$this->phrasen['bewerbung/infotextVorlaeufigesZgvDokument']='Bitte laden Sie eine Datei hoch, welche glaubhaft vermittelt, dass Sie die Zugangsvoraussetzung für den gewählten Studiengang erlangen werden. Das kann das letzte Semester-, Teil-, bzw. ein Sammelzeugnis, eine Anmeldebestätigung, etc. sein.<br>';
 $this->phrasen['bewerbung/bitteDateiAuswaehlen']='Bitte wählen Sie eine Datei aus';
 $this->phrasen['bewerbung/zustimmungDatenuebermittlung']='Können in Ausnahmefällen die Zugangsvoraussetzungen von der FH Technikum Wien nicht abschließend abgeklärt werden, erteile ich die Zustimmung, dass die FH Technikum Wien die Dokumente zur Überprüfung an die zuständigen Behörden weiterleiten kann.<br>
 Ich wurde darüber informiert, dass ich nicht verpflichtet bin, der Übermittlung meiner Daten zuzustimmen. Diese Zustimmung ist allerdings notwendig, um die Bewerbung berücksichtigen zu können.';
