@@ -1,0 +1,79 @@
+.legend
+{
+	display:flex;
+	justify-content: flex-start;
+}
+
+.containerLegende
+{
+	display:flex;
+	justify-content: flex-start;
+	flex-wrap: wrap;
+	flex-direction: row;
+}
+
+.lleft
+{
+	width:25%;
+	font-size:small;
+	border-left: 1pt solid grey;
+	border-top: 1pt solid grey ;
+	border-bottom: 1pt solid grey ;
+	border-top-left-radius: 5px;
+	border-bottom-left-radius: 5px;
+	padding: 10px 0px 10px 10px;
+}
+
+.col
+{
+	border: 1pt dotted;
+	padding: 10px;
+	margin: 1px;
+}
+
+.lright
+{
+	width:40%;
+	padding: 10px 10px 10px 10px;
+	margin-left: 0px;
+	border-right: 1pt solid grey;
+	border-top: 1pt solid grey ;
+	border-bottom: 1pt solid grey ;
+	border-top-right-radius: 5px;
+	border-bottom-right-radius: 5px;
+	font-size:small;
+
+}
+
+.success
+{
+	background-color: #dff0d8;
+	color: #dff0d8;
+}
+
+.danger
+{
+	background-color: mistyrose;
+	color: mistyrose;
+}
+
+.secondary
+{
+	background-color: whitesmoke;
+	display: flex;
+	justify-content: center;
+}
+
+.grey
+{
+	background-color: whitesmoke;
+	color: whitesmoke;
+}
+
+.labelg
+{
+  display: inline;
+  border: 1pt solid black;
+  color: white;
+  background-color: dimgrey;
+}
