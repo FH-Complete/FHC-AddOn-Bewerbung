@@ -570,12 +570,12 @@ if (! isset($person_id))
 			<div class="lright">
 				<div class="col">Pflichtdokument</div>
 				<div class="col">erforderliches Dokument bereits hochgeladen</div>
-				<div class="col">Dokument bereits hochgeladen</div>
+				<div class="col">Dokument bereits vorhanden</div>
 				<div class="col">falls zutreffend hochladen</div>
 			</div>
 		</div>
 	</div>
 	<br>
-	
+
 
 </div>
