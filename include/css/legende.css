@@ -9,12 +9,13 @@
 	display:flex;
 	justify-content: flex-start;
 	flex-wrap: wrap;
-	flex-direction: row;
+	flex-direction: column;
+	width:70%;
 }
 
 .lleft
 {
-	width:25%;
+	width:40%;
 	font-size:small;
 	border-left: 1pt solid grey;
 	border-top: 1pt solid grey ;
@@ -24,7 +25,7 @@
 	padding: 10px 0px 10px 10px;
 }
 
-.col
+.colg
 {
 	border: 1pt dotted;
 	padding: 10px;
@@ -33,7 +34,7 @@
 
 .lright
 {
-	width:40%;
+	width:60%;
 	padding: 10px 10px 10px 10px;
 	margin-left: 0px;
 	border-right: 1pt solid grey;
@@ -73,7 +74,6 @@
 .labelg
 {
   display: inline;
-  border: 1pt solid black;
   color: white;
   background-color: dimgrey;
 }
