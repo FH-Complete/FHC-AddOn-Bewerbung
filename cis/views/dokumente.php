@@ -557,4 +557,25 @@ if (! isset($person_id))
 			});
 		});
 	</script>
+
+	<div class="containerLegende">
+		<h3>Legende</h3>
+		<div class="legend">
+			<div class="lleft">
+				<div class="col colg danger bg-danger">1</div>
+				<div class="col colg success bg-success">2</div>
+				<div class="col colg secondary bg-secondary"><span class="label labelg">Dokument nicht erforderlich</span></div>
+				<div class="col colg grey bg-secondary">4</div>
+			</div>
+			<div class="lright">
+				<div class="col colg">Pflichtdokument</div>
+				<div class="col colg">erforderliches Dokument bereits hochgeladen</div>
+				<div class="col colg">Dokument bereits vorhanden</div>
+				<div class="col colg">falls zutreffend hochladen</div>
+			</div>
+		</div>
+	</div>
+	<br>
+
+
 </div>

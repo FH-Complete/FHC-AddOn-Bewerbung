@@ -61,7 +61,7 @@ dokument a:hover
 	background: linear-gradient(transparent , white );
 }
 /* Animiertes Icon für Ladezeiten */
-.loaderIcon 
+.loaderIcon
 {
 	border: 8px solid #f3f3f3; /* Light grey */
 	border-top: 8px solid #3498db; /* Blue */
@@ -70,7 +70,7 @@ dokument a:hover
 	height: 40px;
 	animation: spin 2s linear infinite;
 }
-@keyframes spin 
+@keyframes spin
 {
 	0% { transform: rotate(0deg); }
 	100% { transform: rotate(360deg); }
@@ -78,20 +78,20 @@ dokument a:hover
 
 /* Sprache-Dropdown im Navigatoinsmenü */
 /* Navbar container */
-.navbar 
+.navbar
 {
 	overflow: hidden;
 }
 
 /* The dropdown container */
-.dropdown 
+.dropdown
 {
 	float: left;
 	overflow: hidden;
 }
 
 /* Dropdown button */
-.sprache-dropdown .dropbtn 
+.sprache-dropdown .dropbtn
 {
 	/* font-size: 16px; */
 	color: #777;
@@ -104,14 +104,14 @@ dokument a:hover
 }
 
 /* Add a red background color to navbar links on hover */
-.navbar a:hover, .sprache-dropdown:hover .dropbtn 
+.navbar a:hover, .sprache-dropdown:hover .dropbtn
 {
 	/* background-color: red; */
 	color: black;
 }
 
 /* Dropdown content (hidden by default) */
-.sprache-dropdown-content 
+.sprache-dropdown-content
 {
 	display: none;
 	position: fixed;
@@ -122,7 +122,7 @@ dokument a:hover
 }
 
 /* Links inside the dropdown */
-.sprache-dropdown-content a 
+.sprache-dropdown-content a
 {
 	float: none;
 	color: #777;
@@ -133,13 +133,13 @@ dokument a:hover
 }
 
 /* Add a grey background color to dropdown links on hover */
-.sprache-dropdown-content a:hover 
+.sprache-dropdown-content a:hover
 {
 	background-color: #ddd;
 }
 
 /* Show the dropdown menu on hover */
-.sprache-dropdown:hover .sprache-dropdown-content 
+.sprache-dropdown:hover .sprache-dropdown-content
 {
 	display: block;
 }
