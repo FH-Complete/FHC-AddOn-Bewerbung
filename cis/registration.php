@@ -1533,6 +1533,18 @@ elseif($username && $password)
 				window.scrollTo(0, 0);
 			}
 
+			// Wenn das Dropdown zur Wahl der ZGV-Nation eingeblendet ist, werden alle Bachelor- und Master-Checkboxen deaktiviert,
+			// bis eine Auswahl getroffen wurde
+			<?php if(defined('BEWERBERTOOL_SHOW_REGISTRATION_ZGVNATION') && BEWERBERTOOL_SHOW_REGISTRATION_ZGVNATION): ?>
+			if($('#zgv_nation').val() == '')
+			{
+				$("input[type=checkbox][class=checkbox_stg]").not(":checked").attr("disabled",true);
+				$("input[type=checkbox][class=checkbox_stg]").parents("label").addClass("text-muted");
+				$("input[type=checkbox][class=checkbox_stg]").parents("div").addClass("disabled");
+				$("input[type=checkbox][class=checkbox_stg]").parents("label").append("<br/><div class=\"label label-warning\" style=\"white-space: initial\"><span class=\"glyphicon glyphicon-warning-sign\"></span>&nbsp;&nbsp;<?php echo $p->t('bewerbung/bitteZGVausweahlen'); ?></div>");
+			}
+			<?php endif; ?>
+
 			//Zeigt das Prio-Badge, wenn mehr als ein Bachelor- oder Master-Studiengang gewählt wird
 			// Und zaehlt in der Reihenfolge hoch, in der die Checkbox angeklickt wird
 			$("input[type=checkbox][class=checkbox_stg]").click(function()
