@@ -3050,7 +3050,7 @@ function sendBewerbung($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz,
 		$notiz->save(true);
 		$notiz->saveZuordnung();
 	}
-	if (CAMPUS_NAME == 'FH Technikum Wien' && $studiengang->typ != 'b')
+	if (CAMPUS_NAME == 'FH Technikum Wien' && $studiengang->typ != 'b' && $studiengang->typ != 'm')
 	{
 		$kontakt = new kontakt();
 		$kontakt->load_persKontakttyp($person->person_id, 'email', 'zustellung DESC');
