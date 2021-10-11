@@ -602,7 +602,7 @@ elseif($username && $password)
 									$prestudent->new = true;
 
 									// ZGV aufgrund der ZGV-Nation setzen
-									if ($zgv_nation != '' && $studiengangForZgv->typ == 'b')
+									if ($zgv_nation != '' && ($studiengangForZgv->typ == 'b' || $studiengangForZgv->typ == 'l'))
 									{
 										$prestudent->zgvnation = $zgv_nation;
 									}
@@ -1001,6 +1001,7 @@ elseif($username && $password)
 
 									$nation = new nation($zgv_nation);
 									$nationengruppe = $nation->nationengruppe_kurzbz;
+									echo "zgvnation: " . $nationengruppe;
 
 									if ($nationengruppe == '')
 									{
