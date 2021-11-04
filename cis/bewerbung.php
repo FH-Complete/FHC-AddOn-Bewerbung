@@ -2578,7 +2578,7 @@ $status_zahlungen_text = $vollstaendig;
 
 if (! defined('BEWERBERTOOL_ZAHLUNGEN_ANZEIGEN') || BEWERBERTOOL_ZAHLUNGEN_ANZEIGEN == true)
 {
-	if (! $konto->checkKontostand($person_id))
+	if (! $konto->checkKontostand($person_id, true))
 	{
 		$status_zahlungen = false;
 		$status_zahlungen_text = $unvollstaendig;
