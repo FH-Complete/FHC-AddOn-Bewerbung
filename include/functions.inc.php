@@ -1489,10 +1489,65 @@ function getReihungstestsForOnlinebewerbung($studienplan_id, $studiensemester_ku
 						END
 					) AS anzahl_plaetze,
 				(
-					SELECT count(*)
-					FROM PUBLIC.tbl_rt_person
-					WHERE rt_id = rt.reihungstest_id
-					) AS anzahl_anmeldungen,
+					SELECT count(DISTINCT(tbl_rt_person.rt_person_id))
+					FROM public.tbl_rt_person
+					JOIN PUBLIC.tbl_prestudent ON (tbl_rt_person.person_id = tbl_prestudent.person_id)
+					JOIN PUBLIC.tbl_prestudentstatus USING (prestudent_id)
+					WHERE tbl_rt_person.rt_id = rt.reihungstest_id
+					AND CASE WHEN
+					(
+						get_rolle_prestudent (tbl_prestudent.prestudent_id, rt.studiensemester_kurzbz) IN ('Abgewiesener') 
+						AND
+						rt.datum > (
+							SELECT MAX(insertamum) 
+							FROM PUBLIC.tbl_prestudentstatus
+							WHERE prestudent_id = tbl_prestudent.prestudent_id
+							AND status_kurzbz = 'Abgewiesener'
+							LIMIT 1
+						)
+					)
+					THEN
+						false
+					ELSE
+						true
+					END
+					AND tbl_rt_person.studienplan_id IN (
+						SELECT studienplan_id
+						FROM PUBLIC.tbl_prestudentstatus
+						WHERE prestudent_id = tbl_prestudent.prestudent_id
+					)
+					AND tbl_prestudentstatus.studiensemester_kurzbz IN (
+						SELECT studiensemester_kurzbz
+						FROM PUBLIC.tbl_studiensemester
+						WHERE studiensemester_kurzbz = rt.studiensemester_kurzbz
+						
+						UNION
+						
+						(
+							SELECT studiensemester_kurzbz
+							FROM PUBLIC.tbl_studiensemester
+							WHERE ende <= (
+								SELECT start
+								FROM PUBLIC.tbl_studiensemester
+								WHERE studiensemester_kurzbz = rt.studiensemester_kurzbz
+								)
+							ORDER BY ende DESC LIMIT 1
+						)
+						
+						UNION
+						
+						(
+							SELECT studiensemester_kurzbz
+							FROM PUBLIC.tbl_studiensemester
+							WHERE start >= (
+								SELECT ende
+								FROM PUBLIC.tbl_studiensemester
+								WHERE studiensemester_kurzbz = rt.studiensemester_kurzbz
+								)
+							ORDER BY start ASC LIMIT 1
+						)
+					)
+				) AS anzahl_anmeldungen,
 				rt.*
 			FROM PUBLIC.tbl_reihungstest rt
 			JOIN PUBLIC.tbl_rt_studienplan USING (reihungstest_id)
