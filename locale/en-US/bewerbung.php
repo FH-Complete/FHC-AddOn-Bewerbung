@@ -552,6 +552,7 @@ $this->phrasen['bewerbung/bewerbungszeitraumStartetAm']='Application period star
 $this->phrasen['bewerbung/bewerbungsfristEndetInXTagen']='Application period ends in %s days';
 $this->phrasen['bewerbung/bewerbungsfristEndetHeute']='Application period ends today';
 $this->phrasen['bewerbung/bewerbungsfristFuerStudiensemesterXAbgelaufen']='Application deadline for %s has expired';
+$this->phrasen['bewerbung/bewerbungsfristFuerEinenStudiengangAbgelaufen']='Application period for at least one degree program has expired';
 $this->phrasen['bewerbung/bewerbungDerzeitNichtMoeglich']='Application currently not possible. Please contact <a href="mailto:%1$s">%1$s</a>';
 $this->phrasen['bewerbung/bewerbungenFuerAb']='Application for %s starting %s';
 $this->phrasen['bewerbung/bewerbungenFuerStudiensemesterXX']='Applications for study semester %s';

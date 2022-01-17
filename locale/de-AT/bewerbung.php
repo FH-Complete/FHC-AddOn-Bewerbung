@@ -607,6 +607,7 @@ $this->phrasen['bewerbung/bewerbungszeitraumStartetAm']='Bewerbungszeitraum star
 $this->phrasen['bewerbung/bewerbungsfristEndetInXTagen']='Bewerbungsfrist endet in %s Tagen';
 $this->phrasen['bewerbung/bewerbungsfristEndetHeute']='Bewerbungsfrist endet heute';
 $this->phrasen['bewerbung/bewerbungsfristFuerStudiensemesterXAbgelaufen']='Bewerbungsfrist für das %s ist abgelaufen';
+$this->phrasen['bewerbung/bewerbungsfristFuerEinenStudiengangAbgelaufen']='Die Bewerbungsfrist für mindestens einen der gewählten Studiengänge ist abgelaufen';
 $this->phrasen['bewerbung/bewerbungDerzeitNichtMoeglich']='Bewerbung derzeit nicht möglich. Bitte kontaktieren Sie <a href="mailto:%1$s">%1$s</a>';
 $this->phrasen['bewerbung/bewerbungenFuerAb']='Bewerbungen fürs %s ab %s';
 $this->phrasen['bewerbung/bewerbungenFuerStudiensemesterXX']='Bewerbungen für das Studiensemester %s';
@@ -680,7 +681,7 @@ $this->phrasen['bewerbung/anmeldefrist']='Anmeldefrist';
 $this->phrasen['bewerbung/infoVorgemerktFuerQualifikationskurs']='Sie sind als TeilnehmerIn für die Qualifikationskurse vorgemerkt. Sobald sie dort bestätigt wurden, können Sie hier einen Termin für den Reihungstest wählen.';
 $this->phrasen['bewerbung/raumzuteilungFolgt']='Details folgen 2 Werktage vor Testbeginn per E-Mail (Bitte auch Spamordner überprüfen!)';
 $this->phrasen['bewerbung/sieHabenFolgendenTerminGewaehlt']='Danke für Ihre Anmeldung zum Reihungstest.<br>Ihre Priorisierung der Studiengänge ist fixiert und kann nur bis zur Anmeldefrist geändert werden.<br>Nach Absolvierung des Reihungstests kann die Priorisierung <b>NICHT</b> mehr geändert werden.';
-$this->phrasen['bewerbung/loginReihungstest']='<h3>Online-Reihungstest</h3>Klicken Sie auf den folgenden Button, um zum Reihungstest zu gelangen. <br>
+$this->phrasen['bewerbung/loginReihungstest']='<h3>Online-Reihungstest</h3>Klicken Sie <b>am Tag Ihres Reihungstesttermins</b> auf den Button "Zum Reihungstest"<br>
 												Bitte beachten Sie, dass Sie <u>Mozilla Firefox</u> als Browser verwenden, da es sonst zu Darstellungsproblemen kommen kann.<br><br>
 												<a href="'.APP_ROOT.'cis/testtool/index.php?prestudent=%s" class="btn btn-primary" role="button" target="_blank">Zum Reihungstest</a>';
 $this->phrasen['bewerbung/informationenRTvorhanden']='Informationen zum Reihungstest vorhanden';
