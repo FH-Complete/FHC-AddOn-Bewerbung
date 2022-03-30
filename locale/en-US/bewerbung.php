@@ -622,6 +622,7 @@ UAS Technikum Wien';
 
 $this->phrasen['bewerbung/reihungstestInfoTextAngemeldet']='<div class="alert alert-info">
 <p>We will start on time with the identity check. Therefore, make sure you are in the Zoom waiting room at that time (you will receive the link 2 working days before your chosen placement test date).</p>
+<p>You find the entry to the placement test in your Bachelor application under <a href="https://cis.technikum-wien.at/cms/dms.php?id=147448" target="_blank">overview/details/to the placement test</a> here in the online application tool.</p>
 </div><br>';
 $this->phrasen['bewerbung/anmeldefrist']='Term of application';
 $this->phrasen['bewerbung/infoVorgemerktFuerQualifikationskurs']='You are pencilled in as a participant for the qualification courses. Once you are confirmed there, you can choose an appointment for the placement test here.';

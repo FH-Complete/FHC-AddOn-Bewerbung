@@ -676,6 +676,7 @@ Mit freundlichen Grüßen<br>
 Fachhochschule Technikum Wien';
 $this->phrasen['bewerbung/reihungstestInfoTextAngemeldet']='<div class="alert alert-info">
 <p>Wir starten pünktlich mit der Identitätskontrolle. Stellen Sie daher sicher, dass Sie zu diesem Zeitpunkt im Zoom Warteraum sind (Den Link erhalten Sie 2 Werktage vor Ihrem gewählten Reihungstesttermin)</p>
+<p>Den Einstieg zum Reihungstest finden Sie bei Ihrer Bachelorbewerbung unter <a href="https://cis.technikum-wien.at/cms/dms.php?id=147448" target="_blank">Ubersicht/Details/zum Reihungstest</a> hier im Online-Bewerbungstool.</p>
 </div><br>';
 $this->phrasen['bewerbung/anmeldefrist']='Anmeldefrist';
 $this->phrasen['bewerbung/infoVorgemerktFuerQualifikationskurs']='Sie sind als TeilnehmerIn für die Qualifikationskurse vorgemerkt. Sobald sie dort bestätigt wurden, können Sie hier einen Termin für den Reihungstest wählen.';
