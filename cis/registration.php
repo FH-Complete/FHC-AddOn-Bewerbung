@@ -1001,7 +1001,6 @@ elseif($username && $password)
 
 									$nation = new nation($zgv_nation);
 									$nationengruppe = $nation->nationengruppe_kurzbz;
-									echo "zgvnation: " . $nationengruppe;
 
 									if ($nationengruppe == '')
 									{

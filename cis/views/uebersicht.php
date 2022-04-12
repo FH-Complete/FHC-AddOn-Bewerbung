@@ -1169,7 +1169,7 @@ $studiensemester_array = array();
 					}
 				}
 				$nation = new nation($zgv_nation);
-				echo $nationengruppe = $nation->nationengruppe_kurzbz;
+				$nationengruppe = $nation->nationengruppe_kurzbz;
 
 				//wenn nichts angegeben, wird die Bewerbungsfrist für Drittstaaten angenommen
 				if ($nationengruppe == '')
