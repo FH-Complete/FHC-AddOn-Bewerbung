@@ -192,12 +192,10 @@ if (!isset($person_id))
 			}
 			else if((anzahlAktenZuAkzeptieren > 0) && (existsOffeneBewerbung == ''))
 			{
-				$('#output42').text('<?php echo 'FALL anzahl zu akzeptieren > 0 und keine offene Bewerbung'?>');
 				if(!isStudent)
 				{
 					$('#output').hide();
 					$('#Aktentext').text('<?php echo $p->t('bewerbung/keineAktenVorhanden')?>');
-					$('#output42').text('<?php echo "HIER"?>');
 					if(showAktentext)
 					{
 						$('#tabAktenStatustext').html('&nbsp;');
