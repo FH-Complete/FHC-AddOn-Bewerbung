@@ -867,7 +867,7 @@ function BewerbungGetGemeinden($plz)
 	else
 		return false;
 }
-function getBewerbungszeitraum($studiengang_kz, $studiensemester, $studienplan_id, $nationengruppe_kurzbz = null)
+function getBewerbungszeitraum($studiengang_kz, $studiensemester, $studienplan_id, $nationengruppe_kurzbz = null, $person_id = null)
 {
 	global $p, $datum;
 	$tage_bis_fristablauf = '';
@@ -876,6 +876,13 @@ function getBewerbungszeitraum($studiengang_kz, $studiensemester, $studienplan_i
 	$bewerbungszeitraum = '';
 	$class = '';
 	$bewerbungsfrist = '';
+
+	//wenn eine interne ZGV vorliegt, Bewerbungsfrist für EU-Nation nehmen
+	$prestudent = new prestudent();
+	if ($prestudent->existsZGVIntern($person_id))
+	{
+		$nationengruppe_kurzbz = 'eu';
+	}
 
 	$bewerbungsfristen = new bewerbungstermin();
 	$bewerbungsfristen->getBewerbungstermine($studiengang_kz, $studiensemester, 'nationengruppe_kurzbz NULLS FIRST, insertamum DESC', $studienplan_id, $nationengruppe_kurzbz);

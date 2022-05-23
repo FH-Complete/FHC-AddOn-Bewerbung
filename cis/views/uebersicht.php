@@ -1177,7 +1177,7 @@ $studiensemester_array = array();
 					$nationengruppe = 'drittstaat';
 				}
 
-				$bewerbungszeitraum = getBewerbungszeitraum($row->studiengang_kz, $std_semester, $row->studienplan_id, $nationengruppe);
+				$bewerbungszeitraum = getBewerbungszeitraum($row->studiengang_kz, $std_semester, $row->studienplan_id, $nationengruppe, $person_id);
 				$stg_bezeichnung .= ' '.$bewerbungszeitraum['infoDiv'];
 				$fristAbgelaufen = $bewerbungszeitraum['frist_abgelaufen'];
 
