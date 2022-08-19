@@ -1347,7 +1347,7 @@ elseif($username && $password)
 				</div>
 			<?php endif; ?>
 		</div>
-		<script type="text/javascript" src="../../../vendor/jquery/jqueryV1/jquery-1.12.4.min.js"></script>
+		<script type="text/javascript" src="../../../vendor/jquery/jquery1/jquery-1.12.4.min.js"></script>
 		<script type="text/javascript" src="../../../vendor/twbs/bootstrap/dist/js/bootstrap.min.js"></script>
 		<script type="text/javascript">
 

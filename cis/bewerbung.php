@@ -2646,7 +2646,7 @@ else
 		<link rel="stylesheet" type="text/css" href="../include/css/bewerbung.css">
 		<link rel="stylesheet" type="text/css" href="../include/css/croppie.css">
 		<link rel="stylesheet" type="text/css" href="../include/css/legende.css">
-		<script type="text/javascript" src="../../../vendor/jquery/jqueryV1/jquery-1.12.4.min.js"></script>
+		<script type="text/javascript" src="../../../vendor/jquery/jquery1/jquery-1.12.4.min.js"></script>
 		<script type="text/javascript" src="../../../vendor/twbs/bootstrap/dist/js/bootstrap.min.js"></script>
 		<script src="../include/js/bewerbung.js"></script>
 		<script src="../include/js/croppie.js"></script>
