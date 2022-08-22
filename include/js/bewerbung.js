@@ -352,7 +352,7 @@ function checkValidDate(datum)
 
 function checkFormat(datum)
 {
-	var regex1 = new RegExp("([0-9]{2}).([0-9]{2}).([0-9]{4})$");
+	var regex1 = new RegExp("([0-9]{2})[.]([0-9]{2})[.]([0-9]{4})$");
 	var regex2 = new RegExp("([0-9]{4})-([0-9]{2})-([0-9]{2})$");
 
 	if (regex1.test(datum))

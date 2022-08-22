@@ -68,7 +68,7 @@ AND (tbl_prestudent.insertamum >= (SELECT (CURRENT_DATE -1||' '||'03:00:00')::ti
 	OR tbl_prestudentstatus.insertamum >= (SELECT (CURRENT_DATE -1||' '||'03:00:00')::timestamp))
 AND tbl_prestudentstatus.status_kurzbz = 'Interessent'
 AND tbl_prestudentstatus.bewerbung_abgeschicktamum IS NULL
-AND tbl_studiengang.typ != 'b'
+AND tbl_studiengang.typ != 'b' AND tbl_studiengang.typ != 'm'
 AND get_rolle_prestudent (tbl_prestudent.prestudent_id, studiensemester_kurzbz) != 'Abgewiesener'
 ORDER BY studiengang_kz, studiensemester_kurzbz, orgform_kurzbz, nachname, vorname";
 

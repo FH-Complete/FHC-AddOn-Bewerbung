@@ -2578,7 +2578,7 @@ $status_zahlungen_text = $vollstaendig;
 
 if (! defined('BEWERBERTOOL_ZAHLUNGEN_ANZEIGEN') || BEWERBERTOOL_ZAHLUNGEN_ANZEIGEN == true)
 {
-	if (! $konto->checkKontostand($person_id))
+	if (! $konto->checkKontostand($person_id, true))
 	{
 		$status_zahlungen = false;
 		$status_zahlungen_text = $unvollstaendig;
@@ -3188,11 +3188,11 @@ function sendBewerbung($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz,
 		$email .= $p->t('bewerbung/emailBodyEnde', array($sanchoMailFooter));
 	}
 
-	// An der FHTW werden alle Bachelor-Studiengänge vom Infocenter abgearbeitet und deshalb keine Mail verschickt
+	// An der FHTW werden alle Bachelor-Studiengänge und Master vom Infocenter abgearbeitet und deshalb keine Mail verschickt
 	// Die FIT-Studiengänge erhalten auch kein Mail
 	if (CAMPUS_NAME == 'FH Technikum Wien')
 	{
-		if ($studiengang->typ != 'b' && $studiengang->studiengang_kz != 10021 && $studiengang->studiengang_kz != 10027)
+		if ($studiengang->typ != 'b' && $studiengang->typ != 'm' && $studiengang->studiengang_kz != 10021 && $studiengang->studiengang_kz != 10027)
 		{
 			$email = wordwrap($email, 70); // Bricht den Code um, da es sonst zu Anzeigefehlern im Mail kommen kann
 
@@ -3247,10 +3247,10 @@ function sendBewerbung($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz,
 			return false;
 	}
 
-	// An der FHTW werden alle Bachelor-Studiengänge vom Infocenter abgearbeitet und deshalb keine Mail verschickt
+	// An der FHTW werden alle Bachelor-Studiengänge und Master vom Infocenter abgearbeitet und deshalb keine Mail verschickt
 	if (CAMPUS_NAME == 'FH Technikum Wien')
 	{
-		if ($studiengang->typ != 'b' && $studiengang->studiengang_kz != 10021 && $studiengang->studiengang_kz != 10027)
+		if ($studiengang->typ != 'b' && $studiengang->typ != 'm' && $studiengang->studiengang_kz != 10021 && $studiengang->studiengang_kz != 10027)
 		{
 			if (! $mail->send())
 				return false;

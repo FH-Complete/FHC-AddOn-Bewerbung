@@ -444,7 +444,7 @@ $this->phrasen['bewerbung/buttonStornierenDisabled']='Once the application has b
 $this->phrasen['bewerbung/infotextDisabled']='Since an application already exists or existed, you can no longer apply in %s for this degree program';
 $this->phrasen['bewerbung/bitteAnmerkungEintragen']='Please enter the name of the institution that will issue the document';
 $this->phrasen['bewerbung/nachreichDatumNichtVergangenheit']='The date of submission may not be in the past ';
-$this->phrasen['bewerbung/infotextVorlaeufigesZgvDokument']='Please upload a file that credibly demonstrates that you will meet the admission requirements for the chosen degree program. This can be the last semester certificate, partial certificate, a collective certificate, a (registration) confirmation, etc.<br>';
+$this->phrasen['bewerbung/infotextVorlaeufigesZgvDokument']='Please upload a file that credibly demonstrates that you will meet the admission requirements for the chosen degree program. This can be the last semester certificate, partial certificate, a collective certificate, a (registration) confirmation, etc. (Confirmations of study or enrolment are not accepted!)<br>';
 $this->phrasen['bewerbung/bitteDateiAuswaehlen']='Please choose a file';
 $this->phrasen['bewerbung/zustimmungDatenuebermittlung']='If in exceptional cases the admission requirements can not be finally clarified by the UAS Technikum Wien, I give my consent that the UAS Technikum Wien can forward the documents to the competent authorities for verification.<br>
 I have been informed that I am under no obligation to consent to the transmission of my data. However, this consent is necessary in order for the application to be considered.';
@@ -552,6 +552,7 @@ $this->phrasen['bewerbung/bewerbungszeitraumStartetAm']='Application period star
 $this->phrasen['bewerbung/bewerbungsfristEndetInXTagen']='Application period ends in %s days';
 $this->phrasen['bewerbung/bewerbungsfristEndetHeute']='Application period ends today';
 $this->phrasen['bewerbung/bewerbungsfristFuerStudiensemesterXAbgelaufen']='Application deadline for %s has expired';
+$this->phrasen['bewerbung/bewerbungsfristFuerEinenStudiengangAbgelaufen']='Application period for at least one degree program has expired';
 $this->phrasen['bewerbung/bewerbungDerzeitNichtMoeglich']='Application currently not possible. Please contact <a href="mailto:%1$s">%1$s</a>';
 $this->phrasen['bewerbung/bewerbungenFuerAb']='Application for %s starting %s';
 $this->phrasen['bewerbung/bewerbungenFuerStudiensemesterXX']='Applications for study semester %s';
@@ -620,7 +621,8 @@ Yours sincerely<br>
 UAS Technikum Wien';
 
 $this->phrasen['bewerbung/reihungstestInfoTextAngemeldet']='<div class="alert alert-info">
-<p>Please make sure that you are ready for the online-placement test 15 minutes before the beginning.</p>
+<p>We will start on time with the identity check. Therefore, make sure you are in the Zoom waiting room at that time (you will receive the link 2 working days before your chosen placement test date).</p>
+<p>You find the entry to the placement test in your Bachelor application under <a href="https://cis.technikum-wien.at/cms/dms.php?id=147448" target="_blank">overview/details/to the placement test</a> here in the online application tool.</p>
 </div><br>';
 $this->phrasen['bewerbung/anmeldefrist']='Term of application';
 $this->phrasen['bewerbung/infoVorgemerktFuerQualifikationskurs']='You are pencilled in as a participant for the qualification courses. Once you are confirmed there, you can choose an appointment for the placement test here.';
