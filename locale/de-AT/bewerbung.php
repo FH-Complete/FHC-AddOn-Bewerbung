@@ -498,7 +498,7 @@ $this->phrasen['bewerbung/buttonStornierenDisabled']='Wenn die Bewerbung abgesch
 $this->phrasen['bewerbung/infotextDisabled']='Da bereits eine Bewerbung vorhanden ist oder war, können Sie sich im %s nicht mehr für diesen Studiengang bewerben';
 $this->phrasen['bewerbung/bitteAnmerkungEintragen']='Bitte geben Sie den Namen der Institution ein, die das Dokument ausstellen wird';
 $this->phrasen['bewerbung/nachreichDatumNichtVergangenheit']='Das Datum der Nachreichung darf nicht in der Vergangenheit liegen';
-$this->phrasen['bewerbung/infotextVorlaeufigesZgvDokument']='Bitte laden Sie eine Datei hoch, welche glaubhaft vermittelt, dass Sie die Zugangsvoraussetzung für den gewählten Studiengang erlangen werden. Das kann das letzte Semester-, Teil-, bzw. ein Sammelzeugnis, eine (Anmelde-)Bestätigung, etc. sein.<br>';
+$this->phrasen['bewerbung/infotextVorlaeufigesZgvDokument']='Bitte laden Sie eine Datei hoch, welche glaubhaft vermittelt, dass Sie die Zugangsvoraussetzung für den gewählten Studiengang erlangen werden. Das kann das letzte Semester-, Teil-, bzw. ein Sammelzeugnis, eine (Anmelde-)Bestätigung, etc. sein. (Studien- oder Inskriptionsbestätigungen werden nicht akzeptiert!)<br>';
 $this->phrasen['bewerbung/bitteDateiAuswaehlen']='Bitte wählen Sie eine Datei aus';
 $this->phrasen['bewerbung/zustimmungDatenuebermittlung']='Können in Ausnahmefällen die Zugangsvoraussetzungen von der FH Technikum Wien nicht abschließend abgeklärt werden, erteile ich die Zustimmung, dass die FH Technikum Wien die Dokumente zur Überprüfung an die zuständigen Behörden weiterleiten kann.<br>
 Ich wurde darüber informiert, dass ich nicht verpflichtet bin, der Übermittlung meiner Daten zuzustimmen. Diese Zustimmung ist allerdings notwendig, um die Bewerbung berücksichtigen zu können.';
@@ -607,6 +607,7 @@ $this->phrasen['bewerbung/bewerbungszeitraumStartetAm']='Bewerbungszeitraum star
 $this->phrasen['bewerbung/bewerbungsfristEndetInXTagen']='Bewerbungsfrist endet in %s Tagen';
 $this->phrasen['bewerbung/bewerbungsfristEndetHeute']='Bewerbungsfrist endet heute';
 $this->phrasen['bewerbung/bewerbungsfristFuerStudiensemesterXAbgelaufen']='Bewerbungsfrist für das %s ist abgelaufen';
+$this->phrasen['bewerbung/bewerbungsfristFuerEinenStudiengangAbgelaufen']='Die Bewerbungsfrist für mindestens einen der gewählten Studiengänge ist abgelaufen';
 $this->phrasen['bewerbung/bewerbungDerzeitNichtMoeglich']='Bewerbung derzeit nicht möglich. Bitte kontaktieren Sie <a href="mailto:%1$s">%1$s</a>';
 $this->phrasen['bewerbung/bewerbungenFuerAb']='Bewerbungen fürs %s ab %s';
 $this->phrasen['bewerbung/bewerbungenFuerStudiensemesterXX']='Bewerbungen für das Studiensemester %s';
@@ -674,13 +675,14 @@ Sollten Sie Fragen haben, kontaktieren Sie bitte unser Infocenter <a href="mailt
 Mit freundlichen Grüßen<br>
 Fachhochschule Technikum Wien';
 $this->phrasen['bewerbung/reihungstestInfoTextAngemeldet']='<div class="alert alert-info">
-<p>Bitte stellen Sie sicher, dass Sie 15 Minuten vor dem gewählten Termin bereit sind, den Online-Reihungstest zu beginnen.</p>
+<p>Wir starten pünktlich mit der Identitätskontrolle. Stellen Sie daher sicher, dass Sie zu diesem Zeitpunkt im Zoom Warteraum sind (Den Link erhalten Sie 2 Werktage vor Ihrem gewählten Reihungstesttermin)</p>
+<p>Den Einstieg zum Reihungstest finden Sie bei Ihrer Bachelorbewerbung unter <a href="https://cis.technikum-wien.at/cms/dms.php?id=147448" target="_blank">Ubersicht/Details/zum Reihungstest</a> hier im Online-Bewerbungstool.</p>
 </div><br>';
 $this->phrasen['bewerbung/anmeldefrist']='Anmeldefrist';
 $this->phrasen['bewerbung/infoVorgemerktFuerQualifikationskurs']='Sie sind als TeilnehmerIn für die Qualifikationskurse vorgemerkt. Sobald sie dort bestätigt wurden, können Sie hier einen Termin für den Reihungstest wählen.';
 $this->phrasen['bewerbung/raumzuteilungFolgt']='Details folgen 2 Werktage vor Testbeginn per E-Mail (Bitte auch Spamordner überprüfen!)';
 $this->phrasen['bewerbung/sieHabenFolgendenTerminGewaehlt']='Danke für Ihre Anmeldung zum Reihungstest.<br>Ihre Priorisierung der Studiengänge ist fixiert und kann nur bis zur Anmeldefrist geändert werden.<br>Nach Absolvierung des Reihungstests kann die Priorisierung <b>NICHT</b> mehr geändert werden.';
-$this->phrasen['bewerbung/loginReihungstest']='<h3>Online-Reihungstest</h3>Klicken Sie auf den folgenden Button, um zum Reihungstest zu gelangen. <br>
+$this->phrasen['bewerbung/loginReihungstest']='<h3>Online-Reihungstest</h3>Klicken Sie <b>am Tag Ihres Reihungstesttermins</b> auf den Button "Zum Reihungstest"<br>
 												Bitte beachten Sie, dass Sie <u>Mozilla Firefox</u> als Browser verwenden, da es sonst zu Darstellungsproblemen kommen kann.<br><br>
 												<a href="'.APP_ROOT.'cis/testtool/index.php?prestudent=%s" class="btn btn-primary" role="button" target="_blank">Zum Reihungstest</a>';
 $this->phrasen['bewerbung/informationenRTvorhanden']='Informationen zum Reihungstest vorhanden';

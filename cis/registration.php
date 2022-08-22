@@ -1770,7 +1770,7 @@ function sendMail($zugangscode, $email, $person_id=null)
 		$anrede = $p->t('bewerbung/anredeNeutral');
 
 	$mail = new mail($email, 'no-reply', $p->t('bewerbung/registration'), $p->t('bewerbung/mailtextHtml'));
-	$text = $p->t('bewerbung/mailtext',array($vorname, $nachname, $zugangscode, $anrede, $email));
+	$text = $p->t('bewerbung/mailtext',array(htmlspecialchars($vorname), htmlspecialchars($nachname), htmlspecialchars($zugangscode), htmlspecialchars($anrede), htmlspecialchars($email)));
 	if(CAMPUS_NAME != 'FH BFI Wien')
 	{
 		$mail->addEmbeddedImage(APP_ROOT.'skin/images/sancho/sancho_header_DEFAULT.jpg', 'image/jpg', 'header_image', 'sancho_header');
@@ -1808,7 +1808,7 @@ function resendMail($zugangscode, $email, $person_id=null)
 		$anrede = $p->t('bewerbung/anredeNeutral');
 
 	$mail = new mail($email, 'no-reply', $p->t('bewerbung/registration'), $p->t('bewerbung/mailtextHtml'));
-	$text = $p->t('bewerbung/mailtext',array($vorname, $nachname, $zugangscode, $anrede, $email));
+	$text = $p->t('bewerbung/mailtext',array(htmlspecialchars($vorname), htmlspecialchars($nachname), htmlspecialchars($zugangscode), htmlspecialchars($anrede), htmlspecialchars($email)));
 	$mail->addEmbeddedImage(APP_ROOT.'skin/images/sancho/sancho_header_DEFAULT.jpg', 'image/jpg', 'header_image', 'sancho_header');
 	$mail->addEmbeddedImage(APP_ROOT.'skin/images/sancho/sancho_footer.jpg', 'image/jpg', 'footer_image', 'sancho_footer');
 	$mail->setHTMLContent($text);
