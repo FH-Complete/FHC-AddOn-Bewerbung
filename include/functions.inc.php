@@ -1995,10 +1995,14 @@ function getNachreichForm($dokument_kurzbz, $studiengang)
 	$colspan = 12;
 	if (CAMPUS_NAME == 'FH Technikum Wien' && ($dokument_kurzbz == 'zgv_bakk' || $dokument_kurzbz == 'zgv_mast' || $dokument_kurzbz == 'SprachB2'))
 	{
-		$returnstring .= '				<div class="col-sm-8">
-											<span>'.$p->t('bewerbung/infotextVorlaeufigesZgvDokument').'</span>
+		$returnstring .= '				<div class="col-sm-8">';
 
-											<input  id="filenachgereicht_'.$studiengang.'_'.$dokument_kurzbz.'"
+		if ($dokument_kurzbz == 'zgv_mast')
+			$returnstring .= '<span>'.$p->t('bewerbung/infotextVorlaeufigesZgvDokumentMast').'</span>';
+		else
+			$returnstring .= '<span>'.$p->t('bewerbung/infotextVorlaeufigesZgvDokument').'</span>';
+
+		$returnstring.= '<input  id="filenachgereicht_'.$studiengang.'_'.$dokument_kurzbz.'"
 													type="file"
 													name="filenachgereicht"
 													class=""
