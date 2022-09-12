@@ -304,6 +304,7 @@ $studiensemester_array = array();
 				$zgv_nation = $row->zgvnation;
 			}
 
+
 			$nation = new nation($zgv_nation);
 			$nationengruppe = $nation->nationengruppe_kurzbz;
 
@@ -946,7 +947,6 @@ $studiensemester_array = array();
 		}
 		echo '</tbody></table></div><br>';
 	}
-
 	?>
 	<button class="btn-nav btn btn-default" type="button"
 	        data-jump-tab="<?php echo $tabs[array_search('uebersicht', $tabs) + 1] ?>">
@@ -963,6 +963,7 @@ $studiensemester_array = array();
 						<span aria-hidden="true">&times;</span>
 					</button>
 					<h4 class="modal-title"><?php echo $p->t('bewerbung/neuerStudiengang') ?></h4>
+
 				</div>
 				<div class="modal-body">
 					<div class="form-group">
@@ -1170,12 +1171,13 @@ $studiensemester_array = array();
 				$nation = new nation($zgv_nation);
 				$nationengruppe = $nation->nationengruppe_kurzbz;
 
+				//wenn nichts angegeben, wird die Bewerbungsfrist für Drittstaaten angenommen
 				if ($nationengruppe == '')
 				{
-					$nationengruppe = 0;
+					$nationengruppe = 'drittstaat';
 				}
 
-				$bewerbungszeitraum = getBewerbungszeitraum($row->studiengang_kz, $std_semester, $row->studienplan_id, $nationengruppe);
+				$bewerbungszeitraum = getBewerbungszeitraum($row->studiengang_kz, $std_semester, $row->studienplan_id, $nationengruppe, $person_id);
 				$stg_bezeichnung .= ' '.$bewerbungszeitraum['infoDiv'];
 				$fristAbgelaufen = $bewerbungszeitraum['frist_abgelaufen'];
 
