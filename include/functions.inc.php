@@ -1966,7 +1966,7 @@ function getNachreichForm($dokument_kurzbz, $studiengang)
 	global $p, $datum;
 
 	$returnstring = '<form method="POST" enctype="multipart/form-data" action="'.$_SERVER['PHP_SELF'].'?active=dokumente" class="form-horizontal">';
-	$returnstring .=    $p->t('bewerbung/placeholderAnmerkungNachgereicht').':
+	$returnstring .=    $p->t('bewerbung/placeholderAnmerkungNachgereicht').'
 						';
 
 	$returnstring .= '		<div class="form-group">
