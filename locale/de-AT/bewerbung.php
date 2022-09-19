@@ -58,7 +58,7 @@ $this->phrasen['bewerbung/einleitungstext']='Bitte füllen Sie das Formular aus,
 		Falls Sie Interesse an mehreren Studiengängen haben, können Sie bis zu
 		'.(defined('BEWERBERTOOL_MAX_STUDIENGAENGE') && BEWERBERTOOL_MAX_STUDIENGAENGE != ''?BEWERBERTOOL_MAX_STUDIENGAENGE:'').'
 		Studienrichtungen auswählen. <br>Wenn Sie mehr Informationen benötigen,
-		steht Ihnen unsere <a href=\'https://www.technikum-wien.at/studieninformationen/studienberatung-kontaktieren/\' target=\'_blank\'>Studienberatung</a>
+		steht Ihnen unsere <a href=\'https://www.technikum-wien.at/studienberatung-kontaktieren/\' target=\'_blank\'>Studienberatung</a>
 		gerne persönlich, telefonisch, per E-Mail oder WhatsApp zur Verfügung.<br><br>
 		<a href="#datenschutzText" data-toggle="collapse">Datenschutz-Hinweis: <span class="glyphicon glyphicon-collapse-down"></span></a>
 
@@ -214,7 +214,7 @@ $this->phrasen['bewerbung/emailgesendetan']='
 <br><br>
 Die E-Mail mit Ihrem Zugangscode wurde erfolgreich an %s verschickt.
 <br><br>In der Regel erhalten Sie das Mail in wenigen Minuten. Wenn Sie nach <b>24 Stunden</b> noch kein Mail erhalten haben,
-kontaktieren Sie bitte unsere <a href=\'https://www.technikum-wien.at/studieninformationen/studienberatung-kontaktieren/\' target=\'_blank\'>Studienberatung</a>';
+kontaktieren Sie bitte unsere <a href=\'https://www.technikum-wien.at/studienberatung-kontaktieren/\' target=\'_blank\'>Studienberatung</a>';
 $this->phrasen['bewerbung/zurueckZurAnmeldung']='Zurück zur Login-Seite.';
 $this->phrasen['bewerbung/sicherheitscodeFalsch']='Der eingegebene Sicherheitscode ist falsch.';
 $this->phrasen['bewerbung/geplanterStudienbeginn']='Geplanter Studienbeginn';
@@ -262,10 +262,10 @@ $this->phrasen['bewerbung/allgemeineErklaerung']='Wir freuen uns, dass Sie sich 
 	<br><br>
 	Sind alle erforderlichen Daten ausgefüllt, können Sie durch einen Klick auf "Bewerbung abschicken", Ihre Bewerbung an uns übermitteln.
 	<br><br>
-	Wenn Sie mehr Informationen benötigen, steht Ihnen unsere <a href=\'https://www.technikum-wien.at/studieninformationen/studienberatung-kontaktieren/\' target=\'_blank\'>Studienberatung</a> gerne persönlich, telefonisch, per E-Mail oder WhatsApp zur Verfügung.
+	Wenn Sie mehr Informationen benötigen, steht Ihnen unsere <a href=\'https://www.technikum-wien.at/studienberatung-kontaktieren/\' target=\'_blank\'>Studienberatung</a> gerne persönlich, telefonisch, per E-Mail oder WhatsApp zur Verfügung.
 	<br><br>
 	Bewerbungsfristen für Drittstaatenbewerbungen (außerhalb der EU) siehe:<br>
-	<a href=\'https://www.technikum-wien.at/bewerbungsfristen\' target=\'_blank\'>https://www.technikum-wien.at/bewerbungsfristen</a><br><br>
+	<a href=\'https://www.technikum-wien.at/studieninformationen/bewerbungsfristen/\' target=\'_blank\'>https://www.technikum-wien.at/studieninformationen/bewerbungsfristen</a><br><br>
 	An dieser Stelle möchten wir Sie auf unsere <a href=\'https://cis.technikum-wien.at/cms/dms.php?id=77605\' target=\'_blank\'><span class="glyphicon glyphicon-file"></span> Information über die Verwendung personenbezogener Daten von BewerberInnen</a> hinweisen.';
 $this->phrasen['bewerbung/erklaerungStudierende']='Wir freuen uns über Ihr Interesse an unserem Bildungsangebot.<br>
 	Klicken Sie auf den grünen Button, um Ihrer Bewerbung einen Studiengang oder Lehrgang hinzuzufügen.';
@@ -465,7 +465,7 @@ $this->phrasen['bewerbung/statusBestaetigen']='Status direkt bestätigen';
 $this->phrasen['bewerbung/footerText']='';
 $this->phrasen['bewerbung/vorbehaltlichAkkreditierung']='Vorbehaltlich der Akkreditierung durch die AQ Austria';
 $this->phrasen['bewerbung/auswahlmöglichkeitenImNaechstenSchritt']='Auswahlmöglichkeiten im nächsten Schritt';
-$this->phrasen['bewerbung/sieKoennenMaximalXStudiengaengeWaehlen']='Sie können sich online für maximal %s Studiengänge im gleichen Studiensemester bewerben. Wenn Sie mehr Informationen benötigen, steht Ihnen unsere <a href=\'https://www.technikum-wien.at/studieninformationen/studienberatung-kontaktieren/\' target=\'_blank\'>Studienberatung</a> gerne persönlich, telefonisch oder per E-Mail zur Verfügung.<br><br><a href=\'#\' class=\'alert-link\' data-dismiss=\'alert\' aria-label=\'close\'>Schließen</a>'; // Link muss mit einfachen Hochkomma maskiert werden, das es sonst im Bewerbungstool zu Anzeigefehlern kommt
+$this->phrasen['bewerbung/sieKoennenMaximalXStudiengaengeWaehlen']='Sie können sich online für maximal %s Studiengänge im gleichen Studiensemester bewerben. Wenn Sie mehr Informationen benötigen, steht Ihnen unsere <a href=\'https://www.technikum-wien.at/studienberatung-kontaktieren/\' target=\'_blank\'>Studienberatung</a> gerne persönlich, telefonisch oder per E-Mail zur Verfügung.<br><br><a href=\'#\' class=\'alert-link\' data-dismiss=\'alert\' aria-label=\'close\'>Schließen</a>'; // Link muss mit einfachen Hochkomma maskiert werden, das es sonst im Bewerbungstool zu Anzeigefehlern kommt
 $this->phrasen['bewerbung/bitteEineStudienrichtungWaehlen']='Bitte eine Studienrichtung auswählen.';
 $this->phrasen['bewerbung/beschreibungTitelPre']='Akademische Titel, die dem Namen vorangestellt werden. ZB.: DI, Mag., Dr. <br><br>Im Zuge dieser Angabe ist ein entsprechender Nachweis ergänzend zu Ihren erforderlichen Dokumenten hochzuladen!';
 $this->phrasen['bewerbung/beschreibungTitelPost']='Akademische Titel, die dem Namen nachgestellt werden. ZB.: BA, MA, PhD. <br><br>Im Zuge dieser Angabe ist ein entsprechender Nachweis ergänzend zu Ihren erforderlichen Dokumenten hochzuladen!';
