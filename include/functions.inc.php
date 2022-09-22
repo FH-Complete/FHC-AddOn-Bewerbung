@@ -1999,6 +1999,8 @@ function getNachreichForm($dokument_kurzbz, $studiengang)
 
 		if ($dokument_kurzbz == 'zgv_mast')
 			$returnstring .= '<span>'.$p->t('bewerbung/infotextVorlaeufigesZgvDokumentMast').'</span>';
+		else if ($dokument_kurzbz == 'SprachB2')
+			$returnstring .= '<span>'.$p->t('bewerbung/infotextVorlaeufigesSprachB2').'</span>';
 		else
 			$returnstring .= '<span>'.$p->t('bewerbung/infotextVorlaeufigesZgvDokument').'</span>';
 
