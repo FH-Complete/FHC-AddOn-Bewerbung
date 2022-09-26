@@ -426,7 +426,7 @@ $this->phrasen['bewerbung/dateien']='File(s)';
 $this->phrasen['bewerbung/dokumentWirdGeprueft']='Document uploaded';
 $this->phrasen['bewerbung/dokumentUeberprueft']='Document examined';
 $this->phrasen['bewerbung/keineDateiAusgewaehlt']='No file selected or found';
-$this->phrasen['bewerbung/placeholderAnmerkungNachgereicht']='Please indicate which institution will issue the document and by when you expect to be able to submit it:';
+$this->phrasen['bewerbung/placeholderAnmerkungNachgereicht']='Please indicate which institution will issue the document and by when you expect to be able to submit it';
 $this->phrasen['bewerbung/bitteAusstellungsnationAuswaehlen']='-- Please select the country in which the document was issued --';
 $this->phrasen['bewerbung/sitzungAbgelaufen']='Seesion expired. Please log in again.';
 $this->phrasen['bewerbung/placeholderOrtNachgereicht']='Issuing institution (eg: TGM Wien)';
@@ -446,6 +446,7 @@ $this->phrasen['bewerbung/bitteAnmerkungEintragen']='Please enter the name of th
 $this->phrasen['bewerbung/nachreichDatumNichtVergangenheit']='The date of submission may not be in the past ';
 $this->phrasen['bewerbung/infotextVorlaeufigesZgvDokumentMast']= 'Upload <b>all</b> previous transcript of records here that credibly convey that you will attain the entrance requirement for the chosen degree program. Confirmations of study or enrolment are not accepted!<br>';
 $this->phrasen['bewerbung/infotextVorlaeufigesZgvDokument']='Please upload a file that credibly demonstrates that you will meet the admission requirements for the chosen degree program. This can be the last semester certificate, partial certificate, a collective certificate, a (registration) confirmation, etc. (Confirmations of study or enrolment are not accepted!)<br>';
+$this->phrasen['bewerbung/infotextVorlaeufigesSprachB2']='Please upload a file that credibly demonstrates that you will meet the <b>language skills</b> at <b>level B2</b> until the application deadline and indicate at which institution you will complete the B2 certification. As provisional proof, please upload a corresponding confirmation.<br>';
 $this->phrasen['bewerbung/bitteDateiAuswaehlen']='Please choose a file';
 $this->phrasen['bewerbung/zustimmungDatenuebermittlung']='If in exceptional cases the admission requirements can not be finally clarified by the UAS Technikum Wien, I give my consent that the UAS Technikum Wien can forward the documents to the competent authorities for verification.<br>
 I have been informed that I am under no obligation to consent to the transmission of my data. However, this consent is necessary in order for the application to be considered.';
