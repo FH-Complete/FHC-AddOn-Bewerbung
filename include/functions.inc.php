@@ -867,7 +867,7 @@ function BewerbungGetGemeinden($plz)
 	else
 		return false;
 }
-function getBewerbungszeitraum($studiengang_kz, $studiensemester, $studienplan_id, $nationengruppe_kurzbz = null)
+function getBewerbungszeitraum($studiengang_kz, $studiensemester, $studienplan_id, $nationengruppe_kurzbz = null, $person_id = null)
 {
 	global $p, $datum;
 	$tage_bis_fristablauf = '';
@@ -876,6 +876,13 @@ function getBewerbungszeitraum($studiengang_kz, $studiensemester, $studienplan_i
 	$bewerbungszeitraum = '';
 	$class = '';
 	$bewerbungsfrist = '';
+
+	//wenn eine interne ZGV vorliegt, Bewerbungsfrist für EU-Nation nehmen
+	$prestudent = new prestudent();
+	if ($prestudent->existsZGVIntern($person_id))
+	{
+		$nationengruppe_kurzbz = 'eu';
+	}
 
 	$bewerbungsfristen = new bewerbungstermin();
 	$bewerbungsfristen->getBewerbungstermine($studiengang_kz, $studiensemester, 'nationengruppe_kurzbz NULLS FIRST, insertamum DESC', $studienplan_id, $nationengruppe_kurzbz);
@@ -1959,7 +1966,7 @@ function getNachreichForm($dokument_kurzbz, $studiengang)
 	global $p, $datum;
 
 	$returnstring = '<form method="POST" enctype="multipart/form-data" action="'.$_SERVER['PHP_SELF'].'?active=dokumente" class="form-horizontal">';
-	$returnstring .=    $p->t('bewerbung/placeholderAnmerkungNachgereicht').':
+	$returnstring .=    $p->t('bewerbung/placeholderAnmerkungNachgereicht').'
 						';
 
 	$returnstring .= '		<div class="form-group">
@@ -1995,10 +2002,16 @@ function getNachreichForm($dokument_kurzbz, $studiengang)
 	$colspan = 12;
 	if (CAMPUS_NAME == 'FH Technikum Wien' && ($dokument_kurzbz == 'zgv_bakk' || $dokument_kurzbz == 'zgv_mast' || $dokument_kurzbz == 'SprachB2'))
 	{
-		$returnstring .= '				<div class="col-sm-8">
-											<span>'.$p->t('bewerbung/infotextVorlaeufigesZgvDokument').'</span>
+		$returnstring .= '				<div class="col-sm-8">';
 
-											<input  id="filenachgereicht_'.$studiengang.'_'.$dokument_kurzbz.'"
+		if ($dokument_kurzbz == 'zgv_mast')
+			$returnstring .= '<span>'.$p->t('bewerbung/infotextVorlaeufigesZgvDokumentMast').'</span>';
+		else if ($dokument_kurzbz == 'SprachB2')
+			$returnstring .= '<span>'.$p->t('bewerbung/infotextVorlaeufigesSprachB2').'</span>';
+		else
+			$returnstring .= '<span>'.$p->t('bewerbung/infotextVorlaeufigesZgvDokument').'</span>';
+
+		$returnstring.= '<input  id="filenachgereicht_'.$studiengang.'_'.$dokument_kurzbz.'"
 													type="file"
 													name="filenachgereicht"
 													class=""

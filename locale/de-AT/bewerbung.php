@@ -58,7 +58,7 @@ $this->phrasen['bewerbung/einleitungstext']='Bitte füllen Sie das Formular aus,
 		Falls Sie Interesse an mehreren Studiengängen haben, können Sie bis zu
 		'.(defined('BEWERBERTOOL_MAX_STUDIENGAENGE') && BEWERBERTOOL_MAX_STUDIENGAENGE != ''?BEWERBERTOOL_MAX_STUDIENGAENGE:'').'
 		Studienrichtungen auswählen. <br>Wenn Sie mehr Informationen benötigen,
-		steht Ihnen unsere <a href=\'https://www.technikum-wien.at/studieninformationen/studienberatung-kontaktieren/\' target=\'_blank\'>Studienberatung</a>
+		steht Ihnen unsere <a href=\'https://www.technikum-wien.at/studienberatung-kontaktieren/\' target=\'_blank\'>Studienberatung</a>
 		gerne persönlich, telefonisch, per E-Mail oder WhatsApp zur Verfügung.<br><br>
 		<a href="#datenschutzText" data-toggle="collapse">Datenschutz-Hinweis: <span class="glyphicon glyphicon-collapse-down"></span></a>
 
@@ -214,7 +214,7 @@ $this->phrasen['bewerbung/emailgesendetan']='
 <br><br>
 Die E-Mail mit Ihrem Zugangscode wurde erfolgreich an %s verschickt.
 <br><br>In der Regel erhalten Sie das Mail in wenigen Minuten. Wenn Sie nach <b>24 Stunden</b> noch kein Mail erhalten haben,
-kontaktieren Sie bitte unsere <a href=\'https://www.technikum-wien.at/studieninformationen/studienberatung-kontaktieren/\' target=\'_blank\'>Studienberatung</a>';
+kontaktieren Sie bitte unsere <a href=\'https://www.technikum-wien.at/studienberatung-kontaktieren/\' target=\'_blank\'>Studienberatung</a>';
 $this->phrasen['bewerbung/zurueckZurAnmeldung']='Zurück zur Login-Seite.';
 $this->phrasen['bewerbung/sicherheitscodeFalsch']='Der eingegebene Sicherheitscode ist falsch.';
 $this->phrasen['bewerbung/geplanterStudienbeginn']='Geplanter Studienbeginn';
@@ -262,10 +262,10 @@ $this->phrasen['bewerbung/allgemeineErklaerung']='Wir freuen uns, dass Sie sich 
 	<br><br>
 	Sind alle erforderlichen Daten ausgefüllt, können Sie durch einen Klick auf "Bewerbung abschicken", Ihre Bewerbung an uns übermitteln.
 	<br><br>
-	Wenn Sie mehr Informationen benötigen, steht Ihnen unsere <a href=\'https://www.technikum-wien.at/studieninformationen/studienberatung-kontaktieren/\' target=\'_blank\'>Studienberatung</a> gerne persönlich, telefonisch, per E-Mail oder WhatsApp zur Verfügung.
+	Wenn Sie mehr Informationen benötigen, steht Ihnen unsere <a href=\'https://www.technikum-wien.at/studienberatung-kontaktieren/\' target=\'_blank\'>Studienberatung</a> gerne persönlich, telefonisch, per E-Mail oder WhatsApp zur Verfügung.
 	<br><br>
 	Bewerbungsfristen für Drittstaatenbewerbungen (außerhalb der EU) siehe:<br>
-	<a href=\'https://www.technikum-wien.at/bewerbungsfristen\' target=\'_blank\'>https://www.technikum-wien.at/bewerbungsfristen</a><br><br>
+	<a href=\'https://www.technikum-wien.at/studieninformationen/bewerbungsfristen/\' target=\'_blank\'>https://www.technikum-wien.at/studieninformationen/bewerbungsfristen</a><br><br>
 	An dieser Stelle möchten wir Sie auf unsere <a href=\'https://cis.technikum-wien.at/cms/dms.php?id=77605\' target=\'_blank\'><span class="glyphicon glyphicon-file"></span> Information über die Verwendung personenbezogener Daten von BewerberInnen</a> hinweisen.';
 $this->phrasen['bewerbung/erklaerungStudierende']='Wir freuen uns über Ihr Interesse an unserem Bildungsangebot.<br>
 	Klicken Sie auf den grünen Button, um Ihrer Bewerbung einen Studiengang oder Lehrgang hinzuzufügen.';
@@ -465,7 +465,7 @@ $this->phrasen['bewerbung/statusBestaetigen']='Status direkt bestätigen';
 $this->phrasen['bewerbung/footerText']='';
 $this->phrasen['bewerbung/vorbehaltlichAkkreditierung']='Vorbehaltlich der Akkreditierung durch die AQ Austria';
 $this->phrasen['bewerbung/auswahlmöglichkeitenImNaechstenSchritt']='Auswahlmöglichkeiten im nächsten Schritt';
-$this->phrasen['bewerbung/sieKoennenMaximalXStudiengaengeWaehlen']='Sie können sich online für maximal %s Studiengänge im gleichen Studiensemester bewerben. Wenn Sie mehr Informationen benötigen, steht Ihnen unsere <a href=\'https://www.technikum-wien.at/studieninformationen/studienberatung-kontaktieren/\' target=\'_blank\'>Studienberatung</a> gerne persönlich, telefonisch oder per E-Mail zur Verfügung.<br><br><a href=\'#\' class=\'alert-link\' data-dismiss=\'alert\' aria-label=\'close\'>Schließen</a>'; // Link muss mit einfachen Hochkomma maskiert werden, das es sonst im Bewerbungstool zu Anzeigefehlern kommt
+$this->phrasen['bewerbung/sieKoennenMaximalXStudiengaengeWaehlen']='Sie können sich online für maximal %s Studiengänge im gleichen Studiensemester bewerben. Wenn Sie mehr Informationen benötigen, steht Ihnen unsere <a href=\'https://www.technikum-wien.at/studienberatung-kontaktieren/\' target=\'_blank\'>Studienberatung</a> gerne persönlich, telefonisch oder per E-Mail zur Verfügung.<br><br><a href=\'#\' class=\'alert-link\' data-dismiss=\'alert\' aria-label=\'close\'>Schließen</a>'; // Link muss mit einfachen Hochkomma maskiert werden, das es sonst im Bewerbungstool zu Anzeigefehlern kommt
 $this->phrasen['bewerbung/bitteEineStudienrichtungWaehlen']='Bitte eine Studienrichtung auswählen.';
 $this->phrasen['bewerbung/beschreibungTitelPre']='Akademische Titel, die dem Namen vorangestellt werden. ZB.: DI, Mag., Dr. <br><br>Im Zuge dieser Angabe ist ein entsprechender Nachweis ergänzend zu Ihren erforderlichen Dokumenten hochzuladen!';
 $this->phrasen['bewerbung/beschreibungTitelPost']='Akademische Titel, die dem Namen nachgestellt werden. ZB.: BA, MA, PhD. <br><br>Im Zuge dieser Angabe ist ein entsprechender Nachweis ergänzend zu Ihren erforderlichen Dokumenten hochzuladen!';
@@ -480,7 +480,7 @@ $this->phrasen['bewerbung/dateien']='Datei(en)';
 $this->phrasen['bewerbung/dokumentWirdGeprueft']='Dokument vorhanden';
 $this->phrasen['bewerbung/dokumentUeberprueft']='Dokument überprüft';
 $this->phrasen['bewerbung/keineDateiAusgewaehlt']='Keine Datei zum Hochladen ausgewählt oder gefunden';
-$this->phrasen['bewerbung/placeholderAnmerkungNachgereicht']='Bitte geben Sie an, welche Institution das Dokument ausstellen wird und bis wann Sie dieses voraussichtlich nachreichen können:';
+$this->phrasen['bewerbung/placeholderAnmerkungNachgereicht']='Bitte geben Sie an, welche Institution das Dokument ausstellen wird und bis wann Sie dieses voraussichtlich nachreichen können';
 $this->phrasen['bewerbung/bitteAusstellungsnationAuswaehlen']='-- Bitte wählen Sie, in welchem Land das Dokument ausgestellt wurde --';
 $this->phrasen['bewerbung/sitzungAbgelaufen']='Die Sitzung ist abgelaufen. Bitte loggen Sie sich erneut ein';
 $this->phrasen['bewerbung/placeholderOrtNachgereicht']='Institution des Ausstellers (zB: TGM Wien)';
@@ -498,7 +498,9 @@ $this->phrasen['bewerbung/buttonStornierenDisabled']='Wenn die Bewerbung abgesch
 $this->phrasen['bewerbung/infotextDisabled']='Da bereits eine Bewerbung vorhanden ist oder war, können Sie sich im %s nicht mehr für diesen Studiengang bewerben';
 $this->phrasen['bewerbung/bitteAnmerkungEintragen']='Bitte geben Sie den Namen der Institution ein, die das Dokument ausstellen wird';
 $this->phrasen['bewerbung/nachreichDatumNichtVergangenheit']='Das Datum der Nachreichung darf nicht in der Vergangenheit liegen';
+$this->phrasen['bewerbung/infotextVorlaeufigesZgvDokumentMast']='Laden Sie hier <b>alle</b> Semesterzeugnisse-, Teil-, bzw. Ihr Sammelzeugnis (transcript of records) hoch, die glaubhaft vermitteln, dass Sie die Zugangsvoraussetzung für den gewählten Studiengang erlangen werden. Studien- oder Inskriptionsbestätigungen werden nicht akzeptiert!<br>';
 $this->phrasen['bewerbung/infotextVorlaeufigesZgvDokument']='Bitte laden Sie eine Datei hoch, welche glaubhaft vermittelt, dass Sie die Zugangsvoraussetzung für den gewählten Studiengang erlangen werden. Das kann das letzte Semester-, Teil-, bzw. ein Sammelzeugnis, eine (Anmelde-)Bestätigung, etc. sein. (Studien- oder Inskriptionsbestätigungen werden nicht akzeptiert!)<br>';
+$this->phrasen['bewerbung/infotextVorlaeufigesSprachB2']='Bitte laden Sie eine Datei hoch, welche glaubhaft vermittelt, dass Sie die <b>Sprachkenntnisse</b> auf dem <b>Level B2</b> bis zum Bewerbungsschluss erlangen und führen Sie an, bei welcher Institution Sie die B2 Zertifizierung absolvieren werden. Als vorläufigen Nachweis laden Sie bitte eine entsprechende Bestätigung hoch.<br>';
 $this->phrasen['bewerbung/bitteDateiAuswaehlen']='Bitte wählen Sie eine Datei aus';
 $this->phrasen['bewerbung/zustimmungDatenuebermittlung']='Können in Ausnahmefällen die Zugangsvoraussetzungen von der FH Technikum Wien nicht abschließend abgeklärt werden, erteile ich die Zustimmung, dass die FH Technikum Wien die Dokumente zur Überprüfung an die zuständigen Behörden weiterleiten kann.<br>
 Ich wurde darüber informiert, dass ich nicht verpflichtet bin, der Übermittlung meiner Daten zuzustimmen. Diese Zustimmung ist allerdings notwendig, um die Bewerbung berücksichtigen zu können.';

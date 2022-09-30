@@ -602,7 +602,7 @@ elseif($username && $password)
 									$prestudent->new = true;
 
 									// ZGV aufgrund der ZGV-Nation setzen
-									if ($zgv_nation != '' && $studiengangForZgv->typ == 'b')
+									if ($zgv_nation != '' && ($studiengangForZgv->typ == 'b' || $studiengangForZgv->typ == 'l'))
 									{
 										$prestudent->zgvnation = $zgv_nation;
 									}
@@ -1004,7 +1004,7 @@ elseif($username && $password)
 
 									if ($nationengruppe == '')
 									{
-										$nationengruppe = 0;
+										$nationengruppe = 'drittstaat';
 									}
 
 									// Bewerbungsfristen laden

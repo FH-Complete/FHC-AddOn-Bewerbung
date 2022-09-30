@@ -54,7 +54,7 @@ $this->phrasen['bewerbung/registrierenOderZugangscode']='<a href="'.$_SERVER['PH
 $this->phrasen['bewerbung/einleitungstext']='Please complete the form, select your preferred degree or certificate program(s) and click "Submit".<br>
 We will then send you an access code via e-mail to the address specified. You may use this access code at any time to log in, add personal information or degree programs and submit non-binding applications.<br><br>
 If you are interested in more than one degree programs, you may select up to 3 study programs.<br><br>
-Should you require any additional information, please do not hesitate to contact our <a href=\'https://www.technikum-wien.at/en/student-guide/admission-counselors/\' target=\'_blank\'>student counselling team</a> in person, by phone, or via e-mail or WhatsApp.<br><br>
+Should you require any additional information, please do not hesitate to contact our <a href=\'https://www.technikum-wien.at/en/infocenter/\' target=\'_blank\'>student counselling team</a> in person, by phone, or via e-mail or WhatsApp.<br><br>
 		<a href="#datenschutzText" data-toggle="collapse">Privacy information: <span class="glyphicon glyphicon-collapse-down"></span></a>
 		<div id="datenschutzText" class="collapse">
 		The data communicated to us by you for the purpose of the application will be used by us exclusively for the processing of the application on the basis of pre-contractual or contractual purposes and will not be passed on to third parties with the exception described below in case of uncertainties regarding the entry requirements. If there is no further contact or enrolment, your data will be deleted after three years.<br><br>
@@ -174,7 +174,7 @@ $this->phrasen['bewerbung/emailgesendetan']='
 <br><br>
 The e-mail with your access code has successfully been sent to %s.
 <br><br>You should receive an e-mail within a few minutes. If you receive no e-mail within <b>24 hours</b> please contact
-our <a href=\'https://www.technikum-wien.at/en/student-guide/admission-counselors/\' target=\'_blank\'>student counselling team</a>';
+our <a href=\'https://www.technikum-wien.at/en/infocenter/\' target=\'_blank\'>student counselling team</a>';
 $this->phrasen['bewerbung/zurueckZurAnmeldung']='Back to registration.';
 $this->phrasen['bewerbung/sicherheitscodeFalsch']='The access code is incorrect.';
 $this->phrasen['bewerbung/geplanterStudienbeginn']='Planned start of study period';
@@ -219,10 +219,10 @@ $this->phrasen['bewerbung/allgemeineErklaerung']='We are pleased that you are in
 You may select - online - up to 3 study programs and as many further education courses as you like.<br>
 Click the green button to add a study program or course to your application.
 Please note that you have to prioritize when choosing your degree programs. <br>Once the placement test has been completed, the prioritization can <b>no longer</b> be changed.<br>
-Should you require any additional information, please do not hesitate to contact our <a href=\'https://www.technikum-wien.at/en/student-guide/admission-counselors/\' target=\'_blank\'>student counselling team</a> in person, by phone, or via e-mail or WhatsApp.<br><br>
+Should you require any additional information, please do not hesitate to contact our <a href=\'https://www.technikum-wien.at/en/infocenter/\' target=\'_blank\'>student counselling team</a> in person, by phone, or via e-mail or WhatsApp.<br><br>
 Complete the form in full. Once you have entered all details, send in your application by clicking "Send application".<br><br>
 Application deadlines for third countries (outside the EU) see:<br>
-<a href=\'https://www.technikum-wien.at/bewerbungsfristen\' target=\'_blank\'>https://www.technikum-wien.at/bewerbungsfristen</a><br><br>
+<a href=\'https://www.technikum-wien.at/en/student-guide/admission-deadlines/\' target=\'_blank\'>https://www.technikum-wien.at/en/student-guide/admission-deadlines</a><br><br>
 In accordance with the new provisions of the GDPR we want to <a href=\'https://cis.technikum-wien.at/cms/dms.php?id=77605\' target=\'_blank\'>inform you where personal data</a> are collected from you';
 $this->phrasen['bewerbung/erklaerungStudierende']='We are pleased that you are interested in the study programs we offer.<br><br>Click the green button to add a study program or course to your application.';
 $this->phrasen['bewerbung/aktuelleBewerbungen']='Current applications:';
@@ -411,7 +411,7 @@ $this->phrasen['bewerbung/statusBestaetigen']='Confirm status directly';
 $this->phrasen['bewerbung/footerText']='';
 $this->phrasen['bewerbung/vorbehaltlichAkkreditierung']='Subject to official accreditation by AQ Austria';
 $this->phrasen['bewerbung/auswahlmöglichkeitenImNaechstenSchritt']='Options in next step';
-$this->phrasen['bewerbung/sieKoennenMaximalXStudiengaengeWaehlen']='You can apply online for a maximum of %s degree programs in the same study semester. If you need more information, our <a href=\'https://www.technikum-wien.at/en/student-guide/admission-counselors/\' target=\'_blank\'>student advisory service</a> is available to you.<br><br><a href=\'#\' class=\'alert-link\' data-dismiss=\'alert\' aria-label=\'close\'>Close</a>'; // Link muss mit einfachen Hochkomma maskiert werden, das es sonst im Bewerbungstool zu Anzeigefehlern kommt
+$this->phrasen['bewerbung/sieKoennenMaximalXStudiengaengeWaehlen']='You can apply online for a maximum of %s degree programs in the same study semester. If you need more information, our <a href=\'https://www.technikum-wien.at/en/infocenter/\' target=\'_blank\'>student advisory service</a> is available to you.<br><br><a href=\'#\' class=\'alert-link\' data-dismiss=\'alert\' aria-label=\'close\'>Close</a>'; // Link muss mit einfachen Hochkomma maskiert werden, das es sonst im Bewerbungstool zu Anzeigefehlern kommt
 $this->phrasen['bewerbung/bitteEineStudienrichtungWaehlen']='Please select one field of study.';
 $this->phrasen['bewerbung/beschreibungTitelPre']='Academic title e.g. Dr., Prof.';
 $this->phrasen['bewerbung/beschreibungTitelPost']='Academic post-nominal letters (titles) e.g. BA, BSc, PhD';
@@ -426,7 +426,7 @@ $this->phrasen['bewerbung/dateien']='File(s)';
 $this->phrasen['bewerbung/dokumentWirdGeprueft']='Document uploaded';
 $this->phrasen['bewerbung/dokumentUeberprueft']='Document examined';
 $this->phrasen['bewerbung/keineDateiAusgewaehlt']='No file selected or found';
-$this->phrasen['bewerbung/placeholderAnmerkungNachgereicht']='Please indicate which institution will issue the document and by when you expect to be able to submit it:';
+$this->phrasen['bewerbung/placeholderAnmerkungNachgereicht']='Please indicate which institution will issue the document and by when you expect to be able to submit it';
 $this->phrasen['bewerbung/bitteAusstellungsnationAuswaehlen']='-- Please select the country in which the document was issued --';
 $this->phrasen['bewerbung/sitzungAbgelaufen']='Seesion expired. Please log in again.';
 $this->phrasen['bewerbung/placeholderOrtNachgereicht']='Issuing institution (eg: TGM Wien)';
@@ -444,7 +444,9 @@ $this->phrasen['bewerbung/buttonStornierenDisabled']='Once the application has b
 $this->phrasen['bewerbung/infotextDisabled']='Since an application already exists or existed, you can no longer apply in %s for this degree program';
 $this->phrasen['bewerbung/bitteAnmerkungEintragen']='Please enter the name of the institution that will issue the document';
 $this->phrasen['bewerbung/nachreichDatumNichtVergangenheit']='The date of submission may not be in the past ';
+$this->phrasen['bewerbung/infotextVorlaeufigesZgvDokumentMast']= 'Upload <b>all</b> previous transcript of records here that credibly convey that you will attain the entrance requirement for the chosen degree program. Confirmations of study or enrolment are not accepted!<br>';
 $this->phrasen['bewerbung/infotextVorlaeufigesZgvDokument']='Please upload a file that credibly demonstrates that you will meet the admission requirements for the chosen degree program. This can be the last semester certificate, partial certificate, a collective certificate, a (registration) confirmation, etc. (Confirmations of study or enrolment are not accepted!)<br>';
+$this->phrasen['bewerbung/infotextVorlaeufigesSprachB2']='Please upload a file that credibly demonstrates that you will meet the <b>language skills</b> at <b>level B2</b> until the application deadline and indicate at which institution you will complete the B2 certification. As provisional proof, please upload a corresponding confirmation.<br>';
 $this->phrasen['bewerbung/bitteDateiAuswaehlen']='Please choose a file';
 $this->phrasen['bewerbung/zustimmungDatenuebermittlung']='If in exceptional cases the admission requirements can not be finally clarified by the UAS Technikum Wien, I give my consent that the UAS Technikum Wien can forward the documents to the competent authorities for verification.<br>
 I have been informed that I am under no obligation to consent to the transmission of my data. However, this consent is necessary in order for the application to be considered.';

@@ -16,9 +16,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * Authors: Manfred Kindl <manfred.kindl@technikum-wien.at>
+ 			Manuela Thamer <manuela.thamer@technikum-wien.at>
  */
 
-if(!isset($person_id))
+if (!isset($person_id))
 {
 	die($p->t('bewerbung/ungueltigerZugriff'));
 }
@@ -35,7 +36,7 @@ if(!isset($person_id))
 	{
 		$typ = new studiengang();
 		$typ->getStudiengangTyp($row->typ);
-		$oe=new organisationseinheit();
+		$oe = new organisationseinheit();
 		$oe->load($row->oe_kurzbz);
 		$stg_arr[$row->studiengang_kz]['kuerzel'] = $row->kuerzel;
 		$stg_arr[$row->studiengang_kz]['typ'] = $typ->bezeichnung;
@@ -60,70 +61,83 @@ if(!isset($person_id))
 		usort($akten->result, "sortAkten");
 	}
 	$anzahlZuAkzeptieren = 0;
-	if(count($akten->result) > 0)
+
+	//manu2
+	$pres = new prestudent();
+	$existsOffeneBewerbung = $pres->existsOffeneBewerbung($person_id);
+	$isStudent = $pres->isStudent($person_id);
+	count($akten->result) > 1 ? $showAktentext = true : $showAktentext = false;
+	echo '<div id="existsOffeneBewerbung" style="display: none">'. $existsOffeneBewerbung. '</div>';
+	echo '<div id="isStudent" style="display: none">'. $isStudent. '</div>';
+	echo '<div id="showAktentext" style="display: none">'. $showAktentext. '</div>';
+
+	if (count($akten->result) > 0)
 	{
 		echo '<ul class="list-group">';
+
 		foreach ($akten->result as $row)
 		{
 			$class = '';
-
 			if ($row->dokument_kurzbz == 'Ausbvert' && $row->akzeptiertamum == '')
 			{
 				$class = 'style="background-color: #f2dede;"';
+				echo '<div id="Aktentext"></div>';
 			}
 			elseif ($row->dokument_kurzbz == 'Ausbvert' && $row->akzeptiertamum != '')
 			{
 				$class = '';
+				echo '<div id="Aktentext2"></div>';
 			}
 			echo '
-				<li class="list-group-item" '.$class.'>
+				<li id="output" class="list-group-item" '.$class.'>
 					<div class="row">
 						<div class="col-sm-12">
 							<form method="POST" action="'.$_SERVER['PHP_SELF'].'?active=akten" class="form-horizontal pull-right" >
 								<input type="hidden" name="action" value="downloadAkte">
 								<input type="hidden" name="akte_id" value="'.$row->akte_id.'">
-								<button type="submit" title="'.$p->t('bewerbung/dokumentHerunterladen').'" 
+								<button type="submit" title="'.$p->t('bewerbung/dokumentHerunterladen').'"
 										class="btn btn-default btn-sm">
 									<span class="glyphicon glyphicon glyphicon-download-alt" aria-hidden="true" title="'.$p->t('bewerbung/dokumentHerunterladen').'"></span>
 									'.$p->t('bewerbung/herunterladen', array($row->bezeichnung)).'
 								</button>
 							</form>
 							<h4>'.$row->bezeichnung.'</h4>';
-							if ($row->dokument_kurzbz == 'Ausbvert')
-							{
-								if ($row->akzeptiertamum == '')
-								{
-									$anzahlZuAkzeptieren++;
-								}
-								echo '
-								<br>
-								'.$p->t('bewerbung/informationDatenverwendungStudierende').'
-								<br><br>
-								<div class="checkbox">
-									<label><input id="checkbox1ausbildungsvertrag'.$row->akte_id.'" type="checkbox" class="checkboxAusbildungsvertrag"
-									name="'.$row->akte_id.'" 
-									'.($row->akzeptiertamum != '' ? 'checked="checked" disabled="disabled"' : '').'>
-									'.$p->t('bewerbung/textAusbildungsvertrag').'</label>
-								</div>';
-								/*echo '<div class="checkbox">
-									<label>
-										<input id="checkbox2ausbildungsvertrag" type="checkbox" class="checkboxAusbildungsvertrag"
-										'.($row->akzeptiertamum != '' ? 'checked="checked" disabled="disabled"' : '').'>
-										'.$p->t('bewerbung/textRuecktrittsrecht').'
-									</label>
-								</div>';*/
-								echo '<form method="POST" action="'.$_SERVER['PHP_SELF'].'?active=akten" class="form-horizontal">
-									<input type="hidden" name="action" value="acceptAkte">
-									<input type="hidden" name="akte_id" value="'.$row->akte_id.'">
-									<button type="submit" id="acceptAkteButton'.$row->akte_id.'" title="" 
-											class="btn '.($row->akzeptiertamum != '' ? 'btn-success' : 'btn-primary').' btn-sm" disabled>
-											'.($row->akzeptiertamum != '' ?  $p->t('bewerbung/akzeptiert', array($row->bezeichnung)) : $p->t('bewerbung/akzeptieren', array($row->bezeichnung))).'
-									</button>
-								</form>';
-							}
-			echo '		</div>
-					</div>
-				</li>';
+			if ($row->dokument_kurzbz == 'Ausbvert')
+			{
+				if ($row->akzeptiertamum == '')
+				{
+					$anzahlZuAkzeptieren++;
+				}
+				echo '
+				<br>
+				'.$p->t('bewerbung/informationDatenverwendungStudierende').'
+				<br><br>
+				<div class="checkbox">
+					<label><input id="checkbox1ausbildungsvertrag'.$row->akte_id.'" type="checkbox" class="checkboxAusbildungsvertrag"
+					name="'.$row->akte_id.'"
+					'.($row->akzeptiertamum != '' ? 'checked="checked" disabled="disabled"' : '').'>
+					'.$p->t('bewerbung/textAusbildungsvertrag').'</label>
+				</div>';
+
+				/*echo '<div class="checkbox">
+					<label>
+						<input id="checkbox2ausbildungsvertrag" type="checkbox" class="checkboxAusbildungsvertrag"
+						'.($row->akzeptiertamum != '' ? 'checked="checked" disabled="disabled"' : '').'>
+						'.$p->t('bewerbung/textRuecktrittsrecht').'
+					</label>
+				</div>';*/
+				echo '<form method="POST" action="'.$_SERVER['PHP_SELF'].'?active=akten" class="form-horizontal">
+					<input type="hidden" name="action" value="acceptAkte">
+					<input type="hidden" name="akte_id" value="'.$row->akte_id.'">
+					<button type="submit" id="acceptAkteButton'.$row->akte_id.'" title=""
+							class="btn '.($row->akzeptiertamum != '' ? 'btn-success' : 'btn-primary').' btn-sm" disabled>
+							'.($row->akzeptiertamum != '' ?  $p->t('bewerbung/akzeptiert', array($row->bezeichnung)) : $p->t('bewerbung/akzeptieren', array($row->bezeichnung))).'
+					</button>
+				</form>';
+			}
+					echo '		</div>
+		</div>
+	</li>';
 		}
 		echo '</ul> ';
 		// Hier wird ein unsichtbares div mit der Anzahl der akzeptierten Akten ausgegeben
@@ -156,12 +170,15 @@ if(!isset($person_id))
 		});
 
 		var anzahlAktenZuAkzeptieren = $('#anzahlAktenZuAkzeptieren').html();
+		var existsOffeneBewerbung = $('#existsOffeneBewerbung').html();
+		var isStudent = $('#isStudent').html();
+		var showAktentext = $('#showAktentext').html();
 
 		if (anzahlAktenZuAkzeptieren != '')
 		{
 			anzahlAktenZuAkzeptieren = parseInt(anzahlAktenZuAkzeptieren);
 
-			if (anzahlAktenZuAkzeptieren > 0)
+			if ((anzahlAktenZuAkzeptieren > 0) && (existsOffeneBewerbung != ''))
 			{
 				$('#tabAktenLink').css('background-color','#F2DEDE');
 				$('#tabAktenLink').hover(
@@ -173,8 +190,46 @@ if(!isset($person_id))
 				$('#tabAktenStatustext').text('<?php echo $p->t('bewerbung/unvollstaendig')?>');
 				$('#tabAktenStatustext').addClass('text-danger');
 			}
+			else if((anzahlAktenZuAkzeptieren > 0) && (existsOffeneBewerbung == ''))
+			{
+				if(!isStudent)
+				{
+					$('#output').hide();
+					$('#Aktentext').text('<?php echo $p->t('bewerbung/keineAktenVorhanden')?>');
+					if(showAktentext)
+					{
+						$('#tabAktenStatustext').html('&nbsp;');
+						$('#Aktentext').text('<?php echo ""?>');
+					}
+				}
+				else
+				{
+					$('#tabAktenLink').css('background-color','#F2DEDE');
+					$('#tabAktenLink').hover(
+						function()
+						{
+							$(this).css('background-color','#F2DEDE');
+						}
+					);
+					$('#tabAktenStatustext').text('<?php echo $p->t('bewerbung/unvollstaendig')?>');
+					$('#tabAktenStatustext').addClass('text-danger');
+				}
+
+			}
 			else
 			{
+				if(existsOffeneBewerbung == '' && !isStudent)
+				{
+					$('#output').hide();
+					$('#Aktentext2').text('<?php echo $p->t('bewerbung/keineAktenVorhanden')?>');
+					if(showAktentext)
+					{
+						$('#tabAktenStatustext').html('&nbsp;');
+						$('#Aktentext2').text('<?php echo ""?>');
+					}
+				}
+				else
+				{
 				$('#tabAktenLink').css('background-color','#DFF0D8');
 				$('#tabAktenLink').hover(
 					function()
@@ -184,6 +239,7 @@ if(!isset($person_id))
 				);
 				$('#tabAktenStatustext').text('<?php echo $p->t('bewerbung/vollstaendig')?>');
 				$('#tabAktenStatustext').addClass('text-success');
+				}
 			}
 		}
 		else
