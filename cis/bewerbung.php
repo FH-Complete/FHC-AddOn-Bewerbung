@@ -3348,7 +3348,18 @@ function sendAddStudiengang($prestudent_id, $studiensemester_kurzbz, $orgform_ku
 	$email = wordwrap($email, 70); // Bricht den Code um, da es sonst zu Anzeigefehlern im Mail kommen kann
 
 	$empfaenger = getMailEmpfaenger($prestudent->studiengang_kz);
-	$mail = new mail($empfaenger, 'no-reply', ($person->geschlecht == 'm' ? 'Neuer Bewerber ' : $person->geschlecht == 'w' ? 'Neue Bewerberin ' : 'Neue/r Bewerber/in ') . $person->vorname . ' ' . $person->nachname . ' registriert', 'Bitte sehen Sie sich die Nachricht in HTML Sicht an, um den Inhalt vollständig darzustellen.');
+
+	$mailGreeating = 'Neue/r Bewerber/in  ';
+	if ($person->geschlecht == 'm')
+	{
+		$mailGreeating = 'Neuer Bewerber ';
+	}
+	elseif ($person->geschlecht == 'w')
+	{
+		$mailGreeating = 'Neue Bewerberin ';
+	}
+
+	$mail = new mail($empfaenger, 'no-reply', $mailGreeating . $person->vorname . ' ' . $person->nachname . ' registriert', 'Bitte sehen Sie sich die Nachricht in HTML Sicht an, um den Inhalt vollständig darzustellen.');
 	$mail->setHTMLContent($email);
 	if (! $mail->send())
 		return false;
