@@ -1872,7 +1872,7 @@ function getAktenListe($person_id, $dokument_kurzbz)
  *
  * @return string HTML-String mit Upload-Button und ggf. Nachreich-Button
  */
-function getUploadButton($dokument_kurzbz, $nachreichbutton = false, $visible = true, $studiengang, $ausstellungsdetails = false)
+function getUploadButton($dokument_kurzbz, $nachreichbutton, $visible, $studiengang, $ausstellungsdetails = false)
 {
 	global $p, $sprache;
 	$display = '';
