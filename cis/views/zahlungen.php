@@ -43,6 +43,7 @@ if(!isset($person_id))
 		$stg_arr[$row->studiengang_kz]['English'] = $row->bezeichnung_arr['English'];
 		$stg_arr[$row->studiengang_kz]['OE'] = $oe->organisationseinheittyp_kurzbz.' '.$oe->bezeichnung;
 		$stg_arr[$row->studiengang_kz]['oe_kurzbz'] = $oe->oe_kurzbz;
+		$stg_arr[$row->studiengang_kz]['typKurz'] = $typ->typ;
 	}
 
 	echo '<h2>'.$p->t('tools/zahlungen').'</h2>';
@@ -123,98 +124,114 @@ if(!isset($person_id))
 					// Zu viel bezahlte Gebühren nicht anzeigen sondern 0
 					$betrag = 0;
 				}
-				echo '
 
-				<div class="panel panel-'.$class.'">
-					<div class="panel-heading" data-toggle="collapse" data-parent="#accordionZahlungen" href="#zahlung'.$row['parent']->buchungsnr.'">
-						<h4 class="panel-title">
-						<div class="row">
-							<div class="col-sm-12">
-								€'.sprintf('%.2f',abs($row['parent']->betrag)).'
-								'.$buchungstyp[$row['parent']->buchungstyp_kurzbz].' -
-								'.$stg_arr[$row['parent']->studiengang_kz]['German'].' -
-								'.$row['parent']->studiensemester_kurzbz.'</div>
-						</div>
-						<div class="row details-arrow">
-							<div class="col-xs-12 text-center">
-								<span class="glyphicon glyphicon-chevron-down text-muted"></span>
-								<span class="text-muted small">'.$p->t('bewerbung/zahlungsdetails').'</span>
-							</div>
-						</div>
-						</h4>
-					</div>
-					<div id="zahlung'.$row['parent']->buchungsnr.'" class="panel-collapse collapse">
-				        <div class="panel-body">
+				//Bei typ = lehrgang sollen Zahlungen ausgefiltert werden können
+				$stringTypSG = $stg_arr[$row['parent']->studiengang_kz]['typKurz'];
+
+				if (! defined('ZAHLUNGSBESTAETIGUNG_ANZEIGEN_FUER_LEHRGAENGE') || ZAHLUNGSBESTAETIGUNG_ANZEIGEN_FUER_LEHRGAENGE == true)
+					$filterStringType = '';
+				else
+					$filterStringType = 'l';
+
+
+				if ($stringTypSG != $filterStringType)
+				{
+					echo '
+					<div class="panel panel-'.$class.'">
+						<div class="panel-heading" data-toggle="collapse" data-parent="#accordionZahlungen" href="#zahlung'.$row['parent']->buchungsnr.'">
+							<h4 class="panel-title">
 							<div class="row">
-								<div class="col-xs-12">
-									<form class="form-horizontal">
-										<div class="form-group">
-											<label for="" class="col-sm-3 col-md-5 text-right">'.$p->t('tools/zahlungstyp').'</label>
-											<div class="col-sm-9 col-md-7">'.$buchungstyp[$row['parent']->buchungstyp_kurzbz].'</div>
-										</div>
-										<div class="form-group">
-											<label for="" class="col-sm-3 col-md-5 text-right">'.$p->t('bewerbung/offenerBetrag').'</label>
-											<div class="col-sm-9 col-md-7 '.($textclass != '' ? 'text-'.$textclass : '').'">€'.sprintf('%.2f',abs($betrag)).'</div>
-										</div>
-										<div class="form-group">
-											<label for="" class="col-sm-3 col-md-5 text-right">'.$p->t('buchungen/buchungsdatum').'</label>
-											<div class="col-sm-9 col-md-7">'.date('d.m.Y',$datum_obj->mktime_fromdate($row['parent']->buchungsdatum)).'</div>
-										</div>
-										<div class="form-group">
-											<label for="" class="col-sm-3 col-md-5 text-right">'.$p->t('global/studiengang').'</label>
-											<div class="col-sm-9 col-md-7">'.$stg_arr[$row['parent']->studiengang_kz]['typ'].' '.$stg_arr[$row['parent']->studiengang_kz]['German'].'</div>
-										</div>
-										<div class="form-group">
-											<label for="" class="col-sm-3 col-md-5 text-right">'.$p->t('global/studiensemester').'</label>
-											<div class="col-sm-9 col-md-7">'.$row['parent']->studiensemester_kurzbz.'
-											</div>
-										</div>
-										<div class="form-group">
-											<label for="" class="col-sm-3 col-md-5 text-right">'.$p->t('tools/buchungstext').'</label>
-											<div class="col-sm-9 col-md-7">'.($row['parent']->buchungstext != '' ? $row['parent']->buchungstext : '-').'</div>
-										</div>';
+								<div class="col-sm-12">
+									€'.sprintf('%.2f',abs($row['parent']->betrag)).'
+									'.$buchungstyp[$row['parent']->buchungstyp_kurzbz].' -
+									'.$stg_arr[$row['parent']->studiengang_kz]['German'].' -
+									'.$row['parent']->studiensemester_kurzbz.'</div>
+							</div>
+							<div class="row details-arrow">
+								<div class="col-xs-12 text-center">
+									<span class="glyphicon glyphicon-chevron-down text-muted"></span>
+									<span class="text-muted small">'.$p->t('bewerbung/zahlungsdetails').'</span>
+								</div>
+							</div>
+							</h4>
+						</div>
 
-										if (!defined('BEWERBERTOOL_ZAHLUNGEN_ZAHLUNGSINFORMATIONEN_ANZEIGEN')
-										 || BEWERBERTOOL_ZAHLUNGEN_ZAHLUNGSINFORMATIONEN_ANZEIGEN==true)
-										{
-											echo ';
-											<legend>'.$p->t('bewerbung/zahlungsinformationen').'</legend>
+						<div id="zahlung'.$row['parent']->buchungsnr.'" class="panel-collapse collapse">
+					        <div class="panel-body">
+								<div class="row">
+									<div class="col-xs-12">
+										<form class="form-horizontal">
 											<div class="form-group">
-												<label for="" class="col-sm-3 col-md-5 text-right">'.$p->t('bewerbung/empfaenger').'</label>
-												<div class="col-sm-9 col-md-7">'.$stg_arr[$row['parent']->studiengang_kz]['OE'].'</div>
+												<label for="" class="col-sm-3 col-md-5 text-right">'.$p->t('tools/zahlungstyp').'</label>
+												<div class="col-sm-9 col-md-7">'.$buchungstyp[$row['parent']->buchungstyp_kurzbz].'</div>
 											</div>
 											<div class="form-group">
-												<label for="" class="col-sm-3 col-md-5 text-right">'.$p->t('bewerbung/iban').'</label>
-												<div class="col-sm-9 col-md-7">'.$iban.'</div>
+												<label for="" class="col-sm-3 col-md-5 text-right">'.$p->t('bewerbung/offenerBetrag').'</label>
+												<div class="col-sm-9 col-md-7 '.($textclass != '' ? 'text-'.$textclass : '').'">€'.sprintf('%.2f',abs($betrag)).'</div>
 											</div>
 											<div class="form-group">
-												<label for="" class="col-sm-3 col-md-5 text-right">'.$p->t('bewerbung/bic').'</label>
-												<div class="col-sm-9 col-md-7">'.$bic.'</div>
+												<label for="" class="col-sm-3 col-md-5 text-right">'.$p->t('buchungen/buchungsdatum').'</label>
+												<div class="col-sm-9 col-md-7">'.date('d.m.Y',$datum_obj->mktime_fromdate($row['parent']->buchungsdatum)).'</div>
+											</div>
+											<div class="form-group">
+												<label for="" class="col-sm-3 col-md-5 text-right">'.$p->t('global/studiengang').'</label>
+												<div class="col-sm-9 col-md-7">'.$stg_arr[$row['parent']->studiengang_kz]['typ'].' '.$stg_arr[$row['parent']->studiengang_kz]['German'].'</div>
+											</div>
+											<div class="form-group">
+												<label for="" class="col-sm-3 col-md-5 text-right">'.$p->t('global/studiensemester').'</label>
+												<div class="col-sm-9 col-md-7">'.$row['parent']->studiensemester_kurzbz.'
+												</div>
+											</div>
+											<div class="form-group">
+												<label for="" class="col-sm-3 col-md-5 text-right">'.$p->t('tools/buchungstext').'</label>
+												<div class="col-sm-9 col-md-7">'.($row['parent']->buchungstext != '' ? $row['parent']->buchungstext : '-').'</div>
 											</div>';
-											if ($row['parent']->zahlungsreferenz != '')
+
+											if (!defined('BEWERBERTOOL_ZAHLUNGEN_ZAHLUNGSINFORMATIONEN_ANZEIGEN')
+											 || BEWERBERTOOL_ZAHLUNGEN_ZAHLUNGSINFORMATIONEN_ANZEIGEN==true)
 											{
-												echo '<div class="form-group" >
-														<label for="" class="col-sm-3 col-md-5 text-right">'.$p->t('bewerbung/zahlungsreferenz').'</label >
-														<div class="col-sm-9 col-md-7">'.$row['parent']->zahlungsreferenz.'</div >
-													</div>';
+												echo ';
+												<legend>'.$p->t('bewerbung/zahlungsinformationen').'</legend>
+												<div class="form-group">
+													<label for="" class="col-sm-3 col-md-5 text-right">'.$p->t('bewerbung/empfaenger').'</label>
+													<div class="col-sm-9 col-md-7">'.$stg_arr[$row['parent']->studiengang_kz]['OE'].'</div>
+												</div>
+												<div class="form-group">
+													<label for="" class="col-sm-3 col-md-5 text-right">'.$p->t('bewerbung/iban').'</label>
+													<div class="col-sm-9 col-md-7">'.$iban.'</div>
+												</div>
+												<div class="form-group">
+													<label for="" class="col-sm-3 col-md-5 text-right">'.$p->t('bewerbung/bic').'</label>
+													<div class="col-sm-9 col-md-7">'.$bic.'</div>
+												</div>';
+												if ($row['parent']->zahlungsreferenz != '')
+												{
+													echo '<div class="form-group" >
+															<label for="" class="col-sm-3 col-md-5 text-right">'.$p->t('bewerbung/zahlungsreferenz').'</label >
+															<div class="col-sm-9 col-md-7">'.$row['parent']->zahlungsreferenz.'</div >
+														</div>';
+												}
 											}
-										}
-								echo '</form>
+									echo '</form>
+
+									</div>
 								</div>
 							</div>
 						</div>
-					</div>
-				</div>';
-			}
 
 
+					</div>';
+				}
+			} //ende if ($stringTypSG != 'l')
 		}
 		echo '</div>';
+
 	}
 	else
 	{
 		echo '<p>'.$p->t('tools/keineZahlungenVorhanden').'</p>';
 	}
+
 	?>
 
 	<?php if(defined('BEWERBERTOOL_PAYMENT_ANZEIGEN') && BEWERBERTOOL_PAYMENT_ANZEIGEN==true && $status_zahlungen==false): ?>

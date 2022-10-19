@@ -2490,12 +2490,6 @@ if (CAMPUS_NAME == 'FH Technikum Wien')
 	}
 }
 
-// $dokumente_abzugeben = new dokument();
-// $dokumente_abzugeben->getAllDokumenteForPerson($person_id, true);
-
-// $akte_person = new akte();
-// $akte_person->getAkten($person_id);
-
 $missing_document = false;
 $status_dokumente = false;
 $status_dokumente_arr = array();
@@ -2507,12 +2501,6 @@ $ben_bezeichnung = array();
 // $ben_bezeichnung['German'][] = array();
 // $ben_bezeichnung['English'][] = array();
 
-/*
- * foreach($akte_person->result as $akte)
- * {
- * $akzeptierte_dokumente[] = $akte->dokument_kurzbz;
- * }
- */
 if ($dokumente_abzugeben)
 {
 	foreach ($dokumente_abzugeben as $dok)
@@ -2575,6 +2563,8 @@ $konto = new konto();
 
 $status_zahlungen = true;
 $status_zahlungen_text = $vollstaendig;
+$existsLehrgang = false;
+
 
 if (! defined('BEWERBERTOOL_ZAHLUNGEN_ANZEIGEN') || BEWERBERTOOL_ZAHLUNGEN_ANZEIGEN == true)
 {
@@ -2583,10 +2573,33 @@ if (! defined('BEWERBERTOOL_ZAHLUNGEN_ANZEIGEN') || BEWERBERTOOL_ZAHLUNGEN_ANZEI
 		$status_zahlungen = false;
 		$status_zahlungen_text = $unvollstaendig;
 	}
+
+	if (! defined('ZAHLUNGSBESTAETIGUNG_ANZEIGEN_FUER_LEHRGAENGE') || ZAHLUNGSBESTAETIGUNG_ANZEIGEN_FUER_LEHRGAENGE == false);
+	{
+		$prestd = new prestudent();
+		$prestd->getPrestudenten($person_id);
+
+		foreach($prestd->result as $pre)
+		{
+		 $studiengang_kz = $pre->studiengang_kz;
+
+			$sg = new studiengang();
+			$sg->load($studiengang_kz);
+			if($sg->typ == 'l')
+			{
+				$status_zahlungen_text = '&nbsp;';
+				$existsLehrgang = true;
+			}
+		}
+ }
 }
+
+//unsichtbares Div um Tab bei Vorhandensein Lehrgang einzufärben
+echo '<div id="existsLehrgang" style="display: none">'.$existsLehrgang.'</div>';
 
 $status_ausbildung = true;
 $status_ausbildung_text = $vollstaendig;
+
 
 if (defined('BEWERBERTOOL_AUSBILDUNG_ANZEIGEN') && BEWERBERTOOL_AUSBILDUNG_ANZEIGEN == true)
 {
@@ -2682,7 +2695,14 @@ else
 				});
 			}, 1500);
 
-			$(document).ready(function(){
+			$(document).ready(function()
+			{
+				var existsLehrgang = $('#existsLehrgang').html();
+				if (existsLehrgang)
+				{
+					$('#tabZahlungenLink').css('background-color','#f7f7f7');
+				}
+
 				$('[data-toggle="popover"]').popover({html:true});
 				$('[data-toggle="tooltip"]').tooltip();
 				$('#sprache-dropdown-content a').on('click', function()
@@ -2777,7 +2797,7 @@ else
 						if(!defined('BEWERBERTOOL_ZAHLUNGEN_ANZEIGEN') || BEWERBERTOOL_ZAHLUNGEN_ANZEIGEN):
 						?>
 						<li>
-							<a href="#zahlungen" aria-controls="zahlungen" role="tab" data-toggle="tab" <?php echo ($status_zahlungen_text == $unvollstaendig?'style="background-color: #F2DEDE !important"':'style="background-color: #DFF0D8 !important"');?>>
+							<a id="tabZahlungenLink" href="#zahlungen" aria-controls="zahlungen" role="tab" data-toggle="tab" <?php echo ($status_zahlungen_text == $unvollstaendig?'style="background-color: #F2DEDE !important"':'style="background-color: #DFF0D8 !important"');?>>
 								<?php echo $p->t('bewerbung/menuZahlungen') ?> <br> <?php echo $status_zahlungen_text;?>
 							</a>
 						</li>
