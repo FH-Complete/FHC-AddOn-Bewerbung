@@ -105,15 +105,19 @@ if(!isset($person_id))
 							<div class="col-xs-3 col-sm-2">'.$p->t('bewerbung/zeitzoneMEZ').'</div>
 							<div class="col-xs-5 col-sm-6">'.($row->ort_kurzbz != '' ? $raumbezeichnung : $p->t('bewerbung/raumzuteilungFolgt')).'</div>
 						</div>
-						</li>';
-			$angemeldeteRtArray[] = $row->reihungstest_id;
+					
+						<div class="row">
+							<div class="col-xs-5 col-sm-6">
+								<button type="button" class="btn btn-warning '.($fristVorbei ? 'disabled' : '').'"
+								onclick="aktionReihungstest(\''.$row->reihungstest_id.'\', \''.$row->studienplan_id.'\', \'delete\')">
+									'.$buttonBeschriftungStornieren.' <b> ('. ($row->typ === 'm' ? $row->kurzbzlang : 'Bachelor').')</b>
+								</button>
+							</div>
+						</div>
+					</li>';
+			$angemeldeteRtArray[] = ['rt_id' => $row->reihungstest_id, 'studienplan_id' => $row->studienplan_id, 'typ' => $row->typ];
 		}
 		echo '</ul></div></div></div>';
-		echo '	<button type="button"
-						class="btn btn-warning '.($fristVorbei ? 'disabled' : '').'"
-						onclick="aktionReihungstest(\''.$row->reihungstest_id.'\', \''.$studienplanReihungstest.'\', \'delete\')">
-					'.$buttonBeschriftungStornieren.'
-				</button>';
 		echo '	</div></div><br><br>';
 		echo $p->t('bewerbung/reihungstestInfoTextAngemeldet');
 	}
@@ -184,7 +188,7 @@ if(!isset($person_id))
 			{
 				foreach ($studienplanQualikurse->result AS $row)
 				{
-					if ($reihungstestTermine = getReihungstestsForOnlinebewerbung($row->studienplan_id, $nextWinterSemester->studiensemester_kurzbz))
+					if ($reihungstestTermine = getReihungstestsForOnlinebewerbung([$row->studienplan_id], $nextWinterSemester->studiensemester_kurzbz))
 					{
 						break;
 					}
@@ -228,7 +232,7 @@ if(!isset($person_id))
 				{
 					if (intval($row->anzahl) > 0)
 					{
-						$reihungstestTermine = getReihungstestsForOnlinebewerbung(5, $nextWinterSemester->studiensemester_kurzbz, 1, $studienplanQualikurse_arr);
+						$reihungstestTermine = getReihungstestsForOnlinebewerbung([5], $nextWinterSemester->studiensemester_kurzbz, 1, $studienplanQualikurse_arr);
 					}
 					else
 					{
@@ -270,8 +274,18 @@ if(!isset($person_id))
 
 	if ($terminauswahl == true)
 	{
+		$nichtAngemeldeteRtArray = array();
+		$hasMasterBewerbung = false;
+		if (is_array($reihungstestTermine))
+		{
+			$nichtAngemeldeteRtArray = array_diff(array_column($reihungstestTermine, 'studienplan_id'), array_column($angemeldeteRtArray, 'studienplan_id'));
+			$hasMasterBewerbung = in_array('m', (array_column($reihungstestTermine, 'typ')));
+			if (!$hasMasterBewerbung)
+				$hasMasterBewerbung = in_array('m', array_column($angemeldeteRtArray, 'typ'));
+		}
 		//Wenn bereits eine Anmeldung existiert, keine Terminauswahl anzeigen
-		if (count($angemeldeteRtArray) == 0)
+		//TODO prüfen ob nicht nur $nichtAngemeldeteRtArray als Abfrage ausreichend ist?
+		if ((!$hasMasterBewerbung && count($angemeldeteRtArray) == 0) || (count($nichtAngemeldeteRtArray) !== 0 && $hasMasterBewerbung))
 		{
 			echo '<p>'.$p->t('bewerbung/fuerReihungstestAnmelden').'</p>';
 			echo '<div class="row">
@@ -292,10 +306,14 @@ if(!isset($person_id))
 			foreach($reihungstestTermine as $row)
 			{
 				$angemeldet = false;
-				if (in_array($row->reihungstest_id, $angemeldeteRtArray))
+
+				if (in_array($row->reihungstest_id, array_column($angemeldeteRtArray, 'rt_id')))
 				{
 					$angemeldet = true;
 				}
+				
+				if (in_array($row->studienplan_id, array_column($angemeldeteRtArray, 'studienplan_id')))
+					continue;
 				// Wenn alle Plätze vergeben sind, Termin nicht anzeigen
 				if ($row->anzahl_plaetze - $row->anzahl_anmeldungen <= 0)
 					continue;
@@ -328,8 +346,8 @@ if(!isset($person_id))
 							<div class="col-xs-4 ">
 								<button type="button"
 										class="btn btn-primary '.($angemeldet ? 'disabled' : '').'"
-										onclick="aktionReihungstest(\''.$row->reihungstest_id.'\', \''.$studienplanReihungstest.'\', \'save\')">
-									'.$p->t('global/anmelden').'
+										onclick="aktionReihungstest(\''.$row->reihungstest_id.'\', \''.$row->studienplan_id.'\', \'save\')">
+									'.$p->t('global/anmelden').' <b> ('. ($row->typ === 'm' ? $row->kurzbzlang : 'Bachelor').')</b>
 								</button>
 								'.$anmeldeFristText.'
 							</div>

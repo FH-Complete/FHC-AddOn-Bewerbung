@@ -1389,7 +1389,32 @@ function getPrioStudienplanForReihungstest($person_id, $studiensemester_kurzbz)
 {
 	$db = new basis_db();
 	$qry = "
-			SELECT studienplan_id
+			(SELECT studienplan_id
+			FROM PUBLIC.tbl_person
+			JOIN PUBLIC.tbl_prestudent USING (person_id)
+			JOIN PUBLIC.tbl_prestudentstatus USING (prestudent_id)
+			JOIN lehre.tbl_studienplan USING (studienplan_id)
+			JOIN lehre.tbl_studienordnung USING (studienordnung_id)
+			JOIN PUBLIC.tbl_studiengang ON (tbl_studienordnung.studiengang_kz = tbl_studiengang.studiengang_kz)
+			WHERE person_id = " . $db->db_add_param($person_id, FHC_INTEGER) . "
+				AND studiensemester_kurzbz = " . $db->db_add_param($studiensemester_kurzbz) . "
+				AND tbl_studiengang.typ = 'm'
+				/*AND bewerbung_abgeschicktamum IS NOT NULL*/ /* Auskommentiert, da nicht immer verlaesslich */
+				AND bestaetigtam IS NOT NULL
+				/*AND bestaetigtvon != ''*/ /* Auskommentiert, da nicht immer verlaesslich */
+				AND (
+					SELECT status_kurzbz
+					FROM PUBLIC.tbl_prestudentstatus
+					WHERE prestudent_id = tbl_prestudent.prestudent_id
+						AND studiensemester_kurzbz = tbl_prestudentstatus.studiensemester_kurzbz
+					ORDER BY datum DESC,
+						tbl_prestudentstatus.insertamum DESC LIMIT 1
+				) IN ('Interessent')
+			ORDER BY priorisierung ASC NULLS LAST, tbl_prestudent.insertamum DESC)
+
+			UNION ALL
+
+			(SELECT studienplan_id
 			FROM PUBLIC.tbl_person
 			JOIN PUBLIC.tbl_prestudent USING (person_id)
 			JOIN PUBLIC.tbl_prestudentstatus USING (prestudent_id)
@@ -1415,19 +1440,17 @@ function getPrioStudienplanForReihungstest($person_id, $studiensemester_kurzbz)
 			{
 				$qry .= " AND tbl_studiengang.studiengang_kz != 10002 ";
 			}
-	$qry .= " ORDER BY priorisierung ASC NULLS LAST, tbl_prestudent.insertamum DESC LIMIT 1";
+	$qry .= " ORDER BY priorisierung ASC NULLS LAST, tbl_prestudent.insertamum DESC LIMIT 1)";
 
-	if ($db->db_query($qry))
+	if ($result = $db->db_query($qry))
 	{
-		if ($row = $db->db_fetch_object())
+		$studienplaene = array();
+		while ($row = $db->db_fetch_object($result))
 		{
-			return $row->studienplan_id;
+			$studienplaene[] = $row->studienplan_id;
 		}
-		else
-		{
-			$db->errormsg = 'Kein Studienplan gefunden';
-			return false;
-		}
+		
+		return $studienplaene;
 	}
 	else
 	{
@@ -1440,7 +1463,7 @@ function getPrioStudienplanForReihungstest($person_id, $studiensemester_kurzbz)
  * Holt die nächsten Reihungstesttermine mit dem passenden Studienplan, für die sich ein Bewerber anmelden kann.
  * Der Termin muss das Attribut "öffentlich" auf TRUE haben und die Anmeldefrist muss <= dem heutigen Datum liegen.
  *
- * @param integer $studienplan_id Studienplan ID eines zugeteilten Studienplans.
+ * @param array $studienplan_id Studienplan ID eines zugeteilten Studienplans.
  * @param string $studiensemester_kurzbz Studiensemester des Termins
  * @param integer $stufe Optional. Default 1. Stufe, die der Termin haben soll.
  * @param array $excludedStudienplans. Array mit Studienplan_ids, deren Reihungstests von der Abfrage ausgenommen werden sollen
@@ -1455,6 +1478,9 @@ function getReihungstestsForOnlinebewerbung($studienplan_id, $studiensemester_ku
 		$db->errormsg='$excludedStudienplans ist kein Array';
 		return false;
 	}
+
+	if (count($studienplan_id) === 0)
+		$studienplan_id = [''];
 
 	$qry = "
 			SELECT (
@@ -1500,10 +1526,14 @@ function getReihungstestsForOnlinebewerbung($studienplan_id, $studiensemester_ku
 					FROM PUBLIC.tbl_rt_person
 					WHERE rt_id = rt.reihungstest_id
 					) AS anzahl_anmeldungen,
-				rt.*
+				rt.*,
+				studienplan_id,
+				typ,
+				kurzbzlang
 			FROM PUBLIC.tbl_reihungstest rt
 			JOIN PUBLIC.tbl_rt_studienplan USING (reihungstest_id)
-			WHERE studienplan_id = " . $db->db_add_param($studienplan_id, FHC_INTEGER) . "
+			LEFT JOIN public.tbl_studiengang ON rt.studiengang_kz = tbl_studiengang.studiengang_kz
+			WHERE studienplan_id IN (" . $db->db_implode4SQL($studienplan_id) . ")
 				AND studiensemester_kurzbz = " . $db->db_add_param($studiensemester_kurzbz);
 
 			if ($stufe != 1 && $stufe != '')
@@ -1560,6 +1590,10 @@ function getReihungstestsForOnlinebewerbung($studienplan_id, $studiensemester_ku
 			$obj->aufnahmegruppe_kurzbz = $row->aufnahmegruppe_kurzbz;
 			$obj->stufe = $row->stufe;
 			$obj->anmeldefrist = $row->anmeldefrist;
+			$obj->studienplan_id = $row->studienplan_id;
+			$obj->typ = $row->typ;
+			$obj->kurzbzlang = $row->kurzbzlang;
+			$obj->rt_id = $row->reihungstest_id;
 			$obj->new = true;
 
 			$db->result[] = $obj;
