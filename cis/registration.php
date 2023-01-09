@@ -197,8 +197,8 @@ elseif($username && $password)
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 		<meta name="robots" content="noindex">
-		<link href="../../../vendor/twbs/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" type="text/css">
-		<link rel="stylesheet" type="text/css" href="../../../vendor/twbs/bootstrap/dist/css/bootstrap.min.css">
+		<link href="../../../vendor/twbs/bootstrap3/dist/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+		<link rel="stylesheet" type="text/css" href="../../../vendor/twbs/bootstrap3/dist/css/bootstrap.min.css">
 		<link href="../include/css/registration.css" rel="stylesheet" type="text/css">
 		<script src="../include/js/bewerbung.js"></script>
 	</head>
@@ -1004,7 +1004,7 @@ elseif($username && $password)
 
 									if ($nationengruppe == '')
 									{
-										$nationengruppe = 0;
+										$nationengruppe = 'drittstaat';
 									}
 
 									// Bewerbungsfristen laden
@@ -1347,8 +1347,8 @@ elseif($username && $password)
 				</div>
 			<?php endif; ?>
 		</div>
-		<script type="text/javascript" src="../../../vendor/jquery/jqueryV1/jquery-1.12.4.min.js"></script>
-		<script type="text/javascript" src="../../../vendor/twbs/bootstrap/dist/js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="../../../vendor/jquery/jquery1/jquery-1.12.4.min.js"></script>
+		<script type="text/javascript" src="../../../vendor/twbs/bootstrap3/dist/js/bootstrap.min.js"></script>
 		<script type="text/javascript">
 
 		function changeSprache(sprache)

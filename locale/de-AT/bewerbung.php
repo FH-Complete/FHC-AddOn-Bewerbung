@@ -480,7 +480,7 @@ $this->phrasen['bewerbung/dateien']='Datei(en)';
 $this->phrasen['bewerbung/dokumentWirdGeprueft']='Dokument vorhanden';
 $this->phrasen['bewerbung/dokumentUeberprueft']='Dokument überprüft';
 $this->phrasen['bewerbung/keineDateiAusgewaehlt']='Keine Datei zum Hochladen ausgewählt oder gefunden';
-$this->phrasen['bewerbung/placeholderAnmerkungNachgereicht']='Bitte geben Sie an, welche Institution das Dokument ausstellen wird und bis wann Sie dieses voraussichtlich nachreichen können:';
+$this->phrasen['bewerbung/placeholderAnmerkungNachgereicht']='Bitte geben Sie an, welche Institution das Dokument ausstellen wird und bis wann Sie dieses voraussichtlich nachreichen können';
 $this->phrasen['bewerbung/bitteAusstellungsnationAuswaehlen']='-- Bitte wählen Sie, in welchem Land das Dokument ausgestellt wurde --';
 $this->phrasen['bewerbung/sitzungAbgelaufen']='Die Sitzung ist abgelaufen. Bitte loggen Sie sich erneut ein';
 $this->phrasen['bewerbung/placeholderOrtNachgereicht']='Institution des Ausstellers (zB: TGM Wien)';
@@ -500,6 +500,7 @@ $this->phrasen['bewerbung/bitteAnmerkungEintragen']='Bitte geben Sie den Namen d
 $this->phrasen['bewerbung/nachreichDatumNichtVergangenheit']='Das Datum der Nachreichung darf nicht in der Vergangenheit liegen';
 $this->phrasen['bewerbung/infotextVorlaeufigesZgvDokumentMast']='Laden Sie hier <b>alle</b> Semesterzeugnisse-, Teil-, bzw. Ihr Sammelzeugnis (transcript of records) hoch, die glaubhaft vermitteln, dass Sie die Zugangsvoraussetzung für den gewählten Studiengang erlangen werden. Studien- oder Inskriptionsbestätigungen werden nicht akzeptiert!<br>';
 $this->phrasen['bewerbung/infotextVorlaeufigesZgvDokument']='Bitte laden Sie eine Datei hoch, welche glaubhaft vermittelt, dass Sie die Zugangsvoraussetzung für den gewählten Studiengang erlangen werden. Das kann das letzte Semester-, Teil-, bzw. ein Sammelzeugnis, eine (Anmelde-)Bestätigung, etc. sein. (Studien- oder Inskriptionsbestätigungen werden nicht akzeptiert!)<br>';
+$this->phrasen['bewerbung/infotextVorlaeufigesSprachB2']='Bitte laden Sie eine Datei hoch, welche glaubhaft vermittelt, dass Sie die <b>Sprachkenntnisse</b> auf dem <b>Level B2</b> bis zum Bewerbungsschluss erlangen und führen Sie an, bei welcher Institution Sie die B2 Zertifizierung absolvieren werden. Als vorläufigen Nachweis laden Sie bitte eine entsprechende Bestätigung hoch.<br>';
 $this->phrasen['bewerbung/bitteDateiAuswaehlen']='Bitte wählen Sie eine Datei aus';
 $this->phrasen['bewerbung/zustimmungDatenuebermittlung']='Können in Ausnahmefällen die Zugangsvoraussetzungen von der FH Technikum Wien nicht abschließend abgeklärt werden, erteile ich die Zustimmung, dass die FH Technikum Wien die Dokumente zur Überprüfung an die zuständigen Behörden weiterleiten kann.<br>
 Ich wurde darüber informiert, dass ich nicht verpflichtet bin, der Übermittlung meiner Daten zuzustimmen. Diese Zustimmung ist allerdings notwendig, um die Bewerbung berücksichtigen zu können.';

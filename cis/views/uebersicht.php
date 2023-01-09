@@ -310,7 +310,7 @@ $studiensemester_array = array();
 
 			if ($nationengruppe == '')
 			{
-				$nationengruppe = 0;
+				$nationengruppe = 'drittstaat';
 			}
 
 			// Bewerbungsfristen laden
