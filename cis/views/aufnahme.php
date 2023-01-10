@@ -103,14 +103,14 @@ if(!isset($person_id))
 							<div class="col-xs-4 col-sm-3">'.substr($tagbez[$spracheIndex][$datum->formatDatum($row->datum, 'N')], 0, 2).', '.$datum->formatDatum($row->datum, 'd.m.Y').'</div>
 							<div class="col-xs-3 col-sm-1">'.$uhrzeit.'</div>
 							<div class="col-xs-3 col-sm-2">'.$p->t('bewerbung/zeitzoneMEZ').'</div>
-							<div class="col-xs-5 col-sm-6">'.($row->ort_kurzbz != '' ? $raumbezeichnung : $p->t('bewerbung/raumzuteilungFolgt')).'</div>
+							<div class="col-xs-5 col-sm-6">'.($row->ort_kurzbz != '' ? $raumbezeichnung : ($row->typ === 'm' ? 'MASTER' :$p->t('bewerbung/raumzuteilungFolgt'))).'</div>
 						</div>
 					
 						<div class="row">
 							<div class="col-xs-5 col-sm-6">
-								<button type="button" class="btn btn-warning '.($fristVorbei ? 'disabled' : '').'"
-								onclick="aktionReihungstest(\''.$row->reihungstest_id.'\', \''.$row->studienplan_id.'\', \'delete\')">
-									'.$buttonBeschriftungStornieren.' <b> ('. ($row->typ === 'm' ? $row->kurzbzlang : 'Bachelor').')</b>
+								<button type="button" class="btn btn-warning '.(($fristVorbei || $row->typ === 'm') ? 'disabled' : '').'"
+								onclick="aktionReihungstest(\''.$row->reihungstest_id.'\', \''.$row->studienplan_id.'\', \'delete\', \'' . $row->typ . '\')">
+									'.$buttonBeschriftungStornieren.' <b> ('. ($row->typ === 'm' ? $row->stg_kuerzel : 'Bachelor').')</b>
 								</button>
 							</div>
 						</div>
@@ -158,7 +158,7 @@ if(!isset($person_id))
 		$isStudentQuali = $prestudent->existsPrestudentstatus($person_id, STUDIENGANG_KZ_QUALIFIKATIONKURSE, $nextSummerSemester);
 	}
 
-	$reihungstestTermine = '';
+	$reihungstestTermine = [];
 
 	//Reihungstesttermine der Qualifikationskurse laden, wenn STUDIENGANG_KZ_QUALIFIKATIONKURSE gesetzt ist
 	$studienplanQualikurse_arr = array();
@@ -260,13 +260,13 @@ if(!isset($person_id))
 			echo '<div class="col-xs-12 alert alert-info">'.$p->t('bewerbung/infoVorgemerktFuerQualifikationskurs').'</div>';
 			$terminauswahl = false;
 		}
-		elseif ($reihungstestTermine == '' && count($angemeldeteRtArray) == 0)
+		elseif (empty($reihungstestTermine) && count($angemeldeteRtArray) == 0)
 		{
 			echo '<div class="col-xs-12 alert alert-warning">'.$p->t('bewerbung/keineRtTermineZurAuswahl').'</div>';
 			$terminauswahl = false;
 		}
 	}
-	elseif($reihungstestTermine == '' && count($angemeldeteRtArray) == 0)
+	elseif(empty($reihungstestTermine) && count($angemeldeteRtArray) == 0)
 	{
 		echo '<div class="col-xs-12 alert alert-info">'.$p->t('bewerbung/keineRtTermineZurAuswahl').'</div>';
 		$terminauswahl = false;
@@ -276,13 +276,9 @@ if(!isset($person_id))
 	{
 		$nichtAngemeldeteRtArray = array();
 		$hasMasterBewerbung = false;
-		if (is_array($reihungstestTermine))
-		{
-			$nichtAngemeldeteRtArray = array_diff(array_column($reihungstestTermine, 'studienplan_id'), array_column($angemeldeteRtArray, 'studienplan_id'));
-			$hasMasterBewerbung = in_array('m', (array_column($reihungstestTermine, 'typ')));
-			if (!$hasMasterBewerbung)
-				$hasMasterBewerbung = in_array('m', array_column($angemeldeteRtArray, 'typ'));
-		}
+		$nichtAngemeldeteRtArray = array_diff(array_column($reihungstestTermine, 'studienplan_id'), array_column($angemeldeteRtArray, 'studienplan_id'));
+		$mergedArray = array_merge(array_column($reihungstestTermine, 'typ'), array_column($angemeldeteRtArray, 'typ'));
+		$hasMasterBewerbung = in_array('m', $mergedArray);
 		//Wenn bereits eine Anmeldung existiert, keine Terminauswahl anzeigen
 		//TODO prüfen ob nicht nur $nichtAngemeldeteRtArray als Abfrage ausreichend ist?
 		if ((!$hasMasterBewerbung && count($angemeldeteRtArray) == 0) || (count($nichtAngemeldeteRtArray) !== 0 && $hasMasterBewerbung))
@@ -347,7 +343,7 @@ if(!isset($person_id))
 								<button type="button"
 										class="btn btn-primary '.($angemeldet ? 'disabled' : '').'"
 										onclick="aktionReihungstest(\''.$row->reihungstest_id.'\', \''.$row->studienplan_id.'\', \'save\')">
-									'.$p->t('global/anmelden').' <b> ('. ($row->typ === 'm' ? $row->kurzbzlang : 'Bachelor').')</b>
+									'.$p->t('global/anmelden').' <b> ('. ($row->typ === 'm' ? $row->stg_kuerzel : 'Bachelor').')</b>
 								</button>
 								'.$anmeldeFristText.'
 							</div>
@@ -380,12 +376,13 @@ if(!isset($person_id))
 	<br/><br/>
 </div>
 <script type="text/javascript">
-function aktionReihungstest(reihungstest_id, studienplan_id, aktion)
+function aktionReihungstest(reihungstest_id, studienplan_id, aktion, typ = null)
 {
 	data = {
 		reihungstest_id: reihungstest_id,
 		studienplan_id: studienplan_id,
 		aktion: aktion,
+		typ: typ,
 		aktionReihungstest: true
 	};
 

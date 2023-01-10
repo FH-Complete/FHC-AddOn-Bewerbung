@@ -555,6 +555,15 @@ if ($aktionReihungstest)
 	}
 	elseif ($aktion == 'delete')
 	{
+		$typ = filter_input(INPUT_POST, 'typ');
+		if ($typ === 'm')
+		{
+			echo json_encode(array(
+				'status' => 'fehler',
+				'msg' => 'Der Termin konnte nicht storniert werden.'
+			));
+			exit();
+		}
 		$rt_person_id = new reihungstest();
 		$rt_person_id->getPersonReihungstest($person_id, $rt_id);
 
@@ -2621,8 +2630,18 @@ if (! defined('BEWERBERTOOL_REIHUNGSTEST_ANZEIGEN') || BEWERBERTOOL_REIHUNGSTEST
 	$reihungstestTermine = getReihungstestsForOnlinebewerbung($studienplanReihungstest, $nextWinterSemester->studiensemester_kurzbz);
 	if (count($angemeldeteReihungstests->result) > 0)
 	{
-		$status_reihungstest = true;
-		$status_reihungstest_text = $vollstaendig;
+		$nichtAngemeldeteRtArray = array_diff(array_column($reihungstestTermine, 'studienplan_id'), array_column($angemeldeteReihungstests->result, 'studienplan_id'));
+
+		if (count($nichtAngemeldeteRtArray) > 0)
+		{
+			$status_reihungstest = false;
+			$status_reihungstest_text = $unvollstaendig;
+		}
+		else
+		{
+			$status_reihungstest = true;
+			$status_reihungstest_text = $vollstaendig;
+		}
 	}
 	elseif ($reihungstestTermine != '')
 	{
@@ -2799,40 +2818,22 @@ else
 						if(!defined('BEWERBERTOOL_REIHUNGSTEST_ANZEIGEN') || BEWERBERTOOL_REIHUNGSTEST_ANZEIGEN)
 						{
 							// An der FHTW wird der Punkt "Reihungstest" erst angezeigt, wenn der Status einer Bewerbung bestätigt wurde
-							// und es mindestens eine Bachelor-Bewerbung gibt
 							if (CAMPUS_NAME == 'FH Technikum Wien')
 							{
-								$standalone_masterbewerbung = false;
 								if ($prestudent = getBewerbungen($person_id, true))
 								{
-									foreach ($prestudent as $row)
+									if (check_person_statusbestaetigt($person_id, 'Interessent', $nextWinterSemester->studiensemester_kurzbz))
 									{
-										if ($row->studiengang_typ != 'm')
-										{
-											$standalone_masterbewerbung = false;
-											break;
-										}
-										else
-										{
-											$standalone_masterbewerbung = true;
-											$display = 'style="display: none"';
-										}
+										$display = '';
 									}
-									if ($standalone_masterbewerbung === false)
+									else
 									{
-										if (check_person_statusbestaetigt($person_id, 'Interessent', $nextWinterSemester->studiensemester_kurzbz))
+										$display = 'style="display: none"';
+										if (($key = array_search('aufnahme', $tabs)) !== false)
 										{
-											$display = '';
+											unset($tabs[$key]);
 										}
-										else
-										{
-											$display = 'style="display: none"';
-											if (($key = array_search('aufnahme', $tabs)) !== false)
-											{
-												unset($tabs[$key]);
-											}
-											$tabs = array_values($tabs);
-										}
+										$tabs = array_values($tabs);
 									}
 								}
 							}

@@ -1529,7 +1529,7 @@ function getReihungstestsForOnlinebewerbung($studienplan_id, $studiensemester_ku
 				rt.*,
 				studienplan_id,
 				typ,
-				kurzbzlang
+				UPPER(typ::varchar(1) || kurzbz) AS stg_kuerzel
 			FROM PUBLIC.tbl_reihungstest rt
 			JOIN PUBLIC.tbl_rt_studienplan USING (reihungstest_id)
 			LEFT JOIN public.tbl_studiengang ON rt.studiengang_kz = tbl_studiengang.studiengang_kz
@@ -1567,7 +1567,7 @@ function getReihungstestsForOnlinebewerbung($studienplan_id, $studiensemester_ku
 // @todo: (stufe = 1 OR stufe IS NULL) ???
 	if ($result = $db->db_query($qry))
 	{
-		$db->result = '';
+		$db->result = [];
 		while ($row = $db->db_fetch_object($result))
 		{
 			$obj = new stdClass();
@@ -1592,7 +1592,7 @@ function getReihungstestsForOnlinebewerbung($studienplan_id, $studiensemester_ku
 			$obj->anmeldefrist = $row->anmeldefrist;
 			$obj->studienplan_id = $row->studienplan_id;
 			$obj->typ = $row->typ;
-			$obj->kurzbzlang = $row->kurzbzlang;
+			$obj->stg_kuerzel = $row->stg_kuerzel;
 			$obj->rt_id = $row->reihungstest_id;
 			$obj->new = true;
 
