@@ -57,6 +57,8 @@ if(defined('BEWERBERTOOL_SICHERHEIT_ANZEIGEN') && BEWERBERTOOL_SICHERHEIT_ANZEIG
 	$tabs[10]='sicherheit';
 if(defined('BEWERBERTOOL_AKTEN_ANZEIGEN') && BEWERBERTOOL_AKTEN_ANZEIGEN)
 	$tabs[11]='akten';
+if(defined('BEWERBERTOOL_INVOICES_ANZEIGEN') && BEWERBERTOOL_INVOICES_ANZEIGEN)
+	$tabs[12]='invoices';
 
 $tabLadefolge = $tabs;
 ksort($tabLadefolge);
@@ -2887,6 +2889,13 @@ else
 							<li>
 								<a href="#sicherheit" aria-controls="sicherheit" role="tab" data-toggle="tab">
 									<?php echo $p->t('bewerbung/menuSicherheit') ?> <br> &nbsp;
+								</a>
+							</li>
+						<?php endif; ?>
+						<?php if(defined('BEWERBERTOOL_INVOICES_ANZEIGEN') && BEWERBERTOOL_INVOICES_ANZEIGEN):	?>
+							<li>
+								<a href="#invoices" aria-controls="invoices" role="tab" data-toggle="tab">
+									<?php echo $p->t('bewerbung/menuInvoices') ?> <br> &nbsp;
 								</a>
 							</li>
 						<?php endif; ?>

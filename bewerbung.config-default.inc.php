@@ -14,6 +14,7 @@ define('BEWERBERTOOL_UEBERSICHT_ANZEIGEN', true);
 define('BEWERBERTOOL_ABSCHICKEN_ANZEIGEN', true); // Deprecated
 define('BEWERBERTOOL_SICHERHEIT_ANZEIGEN', false);
 define('BEWERBERTOOL_MESSAGES_ANZEIGEN', false);
+define('BEWERBERTOOL_INVOICES_ANZEIGEN', false);
 define('BEWERBERTOOL_AKTEN_ANZEIGEN', false);
 // Initialbelastung auf das Konto des Interessenten. Buchungstyp_kurzbz aus public.tbl_buchungstyp
 define('BEWERBERTOOL_KONTOBELASTUNG_BUCHUNGSTYP', '');
