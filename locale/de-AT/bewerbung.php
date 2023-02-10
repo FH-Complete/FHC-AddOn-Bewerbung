@@ -708,4 +708,7 @@ $this->phrasen['bewerbung/re_nachname']='Nachname';
 $this->phrasen['bewerbung/staatsbuergerschaft']='Staatsangehörigkeit';
 $this->phrasen['bewerbung/staatsbuergerschaftErklaerung']='Bitte geben Sie hier Ihre Staatsbürgerschaft an';
 $this->phrasen['bewerbung/bitteAuswaehlenStaatsbuergerschaft']='-- Bitte auswählen --';
+
+$this->phrasen['bewerbung/menuInvoices'] = 'Meine Zahlungen';
+$this->phrasen['bewerbung/erklaerungInvoices'] = 'Ablauf und Zahlungsbedingungen';
 ?>
