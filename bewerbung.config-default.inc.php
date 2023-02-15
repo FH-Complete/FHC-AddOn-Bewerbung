@@ -99,4 +99,7 @@ define('BEWERBERTOOL_UPLOAD_DOKUMENT_WENN_AKZEPTIERT', true);
 //Für welche Studiengänge (Kennzahlen) soll die Option "Reihungstest-Login" angezeigt werden?
 define('TESTTOOL_LOGIN_BEWERBUNGSTOOL_STUDIENGAENGE', serialize(
 	array()));
+
+// FHTW: Zusaetzlich zu den Bachelor- & Masterstudiengaenge Studiengaenge an die keine Mail geschickt werden soll
+define('BEWERBERTOOL_DONT_SEND_MAIL_STG', serialize(array()));
 ?>
