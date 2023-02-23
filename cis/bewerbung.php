@@ -108,6 +108,7 @@ require_once ('../../../include/studienplan.class.php');
 require_once ('../../../include/studiensemester.class.php');
 require_once ('../../../include/zgv.class.php');
 require_once ('../include/functions.inc.php');
+require_once ('../../../include/rueckstellung.class.php');
 
 
 if (isset($_GET['logout']))
@@ -148,6 +149,7 @@ $sprachindex = new sprache();
 $spracheIndex = $sprachindex->getIndexFromSprache($sprache);
 $p = new phrasen($sprache);
 $log = new personlog();
+$rueckstellung = new rueckstellung();
 
 // Erstellen eines Array mit allen Studiengängen
 $studiengaenge_obj = new studiengang();
@@ -221,7 +223,7 @@ if ($method == 'delete')
 				$save_error_dokumente = false;
 				$message = $p->t('global/erfolgreichgelöscht');
 				// Geparkten Logeintrag löschen
-				$log->deleteParked($person_id);
+				$rueckstellung->deleteParked($person_id);
 				// Logeintrag schreiben
 				$log->log($person_id, 'Action', array(
 					'name' => 'Document ' . $akte->bezeichnung . ' deleted',
@@ -280,7 +282,7 @@ if ($deleteAkte && isset($_POST['akte_id']))
 			else
 			{
 				// Geparkten Logeintrag löschen
-				$log->deleteParked($person_id);
+				$rueckstellung->deleteParked($person_id);
 				// Logeintrag schreiben
 				$log->log($person_id, 'Action', array(
 					'name' => 'Document ' . $akte->bezeichnung . ' deleted',
@@ -344,7 +346,7 @@ if ($bewerbungStornieren && isset($_POST['prestudent_id']))
 		else
 		{
 			// Geparkten Logeintrag löschen
-			$log->deleteParked($person->person_id);
+			$rueckstellung->deleteParked($person->person_id);
 			// Logeintrag schreiben
 			$stg = new studiengang($prestudent_status->studiengang_kz);
 			$log->log($person->person_id,
@@ -513,7 +515,7 @@ if ($aktionReihungstest)
 			// Reihungstest laden um Log-Daten zu befüllen
 			$rt = new reihungstest($rt_id);
 			// Geparkten Logeintrag löschen
-			$log->deleteParked($person_id);
+			$rueckstellung->deleteParked($person_id);
 			// Logeintrag schreiben
 			$log->log($person_id,
 				'Processstate',
@@ -595,7 +597,7 @@ if ($aktionReihungstest)
 			// Reihungstest laden um Log-Daten zu befüllen
 			$rt = new reihungstest($rt_id);
 			// Geparkten Logeintrag löschen
-			$log->deleteParked($person_id);
+			$rueckstellung->deleteParked($person_id);
 			// Logeintrag schreiben
 			$log->log($person_id,
 				'Action',
@@ -739,7 +741,7 @@ if (isset($_POST['btn_bewerbung_abschicken']))
 				// echo '<script type="text/javascript">window.location="'.$_SERVER['PHP_SELF'].'?active=abschicken";</script>';
 				$save_error_abschicken = false;
 				// Geparkten Logeintrag löschen
-				$log->deleteParked($prestudent_status->person_id);
+				$rueckstellung->deleteParked($prestudent_status->person_id);
 				// Logeintrag schreiben
 				$log->log($prestudent_status->person_id, 'Processstate', array(
 					'name' => 'Application sent',
@@ -751,7 +753,7 @@ if (isset($_POST['btn_bewerbung_abschicken']))
 				echo '<script type="text/javascript">alert("' . $p->t('bewerbung/fehlerBeimVersendenDerBewerbung') . '");</script>';
 				$save_error_abschicken = true;
 				// Geparkten Logeintrag löschen
-				$log->deleteParked($prestudent_status->person_id);
+				$rueckstellung->deleteParked($prestudent_status->person_id);
 				// Logeintrag schreiben
 				$log->log($prestudent_status->person_id, 'Processstate', array(
 					'name' => 'Application sent',
@@ -815,7 +817,7 @@ if (isset($_POST['submit_nachgereicht']))
 			else
 			{
 				// Geparkten Logeintrag löschen
-				$log->deleteParked($person_id);
+				$rueckstellung->deleteParked($person_id);
 				// Logeintrag schreiben
 				$log->log($person_id, 'Action', array(
 					'name' => $_POST['dok_kurzbz'] . ' set to nachgereicht',
@@ -939,7 +941,7 @@ if (isset($_POST['submit_nachgereicht']))
 							{
 								$message .= $p->t('global/erfolgreichgespeichert');
 								// Geparkten Logeintrag löschen
-								$log->deleteParked($person_id);
+								$rueckstellung->deleteParked($person_id);
 								// Logeintrag schreiben
 								$log->log($person_id, 'Action', array(
 									'name' => 'Document ' . $akte->bezeichnung . ' uploaded',
@@ -1088,7 +1090,7 @@ if (isset($_POST['btn_person']))
 			$message = $p->t('bewerbung/svnrBereitsVorhanden');
 			$save_error_daten = true;
 			// Geparkten Logeintrag löschen
-			$log->deleteParked($person_id);
+			$rueckstellung->deleteParked($person_id);
 			// Logeintrag schreiben
 			$log->log($person_id, 'Action', array(
 				'name' => 'Error saving Sozialversicherungsnummer',
@@ -1111,7 +1113,7 @@ if (isset($_POST['btn_person']))
 			$message = $person->errormsg;
 			$save_error_daten = true;
 			// Geparkten Logeintrag löschen
-			$log->deleteParked($person_id);
+			$rueckstellung->deleteParked($person_id);
 			// Logeintrag schreiben
 			$log->log($person_id, 'Action', array(
 				'name' => 'Personal data saved',
@@ -1123,7 +1125,7 @@ if (isset($_POST['btn_person']))
 		{
 			$save_error_daten = false;
 			// Geparkten Logeintrag löschen
-			$log->deleteParked($person_id);
+			$rueckstellung->deleteParked($person_id);
 			// Logeintrag schreiben
 			$log->log($person_id, 'Action', array(
 				'name' => 'Personal data saved',
@@ -1330,7 +1332,7 @@ if (isset($_POST['btn_kontakt']) && ! $eingabegesperrt)
 				{
 					$save_error_kontakt = false;
 					// Geparkten Logeintrag löschen
-					$log->deleteParked($person->person_id);
+					$rueckstellung->deleteParked($person->person_id);
 					// Logeintrag schreiben
 					$log->log($person->person_id, 'Action', array(
 						'name' => 'Phone number updated',
@@ -1372,7 +1374,7 @@ if (isset($_POST['btn_kontakt']) && ! $eingabegesperrt)
 					{
 						$save_error_kontakt = false;
 						// Geparkten Logeintrag löschen
-						$log->deleteParked($person->person_id);
+						$rueckstellung->deleteParked($person->person_id);
 						// Logeintrag schreiben
 						$log->log($person->person_id, 'Action', array(
 							'name' => 'New phone number saved',
@@ -1442,7 +1444,7 @@ if (isset($_POST['btn_kontakt']) && ! $eingabegesperrt)
 						$nation_alt != $nation_neu)
 					{
 						// Geparkten Logeintrag löschen
-						$log->deleteParked($person->person_id);
+						$rueckstellung->deleteParked($person->person_id);
 						// Logeintrag anlegen
 						$log->log($person->person_id, 'Action', array(
 							'name' => 'Adress updated',
@@ -1478,7 +1480,7 @@ if (isset($_POST['btn_kontakt']) && ! $eingabegesperrt)
 				{
 					$save_error = false;
 					// Geparkten Logeintrag löschen
-					$log->deleteParked($person->person_id);
+					$rueckstellung->deleteParked($person->person_id);
 					// Logeintrag schreiben
 					$log->log($person->person_id, 'Action', array(
 						'name' => 'New adress saved',
@@ -1856,7 +1858,7 @@ if (isset($_POST['btn_notiz']))
 		$notiz->saveZuordnung();
 
 		// Geparkten Logeintrag löschen
-		$log->deleteParked($person_id);
+		$rueckstellung->deleteParked($person_id);
 		// Logeintrag schreiben
 		$log->log($person_id, 'Action', array(
 			'name' => 'New notiz saved',
@@ -1898,7 +1900,7 @@ if ($saveNotiz)
 		if ($notiz->saveZuordnung())
 		{
 			// Geparkten Logeintrag löschen
-			$log->deleteParked($person_id);
+			$rueckstellung->deleteParked($person_id);
 			// Logeintrag schreiben
 			$log->log($person_id, 'Action', array(
 				'name' => 'New notiz saved',
@@ -1943,7 +1945,7 @@ if (isset($_POST['btn_new_accesscode']))
 	else
 	{
 		// Geparkten Logeintrag löschen
-		$log->deleteParked($person_id);
+		$rueckstellung->deleteParked($person_id);
 		// Logeintrag schreiben
 		$log->log($person_id,
 			'Action',
