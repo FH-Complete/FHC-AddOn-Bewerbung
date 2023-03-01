@@ -170,13 +170,13 @@ if (! isset($person_id))
 					&& BEWERBERTOOL_UPLOAD_DOKUMENT_WENN_AKZEPTIERT === false
 					&& $dok->anzahl_dokumente_akzeptiert > 0))
 			{
-				echo '<div class="panel panel-success">';
+				echo '<div class="panel panel-warning">';
 				$collapseStatus = 'collapse';
 				$statusInfotext = '';
 			}
 			elseif ($dok->anzahl_akten_wird_nachgereicht > 0)
 			{
-				echo '<div class="panel panel-warning">';
+				echo '<div class="panel panel-info">';
 				$statusInfotext = '<div class="label label-warning">'.$p->t('bewerbung/dokumentWirdNachgereicht').'</div>';
 				$displayDetailsArrow = false;
 			}
@@ -563,7 +563,7 @@ if (! isset($person_id))
 		<div class="legend">
 			<div class="lleft">
 				<div class="col colg danger bg-danger">1</div>
-				<div class="col colg success bg-success">2</div>
+				<div class="col colg warning bg-warning">2</div>
 				<div class="col colg secondary bg-secondary"><span class="label labelg">Dokument nicht erforderlich</span></div>
 				<div class="col colg grey bg-secondary">4</div>
 			</div>
