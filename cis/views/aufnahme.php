@@ -23,6 +23,18 @@ if(!isset($person_id))
 {
 	die($p->t('bewerbung/ungueltigerZugriff'));
 }
+
+function filterMaster($value)
+{
+	return ($value->typ === 'm');
+}
+
+function filterBachelor($value)
+{
+	return ($value->typ !== 'm');
+}
+
+
 ?>
 
 <div role="tabpanel" class="tab-pane" id="aufnahme">
@@ -36,10 +48,10 @@ if(!isset($person_id))
 	$angemeldeteRtArray = array();
 	$reihungstestID = '';
 
-	// Angemeldete Termine laden
-	if (count($angemeldeteReihungstests->result) > 0)
+	function drawAnmeldeTabelle($reihungstests)
 	{
-		echo '<p>'.$p->t('bewerbung/sieHabenFolgendenTerminGewaehlt').'</p>';
+		global $p, $reihungstestID, $datum, $tagbez, $spracheIndex, $angemeldeteRtArray;
+		
 		echo '<div class="row">
 					<div class="col-xs-12 col-sm-12 col-md-12 col-lg-8">
 					<div class="panel-group ">
@@ -55,7 +67,7 @@ if(!isset($person_id))
 						<div id="listeTesttermine" class="panel-collapse collapse-in">
 							<ul class="list-group">';
 
-		foreach($angemeldeteReihungstests->result as $row)
+		foreach($reihungstests as $key => $row)
 		{
 			// Durch die Punkteübernahme kann es vorkommen, dass mehrere Ergebnisse für den gleichen RT zurückgegeben werden
 			// Deshalb wird das hier geprüft
@@ -103,23 +115,48 @@ if(!isset($person_id))
 							<div class="col-xs-4 col-sm-3">'.substr($tagbez[$spracheIndex][$datum->formatDatum($row->datum, 'N')], 0, 2).', '.$datum->formatDatum($row->datum, 'd.m.Y').'</div>
 							<div class="col-xs-3 col-sm-1">'.$uhrzeit.'</div>
 							<div class="col-xs-3 col-sm-2">'.$p->t('bewerbung/zeitzoneMEZ').'</div>
-							<div class="col-xs-5 col-sm-6">'.($row->ort_kurzbz != '' ? $raumbezeichnung : ($row->typ === 'm' ? 'MASTER' :$p->t('bewerbung/raumzuteilungFolgt'))).'</div>
+							<div class="col-xs-5 col-sm-6">'.($row->typ === 'm' ? $p->t('bewerbung/masterAnmerkung') : ($row->ort_kurzbz != '' ? $raumbezeichnung : $p->t('bewerbung/raumzuteilungFolgt'))).'</div>
 						</div>
 					
 						<div class="row">
 							<div class="col-xs-5 col-sm-6">
 								<button type="button" class="btn btn-warning '.(($fristVorbei || $row->typ === 'm') ? 'disabled' : '').'"
 								onclick="aktionReihungstest(\''.$row->reihungstest_id.'\', \''.$row->studienplan_id.'\', \'delete\', \'' . $row->typ . '\')">
-									'.$buttonBeschriftungStornieren.' <b> ('. ($row->typ === 'm' ? $row->stg_kuerzel : 'Bachelor').')</b>
+									'.$buttonBeschriftungStornieren.' '. ($row->typ === 'm' ? '<br /><b> (' .($spracheIndex === '1' ? $row->bezeichnung : $row->english) .')</b>' : '').'
 								</button>
 							</div>
 						</div>
 					</li>';
-			$angemeldeteRtArray[] = ['rt_id' => $row->reihungstest_id, 'studienplan_id' => $row->studienplan_id, 'typ' => $row->typ];
+			$angemeldeteRtArray[$key] = new stdClass();
+			$angemeldeteRtArray[$key]->rt_id = $row->reihungstest_id;
+			$angemeldeteRtArray[$key]->studienplan_id = $row->studienplan_id;
+			$angemeldeteRtArray[$key]->typ = $row->typ;
 		}
 		echo '</ul></div></div></div>';
-		echo '	</div></div><br><br>';
-		echo $p->t('bewerbung/reihungstestInfoTextAngemeldet');
+		echo '	</div></div>';
+	}
+	// Angemeldete Termine laden
+	if (count($angemeldeteReihungstests->result) > 0)
+	{
+		$angemeldeteReihungstestsMaster = array_filter($angemeldeteReihungstests->result, 'filterMaster');
+		$angemeldeteReihungstestsBachelor = array_filter($angemeldeteReihungstests->result, 'filterBachelor');
+		
+		if (count($angemeldeteReihungstestsBachelor) > 0)
+		{
+			echo '<h3>Bachelor</h3>';
+			echo '<p>'.$p->t('bewerbung/sieHabenFolgendenTerminGewaehlt').'</p>';
+			drawAnmeldeTabelle($angemeldeteReihungstestsBachelor);
+		}
+		
+		if (count($angemeldeteReihungstestsMaster) > 0)
+		{
+			echo '<h3>Master</h3>';
+			echo 'Hier Bitte einen Text für die MasterRTs';
+			drawAnmeldeTabelle($angemeldeteReihungstestsMaster);
+		}
+		
+		if (count($angemeldeteReihungstestsBachelor) > 0 || count($angemeldeteReihungstestsMaster) > 0)
+			echo $p->t('bewerbung/reihungstestInfoTextAngemeldet');
 	}
 
 	// Wenn die Person TeilnehmerIn am Qualifikationskurs ist (den Statusgrund "Qualifikationskurs" hat),
@@ -236,14 +273,14 @@ if(!isset($person_id))
 					}
 					else
 					{
-						$reihungstestTermine = getReihungstestsForOnlinebewerbung($studienplanReihungstest, $nextWinterSemester->studiensemester_kurzbz, 1, $studienplanQualikurse_arr);
+						$reihungstestTermine = getReihungstestsForOnlinebewerbung($studienplanReihungstest['studienplan_id'], $nextWinterSemester->studiensemester_kurzbz, 1, $studienplanQualikurse_arr);
 					}
 				}
 			}
 		}
 		else
 		{
-			$reihungstestTermine = getReihungstestsForOnlinebewerbung($studienplanReihungstest, $nextWinterSemester->studiensemester_kurzbz, 1, $studienplanQualikurse_arr);
+			$reihungstestTermine = getReihungstestsForOnlinebewerbung($studienplanReihungstest['studienplan_id'], $nextWinterSemester->studiensemester_kurzbz, 1, $studienplanQualikurse_arr);
 		}
 	}
 
@@ -260,30 +297,14 @@ if(!isset($person_id))
 			echo '<div class="col-xs-12 alert alert-info">'.$p->t('bewerbung/infoVorgemerktFuerQualifikationskurs').'</div>';
 			$terminauswahl = false;
 		}
-		elseif (empty($reihungstestTermine) && count($angemeldeteRtArray) == 0)
-		{
-			echo '<div class="col-xs-12 alert alert-warning">'.$p->t('bewerbung/keineRtTermineZurAuswahl').'</div>';
-			$terminauswahl = false;
-		}
-	}
-	elseif(empty($reihungstestTermine) && count($angemeldeteRtArray) == 0)
-	{
-		echo '<div class="col-xs-12 alert alert-info">'.$p->t('bewerbung/keineRtTermineZurAuswahl').'</div>';
-		$terminauswahl = false;
 	}
 
 	if ($terminauswahl == true)
 	{
-		$nichtAngemeldeteRtArray = array();
-		$hasMasterBewerbung = false;
-		$nichtAngemeldeteRtArray = array_diff(array_column($reihungstestTermine, 'studienplan_id'), array_column($angemeldeteRtArray, 'studienplan_id'));
-		$mergedArray = array_merge(array_column($reihungstestTermine, 'typ'), array_column($angemeldeteRtArray, 'typ'));
-		$hasMasterBewerbung = in_array('m', $mergedArray);
-		//Wenn bereits eine Anmeldung existiert, keine Terminauswahl anzeigen
-		//TODO prüfen ob nicht nur $nichtAngemeldeteRtArray als Abfrage ausreichend ist?
-		if ((!$hasMasterBewerbung && count($angemeldeteRtArray) == 0) || (count($nichtAngemeldeteRtArray) !== 0 && $hasMasterBewerbung))
+		function drawTerminTabelle($reihungstestTermine, $angemeldeteRtArray)
 		{
-			echo '<p>'.$p->t('bewerbung/fuerReihungstestAnmelden').'</p>';
+			global $p, $tagbez, $spracheIndex, $datum;
+
 			echo '<div class="row">
 					<div class="col-md-8 col-lg-6">
 					<div class="panel-group ">
@@ -293,7 +314,7 @@ if(!isset($person_id))
 								<div class="col-xs-3 ">'.$p->t('global/datum').'</div>
 								<div class="col-xs-2">'.$p->t('bewerbung/uhrzeit').'</div>
 								<!--<div class="col-xs-3">'.$p->t('bewerbung/anmeldefrist').'</div>-->
-								<div class="col-xs-4"></div>
+								<div class="col-xs-7"></div>
 							</div>
 						</div>
 						<div id="listeTesttermine" class="panel-collapse collapse-in">
@@ -339,11 +360,12 @@ if(!isset($person_id))
 							<div class="col-xs-3 ">'.substr($tagbez[$spracheIndex][$datum->formatDatum($row->datum, 'N')], 0, 2).', '.$datum->formatDatum($row->datum, 'd.m.Y').'</div>
 							<div class="col-xs-2 ">'.$uhrzeit.'</div>
 							<!--<div class="col-xs-3 ">'.substr($tagbez[$spracheIndex][$datum->formatDatum($row->anmeldefrist, 'N')], 0, 2).', '.$datum->formatDatum($row->anmeldefrist, 'd.m.Y').' '.$anmeldeFristText.'</div>-->
-							<div class="col-xs-4 ">
+							<div class="col-xs-7">
 								<button type="button"
+										style="white-space: normal"
 										class="btn btn-primary '.($angemeldet ? 'disabled' : '').'"
 										onclick="aktionReihungstest(\''.$row->reihungstest_id.'\', \''.$row->studienplan_id.'\', \'save\')">
-									'.$p->t('global/anmelden').' <b> ('. ($row->typ === 'm' ? $row->stg_kuerzel : 'Bachelor').')</b>
+									'.$p->t('global/anmelden') . ($row->typ === 'm' ? '<br /><b> (' . ($spracheIndex === "1" ? $row->bezeichnung : $row->english) . ')</b>' : '').'
 								</button>
 								'.$anmeldeFristText.'
 							</div>
@@ -351,6 +373,38 @@ if(!isset($person_id))
 						</li>';
 			}
 			echo '</ul></div></div></div></div></div>';
+		}
+
+		$masterRTs = array_filter($reihungstestTermine, 'filterMaster');
+		$bachelorRTs = array_filter($reihungstestTermine, 'filterBachelor');
+		$angemeldeteMasterRTs = array_filter($angemeldeteRtArray, 'filterMaster');
+		$angemeldeteBachelorRTs = array_filter($angemeldeteRtArray, 'filterBachelor');
+		
+		if (count($angemeldeteBachelorRTs) === 0 && in_array('b', $studienplanReihungstest['typ']))
+		{
+			echo '<h3>Bachelor</h3>';
+			
+			if (empty($bachelorRTs))
+			{
+				echo '<div class="col-xs-12 alert alert-info">'.$p->t('bewerbung/keineRtTermineZurAuswahl').'</div>';
+			}
+			else
+			{
+				echo '<p>'.$p->t('bewerbung/fuerReihungstestAnmelden').'</p>';
+				drawTerminTabelle($bachelorRTs, $angemeldeteBachelorRTs);
+			}
+		}
+		
+		if (empty($masterRTs) && empty($angemeldeteMasterRTs) && in_array('m', $studienplanReihungstest['typ']))
+		{
+			echo '<h3>Master</h3>';
+			echo '<div class="col-xs-12 alert alert-info">'.$p->t('bewerbung/keineRtTermineZurAuswahl').'</div>';
+		}
+		else if (count($angemeldeteMasterRTs) !== count($masterRTs))
+		{
+			echo '<h3>Master</h3>';
+			echo 'Hier bitte einen Text für die MasterRTs';
+			drawTerminTabelle($masterRTs, $angemeldeteMasterRTs);
 		}
 	}
 

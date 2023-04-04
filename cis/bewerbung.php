@@ -2621,13 +2621,15 @@ $nextWinterSemester->getNextStudiensemester('WS');
 $nextSommerSemester = new studiensemester();
 $nextSommerSemester->getNextStudiensemester('SS');
 $studienplanReihungstest = getPrioStudienplanForReihungstest($person_id, $nextWinterSemester->studiensemester_kurzbz);
+if (!isset($studienplanReihungstest['studienplan_id']))
+	$studienplanReihungstest['studienplan_id'] = [];
 if (! defined('BEWERBERTOOL_REIHUNGSTEST_ANZEIGEN') || BEWERBERTOOL_REIHUNGSTEST_ANZEIGEN == true)
 {
 	$angemeldeteReihungstests = new reihungstest();
 	$angemeldeteReihungstests->getReihungstestPerson($person_id, $nextWinterSemester->studiensemester_kurzbz);
 	$angemeldeteReihungstests->getReihungstestPerson($person_id, $nextSommerSemester->studiensemester_kurzbz);
 
-	$reihungstestTermine = getReihungstestsForOnlinebewerbung($studienplanReihungstest, $nextWinterSemester->studiensemester_kurzbz);
+	$reihungstestTermine = getReihungstestsForOnlinebewerbung($studienplanReihungstest['studienplan_id'], $nextWinterSemester->studiensemester_kurzbz);
 	if (count($angemeldeteReihungstests->result) > 0)
 	{
 		$nichtAngemeldeteRtArray = array_diff(array_column($reihungstestTermine, 'studienplan_id'), array_column($angemeldeteReihungstests->result, 'studienplan_id'));

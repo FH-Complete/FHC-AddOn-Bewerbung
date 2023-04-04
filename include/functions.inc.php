@@ -1389,7 +1389,8 @@ function getPrioStudienplanForReihungstest($person_id, $studiensemester_kurzbz)
 {
 	$db = new basis_db();
 	$qry = "
-			(SELECT studienplan_id
+			(SELECT studienplan_id,
+			tbl_studiengang.typ
 			FROM PUBLIC.tbl_person
 			JOIN PUBLIC.tbl_prestudent USING (person_id)
 			JOIN PUBLIC.tbl_prestudentstatus USING (prestudent_id)
@@ -1414,7 +1415,8 @@ function getPrioStudienplanForReihungstest($person_id, $studiensemester_kurzbz)
 
 			UNION ALL
 
-			(SELECT studienplan_id
+			(SELECT studienplan_id,
+			tbl_studiengang.typ
 			FROM PUBLIC.tbl_person
 			JOIN PUBLIC.tbl_prestudent USING (person_id)
 			JOIN PUBLIC.tbl_prestudentstatus USING (prestudent_id)
@@ -1447,7 +1449,8 @@ function getPrioStudienplanForReihungstest($person_id, $studiensemester_kurzbz)
 		$studienplaene = array();
 		while ($row = $db->db_fetch_object($result))
 		{
-			$studienplaene[] = $row->studienplan_id;
+			$studienplaene['studienplan_id'][] = $row->studienplan_id;
+			$studienplaene['typ'][] = $row->typ;
 		}
 		
 		return $studienplaene;
@@ -1529,6 +1532,8 @@ function getReihungstestsForOnlinebewerbung($studienplan_id, $studiensemester_ku
 				rt.*,
 				studienplan_id,
 				typ,
+				bezeichnung,
+				english,
 				UPPER(typ::varchar(1) || kurzbz) AS stg_kuerzel
 			FROM PUBLIC.tbl_reihungstest rt
 			JOIN PUBLIC.tbl_rt_studienplan USING (reihungstest_id)
@@ -1592,6 +1597,8 @@ function getReihungstestsForOnlinebewerbung($studienplan_id, $studiensemester_ku
 			$obj->anmeldefrist = $row->anmeldefrist;
 			$obj->studienplan_id = $row->studienplan_id;
 			$obj->typ = $row->typ;
+			$obj->bezeichnung = $row->bezeichnung;
+			$obj->english = $row->english;
 			$obj->stg_kuerzel = $row->stg_kuerzel;
 			$obj->rt_id = $row->reihungstest_id;
 			$obj->new = true;

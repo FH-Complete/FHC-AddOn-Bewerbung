@@ -689,6 +689,7 @@ $this->phrasen['bewerbung/loginReihungstest']='<h3>Online-Reihungstest</h3>Klick
 												<a href="'.APP_ROOT.'cis/testtool/index.php?prestudent=%s" class="btn btn-primary" role="button" target="_blank">Zum Reihungstest</a>';
 $this->phrasen['bewerbung/informationenRTvorhanden']='Informationen zum Reihungstest vorhanden';
 $this->phrasen['bewerbung/anmerkungBerufstaetigkeit']='<b>NUR</b> für Studiengänge in Abendform (berufsbegleitend) und dualer Form verpflichtend<br>&nbsp;&nbsp;&nbsp;&nbsp;Wir weisen darauf hin, dass eine Berufstätigkeit nicht zwingend erforderlich ist!';
+$this->phrasen['bewerbung/masterAnmerkung']='Nähere Details zum Reihungstest erhalten Sie zeitgerecht von der zuständigen Assistenz';
 // Ausbildung
 $this->phrasen['bewerbung/menuAusbildung']='Ausbildung';
 $this->phrasen['bewerbung/ausbildung']='Ausbildung zu Ihrer Zugangsvoraussetzung';
