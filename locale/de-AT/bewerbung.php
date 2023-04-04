@@ -582,7 +582,7 @@ $this->phrasen['bewerbung/erfolgreichBeworbenMail']='
 									Sehr %3$s %1$s %2$s,<br><br>
 									Sie haben sich erfolgreich für %4$s beworben. In der Regel werden Sie innerhalb von 5 Werktagen kontaktiert. Gegebenenfalls werden Sie dann aufgefordert, weitere Dokumente hochzuladen.<br><br>
 									Den Status Ihrer Bewerbung können Sie jederzeit im <a href="'.APP_ROOT.'addons/bewerbung/cis/registration.php">Bewerbungstool</a> verfolgen.<br>
-									Sollten Sie Fragen zur Bewerbung haben, kontaktieren Sie uns bitte unter <a href="mailto:%5$s">%5$s</a>.<br><br>
+									Sollten Sie Fragen zur Bewerbung haben, kontaktieren Sie uns bitte unser <a href="mailto:studienberatung@technikum-wien.at">InfoCenter Team</a>, die Mitarbeiter*innen helfen Ihnen gerne weiter.<br><br>
 									Mit freundlichen Grüßen<br>
 									Fachhochschule Technikum Wien
 								</td>
@@ -677,7 +677,7 @@ Sollten Sie Fragen haben, kontaktieren Sie bitte unser Infocenter <a href="mailt
 Mit freundlichen Grüßen<br>
 Fachhochschule Technikum Wien';
 $this->phrasen['bewerbung/reihungstestInfoTextAngemeldet']='<div class="alert alert-info">
-<p>Wir starten pünktlich mit der Identitätskontrolle. Stellen Sie daher sicher, dass Sie zu diesem Zeitpunkt im Zoom Warteraum sind (Den Link erhalten Sie 2 Werktage vor Ihrem gewählten Reihungstesttermin)</p>
+<p>Wir starten pünktlich mit der Identitätskontrolle. Stellen Sie daher sicher, dass Sie zu diesem Zeitpunkt im Zoom Warteraum sind (Den Link erhalten Sie 2 Werktage vor Ihrem gewählten Reihungstesttermin). Nähere Details zum Ablauf des Reihungstests finden Sie unter: <a href="https://cis.technikum-wien.at/cms/dms.php?id=207694" target="_blank">https://cis.technikum-wien.at/cms/dms.php?id=207694</a></p>
 <p>Den Einstieg zum Reihungstest finden Sie bei Ihrer Bachelorbewerbung unter <a href="https://cis.technikum-wien.at/cms/dms.php?id=147448" target="_blank">Ubersicht/Details/zum Reihungstest</a> hier im Online-Bewerbungstool.</p>
 </div><br>';
 $this->phrasen['bewerbung/anmeldefrist']='Anmeldefrist';

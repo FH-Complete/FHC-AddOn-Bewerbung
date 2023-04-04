@@ -527,7 +527,7 @@ $this->phrasen['bewerbung/erfolgreichBeworbenMail']='
 									Dear %3$s %1$s %2$s,<br><br>
 									Your have successfully submitted your application for %4$s. Generally, we will get back to you within 5 working days. If necessary, you will then be requested to upload additional documents.<br><br>
 									You can see the status of your application in the <a href="'.APP_ROOT.'addons/bewerbung/cis/registration.php">application tool</a>.<br>
-									If you have any questions regarding your application, do not hesitate to contact us at <a href="mailto:%5$s">%5$s</a>.<br><br>
+									If you have any questions regarding your application, please contact our <a href="mailto:studienberatung@technikum-wien.at">InfoCenter Team</a>. They will be happy to help you.<br><br>
 									Best regards,<br>
 									UAS Technikum Wien
 								</td>
@@ -623,7 +623,7 @@ Yours sincerely<br>
 UAS Technikum Wien';
 
 $this->phrasen['bewerbung/reihungstestInfoTextAngemeldet']='<div class="alert alert-info">
-<p>We will start on time with the identity check. Therefore, make sure you are in the Zoom waiting room at that time (you will receive the link 2 working days before your chosen placement test date).</p>
+<p>We will start on time with the identity check. Therefore, make sure you are in the Zoom waiting room at that time (you will receive the link 2 working days before your chosen placement test date). Further details to the placement test can be found at: <a href="https://cis.technikum-wien.at/cms/dms.php?id=207694" target="_blank">https://cis.technikum-wien.at/cms/dms.php?id=207694</a></p>
 <p>You find the entry to the placement test in your Bachelor application under <a href="https://cis.technikum-wien.at/cms/dms.php?id=147448" target="_blank">overview/details/to the placement test</a> here in the online application tool.</p>
 </div><br>';
 $this->phrasen['bewerbung/anmeldefrist']='Term of application';
@@ -632,6 +632,9 @@ $this->phrasen['bewerbung/raumzuteilungFolgt']='Details follow 2 working days be
 $this->phrasen['bewerbung/sieHabenFolgendenTerminGewaehlt']='Thank you for registering for the online-placement test.<br>Your prioritization of degree programs is fixed and can only be changed before the registration deadline.<br>Once the placement test has been completed, the prioritization can <b>no longer</b> be changed.';
 $this->phrasen['bewerbung/informationenRTvorhanden']='Information for placement test';
 $this->phrasen['bewerbung/anmerkungBerufstaetigkeit']='<b>ONLY</b> obligatory for part-time degree programs<br>&nbsp;&nbsp;&nbsp;&nbsp;We would like to point out that a professional activity is not mandatory!';
+$this->phrasen['bewerbung/loginReihungstest']='<h3>Online-placement-test</h3><b>On the day of your placement test</b> click on the button "To placement test"<br>
+												Please note that you must use <u>Mozilla Firefox</u> as your browser, otherwise you may experience rendering problems.<br><br>
+												<a href="'.APP_ROOT.'cis/testtool/index.php?prestudent=%s" class="btn btn-primary" role="button" target="_blank">To placement test</a>';
 
 // Ausbildung
 $this->phrasen['bewerbung/menuAusbildung']='Ausbildung';
