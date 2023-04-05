@@ -708,4 +708,9 @@ $this->phrasen['bewerbung/re_nachname']='Nachname';
 $this->phrasen['bewerbung/staatsbuergerschaft']='Staatsangehörigkeit';
 $this->phrasen['bewerbung/staatsbuergerschaftErklaerung']='Bitte geben Sie hier Ihre Staatsbürgerschaft an';
 $this->phrasen['bewerbung/bitteAuswaehlenStaatsbuergerschaft']='-- Bitte auswählen --';
+$this->phrasen['bewerbung/legende_pflicht']='Pflichtdokument';
+$this->phrasen['bewerbung/legende_hochgeladen']='erforderliches Dokument bereits hochgeladen';
+$this->phrasen['bewerbung/legende_vorhanden']='Dokument bereits vorhanden';
+$this->phrasen['bewerbung/legende_hochladen']='falls zutreffend hochladen';
+$this->phrasen['bewerbung/legende_nachreichen']='Dokument wird nachgereicht';
 ?>

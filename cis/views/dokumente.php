@@ -566,12 +566,14 @@ if (! isset($person_id))
 				<div class="col colg warning bg-warning">2</div>
 				<div class="col colg secondary bg-secondary"><span class="label labelg">Dokument nicht erforderlich</span></div>
 				<div class="col colg grey bg-secondary">4</div>
+				<div class="col colg info bg-info">5</div>
 			</div>
 			<div class="lright">
-				<div class="col colg">Pflichtdokument</div>
-				<div class="col colg">erforderliches Dokument bereits hochgeladen</div>
-				<div class="col colg">Dokument bereits vorhanden</div>
-				<div class="col colg">falls zutreffend hochladen</div>
+				<div class="col colg"><?php echo $p->t('bewerbung/legende_pflicht')?></div>
+				<div class="col colg"><?php echo $p->t('bewerbung/legende_hochgeladen')?></div>
+				<div class="col colg"><?php echo $p->t('bewerbung/legende_vorhanden')?></div>
+				<div class="col colg"><?php echo $p->t('bewerbung/legende_hochladen')?></div>
+				<div class="col colg"><?php echo $p->t('bewerbung/legende_nachreichen')?></div>
 			</div>
 		</div>
 	</div>
