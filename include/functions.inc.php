@@ -334,6 +334,7 @@ function BewerbungPersonAddStudienplan($studienplan_id, $person, $studiensemeste
 		if ($zgv_code == '')
 		{
 			$prestudent_id_for_zgv = 0;
+			$prestudent_id_for_zgv_nation = 0;
 			foreach ($pre->result as $row)
 			{
 				if ($row->prestudent_id > $prestudent_id_for_zgv
@@ -342,6 +343,12 @@ function BewerbungPersonAddStudienplan($studienplan_id, $person, $studiensemeste
 						|| $studiengaenge_arr[$row->studiengang_kz]['typ'] == 'm')) // Höchste Prestudent ID in einem bachelor oder master mit ZGV suchen
 				{
 					$prestudent_id_for_zgv = $row->prestudent_id;
+				}
+				else if ($row->prestudent_id > $prestudent_id_for_zgv_nation && $row->prestudent_id > $prestudent_id_for_zgv && $row->zgvnation != '')
+				{
+					// Kommt vor, dass die ZGV Nation ausgefüllt ist aber ZGV Code nicht. Die ZGV Nation soll dann trotzdem übernommen werden
+					$zgvnation = $row->zgvnation;
+					$prestudent_id_for_zgv_nation = $row->prestudent_id;
 				}
 			}
 			if ($prestudent_id_for_zgv != 0)
@@ -367,7 +374,7 @@ function BewerbungPersonAddStudienplan($studienplan_id, $person, $studiensemeste
 			$zgv_code = '';
 			$zgvort = '';
 			$zgvdatum = '';
-			$zgvnation = '';
+			//$zgvnation = ''; // ZGV Nation soll übernommen werden, da sonst immer die Bewerbungsfrist von Drittstaaten zieht.
 			$zgvmas_code = '';
 			$zgvmaort = '';
 			$zgvmadatum = '';
