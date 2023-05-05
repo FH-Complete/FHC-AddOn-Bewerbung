@@ -380,6 +380,21 @@ function BewerbungPersonAddStudienplan($studienplan_id, $person, $studiensemeste
 			$zgvmadatum = '';
 			$zgvmanation = '';
 		}
+		
+		// Bewerber die keinen vorhanden Bachelor bei uns haben und nachträglich noch Studiengänge hinzufügen, müssen die Nation gesetzt bekommen da sie sonst in die Bewerbungsfrist von Drittstaaten fallen.
+		if ($zgvmanation === '' && $studiengaenge_arr[$studiengang_kz]['typ'] == 'm')
+		{
+			$prestudent_id_for_zgv_nation = 0;
+			foreach ($pre->result as $row)
+			{
+				if ($row->prestudent_id > $prestudent_id_for_zgv_nation && $row->zgvmanation != '')
+				{
+					// Kommt vor, dass die ZGV Nation ausgefüllt ist aber ZGV Code nicht. Die ZGV Nation soll dann trotzdem übernommen werden
+					$zgvmanation = $row->zgvmanation;
+					$prestudent_id_for_zgv_nation = $row->prestudent_id;
+				}
+			}
+		}
 		// Höchste Priorität in diesem Studiensemester laden und ggf. um 1 erhöhen
 		$prestudent = new prestudent();
 		$hoechstePrio = new prestudent();
