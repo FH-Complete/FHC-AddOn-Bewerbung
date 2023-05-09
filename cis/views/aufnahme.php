@@ -146,6 +146,7 @@ function filterBachelor($value)
 			echo '<h3>Bachelor</h3>';
 			echo '<p>'.$p->t('bewerbung/sieHabenFolgendenTerminGewaehlt').'</p>';
 			drawAnmeldeTabelle($angemeldeteReihungstestsBachelor);
+			echo $p->t('bewerbung/reihungstestInfoTextAngemeldet');
 		}
 		
 		if (count($angemeldeteReihungstestsMaster) > 0)
@@ -153,10 +154,8 @@ function filterBachelor($value)
 			echo '<h3>Master</h3>';
 			echo 'Hier Bitte einen Text für die MasterRTs';
 			drawAnmeldeTabelle($angemeldeteReihungstestsMaster);
-		}
-		
-		if (count($angemeldeteReihungstestsBachelor) > 0 || count($angemeldeteReihungstestsMaster) > 0)
 			echo $p->t('bewerbung/reihungstestInfoTextAngemeldet');
+		}
 	}
 
 	// Wenn die Person TeilnehmerIn am Qualifikationskurs ist (den Statusgrund "Qualifikationskurs" hat),
@@ -306,15 +305,16 @@ function filterBachelor($value)
 			global $p, $tagbez, $spracheIndex, $datum;
 
 			echo '<div class="row">
-					<div class="col-md-8 col-lg-6">
+					<div class="col-md-10 col-lg-8">
 					<div class="panel-group ">
 					<div class="panel panel-default">
 						<div class="panel-heading">
 							<div class="row">
-								<div class="col-xs-3 ">'.$p->t('global/datum').'</div>
+								<div class="col-xs-3">'.$p->t('global/datum').'</div>
 								<div class="col-xs-2">'.$p->t('bewerbung/uhrzeit').'</div>
+								<div class="col-xs-2">'.$p->t('bewerbung/zeitzone').'</div>
 								<!--<div class="col-xs-3">'.$p->t('bewerbung/anmeldefrist').'</div>-->
-								<div class="col-xs-7"></div>
+								<div class="col-xs-5"></div>
 							</div>
 						</div>
 						<div id="listeTesttermine" class="panel-collapse collapse-in">
@@ -358,9 +358,10 @@ function filterBachelor($value)
 				echo '	<li class="list-group-item">
 						<div class="row">
 							<div class="col-xs-3 ">'.substr($tagbez[$spracheIndex][$datum->formatDatum($row->datum, 'N')], 0, 2).', '.$datum->formatDatum($row->datum, 'd.m.Y').'</div>
-							<div class="col-xs-2 ">'.$uhrzeit.'</div>
+							<div class="col-xs-2">'.$uhrzeit.'</div>
+							<div class="col-xs-2">'.$p->t('bewerbung/zeitzoneMEZ').'</div>
 							<!--<div class="col-xs-3 ">'.substr($tagbez[$spracheIndex][$datum->formatDatum($row->anmeldefrist, 'N')], 0, 2).', '.$datum->formatDatum($row->anmeldefrist, 'd.m.Y').' '.$anmeldeFristText.'</div>-->
-							<div class="col-xs-7">
+							<div class="col-xs-5 text-center">
 								<button type="button"
 										style="white-space: normal"
 										class="btn btn-primary '.($angemeldet ? 'disabled' : '').'"
@@ -379,6 +380,7 @@ function filterBachelor($value)
 		$bachelorRTs = array_filter($reihungstestTermine, 'filterBachelor');
 		$angemeldeteMasterRTs = array_filter($angemeldeteRtArray, 'filterMaster');
 		$angemeldeteBachelorRTs = array_filter($angemeldeteRtArray, 'filterBachelor');
+		$masterBewerbungen = array_count_values($studienplanReihungstest['typ'])['m'];
 		
 		if (count($angemeldeteBachelorRTs) === 0 && in_array('b', $studienplanReihungstest['typ']))
 		{
@@ -395,12 +397,12 @@ function filterBachelor($value)
 			}
 		}
 		
-		if (empty($masterRTs) && empty($angemeldeteMasterRTs) && in_array('m', $studienplanReihungstest['typ']))
+		if (count($masterRTs) === 0 && count($angemeldeteMasterRTs) === 0 && in_array('m', $studienplanReihungstest['typ']))
 		{
 			echo '<h3>Master</h3>';
 			echo '<div class="col-xs-12 alert alert-info">'.$p->t('bewerbung/keineRtTermineZurAuswahl').'</div>';
 		}
-		else if (count($angemeldeteMasterRTs) !== count($masterRTs))
+		else if (count($angemeldeteMasterRTs) !== ($masterBewerbungen))
 		{
 			echo '<h3>Master</h3>';
 			echo 'Hier bitte einen Text für die MasterRTs';
