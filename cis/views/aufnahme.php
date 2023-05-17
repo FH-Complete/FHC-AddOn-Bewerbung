@@ -119,10 +119,10 @@ function filterBachelor($value)
 						</div>
 					
 						<div class="row">
-							<div class="col-xs-5 col-sm-6">
-								<button type="button" class="btn btn-warning '.(($fristVorbei || $row->typ === 'm') ? 'disabled' : '').'"
+							<div class="col-xs-7 col-sm-4">
+								<button type="button" style="width:100%" class="btn btn-warning '.(($fristVorbei || $row->typ === 'm') ? 'disabled' : '').'"
 								onclick="aktionReihungstest(\''.$row->reihungstest_id.'\', \''.$row->studienplan_id.'\', \'delete\', \'' . $row->typ . '\')">
-									'.$buttonBeschriftungStornieren.' '. ($row->typ === 'm' ? '<br /><b> (' .($spracheIndex === '1' ? $row->bezeichnung : $row->english) .')</b>' : '').'
+									'.$buttonBeschriftungStornieren.' '. ($row->typ === 'm' ? '<br /><b style="white-space: normal"> (' .($spracheIndex === '1' ? $row->bezeichnung : $row->english) .')</b>' : '').'
 								</button>
 							</div>
 						</div>
@@ -363,10 +363,10 @@ function filterBachelor($value)
 							<!--<div class="col-xs-3 ">'.substr($tagbez[$spracheIndex][$datum->formatDatum($row->anmeldefrist, 'N')], 0, 2).', '.$datum->formatDatum($row->anmeldefrist, 'd.m.Y').' '.$anmeldeFristText.'</div>-->
 							<div class="col-xs-5 text-center">
 								<button type="button"
-										style="white-space: normal"
+										style="width:100%"
 										class="btn btn-primary '.($angemeldet ? 'disabled' : '').'"
 										onclick="aktionReihungstest(\''.$row->reihungstest_id.'\', \''.$row->studienplan_id.'\', \'save\')">
-									'.$p->t('global/anmelden') . ($row->typ === 'm' ? '<br /><b> (' . ($spracheIndex === "1" ? $row->bezeichnung : $row->english) . ')</b>' : '').'
+									'.$p->t('global/anmelden') . ($row->typ === 'm' ? '<br /><b style="white-space: normal;"> (' . ($spracheIndex === "1" ? $row->bezeichnung : $row->english) . ')</b>' : '').'
 								</button>
 								'.$anmeldeFristText.'
 							</div>
@@ -380,9 +380,9 @@ function filterBachelor($value)
 		$bachelorRTs = array_filter($reihungstestTermine, 'filterBachelor');
 		$angemeldeteMasterRTs = array_filter($angemeldeteRtArray, 'filterMaster');
 		$angemeldeteBachelorRTs = array_filter($angemeldeteRtArray, 'filterBachelor');
-		$masterBewerbungen = array_count_values($studienplanReihungstest['typ'])['m'];
+		$bewerbungen = array_count_values($studienplanReihungstest['typ']);
 		
-		if (count($angemeldeteBachelorRTs) === 0 && in_array('b', $studienplanReihungstest['typ']))
+		if (count($angemeldeteBachelorRTs) === 0 && isset($bewerbungen['b']))
 		{
 			echo '<h3>Bachelor</h3>';
 			
@@ -397,16 +397,19 @@ function filterBachelor($value)
 			}
 		}
 		
-		if (count($masterRTs) === 0 && count($angemeldeteMasterRTs) === 0 && in_array('m', $studienplanReihungstest['typ']))
+		if (isset($bewerbungen['m']))
 		{
-			echo '<h3>Master</h3>';
-			echo '<div class="col-xs-12 alert alert-info">'.$p->t('bewerbung/keineRtTermineZurAuswahl').'</div>';
-		}
-		else if (count($angemeldeteMasterRTs) !== ($masterBewerbungen))
-		{
-			echo '<h3>Master</h3>';
-			echo 'Hier bitte einen Text für die MasterRTs';
-			drawTerminTabelle($masterRTs, $angemeldeteMasterRTs);
+			if (count($masterRTs) === 0 && count($angemeldeteMasterRTs) === 0)
+			{
+				echo '<h3>Master</h3>';
+				echo '<div class="col-xs-12 alert alert-info">'.$p->t('bewerbung/keineRtTermineZurAuswahl').'</div>';
+			}
+			else if (count($angemeldeteMasterRTs) !== ($bewerbungen['m']))
+			{
+				echo '<h3>Master</h3>';
+				echo 'Hier bitte einen Text für die MasterRTs';
+				drawTerminTabelle($masterRTs, $angemeldeteMasterRTs);
+			}
 		}
 	}
 
