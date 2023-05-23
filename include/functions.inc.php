@@ -1530,15 +1530,17 @@ function getReihungstestsForOnlinebewerbung($studienplan_id, $studiensemester_ku
 					WHERE rt_id = rt.reihungstest_id
 					) AS anzahl_anmeldungen,
 				rt.*,
-				studienplan_id,
+				tbl_rt_studienplan.studienplan_id as studienplan_id,
 				typ,
-				bezeichnung,
-				english,
+				studiengangbezeichnung as bezeichnung,
+				studiengangbezeichnung_englisch as english,
 				UPPER(typ::varchar(1) || kurzbz) AS stg_kuerzel
 			FROM PUBLIC.tbl_reihungstest rt
 			JOIN PUBLIC.tbl_rt_studienplan USING (reihungstest_id)
-			LEFT JOIN public.tbl_studiengang ON rt.studiengang_kz = tbl_studiengang.studiengang_kz
-			WHERE studienplan_id IN (" . $db->db_implode4SQL($studienplan_id) . ")
+			JOIN public.tbl_studiengang USING (studiengang_kz)
+			JOIN lehre.tbl_studienplan USING (studienplan_id)
+			JOIN lehre.tbl_studienordnung USING (studienordnung_id)
+			WHERE tbl_rt_studienplan.studienplan_id IN (" . $db->db_implode4SQL($studienplan_id) . ")
 				AND studiensemester_kurzbz = " . $db->db_add_param($studiensemester_kurzbz);
 
 			if ($stufe != 1 && $stufe != '')

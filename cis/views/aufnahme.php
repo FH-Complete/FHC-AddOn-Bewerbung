@@ -146,7 +146,10 @@ function filterBachelor($value)
 			echo '<h3>Bachelor</h3>';
 			echo '<p>'.$p->t('bewerbung/sieHabenFolgendenTerminGewaehlt').'</p>';
 			drawAnmeldeTabelle($angemeldeteReihungstestsBachelor);
+			echo "<div class='row'>
+					<div class='col-xs-12 col-sm-12 col-md-12 col-lg-8' >";
 			echo $p->t('bewerbung/reihungstestInfoTextAngemeldet');
+			echo "</div></div>";
 		}
 		
 		if (count($angemeldeteReihungstestsMaster) > 0)
@@ -154,7 +157,10 @@ function filterBachelor($value)
 			echo '<h3>Master</h3>';
 			echo 'Hier Bitte einen Text für die MasterRTs';
 			drawAnmeldeTabelle($angemeldeteReihungstestsMaster);
-			echo $p->t('bewerbung/reihungstestInfoTextAngemeldet');
+			echo "<div class='row'>
+					<div class='col-xs-12 col-sm-12 col-md-12 col-lg-8' >";
+			echo $p->t('bewerbung/reihungstestInfoTextAngemeldetMaster');
+			echo "</div></div>";
 		}
 	}
 
@@ -388,11 +394,21 @@ function filterBachelor($value)
 			
 			if (empty($bachelorRTs))
 			{
-				echo '<div class="col-xs-12 alert alert-info">'.$p->t('bewerbung/keineRtTermineZurAuswahl').'</div>';
+				echo '<div class="row">
+						<div class="col-xs-12 col-sm-12 col-md-12 col-lg-8">
+							<div class="alert alert-info">'
+								.$p->t('bewerbung/keineRtTermineZurAuswahl').
+							'</div>
+						</div>
+					</div>';
 			}
 			else
 			{
-				echo '<p>'.$p->t('bewerbung/fuerReihungstestAnmelden').'</p>';
+				echo "<div class='row'>
+						<div class='col-xs-12 col-sm-12 col-md-12 col-lg-8'>
+							<p>".$p->t('bewerbung/fuerReihungstestAnmelden')."</p>
+						</div>
+					</div>";
 				drawTerminTabelle($bachelorRTs, $angemeldeteBachelorRTs);
 			}
 		}
@@ -401,14 +417,37 @@ function filterBachelor($value)
 		{
 			if (count($masterRTs) === 0 && count($angemeldeteMasterRTs) === 0)
 			{
-				echo '<h3>Master</h3>';
-				echo '<div class="col-xs-12 alert alert-info">'.$p->t('bewerbung/keineRtTermineZurAuswahl').'</div>';
+				echo "<h3>Master</h3>
+					<div class='row'>
+						<div class='col-xs-12 col-sm-12 col-md-12 col-lg-8'>
+							<div class='alert alert-info'>"
+								.$p->t('bewerbung/keineRtTermineZurAuswahl').
+							"</div>
+						</div>
+					</div>";
 			}
 			else if (count($angemeldeteMasterRTs) !== ($bewerbungen['m']))
 			{
-				echo '<h3>Master</h3>';
-				echo 'Hier bitte einen Text für die MasterRTs';
-				drawTerminTabelle($masterRTs, $angemeldeteMasterRTs);
+				$div = "<h3>Master</h3>
+						<div class='row'>
+							<div class='col-xs-12 col-sm-12 col-md-12 col-lg-8'>";
+				
+				if (count($angemeldeteMasterRTs) === count($masterRTs))
+				{
+					$div .= "<div class='alert alert-info'>"
+						.$p->t('bewerbung/keineRtTermineZurAuswahl').
+						"</div>";
+				}
+				else
+				{
+					$div .= "<p>".$p->t('bewerbung/fuerReihungstestAnmeldenMaster')."</p>";
+				}
+				
+				$div .= "</div></div>";
+				echo $div;
+				
+				if (count($angemeldeteMasterRTs) !== count($masterRTs))
+					drawTerminTabelle($masterRTs, $angemeldeteMasterRTs);
 			}
 		}
 	}

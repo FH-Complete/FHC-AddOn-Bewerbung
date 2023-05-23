@@ -689,7 +689,13 @@ $this->phrasen['bewerbung/loginReihungstest']='<h3>Online-Reihungstest</h3>Klick
 												<a href="'.APP_ROOT.'cis/testtool/index.php?prestudent=%s" class="btn btn-primary" role="button" target="_blank">Zum Reihungstest</a>';
 $this->phrasen['bewerbung/informationenRTvorhanden']='Informationen zum Reihungstest vorhanden';
 $this->phrasen['bewerbung/anmerkungBerufstaetigkeit']='<b>NUR</b> für Studiengänge in Abendform (berufsbegleitend) und dualer Form verpflichtend<br>&nbsp;&nbsp;&nbsp;&nbsp;Wir weisen darauf hin, dass eine Berufstätigkeit nicht zwingend erforderlich ist!';
-$this->phrasen['bewerbung/masterAnmerkung']='Nähere Details zum Reihungstest erhalten Sie zeitgerecht von der zuständigen Assistenz';
+$this->phrasen['bewerbung/masterAnmerkung']='Nähere Details zum Reihungstest erhalten Sie zeitgerecht von der zuständigen Studiengangsassistenz';
+$this->phrasen['bewerbung/reihungstestInfoTextAngemeldetMaster']='<div class="alert alert-info">
+<p>Wir starten pünktlich mit der Identitätskontrolle. Stellen Sie daher sicher, dass Sie zu diesem Zeitpunkt im Zoom Warteraum sind (Den Link erhalten Sie rechtzeitig von der jeweiligen Studiengangsassistenz).</p>
+<p>Den Einstieg zum Reihungstest finden Sie bei Ihrer Bachelorbewerbung unter <a href="https://cis.technikum-wien.at/cms/dms.php?id=147448" target="_blank">Ubersicht/Details/zum Reihungstest</a> hier im Online-Bewerbungstool.</p>
+</div><br>';
+$this->phrasen['bewerbung/fuerReihungstestAnmeldenMaster']='Bitte melden Sie sich für einen Reihungstesttermin an. Bitte beachte Sie, dass bei Mehrfachbewerbungen der Reihungstest für jeden gewählten Masterstudiengang zu absolvieren ist.';
+
 // Ausbildung
 $this->phrasen['bewerbung/menuAusbildung']='Ausbildung';
 $this->phrasen['bewerbung/ausbildung']='Ausbildung zu Ihrer Zugangsvoraussetzung';

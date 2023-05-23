@@ -635,7 +635,12 @@ $this->phrasen['bewerbung/anmerkungBerufstaetigkeit']='<b>ONLY</b> obligatory fo
 $this->phrasen['bewerbung/loginReihungstest']='<h3>Online-placement-test</h3><b>On the day of your placement test</b> click on the button "To placement test"<br>
 												Please note that you must use <u>Mozilla Firefox</u> as your browser, otherwise you may experience rendering problems.<br><br>
 												<a href="'.APP_ROOT.'cis/testtool/index.php?prestudent=%s" class="btn btn-primary" role="button" target="_blank">To placement test</a>';
-
+$this->phrasen['bewerbung/fuerReihungstestAnmeldenMaster']='Bitte melden Sie sich für einen Reihungstesttermin an. Bitte beachte Sie, dass bei Mehrfachbewerbungen der Reihungstest für jeden gewählten Masterstudiengang zu absolvieren ist.';
+$this->phrasen['bewerbung/masterAnmerkung']='Nähere Details zum Reihungstest erhalten Sie zeitgerecht von der zuständigen Studiengangsassistenz';
+$this->phrasen['bewerbung/reihungstestInfoTextAngemeldetMaster']='<div class="alert alert-info">
+<p>Wir starten pünktlich mit der Identitätskontrolle. Stellen Sie daher sicher, dass Sie zu diesem Zeitpunkt im Zoom Warteraum sind (Den Link erhalten Sie rechtzeitig von der jeweiligen Studiengangsassistenz).</p>
+<p>Den Einstieg zum Reihungstest finden Sie bei Ihrer Bachelorbewerbung unter <a href="https://cis.technikum-wien.at/cms/dms.php?id=147448" target="_blank">Ubersicht/Details/zum Reihungstest</a> hier im Online-Bewerbungstool.</p>
+</div><br>';
 // Ausbildung
 $this->phrasen['bewerbung/menuAusbildung']='Ausbildung';
 $this->phrasen['bewerbung/ausbildung']='Ausbildung zu Ihrer Zugangsvoraussetzung';
