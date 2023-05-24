@@ -640,7 +640,7 @@ $this->phrasen['bewerbung/fuerReihungstestAnmeldenMaster']='Bitte melden Sie sic
 $this->phrasen['bewerbung/masterAnmerkung']='Nähere Details zum Reihungstest erhalten Sie zeitgerecht von der zuständigen Studiengangsassistenz';
 $this->phrasen['bewerbung/reihungstestInfoTextAngemeldetMaster']='<div class="alert alert-info">
 <p>Wir starten pünktlich mit der Identitätskontrolle. Stellen Sie daher sicher, dass Sie zu diesem Zeitpunkt im Zoom Warteraum sind (Den Link erhalten Sie rechtzeitig von der jeweiligen Studiengangsassistenz).</p>
-<p>Den Einstieg zum Reihungstest finden Sie bei Ihrer Bachelorbewerbung unter <a href="https://cis.technikum-wien.at/cms/dms.php?id=147448" target="_blank">Ubersicht/Details/zum Reihungstest</a> hier im Online-Bewerbungstool.</p>
+<p>Den Einstieg zum Reihungstest finden Sie bei Ihrer Bachelorbewerbung unter <a href="https://cis.technikum-wien.at/cms/dms.php?id=265268" target="_blank">Ubersicht/Details/zum Reihungstest</a> hier im Online-Bewerbungstool.</p>
 </div><br>';
 // Ausbildung
 $this->phrasen['bewerbung/menuAusbildung']='Ausbildung';

@@ -684,7 +684,7 @@ $this->phrasen['bewerbung/anmeldefrist']='Anmeldefrist';
 $this->phrasen['bewerbung/infoVorgemerktFuerQualifikationskurs']='Sie sind als TeilnehmerIn für die Qualifikationskurse vorgemerkt. Sobald sie dort bestätigt wurden, können Sie hier einen Termin für den Reihungstest wählen.';
 $this->phrasen['bewerbung/raumzuteilungFolgt']='Details folgen 2 Werktage vor Testbeginn per E-Mail (Bitte auch Spamordner überprüfen!)';
 $this->phrasen['bewerbung/sieHabenFolgendenTerminGewaehltMaster']='Danke für Ihre Anmeldung zum Masterreihungstest.';
-$this->phrasen['bewerbung/sieHabenFolgendenTerminGewaehlt']='Danke für Ihre Anmeldung zum Reihungstest.<br>Ihre Priorisierung der Studiengänge ist fixiert und kann nur bis zur Anmeldefrist geändert werden.<br>Nach Absolvierung des Reihungstests kann die Priorisierung <b>NICHT</b> mehr geändert werden.';
+$this->phrasen['bewerbung/sieHabenFolgendenTerminGewaehlt']='Danke für Ihre Anmeldung zum Bachelorreihungstest.<br>Ihre Priorisierung der Studiengänge ist fixiert und kann nur bis zur Anmeldefrist geändert werden.<br>Nach Absolvierung des Reihungstests kann die Priorisierung <b>NICHT</b> mehr geändert werden.';
 $this->phrasen['bewerbung/loginReihungstest']='<h3>Online-Reihungstest</h3>Klicken Sie <b>am Tag Ihres Reihungstesttermins</b> auf den Button "Zum Reihungstest"<br>
 												Bitte beachten Sie, dass Sie <u>Mozilla Firefox</u> als Browser verwenden, da es sonst zu Darstellungsproblemen kommen kann.<br><br>
 												<a href="'.APP_ROOT.'cis/testtool/index.php?prestudent=%s" class="btn btn-primary" role="button" target="_blank">Zum Reihungstest</a>';
@@ -693,7 +693,7 @@ $this->phrasen['bewerbung/anmerkungBerufstaetigkeit']='<b>NUR</b> für Studieng�
 $this->phrasen['bewerbung/masterAnmerkung']='Nähere Details zum Reihungstest erhalten Sie zeitgerecht von der zuständigen Studiengangsassistenz';
 $this->phrasen['bewerbung/reihungstestInfoTextAngemeldetMaster']='<div class="alert alert-info">
 <p>Wir starten pünktlich mit der Identitätskontrolle. Stellen Sie daher sicher, dass Sie zu diesem Zeitpunkt im Zoom Warteraum sind (Den Link erhalten Sie rechtzeitig von der jeweiligen Studiengangsassistenz).</p>
-<p>Den Einstieg zum Reihungstest finden Sie bei Ihrer Masterbewerbung unter <a href="https://cis.technikum-wien.at/cms/dms.php?id=147448" target="_blank">Ubersicht/Details/zum Reihungstest</a> hier im Online-Bewerbungstool.</p>
+<p>Den Einstieg zum Reihungstest finden Sie bei Ihrer Masterbewerbung unter <a href="https://cis.technikum-wien.at/cms/dms.php?id=265268" target="_blank">Ubersicht/Details/zum Reihungstest</a> hier im Online-Bewerbungstool.</p>
 </div><br>';
 $this->phrasen['bewerbung/fuerReihungstestAnmeldenMaster']='Bitte melden Sie sich für einen Reihungstesttermin an. Bitte beachten Sie, dass bei Mehrfachbewerbungen der Reihungstest für jeden gewählten Masterstudiengang zu absolvieren ist.';
 
