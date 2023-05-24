@@ -155,7 +155,7 @@ function filterBachelor($value)
 		if (count($angemeldeteReihungstestsMaster) > 0)
 		{
 			echo '<h3>Master</h3>';
-			echo 'Hier Bitte einen Text für die MasterRTs';
+			echo '<p>'.$p->t('bewerbung/sieHabenFolgendenTerminGewaehltMaster').'</p>';
 			drawAnmeldeTabelle($angemeldeteReihungstestsMaster);
 			echo "<div class='row'>
 					<div class='col-xs-12 col-sm-12 col-md-12 col-lg-8' >";
