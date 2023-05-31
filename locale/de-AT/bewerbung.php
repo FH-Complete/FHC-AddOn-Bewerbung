@@ -446,6 +446,7 @@ $this->phrasen['bewerbung/orgformWaehlen']='Organisationsform wählen';
 $this->phrasen['bewerbung/orgformBeschreibungstext']='Bitte geben Sie an, für welche Organisationsform Sie sich interessieren. Für den Fall, dass alle Plätze in Ihrer gewünschten Organisationsform vergeben sind, können Sie optional eine Alternative angeben';
 $this->phrasen['bewerbung/menuAbschließen']='Abschließen';
 $this->phrasen['bewerbung/habenSieBereitsEinenZugangscode']='<b>Registrierte*r</b> Bewerber*in? <br>Sie haben sich bereits registriert und einen Zugangscode zu unserem Online-Bewerbungsportal erhalten?';
+$this->phrasen['bewerbung/strasse']='Straße';
 
 // Allgemeine Phrasen
 $this->phrasen['bewerbung/sieHabenNochKeinenZugangscode']='<b>Neue*r</b> Bewerber*in? <br>Sie haben noch keinen Zugangscode oder Account an der FH?';

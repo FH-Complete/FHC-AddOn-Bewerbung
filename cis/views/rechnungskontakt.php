@@ -154,7 +154,7 @@ elseif($save_error_kontakt===true)
 				</div>
 			</div>
 			<div class="form-group">
-				<label for="strasse" class="col-sm-2 control-label"><?php echo $p->t('global/strasse') ?></label>
+				<label for="strasse" class="col-sm-2 control-label"><?php echo $p->t('bewerbung/strasse') ?></label>
 				<div class="col-sm-10">
 					<input type="text" name="re_strasse" id="re_strasse" maxlength="256" value="<?php echo $strasse ?>" class="form-control">
 				</div>

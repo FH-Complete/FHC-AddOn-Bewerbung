@@ -122,7 +122,7 @@ elseif($save_error_kontakt===true)
 				</div>
 			</div>
 			<div class="form-group <?php echo ($strasse==''?'has-error':'') ?>">
-				<label for="strasse" class="col-sm-2 control-label"><?php echo $p->t('global/strasse') ?>*</label>
+				<label for="strasse" class="col-sm-2 control-label"><?php echo $p->t('bewerbung/strasse') ?>*</label>
 				<div class="col-sm-10">
 					<input type="text" name="strasse" id="strasse" maxlength="256" value="<?php echo $strasse ?>" <?php echo $disabled ?> class="form-control">
 				</div>

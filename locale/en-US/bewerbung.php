@@ -391,6 +391,7 @@ $this->phrasen['bewerbung/orgformBeschreibungstext']='Please enter the organizat
 $this->phrasen['bewerbung/menuAbschließen']='Finish';
 
 $this->phrasen['bewerbung/habenSieBereitsEinenZugangscode']='Already registered? You have already registered and you have received an access code?';
+$this->phrasen['bewerbung/strasse']='Street';
 
 // Allgemeine Phrasen
 $this->phrasen['bewerbung/sieHabenNochKeinenZugangscode']='New applicant? You don\'t have an access code or account?';
