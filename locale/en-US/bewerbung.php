@@ -656,4 +656,10 @@ $this->phrasen['bewerbung/re_nachname']='Name';
 $this->phrasen['bewerbung/staatsbuergerschaft']='Citizenship';
 $this->phrasen['bewerbung/staatsbuergerschaftErklaerung']='Please enter your Citizenship here';
 $this->phrasen['bewerbung/bitteAuswaehlenStaatsbuergerschaft']='-- Please select Entry --';
+$this->phrasen['bewerbung/legende_pflicht']='Required document';
+$this->phrasen['bewerbung/legende_hochgeladen']='Required document already uploaded';
+$this->phrasen['bewerbung/legende_vorhanden']='Document already exists';
+$this->phrasen['bewerbung/legende_hochladen']='Upload if applicable';
+$this->phrasen['bewerbung/legende_nachreichen']='Document will be submitted later';
+
 ?>
