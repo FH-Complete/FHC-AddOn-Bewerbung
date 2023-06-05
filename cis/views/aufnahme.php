@@ -110,6 +110,10 @@ function filterBachelor($value)
 			{
 				$raumbezeichnung .= '<p>'.$ort->lageplan.'</p>';
 			}
+			
+			if ($row->typ === 'm')
+				$buttonBeschriftungStornieren = $p->t('bewerbung/anmeldungStornierenMaster');
+			
 			echo '	<li class="list-group-item">
 						<div class="row">
 							<div class="col-xs-4 col-sm-3">'.substr($tagbez[$spracheIndex][$datum->formatDatum($row->datum, 'N')], 0, 2).', '.$datum->formatDatum($row->datum, 'd.m.Y').'</div>

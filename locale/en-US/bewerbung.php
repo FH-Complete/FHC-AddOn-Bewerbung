@@ -563,6 +563,7 @@ $this->phrasen['bewerbung/erklaerungBewerbungAbschickenFuerStudiengang']='If you
 Generally, we will get back to you within 5 working days.';
 $this->phrasen['bewerbung/anmeldungStornieren']='Cancel registration';
 $this->phrasen['bewerbung/anmeldungStornierenBis']='Cancel (until %s)';
+$this->phrasen['bewerbung/anmeldungStornierenMaster']='Cancel';
 $this->phrasen['bewerbung/menuUebersicht']='Overview';
 $this->phrasen['bewerbung/menuSicherheit']='Security';
 $this->phrasen['bewerbung/erklaerungSicherheit']='For reasons of privacy, we recommend that you generate a new access code.<br>
