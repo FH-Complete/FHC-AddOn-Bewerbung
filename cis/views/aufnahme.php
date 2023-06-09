@@ -124,7 +124,7 @@ function filterBachelor($value)
 					
 						<div class="row">
 							<div class="col-xs-7 col-sm-4">
-								<button type="button" style="width:100%" class="btn btn-warning '.(($fristVorbei || $row->typ === 'm') ? 'disabled' : '').'"
+								<button type="button" style="width:100%" class="btn btn-warning '. (($row->typ === 'm') ? 'hidden' : ''). ' ' . (($fristVorbei) ? 'disabled' : '').'"
 								onclick="aktionReihungstest(\''.$row->reihungstest_id.'\', \''.$row->studienplan_id.'\', \'delete\', \'' . $row->typ . '\')">
 									'.$buttonBeschriftungStornieren.' '. ($row->typ === 'm' ? '<br /><b style="white-space: normal"> (' .($spracheIndex === '1' ? $row->bezeichnung : $row->english) .')</b>' : '').'
 								</button>
