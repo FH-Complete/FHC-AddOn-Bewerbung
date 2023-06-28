@@ -246,6 +246,7 @@ $this->phrasen['bewerbung/artDerTaetigkeit']='Type of Occupation';
 $this->phrasen['bewerbung/artDerBerufstaetigkeit']='Type of Job';
 $this->phrasen['bewerbung/nichtBerufstaetig']='Not employed';
 $this->phrasen['bewerbung/facheinschlaegigText']='Sind oder waren Sie nach Ihrer Einschätzung in einem der Studiengänge, für den sie sich derzeit bewerben, fachspezifisch (also in einem themenverwandten Umfeld) berufstätig?';
+$this->phrasen['bewerbung/facheinschlaegig']='Specialized';
 $this->phrasen['bewerbung/weiter']='Next';
 $this->phrasen['bewerbung/eintragVom']='Date of record:';
 $this->phrasen['bewerbung/menuPersDaten']='Personal Data';

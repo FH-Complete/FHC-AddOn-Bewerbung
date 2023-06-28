@@ -298,6 +298,7 @@ $this->phrasen['bewerbung/artDerTaetigkeit']='Art der Tätigkeit';
 $this->phrasen['bewerbung/artDerBerufstaetigkeit']='Art der Berufstätigkeit';
 $this->phrasen['bewerbung/nichtBerufstaetig']='Nicht berufstätig';
 $this->phrasen['bewerbung/facheinschlaegigText']='Sind oder waren Sie nach Ihrer Einschätzung in einem der Studiengänge, für den sie sich derzeit bewerben, fachspezifisch (also in einem themenverwandten Umfeld) berufstätig?';
+$this->phrasen['bewerbung/facheinschlaegig']='Facheinschlägig';
 $this->phrasen['bewerbung/weiter']='Weiter';
 $this->phrasen['bewerbung/eintragVom']='Eintrag vom';
 $this->phrasen['bewerbung/menuPersDaten']='Persönliche Daten';
