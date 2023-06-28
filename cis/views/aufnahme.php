@@ -432,8 +432,8 @@ function filterBachelor($value)
 				$div = "<h3>Master</h3>
 						<div class='row'>
 							<div class='col-xs-12 col-sm-12 col-md-12 col-lg-8'>";
-				
-				if (count($angemeldeteMasterRTs) === count($masterRTs))
+
+				if (count($masterRTs) === 0)
 				{
 					$div .= "<div class='alert alert-info'>"
 						.$p->t('bewerbung/keineRtTermineZurAuswahl').
@@ -446,8 +446,8 @@ function filterBachelor($value)
 				
 				$div .= "</div></div>";
 				echo $div;
-				
-				if (count($angemeldeteMasterRTs) !== count($masterRTs))
+
+				if (count($masterRTs) !== 0)
 					drawTerminTabelle($masterRTs, $angemeldeteMasterRTs);
 			}
 		}
