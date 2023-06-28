@@ -1446,14 +1446,17 @@ function getPrioStudienplanForReihungstest($person_id, $studiensemester_kurzbz)
 
 	if ($result = $db->db_query($qry))
 	{
-		$studienplaene = array();
+		$db->result = [];
 		while ($row = $db->db_fetch_object($result))
 		{
-			$studienplaene['studienplan_id'][] = $row->studienplan_id;
-			$studienplaene['typ'][] = $row->typ;
+			$obj = new stdClass();
+			$obj->studienplan_id = $row->studienplan_id;
+			$obj->typ = $row->typ;
+			
+			$db->result[] = $obj;
 		}
 		
-		return $studienplaene;
+		return $db->result;
 	}
 	else
 	{
@@ -1482,8 +1485,7 @@ function getReihungstestsForOnlinebewerbung($studienplan_id, $studiensemester_ku
 		return false;
 	}
 
-	if (count($studienplan_id) === 0)
-		$studienplan_id = [''];
+	if (empty($studienplan_id)) $studienplan_id = [''];
 
 	$qry = "
 			SELECT (

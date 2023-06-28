@@ -110,10 +110,7 @@ function filterBachelor($value)
 			{
 				$raumbezeichnung .= '<p>'.$ort->lageplan.'</p>';
 			}
-			
-			if ($row->typ === 'm')
-				$buttonBeschriftungStornieren = $p->t('bewerbung/anmeldungStornierenMaster');
-			
+
 			echo '	<li class="list-group-item">
 						<div class="row">
 							<div class="col-xs-4 col-sm-3">'.substr($tagbez[$spracheIndex][$datum->formatDatum($row->datum, 'N')], 0, 2).', '.$datum->formatDatum($row->datum, 'd.m.Y').'</div>
@@ -124,8 +121,8 @@ function filterBachelor($value)
 					
 						<div class="row">
 							<div class="col-xs-7 col-sm-4">
-								<button type="button" style="width:100%" class="btn btn-warning '. (($row->typ === 'm') ? 'hidden' : ''). ' ' . (($fristVorbei) ? 'disabled' : '').'"
-								onclick="aktionReihungstest(\''.$row->reihungstest_id.'\', \''.$row->studienplan_id.'\', \'delete\', \'' . $row->typ . '\')">
+								<button type="button" style="width:100%" class="btn btn-warning '. (($fristVorbei) ? 'disabled' : '').'"
+								onclick="aktionReihungstest(\''.$row->reihungstest_id.'\', \''.$row->studienplan_id.'\', \'delete\')">
 									'.$buttonBeschriftungStornieren.' '. ($row->typ === 'm' ? '<br /><b style="white-space: normal"> (' .($spracheIndex === '1' ? $row->bezeichnung : $row->english) .')</b>' : '').'
 								</button>
 							</div>
@@ -282,14 +279,14 @@ function filterBachelor($value)
 					}
 					else
 					{
-						$reihungstestTermine = getReihungstestsForOnlinebewerbung($studienplanReihungstest['studienplan_id'], $nextWinterSemester->studiensemester_kurzbz, 1, $studienplanQualikurse_arr);
+						$reihungstestTermine = getReihungstestsForOnlinebewerbung(array_column($studienplanReihungstest, 'studienplan_id'), $nextWinterSemester->studiensemester_kurzbz, 1, $studienplanQualikurse_arr);
 					}
 				}
 			}
 		}
 		else
 		{
-			$reihungstestTermine = getReihungstestsForOnlinebewerbung($studienplanReihungstest['studienplan_id'], $nextWinterSemester->studiensemester_kurzbz, 1, $studienplanQualikurse_arr);
+			$reihungstestTermine = getReihungstestsForOnlinebewerbung(array_column($studienplanReihungstest, 'studienplan_id'), $nextWinterSemester->studiensemester_kurzbz, 1, $studienplanQualikurse_arr);
 		}
 	}
 
@@ -390,7 +387,7 @@ function filterBachelor($value)
 		$bachelorRTs = array_filter($reihungstestTermine, 'filterBachelor');
 		$angemeldeteMasterRTs = array_filter($angemeldeteRtArray, 'filterMaster');
 		$angemeldeteBachelorRTs = array_filter($angemeldeteRtArray, 'filterBachelor');
-		$bewerbungen = array_count_values($studienplanReihungstest['typ']);
+		$bewerbungen = array_count_values(array_column($studienplanReihungstest, 'typ'));
 		
 		if (count($angemeldeteBachelorRTs) === 0 && isset($bewerbungen['b']))
 		{
@@ -454,6 +451,17 @@ function filterBachelor($value)
 					drawTerminTabelle($masterRTs, $angemeldeteMasterRTs);
 			}
 		}
+
+		if (empty($bewerbungen))
+		{
+			echo "<div class='row'>
+						<div class='col-xs-12 col-sm-12 col-md-12 col-lg-8'>
+							<div class='alert alert-info'>"
+				.$p->t('bewerbung/keineRtTermineZurAuswahl').
+				"</div>
+						</div>
+					</div>";
+		}
 	}
 
 	if (array_key_exists(array_search('aufnahme', $tabs)-1, $tabs))
@@ -478,13 +486,12 @@ function filterBachelor($value)
 	<br/><br/>
 </div>
 <script type="text/javascript">
-function aktionReihungstest(reihungstest_id, studienplan_id, aktion, typ = null)
+function aktionReihungstest(reihungstest_id, studienplan_id, aktion)
 {
 	data = {
 		reihungstest_id: reihungstest_id,
 		studienplan_id: studienplan_id,
 		aktion: aktion,
-		typ: typ,
 		aktionReihungstest: true
 	};
 

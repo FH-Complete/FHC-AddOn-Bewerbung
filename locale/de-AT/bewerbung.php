@@ -617,7 +617,6 @@ $this->phrasen['bewerbung/bewerbungAbschicken']='Bewerbung abschicken';
 $this->phrasen['bewerbung/erklaerungBewerbungAbschickenFuerStudiengang']='Wenn Sie alle Daten vervollständigt haben, können Sie Ihre Bewerbung für <span style="text-align: center; font-weight: bold; display: block; padding-top: 10px">%s</span> hier abschicken. Sie werden in der Regel innerhalb von 5 Werktagen kontaktiert.';
 $this->phrasen['bewerbung/anmeldungStornieren']='Anmeldung stornieren';
 $this->phrasen['bewerbung/anmeldungStornierenBis']='Stornieren (bis %s)';
-$this->phrasen['bewerbung/anmeldungStornierenMaster']='Stornieren';
 $this->phrasen['bewerbung/menuUebersicht']='Übersicht';
 $this->phrasen['bewerbung/menuSicherheit']='Sicherheit';
 $this->phrasen['bewerbung/erklaerungSicherheit']='Aus Datenschutzgründen empfehlen wir Ihnen, sich einen neuen Zugangscode generieren zu lassen.<br>

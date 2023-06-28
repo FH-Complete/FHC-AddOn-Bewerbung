@@ -555,15 +555,6 @@ if ($aktionReihungstest)
 	}
 	elseif ($aktion == 'delete')
 	{
-		$typ = filter_input(INPUT_POST, 'typ');
-		if ($typ === 'm')
-		{
-			echo json_encode(array(
-				'status' => 'fehler',
-				'msg' => 'Der Termin konnte nicht storniert werden.'
-			));
-			exit();
-		}
 		$rt_person_id = new reihungstest();
 		$rt_person_id->getPersonReihungstest($person_id, $rt_id);
 
@@ -2621,15 +2612,14 @@ $nextWinterSemester->getNextStudiensemester('WS');
 $nextSommerSemester = new studiensemester();
 $nextSommerSemester->getNextStudiensemester('SS');
 $studienplanReihungstest = getPrioStudienplanForReihungstest($person_id, $nextWinterSemester->studiensemester_kurzbz);
-if (!isset($studienplanReihungstest['studienplan_id']))
-	$studienplanReihungstest['studienplan_id'] = [];
+
 if (! defined('BEWERBERTOOL_REIHUNGSTEST_ANZEIGEN') || BEWERBERTOOL_REIHUNGSTEST_ANZEIGEN == true)
 {
 	$angemeldeteReihungstests = new reihungstest();
 	$angemeldeteReihungstests->getReihungstestPerson($person_id, $nextWinterSemester->studiensemester_kurzbz);
 	$angemeldeteReihungstests->getReihungstestPerson($person_id, $nextSommerSemester->studiensemester_kurzbz);
 
-	$reihungstestTermine = getReihungstestsForOnlinebewerbung($studienplanReihungstest['studienplan_id'], $nextWinterSemester->studiensemester_kurzbz);
+	$reihungstestTermine = getReihungstestsForOnlinebewerbung(array_column($studienplanReihungstest, 'studienplan_id'), $nextWinterSemester->studiensemester_kurzbz);
 	if (count($angemeldeteReihungstests->result) > 0)
 	{
 		$nichtAngemeldeteRtArray = array_diff(array_column($reihungstestTermine, 'studienplan_id'), array_column($angemeldeteReihungstests->result, 'studienplan_id'));
