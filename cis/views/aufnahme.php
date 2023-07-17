@@ -111,6 +111,7 @@ function filterBachelor($value)
 				$raumbezeichnung .= '<p>'.$ort->lageplan.'</p>';
 			}
 
+			$studiengangbezeichnung = $spracheIndex === "1" ? $row->studiengangbezeichnung : (isset($row->studiengangbezeichnung_englisch) ?: $row->studiengangbezeichnung);
 			echo '	<li class="list-group-item">
 						<div class="row">
 							<div class="col-xs-4 col-sm-3">'.substr($tagbez[$spracheIndex][$datum->formatDatum($row->datum, 'N')], 0, 2).', '.$datum->formatDatum($row->datum, 'd.m.Y').'</div>
@@ -123,7 +124,7 @@ function filterBachelor($value)
 							<div class="col-xs-7 col-sm-4">
 								<button type="button" style="width:100%" class="btn btn-warning '. (($fristVorbei) ? 'disabled' : '').'"
 								onclick="aktionReihungstest(\''.$row->reihungstest_id.'\', \''.$row->studienplan_id.'\', \'delete\')">
-									'.$buttonBeschriftungStornieren.' '. ($row->typ === 'm' ? '<br /><b style="white-space: normal"> (' .($spracheIndex === '1' ? $row->bezeichnung : $row->english) .')</b>' : '').'
+									'.$buttonBeschriftungStornieren.' '. ($row->typ === 'm' ? '<br /><b style="white-space: normal"> (' .($studiengangbezeichnung) .')</b>' : '').'
 								</button>
 							</div>
 						</div>
@@ -307,7 +308,7 @@ function filterBachelor($value)
 
 	if ($terminauswahl == true)
 	{
-		function drawTerminTabelle($reihungstestTermine, $angemeldeteRtArray)
+		function drawTerminTabelle($reihungstestTermine, $angemeldeteRtArray, $angemeldeteStg = null)
 		{
 			global $p, $tagbez, $spracheIndex, $datum;
 
@@ -327,6 +328,28 @@ function filterBachelor($value)
 						<div id="listeTesttermine" class="panel-collapse collapse-in">
 							<ul class="list-group">';
 
+			if (!is_null($angemeldeteStg))
+			{
+				foreach ($angemeldeteStg as $row)
+				{
+					if (in_array($row->studienplan_id, array_column($angemeldeteRtArray, 'studienplan_id')) || in_array($row->studienplan_id, array_column($reihungstestTermine, 'studienplan_id')))
+						continue;
+					
+					$studiengangbezeichnung = $spracheIndex === "1" ? $row->studiengangbezeichnung : (isset($row->studiengangbezeichnung_englisch) ?: $row->studiengangbezeichnung);
+					echo '	<li class="list-group-item">
+						<div class="row">
+							<div class="col-xs-7"><br />'. $p->t('bewerbung/keineRtTermineZurAuswahl') .'</div>
+							<div class="col-xs-5 text-center">
+								<button type="button"
+										style="width:100%"
+										class="btn btn-primary disabled">
+									'.$p->t('global/anmelden') .'<br /><b style="white-space: normal;"> (' . ($studiengangbezeichnung) . ')</b>
+								</button>
+							</div>
+						</div>
+						</li>';
+				}
+			}
 			foreach($reihungstestTermine as $row)
 			{
 				$angemeldet = false;
@@ -360,6 +383,8 @@ function filterBachelor($value)
 											<span class="glyphicon glyphicon-warning-sign"></span>
 											&nbsp;&nbsp;Anmeldefrist endet am ' . substr($tagbez[$spracheIndex][$datum->formatDatum($row->anmeldefrist, 'N')], 0, 2).', '.$datum->formatDatum($row->anmeldefrist, 'd.m.Y') . '</div>';
 				}
+
+				$studiengangbezeichnung = $spracheIndex === "1" ? $row->studiengangbezeichnung : (isset($row->studiengangbezeichnung_englisch) ?: $row->studiengangbezeichnung);
 				// Anzeigen der Uhrzeit des Tests
 				$uhrzeit = $datum->formatDatum($row->uhrzeit,'H:i');
 				echo '	<li class="list-group-item">
@@ -373,7 +398,7 @@ function filterBachelor($value)
 										style="width:100%"
 										class="btn btn-primary '.($angemeldet ? 'disabled' : '').'"
 										onclick="aktionReihungstest(\''.$row->reihungstest_id.'\', \''.$row->studienplan_id.'\', \'save\')">
-									'.$p->t('global/anmelden') . ($row->typ === 'm' ? '<br /><b style="white-space: normal;"> (' . ($spracheIndex === "1" ? $row->bezeichnung : $row->english) . ')</b>' : '').'
+									'.$p->t('global/anmelden') . ($row->typ === 'm' ? '<br /><b style="white-space: normal;"> (' . ($studiengangbezeichnung) . ')</b>' : '').'
 								</button>
 								'.$anmeldeFristText.'
 							</div>
@@ -388,7 +413,8 @@ function filterBachelor($value)
 		$angemeldeteMasterRTs = array_filter($angemeldeteRtArray, 'filterMaster');
 		$angemeldeteBachelorRTs = array_filter($angemeldeteRtArray, 'filterBachelor');
 		$bewerbungen = array_count_values(array_column($studienplanReihungstest, 'typ'));
-		
+		$bewerbungenMaster = array_filter($studienplanReihungstest, 'filterMaster');
+
 		if (count($angemeldeteBachelorRTs) === 0 && isset($bewerbungen['b']))
 		{
 			echo '<h3>Bachelor</h3>';
@@ -416,39 +442,15 @@ function filterBachelor($value)
 		
 		if (isset($bewerbungen['m']))
 		{
-			if (count($masterRTs) === 0 && count($angemeldeteMasterRTs) === 0)
+			if (count($bewerbungenMaster) !== count($angemeldeteMasterRTs))
 			{
 				echo "<h3>Master</h3>
-					<div class='row'>
-						<div class='col-xs-12 col-sm-12 col-md-12 col-lg-8'>
-							<div class='alert alert-info'>"
-								.$p->t('bewerbung/keineRtTermineZurAuswahl').
-							"</div>
-						</div>
-					</div>";
-			}
-			else if (count($angemeldeteMasterRTs) !== ($bewerbungen['m']))
-			{
-				$div = "<h3>Master</h3>
 						<div class='row'>
-							<div class='col-xs-12 col-sm-12 col-md-12 col-lg-8'>";
-
-				if (count($masterRTs) === 0)
-				{
-					$div .= "<div class='alert alert-info'>"
-						.$p->t('bewerbung/keineRtTermineZurAuswahl').
-						"</div>";
-				}
-				else
-				{
-					$div .= "<p>".$p->t('bewerbung/fuerReihungstestAnmeldenMaster')."</p>";
-				}
-				
-				$div .= "</div></div>";
-				echo $div;
-
-				if (count($masterRTs) !== 0)
-					drawTerminTabelle($masterRTs, $angemeldeteMasterRTs);
+							<div class='col-xs-12 col-sm-12 col-md-12 col-lg-8'>
+								<p>".$p->t('bewerbung/fuerReihungstestAnmeldenMaster')."</p>
+							</div>
+						</div>";
+				drawTerminTabelle($masterRTs, $angemeldeteMasterRTs, $bewerbungenMaster);
 			}
 		}
 

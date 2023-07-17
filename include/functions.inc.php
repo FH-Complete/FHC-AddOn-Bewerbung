@@ -1390,7 +1390,9 @@ function getPrioStudienplanForReihungstest($person_id, $studiensemester_kurzbz)
 	$db = new basis_db();
 	$qry = "
 			(SELECT studienplan_id,
-			tbl_studiengang.typ
+			tbl_studiengang.typ,
+			tbl_studienordnung.studiengangbezeichnung,
+			tbl_studienordnung.studiengangbezeichnung_englisch
 			FROM PUBLIC.tbl_person
 			JOIN PUBLIC.tbl_prestudent USING (person_id)
 			JOIN PUBLIC.tbl_prestudentstatus USING (prestudent_id)
@@ -1416,7 +1418,9 @@ function getPrioStudienplanForReihungstest($person_id, $studiensemester_kurzbz)
 			UNION ALL
 
 			(SELECT studienplan_id,
-			tbl_studiengang.typ
+			tbl_studiengang.typ,
+			tbl_studienordnung.studiengangbezeichnung,
+			tbl_studienordnung.studiengangbezeichnung_englisch
 			FROM PUBLIC.tbl_person
 			JOIN PUBLIC.tbl_prestudent USING (person_id)
 			JOIN PUBLIC.tbl_prestudentstatus USING (prestudent_id)
@@ -1452,6 +1456,8 @@ function getPrioStudienplanForReihungstest($person_id, $studiensemester_kurzbz)
 			$obj = new stdClass();
 			$obj->studienplan_id = $row->studienplan_id;
 			$obj->typ = $row->typ;
+			$obj->studiengangbezeichnung = $row->studiengangbezeichnung;
+			$obj->studiengangbezeichnung_englisch = $row->studiengangbezeichnung_englisch;
 			
 			$db->result[] = $obj;
 		}
@@ -1534,8 +1540,8 @@ function getReihungstestsForOnlinebewerbung($studienplan_id, $studiensemester_ku
 				rt.*,
 				tbl_rt_studienplan.studienplan_id as studienplan_id,
 				typ,
-				studiengangbezeichnung as bezeichnung,
-				studiengangbezeichnung_englisch as english,
+				studiengangbezeichnung,
+				studiengangbezeichnung_englisch,
 				UPPER(typ::varchar(1) || kurzbz) AS stg_kuerzel
 			FROM PUBLIC.tbl_reihungstest rt
 			JOIN PUBLIC.tbl_rt_studienplan USING (reihungstest_id)
@@ -1601,8 +1607,8 @@ function getReihungstestsForOnlinebewerbung($studienplan_id, $studiensemester_ku
 			$obj->anmeldefrist = $row->anmeldefrist;
 			$obj->studienplan_id = $row->studienplan_id;
 			$obj->typ = $row->typ;
-			$obj->bezeichnung = $row->bezeichnung;
-			$obj->english = $row->english;
+			$obj->studiengangbezeichnung = $row->studiengangbezeichnung;
+			$obj->studiengangbezeichnung_englisch = $row->studiengangbezeichnung_englisch;
 			$obj->stg_kuerzel = $row->stg_kuerzel;
 			$obj->rt_id = $row->reihungstest_id;
 			$obj->new = true;
