@@ -111,7 +111,7 @@ function filterBachelor($value)
 				$raumbezeichnung .= '<p>'.$ort->lageplan.'</p>';
 			}
 
-			$studiengangbezeichnung = $spracheIndex === "1" ? $row->studiengangbezeichnung : (isset($row->studiengangbezeichnung_englisch) ?: $row->studiengangbezeichnung);
+			$studiengangbezeichnung = $spracheIndex === "1" ? $row->studiengangbezeichnung : (isset($row->studiengangbezeichnung_englisch) ? $row->studiengangbezeichnung_englisch : $row->studiengangbezeichnung);
 			echo '	<li class="list-group-item">
 						<div class="row">
 							<div class="col-xs-4 col-sm-3">'.substr($tagbez[$spracheIndex][$datum->formatDatum($row->datum, 'N')], 0, 2).', '.$datum->formatDatum($row->datum, 'd.m.Y').'</div>
@@ -335,7 +335,7 @@ function filterBachelor($value)
 					if (in_array($row->studienplan_id, array_column($angemeldeteRtArray, 'studienplan_id')) || in_array($row->studienplan_id, array_column($reihungstestTermine, 'studienplan_id')))
 						continue;
 					
-					$studiengangbezeichnung = $spracheIndex === "1" ? $row->studiengangbezeichnung : (isset($row->studiengangbezeichnung_englisch) ?: $row->studiengangbezeichnung);
+					$studiengangbezeichnung = $spracheIndex === "1" ? $row->studiengangbezeichnung : (isset($row->studiengangbezeichnung_englisch) ? $row->studiengangbezeichnung_englisch : $row->studiengangbezeichnung);
 					echo '	<li class="list-group-item">
 						<div class="row">
 							<div class="col-xs-7"><br />'. $p->t('bewerbung/keineRtTermineZurAuswahl') .'</div>
@@ -384,7 +384,7 @@ function filterBachelor($value)
 											&nbsp;&nbsp;Anmeldefrist endet am ' . substr($tagbez[$spracheIndex][$datum->formatDatum($row->anmeldefrist, 'N')], 0, 2).', '.$datum->formatDatum($row->anmeldefrist, 'd.m.Y') . '</div>';
 				}
 
-				$studiengangbezeichnung = $spracheIndex === "1" ? $row->studiengangbezeichnung : (isset($row->studiengangbezeichnung_englisch) ?: $row->studiengangbezeichnung);
+				$studiengangbezeichnung = $spracheIndex === "1" ? $row->studiengangbezeichnung : (isset($row->studiengangbezeichnung_englisch) ? $row->studiengangbezeichnung_englisch : $row->studiengangbezeichnung);
 				// Anzeigen der Uhrzeit des Tests
 				$uhrzeit = $datum->formatDatum($row->uhrzeit,'H:i');
 				echo '	<li class="list-group-item">
