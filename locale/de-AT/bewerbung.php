@@ -714,4 +714,5 @@ $this->phrasen['bewerbung/legende_hochgeladen']='erforderliches Dokument bereits
 $this->phrasen['bewerbung/legende_vorhanden']='Dokument bereits vorhanden';
 $this->phrasen['bewerbung/legende_hochladen']='falls zutreffend hochladen';
 $this->phrasen['bewerbung/legende_nachreichen']='Dokument wird nachgereicht';
+$this->phrasen['bewerbung/menuUhstat']='Statistische Daten (UHSTAT)';
 ?>

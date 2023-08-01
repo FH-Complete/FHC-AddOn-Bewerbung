@@ -15,6 +15,8 @@ define('BEWERBERTOOL_ABSCHICKEN_ANZEIGEN', true); // Deprecated
 define('BEWERBERTOOL_SICHERHEIT_ANZEIGEN', false);
 define('BEWERBERTOOL_MESSAGES_ANZEIGEN', false);
 define('BEWERBERTOOL_AKTEN_ANZEIGEN', false);
+define('BEWERBERTOOL_UHSTAT1_ANZEIGEN', true);
+
 // Initialbelastung auf das Konto des Interessenten. Buchungstyp_kurzbz aus public.tbl_buchungstyp
 define('BEWERBERTOOL_KONTOBELASTUNG_BUCHUNGSTYP', '');
 // Wenn hier eine Mailadresse angegeben ist, werden die Bewerbungen aus der Onlinebwerbung an diese Adresse gesendet.

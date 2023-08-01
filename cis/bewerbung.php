@@ -30,33 +30,35 @@ session_start();
 // Die Tabs werden in der definierten Reihenfolge ausgegeben aber in der Indexreihenfolge geladen
 $tabs = array();
 if (defined('BEWERBERTOOL_UEBERSICHT_ANZEIGEN') && BEWERBERTOOL_UEBERSICHT_ANZEIGEN)
-	$tabs[12] = 'uebersicht';
+	$tabs[13] = 'uebersicht';
 if (!defined('BEWERBERTOOL_ALLGEMEIN_ANZEIGEN') || BEWERBERTOOL_ALLGEMEIN_ANZEIGEN)
-	$tabs[13] = 'allgemein';
+	$tabs[14] = 'allgemein';
 
 $tabs[0]='daten';
 $tabs[1]='kontakt';
 
 if (!defined('BEWERBERTOOL_DOKUMENTE_ANZEIGEN') || BEWERBERTOOL_DOKUMENTE_ANZEIGEN)
 	$tabs[2]='dokumente';
+if (defined('BEWERBERTOOL_UHSTAT1_ANZEIGEN') && BEWERBERTOOL_UHSTAT1_ANZEIGEN)
+	$tabs[3]='uhstat';
 if(defined('BEWERBERTOOL_AUSBILDUNG_ANZEIGEN') && BEWERBERTOOL_AUSBILDUNG_ANZEIGEN)
-	$tabs[3]='ausbildung';
+	$tabs[4]='ausbildung';
 if(!defined('BEWERBERTOOL_ZGV_ANZEIGEN') || BEWERBERTOOL_ZGV_ANZEIGEN)
-	$tabs[4]='zgv';
+	$tabs[5]='zgv';
 if(!defined('BEWERBERTOOL_ZAHLUNGEN_ANZEIGEN') || BEWERBERTOOL_ZAHLUNGEN_ANZEIGEN)
-	$tabs[5]='zahlungen';
+	$tabs[6]='zahlungen';
 if(defined('BEWERBERTOOL_RECHNUNGSKONTAKT_ANZEIGEN') && BEWERBERTOOL_RECHNUNGSKONTAKT_ANZEIGEN)
-	$tabs[6]='rechnungskontakt';
+	$tabs[7]='rechnungskontakt';
 if(!defined('BEWERBERTOOL_REIHUNGSTEST_ANZEIGEN') || BEWERBERTOOL_REIHUNGSTEST_ANZEIGEN)
-	$tabs[7]='aufnahme';
+	$tabs[8]='aufnahme';
 if(!defined('BEWERBERTOOL_ABSCHICKEN_ANZEIGEN') || BEWERBERTOOL_ABSCHICKEN_ANZEIGEN)
-	$tabs[8]='abschicken';
+	$tabs[9]='abschicken';
 if(defined('BEWERBERTOOL_MESSAGES_ANZEIGEN') && BEWERBERTOOL_MESSAGES_ANZEIGEN)
-	$tabs[9]='messages';
+	$tabs[10]='messages';
 if(defined('BEWERBERTOOL_SICHERHEIT_ANZEIGEN') && BEWERBERTOOL_SICHERHEIT_ANZEIGEN)
-	$tabs[10]='sicherheit';
+	$tabs[11]='sicherheit';
 if(defined('BEWERBERTOOL_AKTEN_ANZEIGEN') && BEWERBERTOOL_AKTEN_ANZEIGEN)
-	$tabs[11]='akten';
+	$tabs[12]='akten';
 
 $tabLadefolge = $tabs;
 ksort($tabLadefolge);
@@ -2756,6 +2758,29 @@ else
 						 ?>
 
 						<?php
+						if(defined('BEWERBERTOOL_UHSTAT1_ANZEIGEN') && BEWERBERTOOL_UHSTAT1_ANZEIGEN)
+						{
+							$display = 'style="display: none !important"';
+							// uhstat Formular nur anzeigen, wenn melderelevant
+							foreach ($prestudent_bewerbungen as $row)
+							{
+								if ($row->melderelevant === true)
+								{
+									$display = '';
+									break;
+								}
+							}
+							$filledOut = $display == '' && UHSTAT1FormFilledOut($person_id);
+
+							echo '<li id="tab_uhstat" '.$display.'>
+								<a href="#uhstat" aria-controls="uhstat" role="tab" data-toggle="tab"'.($filledOut?' style="background-color: #DFF0D8 !important"':' style="background-color: #F2DEDE !important"').'>
+									'.$p->t('bewerbung/menuUhstat').'<br><span id="uhstatVollstaendig">'.($filledOut?$vollstaendig:$unvollstaendig).'</span>
+								</a>
+							</li>';
+						}
+						?>
+
+						<?php
 						if(!defined('BEWERBERTOOL_ZGV_ANZEIGEN') || BEWERBERTOOL_ZGV_ANZEIGEN):
 						?>
 						<li>
@@ -2836,6 +2861,16 @@ else
 											$tabs = array_values($tabs);
 										}
 									}
+								}
+
+								// "Reihungstest" Punkt wird auch nicht angezeigt, wenn die UHSTAT1 Daten noch nicht ausgefüllt wurden
+								if (
+									$display == ''
+									&& defined('BEWERBERTOOL_UHSTAT1_ANZEIGEN') && BEWERBERTOOL_UHSTAT1_ANZEIGEN
+									&& !UHSTAT1FormFilledOut($person_id)
+								)
+								{
+									$display = 'style="display: none"';
 								}
 							}
 							elseif (CAMPUS_NAME == 'FH BFI Wien')

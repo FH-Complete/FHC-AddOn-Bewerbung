@@ -661,5 +661,5 @@ $this->phrasen['bewerbung/legende_hochgeladen']='Required document already uploa
 $this->phrasen['bewerbung/legende_vorhanden']='Document already exists';
 $this->phrasen['bewerbung/legende_hochladen']='Upload if applicable';
 $this->phrasen['bewerbung/legende_nachreichen']='Document will be submitted later';
-
+$this->phrasen['bewerbung/menuUhstat']='Statistical data (UHSTAT)';
 ?>

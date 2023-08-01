@@ -1349,6 +1349,7 @@ function getBewerbungen($person_id, $aktive = null)
 			tbl_studiengang.bezeichnung,
 			tbl_studiengang.english,
 			tbl_studiengang.typ,
+			tbl_studiengang.melderelevant,
 			tbl_prestudent.zgvnation,
 			tbl_prestudent.zgvmanation,
 			tbl_studiengang.lgartcode
@@ -1383,6 +1384,7 @@ function getBewerbungen($person_id, $aktive = null)
 			$obj->zgvnation = $row->zgvnation;
 			$obj->zgvmanation = $row->zgvmanation;
 			$obj->lgartcode = $row->lgartcode;
+			$obj->melderelevant = $db->db_parse_bool($row->melderelevant);
 
 			$db->result[] = $obj;
 		}
@@ -2147,4 +2149,28 @@ function setDokumenteMasterZGV($person_id)
 		$prestudent ->setZGVMasterFields($person_id, $ort);
 	}
 	return true;
+}
+
+/**
+ * Prüft, ob UHSTAT1 formular für eine Person schon ausgefüllt ist.
+ * @param person_id
+ * @return boolean ausgefüllt oder nicht
+ */
+function UHSTAT1FormFilledOut($person_id)
+{
+	$filledOut = false;
+	$db = new basis_db();
+	$qry = "SELECT 1
+			FROM bis.tbl_uhstat1daten
+			WHERE person_id = " . $db->db_add_param($person_id);
+
+	if ($result = $db->db_query($qry))
+	{
+		if ($db->db_num_rows($result) > 0)
+		{
+			$filledOut = true;
+		}
+	}
+
+	return $filledOut;
 }
