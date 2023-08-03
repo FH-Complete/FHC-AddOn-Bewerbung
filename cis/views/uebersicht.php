@@ -17,6 +17,7 @@
 require_once('../../../config/global.config.inc.php');
 require_once('../bewerbung.config.inc.php');
 require_once('../../../include/statusgrund.class.php');
+require_once('../../../include/mitarbeiter.class.php');
 
 if (!isset($person_id))
 {
@@ -51,6 +52,21 @@ $studiensemester_array = array();
 	else
 	{
 		echo '<p>'.$p->t('bewerbung/allgemeineErklaerung').'</p>';
+	}
+
+
+	//Check ob, es sich bei eingeloggtem User um Mitarbeiter handelt
+	$benutzer = new benutzer();
+	$benutzer->getBenutzerFromPerson($person_id, true);
+	$is_mitarbeiter = false;
+	if (count($benutzer->result) > 0)
+	{
+		foreach ($benutzer->result as $ben)
+		{
+				$mitarbeiter = new mitarbeiter();
+				if($mitarbeiter->load($ben->uid))
+					$is_mitarbeiter = true;
+		}
 	}
 
 	// Button zum hinzufügen neuer Studiengänge
@@ -312,6 +328,10 @@ $studiensemester_array = array();
 			{
 				$nationengruppe = 'drittstaat';
 			}
+
+			//für Mitarbeiter immer Bewerbungsfrist EU annehmen
+			if ($is_mitarbeiter)
+				$nationengruppe = 'eu';
 
 			// Bewerbungsfristen laden
 			$bewerbungszeitraum = getBewerbungszeitraum($stg->studiengang_kz, $prestudent_status->studiensemester_kurzbz, $prestudent_status->studienplan_id, $nationengruppe);
@@ -1176,6 +1196,10 @@ $studiensemester_array = array();
 				{
 					$nationengruppe = 'drittstaat';
 				}
+
+				//für Mitarbeiter immer Bewerbungsfrist EU annehmen
+				if ($is_mitarbeiter)
+					$nationengruppe = 'eu';
 
 				$bewerbungszeitraum = getBewerbungszeitraum($row->studiengang_kz, $std_semester, $row->studienplan_id, $nationengruppe, $person_id);
 				$stg_bezeichnung .= ' '.$bewerbungszeitraum['infoDiv'];
