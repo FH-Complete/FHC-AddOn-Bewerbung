@@ -60,7 +60,7 @@ if(!isset($person_id))
 	$konto->getBuchungen($person_id);
 	$timestamp = time();
 	$today = date("Y-m-d", $timestamp);
-	if (count($konto->result) > 0)
+	if (numberOfElements($konto->result) > 0)
 	{
 		echo '<div class="panel-group" id="accordionZahlungen">';
 		foreach ($konto->result as $row)
@@ -242,14 +242,14 @@ function getBankverbindung($oe_kurzbz, $orgform_kurzbz = null)
 	$bic = "";
 	$result = array();
 	$bankverbindung=new bankverbindung();
-	if($bankverbindung->load_oe($oe_kurzbz, $orgform_kurzbz) && count($bankverbindung->result) > 0)
+	if($bankverbindung->load_oe($oe_kurzbz, $orgform_kurzbz) && numberOfElements($bankverbindung->result) > 0)
 	{
 		$result["iban"] = $bankverbindung->result[0]->iban;
 		$result["bic"] = $bankverbindung->result[0]->bic;
 		return $result;
 	}
 	// Nochmal ohne $orgform_kurzbz versuchen
-	elseif($bankverbindung->load_oe($oe_kurzbz) && count($bankverbindung->result) > 0)
+	elseif($bankverbindung->load_oe($oe_kurzbz) && numberOfElements($bankverbindung->result) > 0)
 	{
 		$result["iban"] = $bankverbindung->result[0]->iban;
 		$result["bic"] = $bankverbindung->result[0]->bic;

@@ -493,7 +493,7 @@ if (isset($_POST['submitfile']))
 			{
 				// Extension herausfiltern
 				$ext = explode('.', $_FILES['file']['name']);
-				$ext = mb_strtolower($ext[count($ext) - 1]);
+				$ext = mb_strtolower($ext[numberOfElements($ext) - 1]);
 
 				$filename = $_FILES['file']['tmp_name'];
 
@@ -506,7 +506,7 @@ if (isset($_POST['submitfile']))
 				// Derzeit soll nur eine Akte pro Typ hochgeladen werden können
 				// Daher wird immer eine neue Akte angelegt es sei denn es gibt bereits Eine mit "nachgereicht"==true
 				$akte->getAkten($_GET['person_id'], $dokumenttyp_upload);
-				if (count($akte->result) > 0)
+				if (numberOfElements($akte->result) > 0)
 				{
 					// Wenn ein Dokument im Status "nachgereicht" ist, wird der Datensatz aktualisiert
 					if ($akte->result[0]->nachgereicht === true)
@@ -880,7 +880,7 @@ else
 function resize($filename, $width, $height)
 {
 	$ext = explode('.', $_FILES['file']['name']);
-	$ext = mb_strtolower($ext[count($ext) - 1]);
+	$ext = mb_strtolower($ext[numberOfElements($ext) - 1]);
 
 	// Hoehe und Breite neu berechnen
 	list ($width_orig, $height_orig) = getimagesize($filename);

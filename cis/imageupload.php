@@ -161,7 +161,7 @@ if (fclose($newfile))
 
 			if ($akte->getAkten($person_id, 'Lichtbil'))
 			{
-				if (count($akte->result) > 0)
+				if (numberOfElements($akte->result) > 0)
 				{
 					$akte = $akte->result[0];
 					$akte->new = false;

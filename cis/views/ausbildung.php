@@ -88,7 +88,7 @@ if(!isset($person_id))
             $notiz = new notiz;
             $notiz->getBewerbungstoolNotizenAusbildung($person_id);
             $counter = 0;
-            if(count($notiz->result)>0):
+            if(numberOfElements($notiz->result)>0):
                 foreach($notiz->result as $ausbildung): ?>
                 	<?php if($ausbildung->insertvon == 'online_ausbildung'): $counter++ ?>
 						<?php

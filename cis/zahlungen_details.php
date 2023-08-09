@@ -57,7 +57,7 @@ if($person_id != $konto->person_id)
 $studiengang=new studiengang();
 $studiengang->load($konto->studiengang_kz);
 $bankverbindung=new bankverbindung();
-if($bankverbindung->load_oe($studiengang->oe_kurzbz) && count($bankverbindung->result)>0)
+if($bankverbindung->load_oe($studiengang->oe_kurzbz) && numberOfElements($bankverbindung->result)>0)
 {
 	$iban=$bankverbindung->result[0]->iban;
 	$bic=$bankverbindung->result[0]->bic;

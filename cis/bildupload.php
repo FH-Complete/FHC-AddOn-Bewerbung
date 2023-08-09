@@ -130,7 +130,7 @@ echo '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www
 function resize($filename, $width, $height)
 {
 		$ext = explode('.',$_FILES['bild']['name']);
-		$ext = strtolower($ext[count($ext)-1]);
+		$ext = strtolower($ext[numberOfElements($ext)-1]);
 
 		// Hoehe und Breite neu berechnen
 		list($width_orig, $height_orig) = getimagesize($filename);

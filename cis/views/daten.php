@@ -278,7 +278,7 @@ if(!isset($person_id))
 			$notiz = new notiz;
 			$notiz->getBewerbungstoolNotizen($person_id, null, 'tbl_notiz.insertamum DESC');
 			$counter = 0;
-			if(count($notiz->result) > 0):
+			if(numberOfElements($notiz->result) > 0):
 				foreach($notiz->result as $berufstaetig)
 				{
 					if($berufstaetig->insertvon == 'online')

@@ -859,7 +859,7 @@ function BewerbungGetGemeinden($plz)
 	$qry = "SELECT DISTINCT
 					plz, name, ortschaftskennziffer, ortschaftsname, bulacode, bulabez,
 					(
-						SELECT count(ort) FROM public.tbl_adresse WHERE gemeinde=a.name AND plz=a.plz::varchar AND TRIM(ort)=a.ortschaftsname LIMIT 1
+						SELECT COUNT(ort) FROM public.tbl_adresse WHERE gemeinde=a.name AND plz=a.plz::varchar AND TRIM(ort)=a.ortschaftsname LIMIT 1
 					) AS anzahl
 				FROM
 					bis.tbl_gemeinde a
@@ -1094,28 +1094,28 @@ function getAllDokumenteBewerbungstoolForPerson($person_id, $studiensemester_arr
 			dok_stg.nachreichbar,
 			tbl_dokument.ausstellungsdetails,
 			(
-				SELECT count(*)
+				SELECT COUNT(*)
 				FROM PUBLIC.tbl_akte
 				WHERE dokument_kurzbz = dok_stg.dokument_kurzbz
 					AND person_id = " . $db->db_add_param($person_id, FHC_INTEGER) . "
 					AND (inhalt IS NOT NULL OR dms_id IS NOT NULL)
 				) AS anzahl_akten_vorhanden,
 			(
-				SELECT count(*)
+				SELECT COUNT(*)
 				FROM PUBLIC.tbl_akte
 				WHERE dokument_kurzbz = dok_stg.dokument_kurzbz
 					AND person_id = " . $db->db_add_param($person_id, FHC_INTEGER) . "
 					AND formal_geprueft_amum IS NOT NULL
 				) AS anzahl_akten_formal_geprueft,
 			(
-				SELECT count(*)
+				SELECT COUNT(*)
 				FROM PUBLIC.tbl_akte
 				WHERE dokument_kurzbz = dok_stg.dokument_kurzbz
 					AND person_id = " . $db->db_add_param($person_id, FHC_INTEGER) . "
 					AND nachgereicht = true
 				) AS anzahl_akten_wird_nachgereicht,
 			(
-				SELECT count(*)
+				SELECT COUNT(*)
 				FROM PUBLIC.tbl_dokumentprestudent
 				WHERE dokument_kurzbz = dok_stg.dokument_kurzbz
 					AND prestudent_id IN (
@@ -1518,7 +1518,7 @@ function getReihungstestsForOnlinebewerbung($studienplan_id, $studiensemester_ku
 						END
 					) AS anzahl_plaetze,
 				(
-					SELECT count(*)
+					SELECT COUNT(*)
 					FROM PUBLIC.tbl_rt_person
 					WHERE rt_id = rt.reihungstest_id
 					) AS anzahl_anmeldungen,
@@ -1618,7 +1618,7 @@ function hasPersonStatusgrund($person_id, $studiensemester_kurzbz, $status_grund
 {
 	$db = new basis_db();
 	$qry = "
-			SELECT count(*) AS anzahl
+			SELECT COUNT(*) AS anzahl
 			FROM PUBLIC.tbl_prestudent
 			JOIN PUBLIC.tbl_prestudentstatus USING (prestudent_id)
 			WHERE status_kurzbz = 'Interessent'
@@ -2070,7 +2070,7 @@ function getNachreichForm($dokument_kurzbz, $studiengang)
 function resize($filename, $width, $height)
 {
 	$ext = explode('.', $_FILES['file']['name']);
-	$ext = mb_strtolower($ext[count($ext) - 1]);
+	$ext = mb_strtolower($ext[numberOfElements($ext) - 1]);
 
 	// Hoehe und Breite neu berechnen
 	list ($width_orig, $height_orig) = getimagesize($filename);

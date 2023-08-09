@@ -712,7 +712,7 @@ $studiensemester_array = array();
 						}
 						//$orgformen_sprachen = array_unique($orgformen_sprachen);
 						// Wenn mehrere Orgformen oder Sprachen vorhanden sind, wird ein Auswahl-Modal angezeigt
-						if(count($studienplanIDs) > 1)
+						if(numberOfElements($studienplanIDs) > 1)
 						{
 							$modal = true;
 							
@@ -808,7 +808,7 @@ $studiensemester_array = array();
 					if (defined('BEWERBERTOOL_MAX_STUDIENGAENGE') 
 							&& BEWERBERTOOL_MAX_STUDIENGAENGE != '' 
 							&& isset($studiengaengeBaMa[$std_semester])
-							&& count($studiengaengeBaMa[$std_semester]) >= BEWERBERTOOL_MAX_STUDIENGAENGE
+							&& numberOfElements($studiengaengeBaMa[$std_semester]) >= BEWERBERTOOL_MAX_STUDIENGAENGE
 							&& $result->studiengang_kz > 0
 							&& $result->studiengang_kz < 10000)
 						$disabled = 'disabled';
@@ -1051,7 +1051,7 @@ $studiensemester_array = array();
 				<?php else: ?>
 
 				<div id="auswahlStg">
-				<?php if (defined('BEWERBERTOOL_MAX_STUDIENGAENGE') && BEWERBERTOOL_MAX_STUDIENGAENGE != '' && isset($studiengaengeBaMa[$std_semester]) && count($studiengaengeBaMa[$std_semester]) >= BEWERBERTOOL_MAX_STUDIENGAENGE)
+				<?php if (defined('BEWERBERTOOL_MAX_STUDIENGAENGE') && BEWERBERTOOL_MAX_STUDIENGAENGE != '' && isset($studiengaengeBaMa[$std_semester]) && numberOfElements($studiengaengeBaMa[$std_semester]) >= BEWERBERTOOL_MAX_STUDIENGAENGE)
 						echo '<p class="alert alert-warning">'.strip_tags($p->t('bewerbung/sieKoennenMaximalXStudiengaengeWaehlen', array(BEWERBERTOOL_MAX_STUDIENGAENGE))).'</p>';
 
 					if(!empty($optionsStg))

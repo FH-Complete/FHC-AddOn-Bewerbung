@@ -173,7 +173,7 @@ $eingabegesperrt = false;
 $benutzer = new benutzer();
 if ($benutzer->getBenutzerFromPerson($person->person_id, false))
 {
-	if (count($benutzer->result) > 0)
+	if (numberOfElements($benutzer->result) > 0)
 	{
 		$eingabegesperrt = true;
 	}
@@ -1224,7 +1224,7 @@ if (isset($_POST['btn_kontakt']) && ! $eingabegesperrt)
 	$kontakt = new kontakt();
 	$kontakt->load_persKontakttyp($person->person_id, 'email');
 	// gibt es schon kontakte von user
-	if (count($kontakt->result) > 0)
+	if (numberOfElements($kontakt->result) > 0)
 	{
 		/*
 		 * Eine bestehende Mailadresse darf nicht bearbeitet oder entfernt werden
@@ -1299,7 +1299,7 @@ if (isset($_POST['btn_kontakt']) && ! $eingabegesperrt)
 		$kontakt_t->load_persKontakttyp($person->person_id, 'telefon');
 
 		// gibt es schon kontakte von user
-		if (count($kontakt_t->result) > 0)
+		if (numberOfElements($kontakt_t->result) > 0)
 		{
 			// Es gibt bereits eine Telefonnummer
 			$kontakt_id = $kontakt_t->result[0]->kontakt_id;
@@ -1399,7 +1399,7 @@ if (isset($_POST['btn_kontakt']) && ! $eingabegesperrt)
 			$adresse = new adresse();
 			$adresse->load_pers($person->person_id);
 			$gemeinde = '';
-			if (count($adresse->result) > 0)
+			if (numberOfElements($adresse->result) > 0)
 			{
 				// Wenn die Nation Oesterreich ist, wird die Gemeinde aus der DB ermittelt
 				if (isset($_POST['nation']) && $_POST['nation'] == 'A' && isset($_POST['ort']) && $_POST['ort'] != '' && isset($_POST['plz']) && $_POST['plz'] != '')
@@ -1504,7 +1504,7 @@ if (isset($_POST['btn_rechnungskontakt']))
 		$kontakt_t->load_persKontakttyp($person->person_id, 're_telefon');
 
 		// gibt es schon kontakte von user
-		if (count($kontakt_t->result) > 0)
+		if (numberOfElements($kontakt_t->result) > 0)
 		{
 			// Es gibt bereits eine Telefonnummer
 			$kontakt_id = $kontakt_t->result[0]->kontakt_id;
@@ -1581,7 +1581,7 @@ if (isset($_POST['btn_rechnungskontakt']))
 		$kontakt_t->load_persKontakttyp($person->person_id, 're_email');
 
 		// gibt es schon kontakte von user
-		if (count($kontakt_t->result) > 0)
+		if (numberOfElements($kontakt_t->result) > 0)
 		{
 			// Es gibt bereits eine Telefonnummer
 			$kontakt_id = $kontakt_t->result[0]->kontakt_id;
@@ -1666,7 +1666,7 @@ if (isset($_POST['btn_rechnungskontakt']))
 			{
 				$name = '';
 			}
-			if (count($adresse->result) > 0)
+			if (numberOfElements($adresse->result) > 0)
 			{
 				// Wenn die Nation Oesterreich ist, wird die Gemeinde aus der DB ermittelt
 				if (isset($_POST['re_nation']) && $_POST['re_nation'] == 'A' && isset($_POST['re_ort']) && $_POST['re_ort'] != '' && isset($_POST['re_plz']) && $_POST['re_plz'] != '')
@@ -1842,7 +1842,7 @@ if (isset($_POST['btn_notiz']))
 	$notiz = new notiz;
 	$notiz->getBewerbungstoolNotizen($person_id);
 
-	if ($anmerkung != '' && count($notiz->result) == 0)
+	if ($anmerkung != '' && numberOfElements($notiz->result) == 0)
 	{
 		$notiz = new notiz();
 		$notiz->person_id = $person_id;
@@ -1883,7 +1883,7 @@ if ($saveNotiz)
 	$prestudentObj = new prestudent($prestudent_id);
 	$studiengang =  new studiengang($prestudentObj->studiengang_kz);
 
-	if ($anmerkungstext != '' && count($notiz->result) == 0)
+	if ($anmerkungstext != '' && numberOfElements($notiz->result) == 0)
 	{
 		$notiz = new notiz();
 		$notiz->person_id = $person_id;
@@ -1982,7 +1982,7 @@ if (isset($_POST['submitfile']))
 
 		if (!defined('BEWERBERTOOL_ANZAHL_DOKUMENTPLOAD_JE_TYP')
 			|| ((is_numeric(BEWERBERTOOL_ANZAHL_DOKUMENTPLOAD_JE_TYP)
-				&& count($akte->result) < BEWERBERTOOL_ANZAHL_DOKUMENTPLOAD_JE_TYP)
+				&& numberOfElements($akte->result) < BEWERBERTOOL_ANZAHL_DOKUMENTPLOAD_JE_TYP)
 				||
 				(   $akte->result[0]->inhalt_vorhanden == false
 					&& $akte->result[0]->dms_id == '')))
@@ -2064,7 +2064,7 @@ if (isset($_POST['submitfile']))
 			{
 				// Extension herausfiltern
 				$ext = explode('.', $_FILES['file']['name']);
-				$ext = mb_strtolower($ext[count($ext) - 1]);
+				$ext = mb_strtolower($ext[numberOfElements($ext) - 1]);
 
 				$filename = $_FILES['file']['tmp_name'];
 
@@ -2077,7 +2077,7 @@ if (isset($_POST['submitfile']))
 				// Derzeit soll nur eine Akte pro Typ hochgeladen werden können
 				// Daher wird immer eine neue Akte angelegt es sei denn es gibt bereits Eine mit "nachgereicht"==true
 				$akte->getAkten($person_id, $dokumenttyp_upload);
-				if (count($akte->result) > 0)
+				if (numberOfElements($akte->result) > 0)
 				{
 					// Wenn ein Dokument im Status "nachgereicht" ist, wird der Datensatz aktualisiert
 					if ($akte->result[0]->nachgereicht === true)
@@ -2328,12 +2328,12 @@ $adresse = new adresse();
 $adresse->load_pers($person->person_id);
 
 if (isset($adresse->result[0])
-	&& count($kontakt->result)
-	&& count($adresse->result[0]->strasse)
-	&& count($adresse->result[0]->plz)
-	&& count($adresse->result[0]->ort)
-	&& count($adresse->result[0]->nation)
-	&& count($kontakttel->result))
+	&& numberOfElements($kontakt->result)
+	&& numberOfElements($adresse->result[0]->strasse)
+	&& numberOfElements($adresse->result[0]->plz)
+	&& numberOfElements($adresse->result[0]->ort)
+	&& numberOfElements($adresse->result[0]->nation)
+	&& numberOfElements($kontakttel->result))
 {
 	$status_kontakt = true;
 	$status_kontakt_text = $vollstaendig;
@@ -2420,13 +2420,13 @@ if ($prestudent_bewerbungen)
 		$prestudent_status = new prestudent();
 		$prestudent_status->getLastStatus($row->prestudent_id, $row->laststatus_studiensemester_kurzbz, 'Interessent');
 
-		if ($prestudent_status->bewerbung_abgeschicktamum != '' && ($count_abgeschickte == 0 || $count_abgeschickte < count($prestudent_bewerbungen)))
+		if ($prestudent_status->bewerbung_abgeschicktamum != '' && ($count_abgeschickte == 0 || $count_abgeschickte < numberOfElements($prestudent_bewerbungen)))
 		{
 			$status_abschicken = true;
 			$status_abschicken_text = $teilvollstaendig;
 			$count_abgeschickte ++;
 		}
-		if ($prestudent_status->bewerbung_abgeschicktamum != '' && $count_abgeschickte == count($prestudent_bewerbungen))
+		if ($prestudent_status->bewerbung_abgeschicktamum != '' && $count_abgeschickte == numberOfElements($prestudent_bewerbungen))
 		{
 			$status_abschicken = true;
 			$status_abschicken_text = $vollstaendig;
@@ -2459,7 +2459,7 @@ if (CAMPUS_NAME == 'FH Technikum Wien')
 {
 	$invLetter = new akte();
 	$invLetter->getAkten($person_id, 'InvitLet');
-	if (count($invLetter->result) > 0)
+	if (numberOfElements($invLetter->result) > 0)
 	{
 		$invLetterObj = new dokument();
 		$invLetterObj->loadDokumenttyp('InvitLet');
@@ -2478,7 +2478,7 @@ if (CAMPUS_NAME == 'FH Technikum Wien')
 {
 	$zeitBst = new akte();
 	$zeitBst ->getAkten($person_id, 'ZeitBest');
-	if (count($zeitBst->result) > 0)
+	if (numberOfElements($zeitBst->result) > 0)
 	{
 		$zeitBstObj = new dokument();
 		$zeitBstObj->loadDokumenttyp('ZeitBest');
@@ -2594,7 +2594,7 @@ if (defined('BEWERBERTOOL_AUSBILDUNG_ANZEIGEN') && BEWERBERTOOL_AUSBILDUNG_ANZEI
 {
 	$notiz = new notiz();
 	$notiz->getBewerbungstoolNotizenAusbildung($person_id);
-	if (count($notiz->result) == 0)
+	if (numberOfElements($notiz->result) == 0)
 	{
 		$status_ausbildung = false;
 		$status_ausbildung_text = $unvollstaendig;
@@ -2621,7 +2621,7 @@ if (! defined('BEWERBERTOOL_REIHUNGSTEST_ANZEIGEN') || BEWERBERTOOL_REIHUNGSTEST
 	$angemeldeteReihungstests->getReihungstestPerson($person_id, $nextSommerSemester->studiensemester_kurzbz);
 
 	$reihungstestTermine = getReihungstestsForOnlinebewerbung($studienplanReihungstest, $nextWinterSemester->studiensemester_kurzbz);
-	if (count($angemeldeteReihungstests->result) > 0)
+	if (numberOfElements($angemeldeteReihungstests->result) > 0)
 	{
 		$status_reihungstest = true;
 		$status_reihungstest_text = $vollstaendig;

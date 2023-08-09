@@ -328,7 +328,7 @@ $studiensemester_array = array();
 			// An der FHTW Priorisierung deaktivieren, wenn Anmeldung zum Reihungstest, sonst, wenn abgeschickt
 			if (CAMPUS_NAME == 'FH Technikum Wien')
 			{
-				if (count($angemeldeteReihungstests->result) == 0)
+				if (numberOfElements($angemeldeteReihungstests->result) == 0)
 				{
 					echo '	<div class="btn-group-vertical">
 								<button class="btn btn-default button_up btn-block" type="button"
@@ -578,7 +578,7 @@ $studiensemester_array = array();
 			$notiz = new notiz;
 			$notiz->getBewerbungstoolNotizen($person_id, $row->prestudent_id);
 			$count_notizen = 0;
-			if (count($notiz->result))
+			if (numberOfElements($notiz->result))
 			{
 				foreach ($notiz->result as $note)
 				{
@@ -866,7 +866,7 @@ $studiensemester_array = array();
 	// Zeige mögliche Studierendendaten an, wenn vorhanden
 	$benutzer = new benutzer();
 	$benutzer->getBenutzerFromPerson($person_id, true);
-	if (count($benutzer->result) > 0)
+	if (numberOfElements($benutzer->result) > 0)
 	{
 		echo '<p><b>'.$p->t('bewerbung/studierendenDaten').'</b></p>';
 		echo '<div class="table-responsive">
@@ -1098,7 +1098,7 @@ $studiensemester_array = array();
 					if (defined('BEWERBERTOOL_MAX_STUDIENGAENGE')
 						&& BEWERBERTOOL_MAX_STUDIENGAENGE != ''
 						&& isset($studiengaengeBaMa[$std_semester])
-						&& count($studiengaengeBaMa[$std_semester]) >= BEWERBERTOOL_MAX_STUDIENGAENGE
+						&& numberOfElements($studiengaengeBaMa[$std_semester]) >= BEWERBERTOOL_MAX_STUDIENGAENGE
 						&& $row->studiengang_kz > 0
 						&& $row->studiengang_kz < 10000
 						&& $row->typ != 'l')
@@ -1122,7 +1122,7 @@ $studiensemester_array = array();
 				if (defined('BEWERBERTOOL_MAX_STUDIENGAENGE')
 					&& BEWERBERTOOL_MAX_STUDIENGAENGE != ''
 					&& isset($studiengaengeBaMa[$std_semester])
-					&& count($studiengaengeBaMa[$std_semester]) >= BEWERBERTOOL_MAX_STUDIENGAENGE
+					&& numberOfElements($studiengaengeBaMa[$std_semester]) >= BEWERBERTOOL_MAX_STUDIENGAENGE
 					&& $row->studiengang_kz > 0
 					&& $row->studiengang_kz < 10000)
 				{

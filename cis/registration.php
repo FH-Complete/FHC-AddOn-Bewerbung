@@ -337,7 +337,7 @@ elseif($username && $password)
 								// Studienplan in $sprache laden
 								$studienplan->getStudienplaeneFromSem($stg, $std_semester, '1', $orgform_get, $sprache);
 								//Wenn keine Studienplan in $sprache gefunden wurde, nochmal ohne probieren
-								if (count($studienplan->result) == 0)
+								if (numberOfElements($studienplan->result) == 0)
 								{
 									$studienplan->getStudienplaeneFromSem($stg, $std_semester, '1', $orgform_get);
 								}
@@ -347,7 +347,7 @@ elseif($username && $password)
 								// Studienplan in $sprache laden
 								$studienplan->getStudienplaeneFromSem($stg, $std_semester, '1', NULL, $sprache);
 								//Wenn keine Studienplan in $sprache gefunden wurde, nochmal ohne probieren
-								if (count($studienplan->result) == 0)
+								if (numberOfElements($studienplan->result) == 0)
 								{
 									$studienplan->getStudienplaeneFromSem($stg, $std_semester, '1');
 								}
@@ -482,7 +482,7 @@ elseif($username && $password)
 						// Wenn kein Studienplan angeklickt wurde
 						elseif (defined('BEWERBERTOOL_STUDIENAUSWAHL_ANZEIGEN')
 								&& BEWERBERTOOL_STUDIENAUSWAHL_ANZEIGEN
-								&& count($studienplaene) == 0)
+								&& numberOfElements($studienplaene) == 0)
 						{
 							$message = '<p class="bg-danger padding-10">'.$p->t('bewerbung/bitteStudienrichtungWaehlen').'</p>';
 						}
@@ -491,7 +491,7 @@ elseif($username && $password)
 								&& BEWERBERTOOL_STUDIENAUSWAHL_ANZEIGEN
 								&& defined('BEWERBERTOOL_MAX_STUDIENGAENGE')
 								&& BEWERBERTOOL_MAX_STUDIENGAENGE != ''
-								&& count($studienplaeneBaMa) > BEWERBERTOOL_MAX_STUDIENGAENGE)
+								&& numberOfElements($studienplaeneBaMa) > BEWERBERTOOL_MAX_STUDIENGAENGE)
 						{
 							$message = '<p class="bg-danger padding-10">'.$p->t('bewerbung/sieKoennenMaximalXStudiengaengeWaehlen', array(BEWERBERTOOL_MAX_STUDIENGAENGE)).'</p>';
 						}
@@ -514,7 +514,7 @@ elseif($username && $password)
 						elseif (defined('BEWERBERTOOL_SHOW_REGISTRATION_ZGVNATION')
 								&& BEWERBERTOOL_SHOW_REGISTRATION_ZGVNATION
 								&& $zgv_nation == ''
-								&& count($studienplaeneBaMa) > 0)
+								&& numberOfElements($studienplaeneBaMa) > 0)
 						{
 							$message = '<p class="bg-danger padding-10">'.$p->t('bewerbung/bitteZGVausweahlen').'</p>';
 						}
@@ -581,10 +581,10 @@ elseif($username && $password)
 								null,
 								'online');
 
-							if(BEWERBERTOOL_STUDIENAUSWAHL_ANZEIGEN && count($studienplaene) < ANZAHL_PREINTERESSENT)
+							if(BEWERBERTOOL_STUDIENAUSWAHL_ANZEIGEN && numberOfElements($studienplaene) < ANZAHL_PREINTERESSENT)
 							{
 								// Prestudenten anlegen
-								for($i = 0; $i < count($studienplaene); $i++)
+								for($i = 0; $i < numberOfElements($studienplaene); $i++)
 								{
 									$studienordnung = new studienordnung();
 									$studienordnung->getStudienordnungFromStudienplan($studienplaene[$i]);
@@ -974,7 +974,7 @@ elseif($username && $password)
 									// Checkboxen deaktivieren, wenn BEWERBERTOOL_MAX_STUDIENGAENGE gesetzt ist und mehr als oder genau BEWERBERTOOL_MAX_STUDIENGAENGE uebergeben werden.
 									if(defined('BEWERBERTOOL_MAX_STUDIENGAENGE') && BEWERBERTOOL_MAX_STUDIENGAENGE != '')
 									{
-										if (count($studienplaeneBaMa) >= BEWERBERTOOL_MAX_STUDIENGAENGE && $row->typ != 'l')
+										if (numberOfElements($studienplaeneBaMa) >= BEWERBERTOOL_MAX_STUDIENGAENGE && $row->typ != 'l')
 											$disabled = 'disabled';
 									}
 

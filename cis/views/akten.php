@@ -66,12 +66,12 @@ if (!isset($person_id))
 	$pres = new prestudent();
 	$existsOffeneBewerbung = $pres->existsOffeneBewerbung($person_id);
 	$isStudent = $pres->isStudent($person_id);
-	count($akten->result) > 1 ? $showAktentext = true : $showAktentext = false;
+	numberOfElements($akten->result) > 1 ? $showAktentext = true : $showAktentext = false;
 	echo '<div id="existsOffeneBewerbung" style="display: none">'. $existsOffeneBewerbung. '</div>';
 	echo '<div id="isStudent" style="display: none">'. $isStudent. '</div>';
 	echo '<div id="showAktentext" style="display: none">'. $showAktentext. '</div>';
 
-	if (count($akten->result) > 0)
+	if (numberOfElements($akten->result) > 0)
 	{
 		echo '<ul class="list-group">';
 

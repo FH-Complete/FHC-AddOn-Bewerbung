@@ -37,7 +37,7 @@ if(!isset($person_id))
 	$reihungstestID = '';
 
 	// Angemeldete Termine laden
-	if (count($angemeldeteReihungstests->result) > 0)
+	if (numberOfElements($angemeldeteReihungstests->result) > 0)
 	{
 		echo '<p>'.$p->t('bewerbung/sieHabenFolgendenTerminGewaehlt').'</p>';
 		echo '<div class="row">
@@ -165,7 +165,7 @@ if(!isset($person_id))
 		$studienplanQualikurse = new studienplan();
 		$studienplanQualikurse->getStudienplaeneFromSem(STUDIENGANG_KZ_QUALIFIKATIONKURSE, $nextWinterSemester->studiensemester_kurzbz);
 		// Wenn für das übergbene Studiensemester kein Studienplan gefunden wird, wird nochmal ohne Studiensemester gesucht
-		if (count($studienplanQualikurse->result) == 0)
+		if (numberOfElements($studienplanQualikurse->result) == 0)
 		{
 			$studienplanQualikurse->getStudienplaeneFromSem(STUDIENGANG_KZ_QUALIFIKATIONKURSE);
 		}
@@ -180,7 +180,7 @@ if(!isset($person_id))
 	{
 		if ($isStudentQuali == true)
 		{
-			if (count($studienplanQualikurse->result) > 0)
+			if (numberOfElements($studienplanQualikurse->result) > 0)
 			{
 				foreach ($studienplanQualikurse->result AS $row)
 				{
@@ -201,7 +201,7 @@ if(!isset($person_id))
 		// Wenn mindestens eine Bewerbung BEW DL ist, werden nur Termine mit diesem Studienplan zur Anmeldung angezeigt.
 		if (CAMPUS_NAME == 'FH Technikum Wien')
 		{
-			$qry = "SELECT count(*) as anzahl
+			$qry = "SELECT COUNT(*) as anzahl
 			FROM PUBLIC.tbl_person
 			JOIN PUBLIC.tbl_prestudent USING (person_id)
 			JOIN PUBLIC.tbl_prestudentstatus USING (prestudent_id)
@@ -256,13 +256,13 @@ if(!isset($person_id))
 			echo '<div class="col-xs-12 alert alert-info">'.$p->t('bewerbung/infoVorgemerktFuerQualifikationskurs').'</div>';
 			$terminauswahl = false;
 		}
-		elseif ($reihungstestTermine == '' && count($angemeldeteRtArray) == 0)
+		elseif ($reihungstestTermine == '' && numberOfElements($angemeldeteRtArray) == 0)
 		{
 			echo '<div class="col-xs-12 alert alert-warning">'.$p->t('bewerbung/keineRtTermineZurAuswahl').'</div>';
 			$terminauswahl = false;
 		}
 	}
-	elseif($reihungstestTermine == '' && count($angemeldeteRtArray) == 0)
+	elseif($reihungstestTermine == '' && numberOfElements($angemeldeteRtArray) == 0)
 	{
 		echo '<div class="col-xs-12 alert alert-info">'.$p->t('bewerbung/keineRtTermineZurAuswahl').'</div>';
 		$terminauswahl = false;
@@ -271,7 +271,7 @@ if(!isset($person_id))
 	if ($terminauswahl == true)
 	{
 		//Wenn bereits eine Anmeldung existiert, keine Terminauswahl anzeigen
-		if (count($angemeldeteRtArray) == 0)
+		if (numberOfElements($angemeldeteRtArray) == 0)
 		{
 			echo '<p>'.$p->t('bewerbung/fuerReihungstestAnmelden').'</p>';
 			echo '<div class="row">

@@ -79,7 +79,7 @@ elseif($save_error_zgv===true)
 			{
 				continue;
 			}
-			if (count($zgv[$stufe])>0)
+			if (numberOfElements($zgv[$stufe])>0)
 				$gesperrt = true;
 
 			// Hack um $stufe mit Phrasen zu überschreiben

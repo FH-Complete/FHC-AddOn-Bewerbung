@@ -49,7 +49,7 @@ echo '<p>'.$p->t('bewerbung/erklaerungBewerbungAbschicken').'</p>
 $notiz = new notiz;
 $notiz->getBewerbungstoolNotizen($person_id);
 $count_notizen = 0;
-if(count($notiz->result))
+if(numberOfElements($notiz->result))
 {
 	foreach($notiz->result as $note)
 	{
