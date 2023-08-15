@@ -24,54 +24,105 @@ if(!isset($person_id))
 	die($p->t('bewerbung/ungueltigerZugriff'));
 }
 
+// Prüfen ob Bewerbung schon abgeschickt ist
+$bewerbung_abgeschickt = check_person_bewerbungabgeschickt($person_id);
+// wenn ja, keine Einträge mehr möglich
+$readOnly = $bewerbung_abgeschickt ? 'readOnly' : '';
+// UHSTAT Daten gerade gespeichert
+$saved = isset($_POST['uhstat_saved']);
+
 echo '<div role="tabpanel" class="tab-pane active" id="uhstat">';
 
-echo '
-		<div id="responsiveDiv" class="embed-responsive" style="padding-bottom: 100%;">
-		  <iframe id="uhstatIframe"
-					class="embed-responsive-item"
-					src="../../../index.ci.php/codex/UHSTAT1"
-					></iframe>
-		</div>
-		<div class="form-group">';
+// success alert
+if ($saved)
+{
+	echo '
+			<div class="alert alert-success" id="success-alert_uhstat1">
+				<button type="button" class="close" data-dismiss="alert">x</button>
+				<strong>'.$p->t('global/erfolgreichgespeichert').'</strong>
+			</div>';
+}
 
-	if (array_key_exists(array_search('uhstat', $tabs)-1, $tabs))
-	{
-		echo '	<button class="btn-nav btn btn-default" type="button" data-jump-tab="'.$tabs[array_search('uhstat', $tabs)-1].'">
-					'.$p->t('global/zurueck').'
-				</button>';
-	}
-	if (array_key_exists(array_search('uhstat', $tabs)+1, $tabs))
-	{
-		echo '	<button class="btn-nav btn btn-default" type="button" data-jump-tab="'.$tabs[array_search('uhstat', $tabs)+1].'">
-					'.$p->t('bewerbung/weiter').'
-				</button>';
-	}
-	else
-	{
-		echo '	<button class="btn-nav btn btn-default" type="button" data-jump-tab="'.$tabs[0].'">
-					'.$p->t('bewerbung/menuUebersicht').'
-				</button>';
-	}
+// div zum reinladen des uhstat Formulars
+echo '<div id="uhstatDiv"></div>';
 
-echo '</div></div>';
+echo	'<div class="alert alert-danger" id="danger-alert_uhstat1" hidden>
+			<button type="button" class="close" data-dismiss="alert">x</button>
+			<strong>'.$p->t('global/fehleraufgetreten').' </strong>
+		</div>';
+
+// Formular, das zum neu Laden der Seite abgeschickt wird
+echo '<form method="POST" action="'.$_SERVER['PHP_SELF'].'?active=uhstat" class="form-horizontal" id="uhstatFormBewerbung">
+			<div class="form-group">';
+
+if (array_key_exists(array_search('uhstat', $tabs)-1, $tabs))
+{
+	echo '	<button class="btn-nav btn btn-default" type="button" data-jump-tab="'.$tabs[array_search('uhstat', $tabs)-1].'">
+				'.$p->t('global/zurueck').'
+			</button>';
+}
+echo '<input type="hidden" value="uhstat_saved" name="uhstat_saved"/>';
+
+echo	'&nbsp;<button class="btn btn-success" type="submit" name="btn_uhstat" id="submit_uhstat">'
+			.$p->t('global/speichern').
+		'</button>';
+
+if (array_key_exists(array_search('uhstat', $tabs)+1, $tabs))
+{
+	echo '&nbsp;<button class="btn-nav btn btn-default" type="button" data-jump-tab="'.$tabs[array_search('uhstat', $tabs)+1].'">
+				'.$p->t('bewerbung/weiter').'
+			</button>';
+}
+
+echo '</div></form></div>';
 ?>
 
 <script type="text/javascript">
-$('#uhstatIframe').load(function()
-{
-	// remove left and right space of form container
-	$('#uhstatIframe').contents().find('#uhstat1Container').removeClass('container');
 
-	// space between iframe and rest
-	$('#responsiveDiv').css('padding-bottom', '90%');
+// readOnly wenn Bewerbung schon abgeschickt
+let readOnly = "?<?php echo $readOnly ?>";
 
-	let saved = $('#uhstatIframe').contents().find('#uhstat1Saved').val();
+// Laden des Formulars
+$("#uhstatDiv").load('../../../index.ci.php/codex/UHSTAT1'+readOnly+' #uhstat1Subcontainer', function() {
 
-	if (saved == 1) {
-		$("#tab_uhstat a").css('background-color', '#DFF0D8');
-		$("#uhstatVollstaendig").html('<?php echo $vollstaendig ?>');
-	}
+	// Animation für success message
+	window.setTimeout(function() {
+		$("#success-alert_uhstat1").fadeTo(500, 0).slideUp(500, function(){
+			$(this).hide();
+		});
+	}, 1500);
+
+	// wenn submit button geklickt
+	$("#submit_uhstat").click(function(e) {
+		e.preventDefault();
+
+		// UHSTAT Formular abschicken
+		let form = $("#uhstat1Form");
+		let actionUrl = form.attr('action');
+
+		$.ajax({
+			type: "POST",
+			url: actionUrl+readOnly,
+			data: form.serialize(),
+			success: function(data)
+			{
+				// Antwort html ins div laden
+				$("#uhstatDiv").html($(data).find("#uhstat1Subcontainer").html());
+
+				// saved flag, ist 1 wenn erfolgreich gespeichert
+				let saved = $('#uhstat1Saved').val();
+
+				// wenn erfolgreich, seite neu laden durch submit des Formulars im Bewerbungstool
+				if (saved == 1) {
+					$("#uhstatFormBewerbung").submit();
+				}
+			},
+			// wenn fehlgeschlagen, Fehlermeldungsalert anzeigen
+			error: function(error) {
+				$("#danger-alert_uhstat1").fadeTo(500, 1);
+			}
+		});
+	});
 });
 
 </script>

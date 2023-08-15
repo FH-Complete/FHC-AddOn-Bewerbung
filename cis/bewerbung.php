@@ -2770,11 +2770,11 @@ else
 									break;
 								}
 							}
-							$filledOut = $display == '' && UHSTAT1FormFilledOut($person_id);
+							$uhstatFilledOut = $display == '' && UHSTAT1FormFilledOut($person_id);
 
 							echo '<li id="tab_uhstat" '.$display.'>
-								<a href="#uhstat" aria-controls="uhstat" role="tab" data-toggle="tab"'.($filledOut?' style="background-color: #DFF0D8 !important"':' style="background-color: #F2DEDE !important"').'>
-									'.$p->t('bewerbung/menuUhstat').'<br><span id="uhstatVollstaendig">'.($filledOut?$vollstaendig:$unvollstaendig).'</span>
+								<a href="#uhstat" aria-controls="uhstat" role="tab" data-toggle="tab"'.($uhstatFilledOut?' style="background-color: #DFF0D8 !important"':' style="background-color: #F2DEDE !important"').'>
+									'.$p->t('bewerbung/menuUhstat').'<br><span id="uhstatVollstaendig">'.($uhstatFilledOut?$vollstaendig:$unvollstaendig).'</span>
 								</a>
 							</li>';
 						}
