@@ -2862,16 +2862,6 @@ else
 										}
 									}
 								}
-
-								// "Reihungstest" Punkt wird auch nicht angezeigt, wenn die UHSTAT1 Daten noch nicht ausgefüllt wurden
-								if (
-									$display == ''
-									&& defined('BEWERBERTOOL_UHSTAT1_ANZEIGEN') && BEWERBERTOOL_UHSTAT1_ANZEIGEN
-									&& !UHSTAT1FormFilledOut($person_id)
-								)
-								{
-									$display = 'style="display: none"';
-								}
 							}
 							elseif (CAMPUS_NAME == 'FH BFI Wien')
 							{

@@ -715,4 +715,5 @@ $this->phrasen['bewerbung/legende_vorhanden']='Dokument bereits vorhanden';
 $this->phrasen['bewerbung/legende_hochladen']='falls zutreffend hochladen';
 $this->phrasen['bewerbung/legende_nachreichen']='Dokument wird nachgereicht';
 $this->phrasen['bewerbung/menuUhstat']='Statistische Daten (UHSTAT)';
+$this->phrasen['bewerbung/uhstatNichtAusgefuellt']='Vor Anmeldung zu einem Reihungstest müssen die statistischen Daten (UHSTAT) ausgefüllt werden.';
 ?>

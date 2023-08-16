@@ -118,6 +118,9 @@ if(!isset($person_id))
 		echo $p->t('bewerbung/reihungstestInfoTextAngemeldet');
 	}
 
+	// Termine verbergen, wenn UHSTAT1 Daten noch nicht ausgefüllt wurden
+	$uhstatNotFilledOut = defined('BEWERBERTOOL_UHSTAT1_ANZEIGEN') && BEWERBERTOOL_UHSTAT1_ANZEIGEN != '' && !$uhstatFilledOut;
+
 	// Wenn die Person TeilnehmerIn am Qualifikationskurs ist (den Statusgrund "Qualifikationskurs" hat),
 	// Termine verbergen, bis ein Account im EQK vorhanden ist
 	if (defined('STATUSGRUND_ID_QUALIFIKATIONKURSTEILNEHMER') && STATUSGRUND_ID_QUALIFIKATIONKURSTEILNEHMER != '')
@@ -244,7 +247,12 @@ if(!isset($person_id))
 	}
 
 	$terminauswahl = true;
-	if($hasStatusgrundEinstiegSS == true)
+	if ($uhstatNotFilledOut == true)
+	{
+		echo '<div class="col-xs-12 alert alert-warning">'.$p->t('bewerbung/uhstatNichtAusgefuellt').'</div>';
+		$terminauswahl = false;
+	}
+	elseif($hasStatusgrundEinstiegSS == true)
 	{
 		echo '<div class="col-xs-12 alert alert-warning">'.$p->t('bewerbung/keineRtTermineZurAuswahl').'</div>';
 		$terminauswahl = false;
