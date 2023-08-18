@@ -24,10 +24,8 @@ if(!isset($person_id))
 	die($p->t('bewerbung/ungueltigerZugriff'));
 }
 
-// Prüfen ob Bewerbung schon abgeschickt ist
-$bewerbung_abgeschickt = check_person_bewerbungabgeschickt($person_id);
-// wenn ja, keine Einträge mehr möglich
-$readOnly = $bewerbung_abgeschickt ? 'readOnly' : '';
+// wenn Eingabe gesperrt (z.B. Bewerbung schon abgeschickt), keine Einträge mehr möglich
+$readOnly = $eingabegesperrt ? 'readOnly' : '';
 // UHSTAT Daten gerade gespeichert
 $saved = isset($_POST['uhstat_saved']);
 
