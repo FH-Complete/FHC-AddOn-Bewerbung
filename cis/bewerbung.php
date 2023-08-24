@@ -1137,43 +1137,72 @@ if (isset($_POST['btn_person']))
 
 	$berufstaetig = filter_input(INPUT_POST, 'berufstaetig');
 
-	if (in_array($berufstaetig, array(
-		'Vollzeit',
-		'Teilzeit'
-	), true))
+	if (defined('BEWERBERTOOL_BERUFSTAETIGKEIT_NOTIZ') && BEWERBERTOOL_BERUFSTAETIGKEIT_NOTIZ === false)
 	{
+		$facheinschlaegig = filter_input(INPUT_POST, 'facheinschlaegig');
+		
+		if (in_array($berufstaetig, array('Vollzeit', 'Teilzeit', 'Nein'), true) &&
+			in_array($facheinschlaegig, array('Ja', 'Nein'), true))
+		{
+			$berufscodeArray = ['Ja' => ['Vollzeit' => 6, 'Teilzeit' => 7, 'Nein' => 2],
+								'Nein' => ['Vollzeit' => 9, 'Teilzeit' => 10, 'Nein' => 0]];
 
-		$berufstaetig_art = filter_input(INPUT_POST, 'berufstaetig_art');
-		$berufstaetig_dienstgeber = filter_input(INPUT_POST, 'berufstaetig_dienstgeber');
+			$berufscode = $berufscodeArray[$facheinschlaegig][$berufstaetig];
 
-		$notiz = new notiz();
-		$notiz->person_id = $person_id;
-		$notiz->verfasser_uid = '';
-		$notiz->erledigt = false;
-		$notiz->insertvon = 'online'; // Nicht aendern, da in notiz.class.php nach insertvon abgefragt wird
-		$notiz->insertamum = date('c');
-		$notiz->start = date('Y-m-d');
-		$notiz->titel = 'Berufstätigkeit';
-		$notiz->text = 'Berufstätig: '.$berufstaetig.'; Dienstgeber: '.$berufstaetig_dienstgeber.'; Art der Tätigkeit: '.$berufstaetig_art;
-		$notiz->save(true);
-		$notiz->saveZuordnung();
+			$prestudent = new prestudent();
+			$prestudent->getPrestudenten($person_id);
+
+			$last_prestudent = count($prestudent->result) - 1;
+			foreach ($prestudent->result as $key => $prestudent_beruf)
+			{
+				if ($key === $last_prestudent || (is_null($prestudent_beruf->berufstaetigkeit_code)))
+				{
+					$prestudent_beruf->berufstaetigkeit_code = $berufscode;
+					$prestudent_beruf->save();
+				}
+			}
+		}
 	}
-	elseif (in_array($berufstaetig, array('Nein'), true))
+	else
 	{
-		$berufstaetig_art = filter_input(INPUT_POST, 'berufstaetig_art');
-		$berufstaetig_dienstgeber = filter_input(INPUT_POST, 'berufstaetig_dienstgeber');
-
-		$notiz = new notiz();
-		$notiz->person_id = $person_id;
-		$notiz->verfasser_uid = '';
-		$notiz->erledigt = false;
-		$notiz->insertvon = 'online'; // Nicht aendern, da in notiz.class.php nach insertvon abgefragt wird
-		$notiz->insertamum = date('c');
-		$notiz->start = date('Y-m-d');
-		$notiz->titel = 'Berufstätigkeit';
-		$notiz->text = 'Nicht Berufstätig';
-		$notiz->save(true);
-		$notiz->saveZuordnung();
+		if (in_array($berufstaetig, array(
+			'Vollzeit',
+			'Teilzeit'
+		), true))
+		{
+			
+			$berufstaetig_art = filter_input(INPUT_POST, 'berufstaetig_art');
+			$berufstaetig_dienstgeber = filter_input(INPUT_POST, 'berufstaetig_dienstgeber');
+			
+			$notiz = new notiz();
+			$notiz->person_id = $person_id;
+			$notiz->verfasser_uid = '';
+			$notiz->erledigt = false;
+			$notiz->insertvon = 'online'; // Nicht aendern, da in notiz.class.php nach insertvon abgefragt wird
+			$notiz->insertamum = date('c');
+			$notiz->start = date('Y-m-d');
+			$notiz->titel = 'Berufstätigkeit';
+			$notiz->text = 'Berufstätig: '.$berufstaetig.'; Dienstgeber: '.$berufstaetig_dienstgeber.'; Art der Tätigkeit: '.$berufstaetig_art;
+			$notiz->save(true);
+			$notiz->saveZuordnung();
+		}
+		elseif (in_array($berufstaetig, array('Nein'), true))
+		{
+			$berufstaetig_art = filter_input(INPUT_POST, 'berufstaetig_art');
+			$berufstaetig_dienstgeber = filter_input(INPUT_POST, 'berufstaetig_dienstgeber');
+			
+			$notiz = new notiz();
+			$notiz->person_id = $person_id;
+			$notiz->verfasser_uid = '';
+			$notiz->erledigt = false;
+			$notiz->insertvon = 'online'; // Nicht aendern, da in notiz.class.php nach insertvon abgefragt wird
+			$notiz->insertamum = date('c');
+			$notiz->start = date('Y-m-d');
+			$notiz->titel = 'Berufstätigkeit';
+			$notiz->text = 'Nicht Berufstätig';
+			$notiz->save(true);
+			$notiz->saveZuordnung();
+		}
 	}
 
 	if (!$eingabegesperrt)

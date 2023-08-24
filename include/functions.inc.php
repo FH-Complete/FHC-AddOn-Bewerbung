@@ -422,6 +422,19 @@ function BewerbungPersonAddStudienplan($studienplan_id, $person, $studiensemeste
 		$prestudent->priorisierung = $hoechstePrio->priorisierung+1;
 		$prestudent->new = true;
 
+		if (defined('BEWERBERTOOL_BERUFSTAETIGKEIT_NOTIZ') && BEWERBERTOOL_BERUFSTAETIGKEIT_NOTIZ === false)
+		{
+			$prestudent_desc = array_reverse($pre->result);
+			foreach ($prestudent_desc as $row)
+			{
+				if($row->berufstaetigkeit_code !== '' )
+				{
+					$prestudent->berufstaetigkeit_code = $row->berufstaetigkeit_code;
+					break;
+				}
+			}
+		}
+
 		if (! $prestudent->save())
 		{
 			return $prestudent->errormsg;

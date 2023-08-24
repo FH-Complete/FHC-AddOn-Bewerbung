@@ -99,4 +99,11 @@ define('BEWERBERTOOL_UPLOAD_DOKUMENT_WENN_AKZEPTIERT', true);
 //Für welche Studiengänge (Kennzahlen) soll die Option "Reihungstest-Login" angezeigt werden?
 define('TESTTOOL_LOGIN_BEWERBUNGSTOOL_STUDIENGAENGE', serialize(
 	array()));
+
+/* Soll die Berufstätigkeit als Notiz abgespeichert werden?
+ * Wenn false, wird die Berufstätigkeit bei allen PreStudenten von der Person gespeichert, die keine Berufstätigkeit eingetragen haben
+ * und zusätzlich beim PreStudenten mit der höchsten ID
+ * */
+define('BEWERBERTOOL_BERUFSTAETIGKEIT_NOTIZ', false);
+
 ?>
