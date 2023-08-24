@@ -3216,7 +3216,7 @@ function sendBewerbung($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz,
 	// Die FIT-Studiengänge erhalten auch kein Mail
 	if (CAMPUS_NAME == 'FH Technikum Wien')
 	{
-		if ($studiengang->typ != 'b' && $studiengang->typ != 'm' && $studiengang->studiengang_kz != 10021 && $studiengang->studiengang_kz != 10027)
+		if ($studiengang->typ != 'b' && $studiengang->typ != 'm' && defined('BEWERBERTOOL_DONT_SEND_MAIL_STG') && !in_array($studiengang->studiengang_kz, unserialize(BEWERBERTOOL_DONT_SEND_MAIL_STG)))
 		{
 			$email = wordwrap($email, 70); // Bricht den Code um, da es sonst zu Anzeigefehlern im Mail kommen kann
 
@@ -3274,7 +3274,7 @@ function sendBewerbung($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz,
 	// An der FHTW werden alle Bachelor-Studiengänge und Master vom Infocenter abgearbeitet und deshalb keine Mail verschickt
 	if (CAMPUS_NAME == 'FH Technikum Wien')
 	{
-		if ($studiengang->typ != 'b' && $studiengang->typ != 'm' && $studiengang->studiengang_kz != 10021 && $studiengang->studiengang_kz != 10027)
+		if ($studiengang->typ != 'b' && $studiengang->typ != 'm' && defined('BEWERBERTOOL_DONT_SEND_MAIL_STG') && !in_array($studiengang->studiengang_kz, unserialize(BEWERBERTOOL_DONT_SEND_MAIL_STG)))
 		{
 			if (! $mail->send())
 				return false;

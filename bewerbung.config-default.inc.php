@@ -106,4 +106,7 @@ define('TESTTOOL_LOGIN_BEWERBUNGSTOOL_STUDIENGAENGE', serialize(
  * */
 define('BEWERBERTOOL_BERUFSTAETIGKEIT_NOTIZ', false);
 
+
+// FHTW: Zusaetzlich zu den Bachelor- & Masterstudiengaenge Studiengaenge an die keine Mail geschickt werden soll
+define('BEWERBERTOOL_DONT_SEND_MAIL_STG', serialize(array()));
 ?>
