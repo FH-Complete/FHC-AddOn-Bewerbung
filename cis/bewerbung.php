@@ -1137,43 +1137,72 @@ if (isset($_POST['btn_person']))
 
 	$berufstaetig = filter_input(INPUT_POST, 'berufstaetig');
 
-	if (in_array($berufstaetig, array(
-		'Vollzeit',
-		'Teilzeit'
-	), true))
+	if (defined('BEWERBERTOOL_BERUFSTAETIGKEIT_NOTIZ') && BEWERBERTOOL_BERUFSTAETIGKEIT_NOTIZ === false)
 	{
+		$facheinschlaegig = filter_input(INPUT_POST, 'facheinschlaegig');
+		
+		if (in_array($berufstaetig, array('Vollzeit', 'Teilzeit', 'Nein'), true) &&
+			in_array($facheinschlaegig, array('Ja', 'Nein'), true))
+		{
+			$berufscodeArray = ['Ja' => ['Vollzeit' => 6, 'Teilzeit' => 7, 'Nein' => 2],
+								'Nein' => ['Vollzeit' => 9, 'Teilzeit' => 10, 'Nein' => 0]];
 
-		$berufstaetig_art = filter_input(INPUT_POST, 'berufstaetig_art');
-		$berufstaetig_dienstgeber = filter_input(INPUT_POST, 'berufstaetig_dienstgeber');
+			$berufscode = $berufscodeArray[$facheinschlaegig][$berufstaetig];
 
-		$notiz = new notiz();
-		$notiz->person_id = $person_id;
-		$notiz->verfasser_uid = '';
-		$notiz->erledigt = false;
-		$notiz->insertvon = 'online'; // Nicht aendern, da in notiz.class.php nach insertvon abgefragt wird
-		$notiz->insertamum = date('c');
-		$notiz->start = date('Y-m-d');
-		$notiz->titel = 'Berufstätigkeit';
-		$notiz->text = 'Berufstätig: '.$berufstaetig.'; Dienstgeber: '.$berufstaetig_dienstgeber.'; Art der Tätigkeit: '.$berufstaetig_art;
-		$notiz->save(true);
-		$notiz->saveZuordnung();
+			$prestudent = new prestudent();
+			$prestudent->getPrestudenten($person_id);
+
+			$last_prestudent = count($prestudent->result) - 1;
+			foreach ($prestudent->result as $key => $prestudent_beruf)
+			{
+				if ($key === $last_prestudent || (is_null($prestudent_beruf->berufstaetigkeit_code)))
+				{
+					$prestudent_beruf->berufstaetigkeit_code = $berufscode;
+					$prestudent_beruf->save();
+				}
+			}
+		}
 	}
-	elseif (in_array($berufstaetig, array('Nein'), true))
+	else
 	{
-		$berufstaetig_art = filter_input(INPUT_POST, 'berufstaetig_art');
-		$berufstaetig_dienstgeber = filter_input(INPUT_POST, 'berufstaetig_dienstgeber');
-
-		$notiz = new notiz();
-		$notiz->person_id = $person_id;
-		$notiz->verfasser_uid = '';
-		$notiz->erledigt = false;
-		$notiz->insertvon = 'online'; // Nicht aendern, da in notiz.class.php nach insertvon abgefragt wird
-		$notiz->insertamum = date('c');
-		$notiz->start = date('Y-m-d');
-		$notiz->titel = 'Berufstätigkeit';
-		$notiz->text = 'Nicht Berufstätig';
-		$notiz->save(true);
-		$notiz->saveZuordnung();
+		if (in_array($berufstaetig, array(
+			'Vollzeit',
+			'Teilzeit'
+		), true))
+		{
+			
+			$berufstaetig_art = filter_input(INPUT_POST, 'berufstaetig_art');
+			$berufstaetig_dienstgeber = filter_input(INPUT_POST, 'berufstaetig_dienstgeber');
+			
+			$notiz = new notiz();
+			$notiz->person_id = $person_id;
+			$notiz->verfasser_uid = '';
+			$notiz->erledigt = false;
+			$notiz->insertvon = 'online'; // Nicht aendern, da in notiz.class.php nach insertvon abgefragt wird
+			$notiz->insertamum = date('c');
+			$notiz->start = date('Y-m-d');
+			$notiz->titel = 'Berufstätigkeit';
+			$notiz->text = 'Berufstätig: '.$berufstaetig.'; Dienstgeber: '.$berufstaetig_dienstgeber.'; Art der Tätigkeit: '.$berufstaetig_art;
+			$notiz->save(true);
+			$notiz->saveZuordnung();
+		}
+		elseif (in_array($berufstaetig, array('Nein'), true))
+		{
+			$berufstaetig_art = filter_input(INPUT_POST, 'berufstaetig_art');
+			$berufstaetig_dienstgeber = filter_input(INPUT_POST, 'berufstaetig_dienstgeber');
+			
+			$notiz = new notiz();
+			$notiz->person_id = $person_id;
+			$notiz->verfasser_uid = '';
+			$notiz->erledigt = false;
+			$notiz->insertvon = 'online'; // Nicht aendern, da in notiz.class.php nach insertvon abgefragt wird
+			$notiz->insertamum = date('c');
+			$notiz->start = date('Y-m-d');
+			$notiz->titel = 'Berufstätigkeit';
+			$notiz->text = 'Nicht Berufstätig';
+			$notiz->save(true);
+			$notiz->saveZuordnung();
+		}
 	}
 
 	if (!$eingabegesperrt)
@@ -2614,17 +2643,28 @@ $nextWinterSemester->getNextStudiensemester('WS');
 $nextSommerSemester = new studiensemester();
 $nextSommerSemester->getNextStudiensemester('SS');
 $studienplanReihungstest = getPrioStudienplanForReihungstest($person_id, $nextWinterSemester->studiensemester_kurzbz);
+
 if (! defined('BEWERBERTOOL_REIHUNGSTEST_ANZEIGEN') || BEWERBERTOOL_REIHUNGSTEST_ANZEIGEN == true)
 {
 	$angemeldeteReihungstests = new reihungstest();
 	$angemeldeteReihungstests->getReihungstestPerson($person_id, $nextWinterSemester->studiensemester_kurzbz);
 	$angemeldeteReihungstests->getReihungstestPerson($person_id, $nextSommerSemester->studiensemester_kurzbz);
 
-	$reihungstestTermine = getReihungstestsForOnlinebewerbung($studienplanReihungstest, $nextWinterSemester->studiensemester_kurzbz);
+	$reihungstestTermine = getReihungstestsForOnlinebewerbung(array_column($studienplanReihungstest, 'studienplan_id'), $nextWinterSemester->studiensemester_kurzbz);
 	if (count($angemeldeteReihungstests->result) > 0)
 	{
-		$status_reihungstest = true;
-		$status_reihungstest_text = $vollstaendig;
+		$nichtAngemeldeteRtArray = array_diff(array_column($reihungstestTermine, 'studienplan_id'), array_column($angemeldeteReihungstests->result, 'studienplan_id'));
+
+		if (count($nichtAngemeldeteRtArray) > 0)
+		{
+			$status_reihungstest = false;
+			$status_reihungstest_text = $unvollstaendig;
+		}
+		else
+		{
+			$status_reihungstest = true;
+			$status_reihungstest_text = $vollstaendig;
+		}
 	}
 	elseif ($reihungstestTermine != '')
 	{
@@ -2801,40 +2841,22 @@ else
 						if(!defined('BEWERBERTOOL_REIHUNGSTEST_ANZEIGEN') || BEWERBERTOOL_REIHUNGSTEST_ANZEIGEN)
 						{
 							// An der FHTW wird der Punkt "Reihungstest" erst angezeigt, wenn der Status einer Bewerbung bestätigt wurde
-							// und es mindestens eine Bachelor-Bewerbung gibt
 							if (CAMPUS_NAME == 'FH Technikum Wien')
 							{
-								$standalone_masterbewerbung = false;
 								if ($prestudent = getBewerbungen($person_id, true))
 								{
-									foreach ($prestudent as $row)
+									if (check_person_statusbestaetigt($person_id, 'Interessent', $nextWinterSemester->studiensemester_kurzbz))
 									{
-										if ($row->studiengang_typ != 'm')
-										{
-											$standalone_masterbewerbung = false;
-											break;
-										}
-										else
-										{
-											$standalone_masterbewerbung = true;
-											$display = 'style="display: none"';
-										}
+										$display = '';
 									}
-									if ($standalone_masterbewerbung === false)
+									else
 									{
-										if (check_person_statusbestaetigt($person_id, 'Interessent', $nextWinterSemester->studiensemester_kurzbz))
+										$display = 'style="display: none"';
+										if (($key = array_search('aufnahme', $tabs)) !== false)
 										{
-											$display = '';
+											unset($tabs[$key]);
 										}
-										else
-										{
-											$display = 'style="display: none"';
-											if (($key = array_search('aufnahme', $tabs)) !== false)
-											{
-												unset($tabs[$key]);
-											}
-											$tabs = array_values($tabs);
-										}
+										$tabs = array_values($tabs);
 									}
 								}
 							}
@@ -3194,7 +3216,7 @@ function sendBewerbung($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz,
 	// Die FIT-Studiengänge erhalten auch kein Mail
 	if (CAMPUS_NAME == 'FH Technikum Wien')
 	{
-		if ($studiengang->typ != 'b' && $studiengang->typ != 'm' && $studiengang->studiengang_kz != 10021 && $studiengang->studiengang_kz != 10027)
+		if ($studiengang->typ != 'b' && $studiengang->typ != 'm' && defined('BEWERBERTOOL_DONT_SEND_MAIL_STG') && !in_array($studiengang->studiengang_kz, unserialize(BEWERBERTOOL_DONT_SEND_MAIL_STG)))
 		{
 			$email = wordwrap($email, 70); // Bricht den Code um, da es sonst zu Anzeigefehlern im Mail kommen kann
 
@@ -3252,7 +3274,7 @@ function sendBewerbung($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz,
 	// An der FHTW werden alle Bachelor-Studiengänge und Master vom Infocenter abgearbeitet und deshalb keine Mail verschickt
 	if (CAMPUS_NAME == 'FH Technikum Wien')
 	{
-		if ($studiengang->typ != 'b' && $studiengang->typ != 'm' && $studiengang->studiengang_kz != 10021 && $studiengang->studiengang_kz != 10027)
+		if ($studiengang->typ != 'b' && $studiengang->typ != 'm' && defined('BEWERBERTOOL_DONT_SEND_MAIL_STG') && !in_array($studiengang->studiengang_kz, unserialize(BEWERBERTOOL_DONT_SEND_MAIL_STG)))
 		{
 			if (! $mail->send())
 				return false;

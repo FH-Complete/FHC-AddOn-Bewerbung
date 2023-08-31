@@ -275,53 +275,92 @@ if(!isset($person_id))
 		<fieldset>
 			<legend><?php echo $p->t('bewerbung/berufstaetigkeit') ?></legend>
 			<?php
-			$notiz = new notiz;
-			$notiz->getBewerbungstoolNotizen($person_id, null, 'tbl_notiz.insertamum DESC');
-			$counter = 0;
-			if(count($notiz->result) > 0):
-				foreach($notiz->result as $berufstaetig)
+			if (defined('BEWERBERTOOL_BERUFSTAETIGKEIT_NOTIZ') && BEWERBERTOOL_BERUFSTAETIGKEIT_NOTIZ === false):
+
+				$berufstaetigkeit_code = '';
+
+				$prestudenten_desc = array_reverse($prestudent->result);
+				foreach($prestudenten_desc AS $row)
 				{
-					if($berufstaetig->insertvon == 'online')
+					if($row->berufstaetigkeit_code !== '')
 					{
-						$counter++;
-						echo '	<div class="form-group">
-									<label for="berufstaetig" class="col-sm-3 control-label">
-										'.$p->t('bewerbung/eintragVom').' '.date('d.m.Y', strtotime($berufstaetig->insertamum)).'
-									</label>
-									<div class="col-sm-9">
-										<input type="text" class="form-control" disabled value="'.htmlspecialchars($berufstaetig->text).'">
-									</div>
-								</div>';
+						$berufstaetigkeit_code = $row->berufstaetigkeit_code;
 						break;
 					}
 				}
-				$berufstaetigkeit_code='';
-				//if($counter == 0)
-				{
-					foreach($prestudent->result AS $row)
+			?>
+				<div class="form-group">
+					<label for="berufstaetig" class="col-sm-3 control-label"><?php echo $p->t('bewerbung/artDerBerufstaetigkeit') ?></label>
+					<div class="col-sm-9">
+						<input type="hidden" id="inputBerufstaetigCode" value="<?php echo $berufstaetigkeit_code?>"/>
+						<label class="radio-inline"><input type="radio" class="inputBerufstaetigArt" name="berufstaetig" value="Vollzeit"><?php echo $p->t('bewerbung/vollzeit') ?></label>
+						<label class="radio-inline"><input type="radio" class="inputBerufstaetigArt" name="berufstaetig" value="Teilzeit"><?php echo $p->t('bewerbung/teilzeit') ?></label>
+						<label class="radio-inline"><input type="radio" class="inputBerufstaetigArt" name="berufstaetig" value="Nein"><?php echo $p->t('bewerbung/nichtBerufstaetig') ?></label>
+						<label class="radio-inline"></label>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="facheinschlaegig" class="col-sm-3 control-label"><?php echo $p->t('bewerbung/facheinschlaegig') ?>
+						<a href="#" data-toggle="tooltip" data-html="true" data-placement="auto" title="" data-original-title="<?php echo $p->t('bewerbung/facheinschlaegigText') ?>">
+							<span style="font-size: 1em;" class="glyphicon glyphicon-info-sign glyph" aria-hidden="true"></span>
+						</a>
+					</label>
+					<div class="col-sm-9">
+						<label class="radio-inline"><input type="radio" class="inputFacheinschlaegig" name="facheinschlaegig" value="Ja"><?php echo $p->t('global/ja') ?></label>
+						<label class="radio-inline"><input type="radio" class="inputFacheinschlaegig" name="facheinschlaegig" value="Nein"><?php echo $p->t('global/nein') ?></label>
+					</div>
+				</div>
+			<?php
+
+			else:
+				$notiz = new notiz;
+				$notiz->getBewerbungstoolNotizen($person_id, null, 'tbl_notiz.insertamum DESC');
+				$counter = 0;
+				if(count($notiz->result) > 0):
+					foreach($notiz->result as $berufstaetig)
 					{
-						if($row->berufstaetigkeit_code!='')
+						if($berufstaetig->insertvon == 'online')
 						{
-							$berufstaetigkeit_code = $row->berufstaetigkeit_code;
 							$counter++;
+							echo '	<div class="form-group">
+										<label for="berufstaetig" class="col-sm-3 control-label">
+											'.$p->t('bewerbung/eintragVom').' '.date('d.m.Y', strtotime($berufstaetig->insertamum)).'
+										</label>
+										<div class="col-sm-9">
+											<input type="text" class="form-control" disabled value="'.htmlspecialchars($berufstaetig->text).'">
+										</div>
+									</div>';
+							break;
 						}
 					}
-					if(CAMPUS_NAME != 'FH Technikum Wien' && $berufstaetigkeit_code!='')
+					$berufstaetigkeit_code='';
+					//if($counter == 0)
 					{
-						$berufstaetigkeit = new bisberufstaetigkeit();
-						$berufstaetigkeit->load($berufstaetigkeit_code);
+						foreach($prestudent->result AS $row)
+						{
+							if($row->berufstaetigkeit_code!='')
+							{
+								$berufstaetigkeit_code = $row->berufstaetigkeit_code;
+								$counter++;
+							}
+						}
+						if(CAMPUS_NAME != 'FH Technikum Wien' && $berufstaetigkeit_code!='')
+						{
+							$berufstaetigkeit = new bisberufstaetigkeit();
+							$berufstaetigkeit->load($berufstaetigkeit_code);
 
-						echo '<div class="form-group">
-								<label for="berufstaetig" class="col-sm-3 control-label">
-									'.$p->t('bewerbung/berufstaetigkeit').'
-								</label>
-								<div class="col-sm-9">
-									<input type="text" class="form-control" disabled value="'.($berufstaetigkeit->berufstaetigkeit_bez).'">
-								</div>
-							</div>';
+							echo '<div class="form-group">
+									<label for="berufstaetig" class="col-sm-3 control-label">
+										'.$p->t('bewerbung/berufstaetigkeit').'
+									</label>
+									<div class="col-sm-9">
+										<input type="text" class="form-control" disabled value="'.($berufstaetigkeit->berufstaetigkeit_bez).'">
+									</div>
+								</div>';
+						}
 					}
-				}
-			endif;	?>
+				endif;
+			?>
 
 				<div class="form-group">
 					<label for="berufstaetig" class="col-sm-3 control-label"><?php echo $p->t('bewerbung/berufstaetig') ?></label>
@@ -345,13 +384,15 @@ if(!isset($person_id))
 						<input type="text" name="berufstaetig_art" id="berufstaetig_art" class="form-control">
 					</div>
 				</div>
+			<?php
+			endif;
+			?>
 				<div class="form-group">
 					<label class="col-sm-3 control-label"></label>
 					<div class="col-sm-9">
 						** <?php echo $p->t('bewerbung/anmerkungBerufstaetigkeit') ?>
 					</div>
 				</div>
-
 		</fieldset>
 		<?php
 		endif;
@@ -382,7 +423,28 @@ if(!isset($person_id))
 					$('#input_svnr').hide();
 				}
 			});
-			<?php endif; ?>
+			<?php
+			endif;
+
+			if(defined('BEWERBERTOOL_BERUFSTAETIGKEIT_NOTIZ') && BEWERBERTOOL_BERUFSTAETIGKEIT_NOTIZ === false):
+			?>
+			var berufstaetigCode = $('#inputBerufstaetigCode').val();
+
+			if (['6', '7', '2'].includes(berufstaetigCode))
+				$('.inputFacheinschlaegig[value=Ja]').prop('checked', true);
+			else if (['9', '10', '0'].includes(berufstaetigCode))
+				$('.inputFacheinschlaegig[value=Nein]').prop('checked', true);
+			
+			if (['6', '9'].includes(berufstaetigCode))
+				$('.inputBerufstaetigArt[value=Vollzeit]').prop('checked', true);
+			else if (['7', '10'].includes(berufstaetigCode))
+				$('.inputBerufstaetigArt[value=Teilzeit]').prop('checked', true);
+			else if (['2', '0'].includes(berufstaetigCode))
+				$('.inputBerufstaetigArt[value=Nein]').prop('checked', true);
+
+			<?php
+			endif;
+			?>
 
 			$('.inputBerufstaetig').change(function()
 			{
