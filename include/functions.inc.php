@@ -380,7 +380,7 @@ function BewerbungPersonAddStudienplan($studienplan_id, $person, $studiensemeste
 			$zgvmadatum = '';
 			$zgvmanation = '';
 		}
-		
+
 		// Bewerber die keinen vorhanden Bachelor bei uns haben und nachträglich noch Studiengänge hinzufügen, müssen die Nation gesetzt bekommen da sie sonst in die Bewerbungsfrist von Drittstaaten fallen.
 		if ($zgvmanation === '' && $studiengaenge_arr[$studiengang_kz]['typ'] == 'm')
 		{
@@ -2173,4 +2173,32 @@ function UHSTAT1FormFilledOut($person_id)
 	}
 
 	return $filledOut;
+}
+
+/**
+ * Prüft, ob Person zumindest einen Bewerberstatus hat.
+ * @param person_id
+ * @return boolean hat Status oder nicht
+ */
+function hasBewerber($person_id)
+{
+	$hasBewerber = false;
+	$db = new basis_db();
+	$qry = "SELECT 1
+			FROM
+				public.tbl_prestudent
+				JOIN public.tbl_prestudentstatus USING (prestudent_id)
+			WHERE
+				tbl_prestudentstatus.status_kurzbz = 'Bewerber'
+				AND tbl_prestudent.person_id = " . $db->db_add_param($person_id);
+
+	if ($result = $db->db_query($qry))
+	{
+		if ($db->db_num_rows($result) > 0)
+		{
+			$hasBewerber = true;
+		}
+	}
+
+	return $hasBewerber;
 }

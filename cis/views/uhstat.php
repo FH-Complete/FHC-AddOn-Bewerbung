@@ -24,17 +24,15 @@ if(!isset($person_id))
 	die($p->t('bewerbung/ungueltigerZugriff'));
 }
 
-// Prüfen ob Bewerbung schon abgeschickt ist
-$bewerbung_abgeschickt = check_person_bewerbungabgeschickt($person_id);
-// wenn ja, keine Einträge mehr möglich
-$readOnly = $bewerbung_abgeschickt ? 'readOnly' : '';
+// Wenn Formular schon ausgefüllt und Bewerberstatus vorhanden, sind keine Einträge mehr möglich
+$readOnly = UHSTAT1FormFilledOut($person_id) && hasBewerber($person_id) ? 'readOnly' : '';
 // UHSTAT Daten gerade gespeichert
-$saved = isset($_POST['uhstat_saved']);
+$justSaved = isset($_POST['uhstat_saved']);
 
 echo '<div role="tabpanel" class="tab-pane active" id="uhstat">';
 
 // success alert
-if ($saved)
+if ($justSaved)
 {
 	echo '
 			<div class="alert alert-success" id="success-alert_uhstat1">
@@ -79,7 +77,7 @@ echo '</div></form></div>';
 
 <script type="text/javascript">
 
-// readOnly wenn Bewerbung schon abgeschickt
+// readOnly wenn schon Bewerber und Formular schon ausgefüllt
 let readOnly = "?<?php echo $readOnly ?>";
 
 // Laden des Formulars
