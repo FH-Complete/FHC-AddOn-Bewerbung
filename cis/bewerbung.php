@@ -2760,14 +2760,18 @@ else
 						<?php
 						if(defined('BEWERBERTOOL_UHSTAT1_ANZEIGEN') && BEWERBERTOOL_UHSTAT1_ANZEIGEN)
 						{
+							$all_person_bewerbungen = getBewerbungen($person_id);
 							$display = 'style="display: none !important"';
-							// uhstat Formular nur anzeigen, wenn melderelevant
-							foreach ($prestudent_bewerbungen as $row)
+							// uhstat Formular nur anzeigen, wenn es einen melderelevanten Studiengang gibt
+							if ($all_person_bewerbungen)
 							{
-								if ($row->melderelevant === true)
+								foreach ($all_person_bewerbungen as $row)
 								{
-									$display = '';
-									break;
+									if ($row->melderelevant === true)
+									{
+										$display = '';
+										break;
+									}
 								}
 							}
 							$uhstatFilledOut = $display == '' && UHSTAT1FormFilledOut($person_id);
@@ -2861,16 +2865,6 @@ else
 											$tabs = array_values($tabs);
 										}
 									}
-								}
-
-								// "Reihungstest" Punkt wird auch nicht angezeigt, wenn die UHSTAT1 Daten noch nicht ausgefüllt wurden
-								if (
-									$display == ''
-									&& defined('BEWERBERTOOL_UHSTAT1_ANZEIGEN') && BEWERBERTOOL_UHSTAT1_ANZEIGEN
-									&& !UHSTAT1FormFilledOut($person_id)
-								)
-								{
-									$display = 'style="display: none"';
 								}
 							}
 							elseif (CAMPUS_NAME == 'FH BFI Wien')
