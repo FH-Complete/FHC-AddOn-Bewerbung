@@ -58,7 +58,7 @@ if(defined('BEWERBERTOOL_SICHERHEIT_ANZEIGEN') && BEWERBERTOOL_SICHERHEIT_ANZEIG
 if(defined('BEWERBERTOOL_AKTEN_ANZEIGEN') && BEWERBERTOOL_AKTEN_ANZEIGEN)
 	$tabs[11]='akten';
 if(defined('BEWERBERTOOL_INVOICES_ANZEIGEN') && BEWERBERTOOL_INVOICES_ANZEIGEN)
-	$tabs[12]='invoices';
+	$tabs[14]='invoices';
 
 $tabLadefolge = $tabs;
 ksort($tabLadefolge);

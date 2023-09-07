@@ -1461,3 +1461,4 @@ $studiensemester_array = array();
 	}
 </script>
 </div>
+</div>
