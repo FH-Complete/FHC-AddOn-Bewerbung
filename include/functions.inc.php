@@ -744,7 +744,7 @@ function getStudienplaeneForOnlinebewerbung($studiensemester_kurzbz = null, $aus
 
 	if ($result = $db->db_query($qry))
 	{
-		$db->result = '';
+		$db->result = array();
 		while ($row = $db->db_fetch_object($result))
 		{
 			$obj = new studienplan();
@@ -869,7 +869,7 @@ function BewerbungGetGemeinden($plz)
 
 	if ($result = $db->db_query($qry))
 	{
-		$db->result = '';
+		$db->result = array();
 		while ($row = $db->db_fetch_object($result))
 		{
 			$obj = new stdClass();

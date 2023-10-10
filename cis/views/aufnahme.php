@@ -141,7 +141,7 @@ if(!isset($person_id))
 
 
 	$nextSummerSemester = new studiensemester();
-	$nextSummerSemester = $nextSummerSemester->getaktorNext('SS');
+	$nextSummerSemester = $nextSummerSemester->getaktorNext(2);
 
 	$prestudent = new prestudent();
 	$isStudentQuali = false;

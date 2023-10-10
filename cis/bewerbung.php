@@ -2329,10 +2329,10 @@ $adresse->load_pers($person->person_id);
 
 if (isset($adresse->result[0])
 	&& numberOfElements($kontakt->result)
-	&& numberOfElements($adresse->result[0]->strasse)
-	&& numberOfElements($adresse->result[0]->plz)
-	&& numberOfElements($adresse->result[0]->ort)
-	&& numberOfElements($adresse->result[0]->nation)
+	&& mb_strlen($adresse->result[0]->strasse)>0
+	&& mb_strlen($adresse->result[0]->plz)>0
+	&& mb_strlen($adresse->result[0]->ort)>0
+	&& mb_strlen($adresse->result[0]->nation)>0
 	&& numberOfElements($kontakttel->result))
 {
 	$status_kontakt = true;
