@@ -1288,7 +1288,7 @@ elseif($username && $password)
 													placeholder="<?php echo $p->t('bewerbung/zugangscode') ?>"
 													name="userid"
 													autofocus="autofocus"
-													value="<?php echo $codeGet ?>">
+													value="<?php echo htmlentities($codeGet) ?>">
 										</div>
 									</div>
 									<div class="form-group">
