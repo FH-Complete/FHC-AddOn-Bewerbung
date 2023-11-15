@@ -84,8 +84,8 @@ $userid = trim(filter_input(INPUT_POST, 'userid'));
 $mailadresse = trim(filter_input(INPUT_POST, 'mailadresse'));
 $username = trim(filter_input(INPUT_POST, 'username'));
 $password = trim(filter_input(INPUT_POST, 'password'));
-$codeGet = trim(filter_input(INPUT_GET, 'code'));
-$emailAdresseGet = trim(filter_input(INPUT_GET, 'emailAdresse'));
+$codeGet = htmlspecialchars(trim(filter_input(INPUT_GET, 'code')));
+$emailAdresseGet = htmlspecialchars(trim(filter_input(INPUT_GET, 'emailAdresse')));
 
 // Erstellen eines Array mit allen Studiengängen
 $studiengaenge_obj = new studiengang();
@@ -1288,7 +1288,7 @@ elseif($username && $password)
 													placeholder="<?php echo $p->t('bewerbung/zugangscode') ?>"
 													name="userid"
 													autofocus="autofocus"
-													value="<?php echo htmlentities($codeGet) ?>">
+													value="<?php echo $codeGet ?>">
 										</div>
 									</div>
 									<div class="form-group">
