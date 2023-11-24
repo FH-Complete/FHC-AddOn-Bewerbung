@@ -1099,9 +1099,9 @@ $studiensemester_array = array();
 						&& BEWERBERTOOL_MAX_STUDIENGAENGE != ''
 						&& isset($studiengaengeBaMa[$std_semester])
 						&& count($studiengaengeBaMa[$std_semester]) >= BEWERBERTOOL_MAX_STUDIENGAENGE
-						&& $row->studiengang_kz > 0
-						&& $row->studiengang_kz < 10000
-						&& $row->typ != 'l')
+						//&& $row->studiengang_kz > 0
+						//&& $row->studiengang_kz < 10000
+						&& ($row->typ == 'b' || $row->typ == 'm'))
 					{
 						echo '<div class="alert alert-warning" name="checkboxInfoDiv">'.$p->t('bewerbung/sieKoennenMaximalXStudiengaengeWaehlen', array(BEWERBERTOOL_MAX_STUDIENGAENGE)).'</div>';
 					}
@@ -1117,16 +1117,19 @@ $studiensemester_array = array();
 
 				$checked = '';
 				$disabled = '';
+				$textMuted = '';
 
 				// Checkboxen deaktivieren, wenn BEWERBERTOOL_MAX_STUDIENGAENGE gesetzt ist und mehr als oder genau BEWERBERTOOL_MAX_STUDIENGAENGE uebergeben werden.
 				if (defined('BEWERBERTOOL_MAX_STUDIENGAENGE')
 					&& BEWERBERTOOL_MAX_STUDIENGAENGE != ''
 					&& isset($studiengaengeBaMa[$std_semester])
 					&& count($studiengaengeBaMa[$std_semester]) >= BEWERBERTOOL_MAX_STUDIENGAENGE
-					&& $row->studiengang_kz > 0
-					&& $row->studiengang_kz < 10000)
+					//&& $row->studiengang_kz > 0
+					//&& $row->studiengang_kz < 10000
+					&& ($row->typ == 'b' || $row->typ == 'm'))
 				{
 					$disabled = 'disabled';
+					$textMuted = 'text-muted';
 				}
 
 				// Wenn es nur einen gueltigen Studienplan gibt, kommt der Name des Studiengangs aus dem Studienplan
@@ -1183,7 +1186,7 @@ $studiensemester_array = array();
 
 				// Wenn es für das gewählte Studiensemester schon eine Bewerbung gibt, kann man sich nicht mehr dafür bewerben
 				$disabledExistsPrestudentstatus = '';
-				$textMuted = '';
+
 				$prestudent_status = new prestudent();
 				if ($prestudent_status->existsPrestudentstatus($person_id, $row->studiengang_kz, $std_semester, null, $row->studienplan_id))
 				{
