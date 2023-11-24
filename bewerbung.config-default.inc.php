@@ -15,6 +15,8 @@ define('BEWERBERTOOL_ABSCHICKEN_ANZEIGEN', true); // Deprecated
 define('BEWERBERTOOL_SICHERHEIT_ANZEIGEN', false);
 define('BEWERBERTOOL_MESSAGES_ANZEIGEN', false);
 define('BEWERBERTOOL_AKTEN_ANZEIGEN', false);
+define('BEWERBERTOOL_UHSTAT1_ANZEIGEN', true);
+
 // Initialbelastung auf das Konto des Interessenten. Buchungstyp_kurzbz aus public.tbl_buchungstyp
 define('BEWERBERTOOL_KONTOBELASTUNG_BUCHUNGSTYP', '');
 // Wenn hier eine Mailadresse angegeben ist, werden die Bewerbungen aus der Onlinebwerbung an diese Adresse gesendet.
@@ -99,4 +101,14 @@ define('BEWERBERTOOL_UPLOAD_DOKUMENT_WENN_AKZEPTIERT', true);
 //Für welche Studiengänge (Kennzahlen) soll die Option "Reihungstest-Login" angezeigt werden?
 define('TESTTOOL_LOGIN_BEWERBUNGSTOOL_STUDIENGAENGE', serialize(
 	array()));
+
+/* Soll die Berufstätigkeit als Notiz abgespeichert werden?
+ * Wenn false, wird die Berufstätigkeit bei allen PreStudenten von der Person gespeichert, die keine Berufstätigkeit eingetragen haben
+ * und zusätzlich beim PreStudenten mit der höchsten ID
+ * */
+define('BEWERBERTOOL_BERUFSTAETIGKEIT_NOTIZ', false);
+
+
+// FHTW: Zusaetzlich zu den Bachelor- & Masterstudiengaenge Studiengaenge an die keine Mail geschickt werden soll
+define('BEWERBERTOOL_DONT_SEND_MAIL_STG', serialize(array()));
 ?>
