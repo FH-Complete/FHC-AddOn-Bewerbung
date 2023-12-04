@@ -730,4 +730,7 @@ $this->phrasen['bewerbung/legende_hochladen']='falls zutreffend hochladen';
 $this->phrasen['bewerbung/legende_nachreichen']='Dokument wird nachgereicht';
 $this->phrasen['bewerbung/menuUhstat']='Statistische Daten (UHSTAT)';
 $this->phrasen['bewerbung/uhstatNichtAusgefuellt']='Vor Anmeldung zu einem Reihungstest müssen die statistischen Daten (UHSTAT) ausgefüllt werden.';
+
+$this->phrasen['bewerbung/menuInvoices'] = 'Meine Zahlungen';
+$this->phrasen['bewerbung/erklaerungInvoices'] = 'Ablauf und Zahlungsbedingungen';
 ?>
