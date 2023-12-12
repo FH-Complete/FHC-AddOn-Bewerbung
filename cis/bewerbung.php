@@ -59,6 +59,8 @@ if(defined('BEWERBERTOOL_SICHERHEIT_ANZEIGEN') && BEWERBERTOOL_SICHERHEIT_ANZEIG
 	$tabs[11]='sicherheit';
 if(defined('BEWERBERTOOL_AKTEN_ANZEIGEN') && BEWERBERTOOL_AKTEN_ANZEIGEN)
 	$tabs[12]='akten';
+if(defined('BEWERBERTOOL_INVOICES_ANZEIGEN') && BEWERBERTOOL_INVOICES_ANZEIGEN)
+	$tabs[15]='invoices';
 
 $tabLadefolge = $tabs;
 ksort($tabLadefolge);
@@ -2645,7 +2647,6 @@ $nextWinterSemester->getNextStudiensemester('WS');
 $nextSommerSemester = new studiensemester();
 $nextSommerSemester->getNextStudiensemester('SS');
 $studienplanReihungstest = getPrioStudienplanForReihungstest($person_id, $nextWinterSemester->studiensemester_kurzbz);
-
 if (! defined('BEWERBERTOOL_REIHUNGSTEST_ANZEIGEN') || BEWERBERTOOL_REIHUNGSTEST_ANZEIGEN == true)
 {
 	$angemeldeteReihungstests = new reihungstest();
@@ -2940,6 +2941,13 @@ else
 							<li>
 								<a href="#sicherheit" aria-controls="sicherheit" role="tab" data-toggle="tab">
 									<?php echo $p->t('bewerbung/menuSicherheit') ?> <br> &nbsp;
+								</a>
+							</li>
+						<?php endif; ?>
+						<?php if(defined('BEWERBERTOOL_INVOICES_ANZEIGEN') && BEWERBERTOOL_INVOICES_ANZEIGEN):	?>
+							<li>
+								<a href="#invoices" aria-controls="invoices" role="tab" data-toggle="tab">
+									<?php echo $p->t('bewerbung/menuInvoices') ?> <br> &nbsp;
 								</a>
 							</li>
 						<?php endif; ?>
