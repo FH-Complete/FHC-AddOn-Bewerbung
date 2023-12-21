@@ -678,4 +678,6 @@ $this->phrasen['bewerbung/legende_hochladen']='Upload if applicable';
 $this->phrasen['bewerbung/legende_nachreichen']='Document will be submitted later';
 $this->phrasen['bewerbung/menuUhstat']='Statistical data (UHSTAT)';
 $this->phrasen['bewerbung/uhstatNichtAusgefuellt']='Before registering for a placement test, the statistical data (UHSTAT) must be filled out.';
+$this->phrasen['bewerbung/menuInvoices'] = 'Payments';
+
 ?>
