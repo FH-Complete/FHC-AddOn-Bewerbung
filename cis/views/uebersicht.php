@@ -178,7 +178,7 @@ $studiensemester_array = array();
 
 				$anzahl_studiengaenge[$prestudent_status->studiensemester_kurzbz]++;
 
-				if ($row->studiengang_kz > 0 && $row->studiengang_kz < 10000)
+				if ($row->typ == 'b' || $row->typ == 'm')
 				{
 					$studiengaengeBaMa[$prestudent_status->studiensemester_kurzbz][] = $row->studiengang_kz;
 				}
@@ -770,7 +770,7 @@ $studiensemester_array = array();
 
 						$anzahl_studiengaenge[$prestudent_status->studiensemester_kurzbz]++;
 
-						if ($row->studiengang_kz > 0 && $row->studiengang_kz < 10000)
+						if ($row->typ == 'b' || $row->typ == 'm')
 						{
 							$studiengaengeBaMa[$prestudent_status->studiensemester_kurzbz][] = $row->studiengang_kz;
 						}
