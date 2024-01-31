@@ -19,10 +19,10 @@
  */
 
 $zgv_options = new zgv();
-$zgv_options->getAll();
+$zgv_options->getAll(true);
 
 $zgvma_options = new zgv();
-$zgvma_options->getAllMaster();
+$zgvma_options->getAllMaster(true);
 
 $zgv = $prestudent->getZgv();
 $studiengaenge = array();
