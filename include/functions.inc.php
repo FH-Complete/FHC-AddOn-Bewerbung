@@ -1426,7 +1426,7 @@ function getPrioStudienplanForReihungstest($person_id, $studiensemester_kurzbz)
 {
 	$db = new basis_db();
 	$qry = "
-			(SELECT studienplan_id,
+			(SELECT DISTINCT(studienplan_id),
 			tbl_studiengang.typ,
 			tbl_studienordnung.studiengangbezeichnung,
 			tbl_studienordnung.studiengangbezeichnung_englisch
@@ -1449,8 +1449,8 @@ function getPrioStudienplanForReihungstest($person_id, $studiensemester_kurzbz)
 						AND studiensemester_kurzbz = tbl_prestudentstatus.studiensemester_kurzbz
 					ORDER BY datum DESC,
 						tbl_prestudentstatus.insertamum DESC LIMIT 1
-				) IN ('Interessent', 'Bewerber')
-			ORDER BY priorisierung ASC NULLS LAST, tbl_prestudent.insertamum DESC)
+				) IN ('Interessent', 'Bewerber', 'Wartender')
+			ORDER BY studienplan_id)
 
 			UNION ALL
 
