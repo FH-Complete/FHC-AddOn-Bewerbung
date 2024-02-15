@@ -1144,7 +1144,7 @@ if (isset($_POST['btn_person']))
 	if (defined('BEWERBERTOOL_BERUFSTAETIGKEIT_NOTIZ') && BEWERBERTOOL_BERUFSTAETIGKEIT_NOTIZ === false)
 	{
 		$facheinschlaegig = filter_input(INPUT_POST, 'facheinschlaegig');
-		
+
 		if (in_array($berufstaetig, array('Vollzeit', 'Teilzeit', 'Nein'), true) &&
 			in_array($facheinschlaegig, array('Ja', 'Nein'), true))
 		{
@@ -1174,10 +1174,10 @@ if (isset($_POST['btn_person']))
 			'Teilzeit'
 		), true))
 		{
-			
+
 			$berufstaetig_art = filter_input(INPUT_POST, 'berufstaetig_art');
 			$berufstaetig_dienstgeber = filter_input(INPUT_POST, 'berufstaetig_dienstgeber');
-			
+
 			$notiz = new notiz();
 			$notiz->person_id = $person_id;
 			$notiz->verfasser_uid = '';
@@ -1194,7 +1194,7 @@ if (isset($_POST['btn_person']))
 		{
 			$berufstaetig_art = filter_input(INPUT_POST, 'berufstaetig_art');
 			$berufstaetig_dienstgeber = filter_input(INPUT_POST, 'berufstaetig_dienstgeber');
-			
+
 			$notiz = new notiz();
 			$notiz->person_id = $person_id;
 			$notiz->verfasser_uid = '';
@@ -2801,23 +2801,23 @@ else
 						<?php
 						if(defined('BEWERBERTOOL_UHSTAT1_ANZEIGEN') && BEWERBERTOOL_UHSTAT1_ANZEIGEN)
 						{
-							$all_person_bewerbungen = getBewerbungen($person_id);
-							$display = 'style="display: none !important"';
+							//~ $all_person_bewerbungen = getBewerbungen($person_id);
+							//~ $display = 'style="display: none !important"';
 							// uhstat Formular nur anzeigen, wenn es einen melderelevanten Studiengang gibt
-							if ($all_person_bewerbungen)
-							{
-								foreach ($all_person_bewerbungen as $row)
-								{
-									if ($row->melderelevant === true)
-									{
-										$display = '';
-										break;
-									}
-								}
-							}
-							$uhstatFilledOut = $display == '' && UHSTAT1FormFilledOut($person_id);
+							//~ if ($all_person_bewerbungen)
+							//~ {
+								//~ foreach ($all_person_bewerbungen as $row)
+								//~ {
+									//~ if ($row->melderelevant === true)
+									//~ {
+										//~ $display = '';
+										//~ break;
+									//~ }
+								//~ }
+							//~ }
+							$uhstatFilledOut = UHSTAT1FormFilledOut($person_id);
 
-							echo '<li id="tab_uhstat" '.$display.'>
+							echo '<li id="tab_uhstat">
 								<a href="#uhstat" aria-controls="uhstat" role="tab" data-toggle="tab"'.($uhstatFilledOut?' style="background-color: #DFF0D8 !important"':' style="background-color: #F2DEDE !important"').'>
 									'.$p->t('bewerbung/menuUhstat').'<br><span id="uhstatVollstaendig">'.($uhstatFilledOut?$vollstaendig:$unvollstaendig).'</span>
 								</a>
