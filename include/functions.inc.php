@@ -1495,10 +1495,10 @@ function getPrioStudienplanForReihungstest($person_id, $studiensemester_kurzbz)
 			$obj->typ = $row->typ;
 			$obj->studiengangbezeichnung = $row->studiengangbezeichnung;
 			$obj->studiengangbezeichnung_englisch = $row->studiengangbezeichnung_englisch;
-			
+
 			$db->result[] = $obj;
 		}
-		
+
 		return $db->result;
 	}
 	else
@@ -2226,7 +2226,7 @@ function UHSTAT1FormFilledOut($person_id)
 	$db = new basis_db();
 	$qry = "SELECT 1
 			FROM bis.tbl_uhstat1daten
-			WHERE person_id = " . $db->db_add_param($person_id);
+			WHERE person_id = " . $db->db_add_param($person_id, FHC_INTEGER);
 
 	if ($result = $db->db_query($qry))
 	{
