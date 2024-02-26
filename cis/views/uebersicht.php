@@ -556,7 +556,7 @@ $studiensemester_array = array();
 											<div class="col-sm-9 col-md-7" id="status">'.$prestatus_help;
 										if ($prestatus_help == 'BewerberIn')
 										{
-											echo '<br>Innerhalb von ca. einer Woche nach Absolvierung Ihres Reihungstests erfahren Sie, ob Sie einen Studienplatz (Status Aufgenomme/r) erhalten oder Sie vorerst auf Warteliste (Status Wartende/r) gesetzt wurden.';
+											echo '<br>'.$p->t('bewerbung/beschreibungUebersichtBewerberstatus');
 										}
 										echo '	</div>
 										</div>

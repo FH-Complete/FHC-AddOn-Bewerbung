@@ -618,6 +618,7 @@ $this->phrasen['bewerbung/textRuecktrittsrecht']='I take note that I have the ri
 								contract by means of a clear declaration by email to your degree program’s administrative assistant about your decision to cancel this contract.</p>';
 $this->phrasen['bewerbung/textAusbildungsvertrag']='I have read the training contract and agree to the content of the contract.';
 $this->phrasen['bewerbung/informationDatenverwendungStudierende']='<a href=\''.APP_ROOT.'cms/dms.php?id=149169\' target=\'_blank\'><span class="glyphicon glyphicon-file"></span>Information on the use of student personal data</a>';
+$this->phrasen['bewerbung/beschreibungUebersichtBewerberstatus']='Within approximately one week of completing your placement test, you will find out whether you have been offered a study place (status "Aufgenomme/r") or whether you have been placed on the waiting list (status "Wartende/r") for the time being.';
 
 // Reihungstest
 $this->phrasen['bewerbung/anmeldungReihungstestMailBetreff']='Confirmation of registration to placement test UAS Technikum Wien';
