@@ -164,6 +164,7 @@ $studiensemester_array = array();
 
 			$prestudent_status = new prestudent();
 			$prestatus_help = ($prestudent_status->getLastStatus($row->prestudent_id)) ? $prestudent_status->status_mehrsprachig[$sprache] : $p->t('bewerbung/keinStatus');
+			$prestatus_help_status_kurzbz = $prestudent_status->getLastStatus($row->prestudent_id);
 
 			$bereits_angemeldet[$prestudent_status->studiensemester_kurzbz][] = $stg->studiengang_kz;
 
@@ -554,7 +555,7 @@ $studiensemester_array = array();
 										<div class="form-group">
 											<label for="status" class="col-sm-3 col-md-5 text-right">'.$p->t('bewerbung/status').':</label>
 											<div class="col-sm-9 col-md-7" id="status">'.$prestatus_help;
-										if ($prestatus_help == 'BewerberIn')
+										if ($prestatus_help_status_kurzbz == 'Bewerber')
 										{
 											echo '<br>'.$p->t('bewerbung/beschreibungUebersichtBewerberstatus');
 										}
