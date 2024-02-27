@@ -164,7 +164,7 @@ $studiensemester_array = array();
 
 			$prestudent_status = new prestudent();
 			$prestatus_help = ($prestudent_status->getLastStatus($row->prestudent_id)) ? $prestudent_status->status_mehrsprachig[$sprache] : $p->t('bewerbung/keinStatus');
-			$prestatus_help_status_kurzbz = $prestudent_status->getLastStatus($row->prestudent_id);
+			$prestatus_help_status_kurzbz = $prestudent_status->status_kurzbz;
 
 			$bereits_angemeldet[$prestudent_status->studiensemester_kurzbz][] = $stg->studiengang_kz;
 
