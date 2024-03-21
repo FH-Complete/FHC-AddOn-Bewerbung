@@ -56,8 +56,8 @@ elseif($save_error_kontakt===true)
 	{
 		$kontakt_t->load_persKontakttyp($person->person_id, 'mobil');
 		$telefon = isset($kontakt_t->result[0]->kontakt)?$kontakt_t->result[0]->kontakt:'';
-	}	
-		
+	}
+
 	$adresse = new adresse();
 	$adresse->load_pers($person->person_id);
 	$strasse = isset($adresse->result[0]->strasse)?$adresse->result[0]->strasse:'';
@@ -101,7 +101,7 @@ elseif($save_error_kontakt===true)
 		<fieldset>
 			<legend><?php echo $p->t('bewerbung/adresse') ?></legend>
 			<div class="form-group <?php echo ($adr_nation==''?'has-error':'') ?>">
-				<label for="nation" class="col-sm-2 control-label"><?php echo $p->t('bewerbung/nation') ?>*</label>
+				<label for="nation" class="col-sm-2 control-label"><?php echo $p->t('bewerbung/wohnsitznation') ?>*</label>
 				<div class="col-sm-10">
 					<select name="nation" id="nation" class="form-control" <?php echo $disabled; ?> >
 						<option value=""><?php echo $p->t('bewerbung/bitteAuswaehlen') ?></option>
@@ -159,7 +159,7 @@ elseif($save_error_kontakt===true)
 		</button><br/><br/>
 	</form>
 	<script type="text/javascript">
-		$(function() 
+		$(function()
 		{
 			$(document).ready(function()
 			{
@@ -179,7 +179,7 @@ elseif($save_error_kontakt===true)
 						$("#ort_input").prop('disabled', false);
 				}
 			});
-			$('#nation').change(function() 
+			$('#nation').change(function()
 			{
 				if($('#nation').val() != "")
 				{
@@ -206,7 +206,7 @@ elseif($save_error_kontakt===true)
 					$('#plz').prop('disabled', true);
 				}
 			});
-			$('#plz').on("input", function() 
+			$('#plz').on("input", function()
 			{
 				if ($('#nation').val() == "A")
 				{
@@ -242,7 +242,7 @@ elseif($save_error_kontakt===true)
 						$('#ort_input').empty();
 						if (data.gemeinden != '')
 						{
-							$.each(data.gemeinden, function (i, v) 
+							$.each(data.gemeinden, function (i, v)
 							{
 								if (v.ortschaftsname === '<?php echo $ort ?>')
 								{
@@ -254,7 +254,7 @@ elseif($save_error_kontakt===true)
 									$(element).append("<option value='" + v.ortschaftsname + "'>" + v.ortschaftsname + "</option>");
 									$('#gemeinde_input').val(v.gemeindename);
 								}
-								/*if ($(select).attr("name") === "ort_dd") 
+								/*if ($(select).attr("name") === "ort_dd")
 								{
 									if (v.ortschaftskennziffer === '')
 									{

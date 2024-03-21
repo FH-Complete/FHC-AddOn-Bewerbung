@@ -307,6 +307,7 @@ $this->phrasen['bewerbung/bitteAuswaehlen']='-- Bitte auswählen --';
 $this->phrasen['bewerbung/menuKontaktinformationen']='Kontaktinformationen';
 $this->phrasen['bewerbung/kontakt']='Kontakt';
 $this->phrasen['bewerbung/nation']='Nation';
+$this->phrasen['bewerbung/wohnsitznation']='Wohnsitz Nation';
 $this->phrasen['bewerbung/menuDokumente']='Dokumente';
 $this->phrasen['bewerbung/dokument']='Dokument';
 $this->phrasen['bewerbung/linkDokumenteHochladen']='Dokumente hochladen';
