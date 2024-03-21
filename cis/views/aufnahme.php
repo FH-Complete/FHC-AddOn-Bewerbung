@@ -51,7 +51,7 @@ function filterBachelor($value)
 	function drawAnmeldeTabelle($reihungstests)
 	{
 		global $p, $reihungstestID, $datum, $tagbez, $spracheIndex, $angemeldeteRtArray;
-		
+
 		echo '<div class="row">
 					<div class="col-xs-12 col-sm-12 col-md-12 col-lg-8">
 					<div class="panel-group ">
@@ -69,70 +69,75 @@ function filterBachelor($value)
 
 		foreach($reihungstests as $key => $row)
 		{
-			// Durch die Punkteübernahme kann es vorkommen, dass mehrere Ergebnisse für den gleichen RT zurückgegeben werden
-			// Deshalb wird das hier geprüft
-			if ($reihungstestID == $row->reihungstest_id)
+			if ($row->stufe == 1 || $row->stufe == '')
 			{
-				continue;
-			}
-			$reihungstestID = $row->reihungstest_id;
-
-			$fristVorbei = false;
-			$uhrzeit = $datum->formatDatum($row->uhrzeit,'H:i');
-
-			$datumStornierenBis = '';
-			$buttonBeschriftungStornieren = $p->t('bewerbung/anmeldungStornieren');
-			// Wenn BEWERBERTOOL_REIHUNGSTEST_STORNIERBAR_TAGE gesetzt ist oder die Anmeldefrist vorbei ist, kann der Termin nicht mehr storniert werden
-			if (defined('BEWERBERTOOL_REIHUNGSTEST_STORNIERBAR_TAGE') && BEWERBERTOOL_REIHUNGSTEST_STORNIERBAR_TAGE != '')
-			{
-				$time = strtotime($row->datum.' 23:59:59 -'.BEWERBERTOOL_REIHUNGSTEST_STORNIERBAR_TAGE.'days');
-				if ($time < time())
+				// Durch die Punkteübernahme kann es vorkommen, dass mehrere Ergebnisse für den gleichen RT zurückgegeben werden
+				// Deshalb wird das hier geprüft
+				if ($reihungstestID == $row->reihungstest_id)
 				{
-					$fristVorbei = true;
+					continue;
 				}
-				$datumStornierenBis = date("d.m.Y", $time);
-				$wochentag = substr($tagbez[$spracheIndex][date("N", $time)], 0, 2);
-				$buttonBeschriftungStornieren = $p->t('bewerbung/anmeldungStornierenBis', array($wochentag.', '.$datumStornierenBis));
-			}
-			elseif ($row->anmeldefrist != '')
-			{
-				if (strtotime($row->anmeldefrist.' 23:59:59') <= time())
-				{
-					$fristVorbei = true;
-				}
-				$datumStornierenBis = $datum->formatDatum($row->anmeldefrist, 'd.m.Y');
-				$wochentag = substr($tagbez[$spracheIndex][$datum->formatDatum($row->anmeldefrist, 'N')], 0, 2);
-				$buttonBeschriftungStornieren = $p->t('bewerbung/anmeldungStornierenBis', array($wochentag.', '.$datumStornierenBis));
-			}
-			$ort = new ort($row->ort_kurzbz);
-			$raumbezeichnung = $ort->bezeichnung.' '.$ort->planbezeichnung;
-			if ($ort->lageplan != '')
-			{
-				$raumbezeichnung .= '<p>'.$ort->lageplan.'</p>';
-			}
+				$reihungstestID = $row->reihungstest_id;
 
-			$studiengangbezeichnung = $spracheIndex === "1" ? $row->studiengangbezeichnung : (isset($row->studiengangbezeichnung_englisch) ? $row->studiengangbezeichnung_englisch : $row->studiengangbezeichnung);
-			echo '	<li class="list-group-item">
-						<div class="row">
-							<div class="col-xs-4 col-sm-3">'.substr($tagbez[$spracheIndex][$datum->formatDatum($row->datum, 'N')], 0, 2).', '.$datum->formatDatum($row->datum, 'd.m.Y').'</div>
-							<div class="col-xs-3 col-sm-1">'.$uhrzeit.'</div>
-							<div class="col-xs-3 col-sm-2">'.$p->t('bewerbung/zeitzoneMEZ').'</div>
-							<div class="col-xs-5 col-sm-6">'.($row->typ === 'm' ? $p->t('bewerbung/masterAnmerkung') : ($row->ort_kurzbz != '' ? $raumbezeichnung : $p->t('bewerbung/raumzuteilungFolgt'))).'</div>
-						</div>
-					
-						<div class="row">
-							<div class="col-xs-7 col-sm-4">
-								<button type="button" style="width:100%" class="btn btn-warning '. (($fristVorbei) ? 'disabled' : '').'"
-								onclick="aktionReihungstest(\''.$row->reihungstest_id.'\', \''.$row->studienplan_id.'\', \'delete\')">
-									'.$buttonBeschriftungStornieren.' '. ($row->typ === 'm' ? '<br /><b style="white-space: normal"> (' .($studiengangbezeichnung) .')</b>' : '').'
-								</button>
+				$fristVorbei = false;
+				$uhrzeit = $datum->formatDatum($row->uhrzeit,'H:i');
+
+				$datumStornierenBis = '';
+				$buttonBeschriftungStornieren = $p->t('bewerbung/anmeldungStornieren');
+				// Wenn BEWERBERTOOL_REIHUNGSTEST_STORNIERBAR_TAGE gesetzt ist oder die Anmeldefrist vorbei ist, kann der Termin nicht mehr storniert werden
+				if (defined('BEWERBERTOOL_REIHUNGSTEST_STORNIERBAR_TAGE') && BEWERBERTOOL_REIHUNGSTEST_STORNIERBAR_TAGE != '')
+				{
+					$time = strtotime($row->datum.' 23:59:59 -'.BEWERBERTOOL_REIHUNGSTEST_STORNIERBAR_TAGE.'days');
+					if ($time < time())
+					{
+						$fristVorbei = true;
+					}
+					$datumStornierenBis = date("d.m.Y", $time);
+					$wochentag = substr($tagbez[$spracheIndex][date("N", $time)], 0, 2);
+					$buttonBeschriftungStornieren = $p->t('bewerbung/anmeldungStornierenBis', array($wochentag.', '.$datumStornierenBis));
+				}
+				elseif ($row->anmeldefrist != '')
+				{
+					if (strtotime($row->anmeldefrist.' 23:59:59') <= time())
+					{
+						$fristVorbei = true;
+					}
+					$datumStornierenBis = $datum->formatDatum($row->anmeldefrist, 'd.m.Y');
+					$wochentag = substr($tagbez[$spracheIndex][$datum->formatDatum($row->anmeldefrist, 'N')], 0, 2);
+					$buttonBeschriftungStornieren = $p->t('bewerbung/anmeldungStornierenBis', array($wochentag.', '.$datumStornierenBis));
+				}
+				$ort = new ort($row->ort_kurzbz);
+				$raumbezeichnung = $ort->bezeichnung.' '.$ort->planbezeichnung;
+				if ($ort->lageplan != '')
+				{
+					$raumbezeichnung .= '<p>'.$ort->lageplan.'</p>';
+				}
+
+				$studiengangbezeichnung = $spracheIndex === "1" ? $row->studiengangbezeichnung : (isset($row->studiengangbezeichnung_englisch) ? $row->studiengangbezeichnung_englisch : $row->studiengangbezeichnung);
+				echo '	<li class="list-group-item">
+							<div class="row">
+								<div class="col-xs-4 col-sm-3">'.substr($tagbez[$spracheIndex][$datum->formatDatum($row->datum, 'N')], 0, 2).', '.$datum->formatDatum($row->datum, 'd.m.Y').'</div>
+								<div class="col-xs-3 col-sm-1">'.$uhrzeit.'</div>
+								<div class="col-xs-3 col-sm-2">'.$p->t('bewerbung/zeitzoneMEZ').'</div>
+								<div class="col-xs-5 col-sm-6">'.($row->typ === 'm' ? $p->t('bewerbung/masterAnmerkung') : ($row->ort_kurzbz != '' ? $raumbezeichnung : $p->t('bewerbung/raumzuteilungFolgt'))).'</div>
 							</div>
-						</div>
-					</li>';
-			$angemeldeteRtArray[$key] = new stdClass();
-			$angemeldeteRtArray[$key]->rt_id = $row->reihungstest_id;
-			$angemeldeteRtArray[$key]->studienplan_id = $row->studienplan_id;
-			$angemeldeteRtArray[$key]->typ = $row->typ;
+
+							<div class="row">
+								<div class="col-xs-7 col-sm-4">
+									<button type="button" style="width:100%" class="btn btn-warning '. (($fristVorbei) ? 'disabled' : '').'"
+									onclick="aktionReihungstest(\''.$row->reihungstest_id.'\', \''.$row->studienplan_id.'\', \'delete\')">
+										'.$buttonBeschriftungStornieren.' '. ($row->typ === 'm' ? '<br /><b style="white-space: normal"> (' .($studiengangbezeichnung) .')</b>' : '').'
+									</button>
+								</div>
+							</div>
+						</li>';
+
+				$angemeldeteRtArray[$key] = new stdClass();
+				$angemeldeteRtArray[$key]->rt_id = $row->reihungstest_id;
+				$angemeldeteRtArray[$key]->studienplan_id = $row->studienplan_id;
+				$angemeldeteRtArray[$key]->typ = $row->typ;
+			}
+
 		}
 		echo '</ul></div></div></div>';
 		echo '	</div></div>';
@@ -142,7 +147,7 @@ function filterBachelor($value)
 	{
 		$angemeldeteReihungstestsMaster = array_filter($angemeldeteReihungstests->result, 'filterMaster');
 		$angemeldeteReihungstestsBachelor = array_filter($angemeldeteReihungstests->result, 'filterBachelor');
-		
+
 		if (count($angemeldeteReihungstestsBachelor) > 0)
 		{
 			echo '<h3>Bachelor</h3>';
@@ -153,7 +158,7 @@ function filterBachelor($value)
 			echo $p->t('bewerbung/reihungstestInfoTextAngemeldet');
 			echo "</div></div>";
 		}
-		
+
 		if (count($angemeldeteReihungstestsMaster) > 0)
 		{
 			echo '<h3>Master</h3>';
@@ -342,7 +347,7 @@ function filterBachelor($value)
 				{
 					if (in_array($row->studienplan_id, array_column($angemeldeteRtArray, 'studienplan_id')) || in_array($row->studienplan_id, array_column($reihungstestTermine, 'studienplan_id')))
 						continue;
-					
+
 					$studiengangbezeichnung = $spracheIndex === "1" ? $row->studiengangbezeichnung : (isset($row->studiengangbezeichnung_englisch) ? $row->studiengangbezeichnung_englisch : $row->studiengangbezeichnung);
 					echo '	<li class="list-group-item">
 						<div class="row">
@@ -360,13 +365,14 @@ function filterBachelor($value)
 			}
 			foreach($reihungstestTermine as $row)
 			{
+
 				$angemeldet = false;
 
 				if (in_array($row->reihungstest_id, array_column($angemeldeteRtArray, 'rt_id')))
 				{
 					$angemeldet = true;
 				}
-				
+
 				if (in_array($row->studienplan_id, array_column($angemeldeteRtArray, 'studienplan_id')))
 					continue;
 				// Wenn alle Plätze vergeben sind, Termin nicht anzeigen
@@ -426,7 +432,7 @@ function filterBachelor($value)
 		if (count($angemeldeteBachelorRTs) === 0 && isset($bewerbungen['b']))
 		{
 			echo '<h3>Bachelor</h3>';
-			
+
 			if (empty($bachelorRTs))
 			{
 				echo '<div class="row">
@@ -447,7 +453,7 @@ function filterBachelor($value)
 				drawTerminTabelle($bachelorRTs, $angemeldeteBachelorRTs);
 			}
 		}
-		
+
 		if (isset($bewerbungen['m']))
 		{
 			if (count($bewerbungenMaster) !== count($angemeldeteMasterRTs))
