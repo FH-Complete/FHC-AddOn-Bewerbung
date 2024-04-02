@@ -1449,7 +1449,7 @@ function getPrioStudienplanForReihungstest($person_id, $studiensemester_kurzbz)
 						AND studiensemester_kurzbz = tbl_prestudentstatus.studiensemester_kurzbz
 					ORDER BY datum DESC,
 						tbl_prestudentstatus.insertamum DESC LIMIT 1
-				) IN ('Interessent', 'Bewerber')
+				) IN ('Interessent', 'Bewerber', 'Wartender')
 			ORDER BY studienplan_id)
 
 			UNION ALL
