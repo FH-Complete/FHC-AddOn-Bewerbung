@@ -422,12 +422,10 @@ function filterBachelor($value)
 			echo '</ul></div></div></div></div></div>';
 		}
 
-		$masterRTs = array_filter($reihungstestTermine, 'filterMaster');
+
 		$bachelorRTs = array_filter($reihungstestTermine, 'filterBachelor');
-		$angemeldeteMasterRTs = array_filter($angemeldeteRtArray, 'filterMaster');
 		$angemeldeteBachelorRTs = array_filter($angemeldeteRtArray, 'filterBachelor');
 		$bewerbungen = array_count_values(array_column($studienplanReihungstest, 'typ'));
-		$bewerbungenMaster = array_filter($studienplanReihungstest, 'filterMaster');
 
 		if (count($angemeldeteBachelorRTs) === 0 && isset($bewerbungen['b']))
 		{
@@ -456,7 +454,12 @@ function filterBachelor($value)
 
 		if (isset($bewerbungen['m']))
 		{
-			if (count($bewerbungenMaster) !== count($angemeldeteMasterRTs))
+			$masterRTs = array_filter($reihungstestTermine, 'filterMaster');
+			$angemeldeteMasterRTs = array_filter($angemeldeteRtArray, 'filterMaster');
+			$bewerbungenMaster = array_filter($studienplanReihungstest, 'filterMaster');
+			$diffMaster = array_diff(array_column($bewerbungenMaster, 'studienplan_id'), array_column($angemeldeteMasterRTs, 'studienplan_id'));
+
+			if (count($diffMaster) > 0)
 			{
 				echo "<h3>Master</h3>
 						<div class='row'>
