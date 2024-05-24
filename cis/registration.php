@@ -1042,7 +1042,7 @@ elseif($username && $password)
 										echo '<div class="panel-body">
 												<div class="checkbox disabled">
 													<label class="text-muted">
-														<input class="" type="checkbox" name="" value="" disabled>
+														<input class="'. $class .'" type="checkbox" name="" value="" disabled>
 														'.$stg_bezeichnung;
 									}
 
@@ -1541,7 +1541,12 @@ elseif($username && $password)
 				$("input[type=checkbox][class=checkbox_stg]").not(":checked").attr("disabled",true);
 				$("input[type=checkbox][class=checkbox_stg]").parents("label").addClass("text-muted");
 				$("input[type=checkbox][class=checkbox_stg]").parents("div").addClass("disabled");
-				$("input[type=checkbox][class=checkbox_stg]").parents("label").append("<br/><div class=\"label label-warning\" style=\"white-space: initial\"><span class=\"glyphicon glyphicon-warning-sign\"></span>&nbsp;&nbsp;<?php echo $p->t('bewerbung/bitteZGVausweahlen'); ?></div>");
+				$("input[type=checkbox][class=checkbox_stg]").parents("label").find('div.label-danger').prev('br').remove();
+				$("input[type=checkbox][class=checkbox_stg]").parents("label").find('div.label-danger').remove();
+
+				$("input[type=checkbox][class=checkbox_stg]").parents("label").find('div.label-warning').prev('br').remove();
+				$("input[type=checkbox][class=checkbox_stg]").parents("label").find('div.label-warning').remove();
+				$("input[type=checkbox][class=checkbox_stg]").parents("label").append("<br /><div class=\"label label-warning\" style=\"white-space: initial\"><span class=\"glyphicon glyphicon-warning-sign\"></span>&nbsp;&nbsp;<?php echo $p->t('bewerbung/bitteZGVausweahlen'); ?></div>");
 			}
 			<?php endif; ?>
 

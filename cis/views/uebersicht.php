@@ -1178,7 +1178,7 @@ $studiensemester_array = array();
 				//wenn nichts angegeben, wird die Bewerbungsfrist für Drittstaaten angenommen
 				if ($nationengruppe == '')
 				{
-					$nationengruppe = 'drittstaat';
+					$nationengruppe = 'eu';
 				}
 
 				$bewerbungszeitraum = getBewerbungszeitraum($row->studiengang_kz, $std_semester, $row->studienplan_id, $nationengruppe, $person_id);
