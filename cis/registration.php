@@ -1023,10 +1023,12 @@ elseif($username && $password)
 									if ($row->typ != 'l')
 									{
 										$class = 'checkbox_stg';
+										$data_for_zgv = 'true';
 									}
 									else
 									{
 										$class = 'checkbox_lg';
+										$data_for_zgv = '';
 									}
 
 									if (!$fristAbgelaufen)
@@ -1034,7 +1036,7 @@ elseif($username && $password)
 										echo '<div class="panel-body" '.$style.'>
 												<div class="checkbox">
 													<label>
-														<input class="'.$class.'" id="checkbox_'.$row->studienplan_id.'" type="checkbox" name="studienplaene[]" value="'.$row->studienplan_id.'" '.$checked.' '.$disabled.'>
+														<input class="'.$class. '" id="checkbox_'.$row->studienplan_id.'" data-zgv="'. $data_for_zgv .'" type="checkbox" name="studienplaene[]" value="'.$row->studienplan_id.'" '.$checked.' '.$disabled.'>
 														'.$stg_bezeichnung;
 									}
 									else
@@ -1042,7 +1044,7 @@ elseif($username && $password)
 										echo '<div class="panel-body">
 												<div class="checkbox disabled">
 													<label class="text-muted">
-														<input class="'. $class .'" type="checkbox" name="" value="" disabled>
+														<input data-zgv="'. $data_for_zgv .'" type="checkbox" name="" value="" disabled>
 														'.$stg_bezeichnung;
 									}
 
@@ -1533,23 +1535,6 @@ elseif($username && $password)
 				window.scrollTo(0, 0);
 			}
 
-			// Wenn das Dropdown zur Wahl der ZGV-Nation eingeblendet ist, werden alle Bachelor- und Master-Checkboxen deaktiviert,
-			// bis eine Auswahl getroffen wurde
-			<?php if(defined('BEWERBERTOOL_SHOW_REGISTRATION_ZGVNATION') && BEWERBERTOOL_SHOW_REGISTRATION_ZGVNATION): ?>
-			if($('#zgv_nation').val() == '')
-			{
-				$("input[type=checkbox][class=checkbox_stg]").not(":checked").attr("disabled",true);
-				$("input[type=checkbox][class=checkbox_stg]").parents("label").addClass("text-muted");
-				$("input[type=checkbox][class=checkbox_stg]").parents("div").addClass("disabled");
-				$("input[type=checkbox][class=checkbox_stg]").parents("label").find('div.label-danger').prev('br').remove();
-				$("input[type=checkbox][class=checkbox_stg]").parents("label").find('div.label-danger').remove();
-
-				$("input[type=checkbox][class=checkbox_stg]").parents("label").find('div.label-warning').prev('br').remove();
-				$("input[type=checkbox][class=checkbox_stg]").parents("label").find('div.label-warning').remove();
-				$("input[type=checkbox][class=checkbox_stg]").parents("label").append("<br /><div class=\"label label-warning\" style=\"white-space: initial\"><span class=\"glyphicon glyphicon-warning-sign\"></span>&nbsp;&nbsp;<?php echo $p->t('bewerbung/bitteZGVausweahlen'); ?></div>");
-			}
-			<?php endif; ?>
-
 			//Zeigt das Prio-Badge, wenn mehr als ein Bachelor- oder Master-Studiengang gewählt wird
 			// Und zaehlt in der Reihenfolge hoch, in der die Checkbox angeklickt wird
 			$("input[type=checkbox][class=checkbox_stg]").click(function()
@@ -1704,6 +1689,26 @@ elseif($username && $password)
 					<?php endif; ?>
 				}
 			});
+
+			// Wenn das Dropdown zur Wahl der ZGV-Nation eingeblendet ist, werden alle Bachelor- und Master-Checkboxen deaktiviert,
+			// bis eine Auswahl getroffen wurde
+			<?php if(defined('BEWERBERTOOL_SHOW_REGISTRATION_ZGVNATION') && BEWERBERTOOL_SHOW_REGISTRATION_ZGVNATION): ?>
+			if($('#zgv_nation').val() == '')
+			{
+				$("input[type=checkbox][data-zgv='true']").parents("label").addClass("text-muted");
+				$("input[type=checkbox][data-zgv='true']").parents("div").addClass("disabled");
+				$("input[type=checkbox][data-zgv='true']").parents("label").find('div.label-danger').prev('br').remove();
+				$("input[type=checkbox][data-zgv='true']").parents("label").find('div.label-danger').remove();
+
+				$("input[type=checkbox][data-zgv='true']").parents("label").find('div.label-warning').prev('br').remove();
+				$("input[type=checkbox][data-zgv='true']").parents("label").find('div.label-warning').remove();
+				$("input[type=checkbox][data-zgv='true']").parents("label").append("<br /><div class=\"label label-warning\" style=\"white-space: initial\"><span class=\"glyphicon glyphicon-warning-sign\"></span>&nbsp;&nbsp;<?php echo $p->t('bewerbung/bitteZGVausweahlen'); ?></div>");
+				$("input[type=checkbox][data-zgv='true']").attr("disabled",true);
+				$("input[type=checkbox][data-zgv='true']").attr("checked",false);
+				$("input[type=checkbox][data-zgv='true']").siblings('.badge').html("")
+				$("input[type=checkbox][data-zgv='true']").parents('div.panel-body').css("background-color", "unset")
+			}
+			<?php endif; ?>
 			<?php if (CAMPUS_NAME == 'FH Technikum Wien'): ?>
 			//Bei Microsoft-Adressen gibt es derzeit Probleme an der FHTW
 			$("#email").keyup(function()
