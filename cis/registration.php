@@ -1332,6 +1332,24 @@ elseif($username && $password)
 								</div>
 							  </div>
 							</div>
+							<?php if (defined('BEWERBERTOOL_ELECTRONIC_ONBOARDING_REGISTRATION_LINK')): ?>
+							<div class="panel panel-info">
+								<div class="panel-heading text-center">
+									<h3 class="panel-title"><?php echo $p->t('bewerbung/idAustriaLogin') ?></h3>
+								</div>
+								<div class="panel-body text-center">
+									<br>
+									<a
+										class="btn btn-primary btn-lg"
+										style="width: 250px;"
+										href="<?php echo APP_ROOT.BEWERBERTOOL_ELECTRONIC_ONBOARDING_REGISTRATION_LINK ?>"
+										role="button">
+											<?php echo $p->t('bewerbung/login') ?>
+									</a>
+									<br><br>
+								</div>
+							</div>
+							<?php endif; ?>
 							<div style="text-align:center; color:gray;"><?php echo $p->t('bewerbung/footerText')?></div>
 							<br><br><br><br><br><br><br>
 							<br><br><br><br><br><br><br>
