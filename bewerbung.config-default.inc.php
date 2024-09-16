@@ -113,6 +113,6 @@ define('BEWERBERTOOL_BERUFSTAETIGKEIT_NOTIZ', false);
 // FHTW: Zusaetzlich zu den Bachelor- & Masterstudiengaenge Studiengaenge an die keine Mail geschickt werden soll
 define('BEWERBERTOOL_DONT_SEND_MAIL_STG', serialize(array()));
 
-// Wenn Id Austria Login verwendet wird: Link zum Electronic Onboarding start
+// Wenn Id Austria Login verwendet wird: Link zum Electronic Onboarding Start
 define('BEWERBERTOOL_ELECTRONIC_ONBOARDING_REGISTRATION_LINK', 'index.ci.php/extensions/FHC-Core-ElectronicOnboarding/OnboardingRegistrierung/startOnboarding');
 ?>
