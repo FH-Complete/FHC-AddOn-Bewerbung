@@ -114,6 +114,31 @@ if ($userid)
 			}
 		}
 
+		// TODO additional parameter for assistance so not every login leads to verification
+		if (!$validMail)
+		{
+			$kontakte = new kontakt();
+			$kontakte->load_persKontakttyp($person_id, 'email_unverifiziert');
+			foreach ($kontakte->result AS $kontakt)
+			{
+				// if email is not yet verified when logging in
+				if (strtolower($kontakt->kontakt) == strtolower($mailadresse))
+				{
+					// set email to verified
+					if ($kontakt->load($kontakt->kontakt_id))
+					{
+						$kontakt->kontakttyp = 'email';
+						if ($kontakt->save())
+						{
+							$validMail = true;
+							break;
+							// TODO: save kontakt_verifiziert?
+						}
+					}
+				}
+			}
+		}
+
 		if ($validMail)
 		{
 			$_SESSION['bewerbung/user'] = $userid;
@@ -558,7 +583,7 @@ elseif($username && $password)
 							// Email Kontakt zu Person speichern
 							$kontakt = new kontakt();
 							$kontakt->person_id = $person->person_id;
-							$kontakt->kontakttyp = 'email';
+							$kontakt->kontakttyp = 'email_unverifiziert';
 							$kontakt->kontakt = $email;
 							$kontakt->zustellung = true;
 							$kontakt->insertamum = date('Y-m-d H:i:s');
