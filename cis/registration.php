@@ -82,10 +82,12 @@ $p = new phrasen($sprache);
 $db = new basis_db();
 $userid = trim(filter_input(INPUT_POST, 'userid'));
 $mailadresse = trim(filter_input(INPUT_POST, 'mailadresse'));
+$keepEmailUnverified = trim(filter_input(INPUT_POST, 'keepEmailUnverified'));
 $username = trim(filter_input(INPUT_POST, 'username'));
 $password = trim(filter_input(INPUT_POST, 'password'));
 $codeGet = htmlspecialchars(trim(filter_input(INPUT_GET, 'code')));
 $emailAdresseGet = htmlspecialchars(trim(filter_input(INPUT_GET, 'emailAdresse')));
+$keepEmailUnverifiedGet = htmlspecialchars(trim(filter_input(INPUT_GET, 'keepEmailUnverified')));
 
 // Erstellen eines Array mit allen Studiengängen
 $studiengaenge_obj = new studiengang();
@@ -114,26 +116,30 @@ if ($userid)
 			}
 		}
 
-		// TODO additional parameter for assistance so not every login leads to verification
 		if (!$validMail)
 		{
 			$kontakte = new kontakt();
 			$kontakte->load_persKontakttyp($person_id, 'email_unverifiziert');
+
 			foreach ($kontakte->result AS $kontakt)
 			{
 				// if email is not yet verified when logging in
 				if (strtolower($kontakt->kontakt) == strtolower($mailadresse))
 				{
-					// set email to verified
+					// if email found
 					if ($kontakt->load($kontakt->kontakt_id))
 					{
-						$kontakt->kontakttyp = 'email';
-						if ($kontakt->save())
+						$validMail = true;
+
+						// not set to verified if parameter is set
+						if ($keepEmailUnverified !== 'true')
 						{
-							$validMail = true;
-							break;
-							// TODO: save kontakt_verifiziert?
+							// set email to verified
+							$kontakt->kontakttyp = 'email';
+							if (!$kontakt->save()) $validMail = false;
 						}
+						break;
+						// TODO: save kontakt_verifiziert?
 					}
 				}
 			}
@@ -1266,6 +1272,7 @@ elseif($username && $password)
 					<!--<div class="col-xs-10 col-xs-offset-1 col-sm-6 col-sm-offset-3">-->
 					<div class="col-sm-8 col-sm-offset-2">
 						<form action="<?php echo basename(__FILE__);?>" method="POST" id="lp" class="form-horizontal">
+							<input type="hidden" name="keepEmailUnverified" value="<?php echo $keepEmailUnverifiedGet ?>">
 							<div style="border-bottom: 1px solid #eee; margin-bottom: 30px;" class="row">
 								<?php echo $p->t('bewerbung/welcomeHeaderLogin') ?>
 							</div>
