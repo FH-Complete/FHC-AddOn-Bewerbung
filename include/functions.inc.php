@@ -499,7 +499,7 @@ function check_load_bewerbungen($mailadresse, $studiensemester_kurzbz = null)
 		$qry .= "	JOIN public.tbl_prestudent USING (person_id)
 							JOIN public.tbl_prestudentstatus USING (prestudent_id) ";
 	$qry .= "
-				WHERE kontakttyp='email'
+				WHERE kontakttyp IN ('email', 'email_unverifiziert')
 				AND (	LOWER(kontakt)=" . $db->db_add_param($mailadresse, FHC_STRING) . "
 						OR LOWER(alias||'@" . DOMAIN . "')=" . $db->db_add_param($mailadresse, FHC_STRING) . "
 			 			OR LOWER(uid||'@" . DOMAIN . "')=" . $db->db_add_param($mailadresse, FHC_STRING) . ")";
