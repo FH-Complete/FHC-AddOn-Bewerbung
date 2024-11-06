@@ -113,6 +113,7 @@ require_once ('../../../include/studiensemester.class.php');
 require_once ('../../../include/zgv.class.php');
 require_once ('../include/functions.inc.php');
 require_once ('../../../include/rueckstellung.class.php');
+require_once ('../../../include/kennzeichen.class.php');
 
 
 if (isset($_GET['logout']))
@@ -131,6 +132,19 @@ if (! $person->load($person_id))
 {
 	die($p->t('global/fehlerBeimLadenDesDatensatzes'));
 }
+
+$kennzeichen = new kennzeichen();
+
+$eobLogin = false;
+if ($kennzeichen->load_pers($person_id, ['eobRegistrierungsId']))
+{
+	$eobLogin = count($kennzeichen->result) > 0;
+}
+else
+{
+	die($kennzeichen->errormsg);
+}
+
 
 $spracheGet = filter_input(INPUT_GET, 'sprache');
 
