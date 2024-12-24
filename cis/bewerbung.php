@@ -2286,8 +2286,9 @@ if ($addStudienplan)
 	$return = BewerbungPersonAddStudienplan(
 		$_POST['studienplan_id'],
 		$person,
-		$_POST['studiensemester']
-		);
+		$_POST['studiensemester'],
+		isset($_POST['zgv_nation']) ? $_POST['zgv_nation'] : null
+	);
 	if ($return === true)
 		echo json_encode(array('status'=>'ok'));
 	else
