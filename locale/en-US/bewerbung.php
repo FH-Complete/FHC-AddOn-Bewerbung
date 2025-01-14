@@ -58,6 +58,7 @@ Should you require any additional information, please do not hesitate to contact
 		<a href="#datenschutzText" data-toggle="collapse">Privacy information: <span class="glyphicon glyphicon-collapse-down"></span></a>
 		<div id="datenschutzText" class="collapse">
 		The data communicated to us by you for the purpose of the application will be used by us exclusively for the processing of the application on the basis of pre-contractual or contractual purposes and will not be passed on to third parties with the exception described below in case of uncertainties regarding the entry requirements. If there is no further contact or enrolment, your data will be deleted after three years.<br><br>
+		UAS Technikum Wien is entitled to use your data in anonymized form for surveys for the purpose of quality assurance.<br><br>
 		Information on your data subject rights can be found here: <a href=\'https://www.technikum-wien.at/information-ueber-ihre-rechte-gemaess-datenschutz-grundverordnung/\' target=\'_blank\'>https://www.technikum-wien.at/information-ueber-ihre-rechte-gemaess-datenschutz-grundverordnung/</a><br><br>
 		If you have any questions, please contact us at <a href=\'mailto:datenschutz@technikum-wien.at\'>datenschutz@technikum-wien.at</a><br><br>
 		Data Processing Office:<br>
