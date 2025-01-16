@@ -742,6 +742,6 @@ $this->phrasen['bewerbung/erklaerungInvoices'] = 'Ablauf und Zahlungsbedingungen
 
 // Datenschutzerklärung
 $this->phrasen['bewerbung/bitteDatenschutzerklaerungZustimmen']='Sie müssen der Datenschutzerklärung zustimmen, um Ihre Bewerbung abschicken zu können';
-$this->phrasen['bewerbung/zustimmungDatenschutzerklaerung']='Ich habe die Datenschutzerklärung zu Kenntnis genommen';
+$this->phrasen['bewerbung/zustimmungDatenschutzerklaerung']='Ich habe die Datenschutzerklärung zu Kenntnis genommen.';
 
 ?>

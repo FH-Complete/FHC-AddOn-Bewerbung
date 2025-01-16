@@ -690,5 +690,5 @@ $this->phrasen['bewerbung/erklaerungInvoices'] = 'Process and payment conditions
 
 // Datenschutzerklärung
 $this->phrasen['bewerbung/bitteDatenschutzerklaerungZustimmen']='You have to consent to the privacy statement to send the application.';
-$this->phrasen['bewerbung/zustimmungDatenschutzerklaerung']='I have taken note of the privacy policy';
+$this->phrasen['bewerbung/zustimmungDatenschutzerklaerung']='I have taken note of the privacy policy.';
 ?>
