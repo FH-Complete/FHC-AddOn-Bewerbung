@@ -679,8 +679,16 @@ $this->phrasen['bewerbung/legende_hochgeladen']='Required document already uploa
 $this->phrasen['bewerbung/legende_vorhanden']='Document already exists';
 $this->phrasen['bewerbung/legende_hochladen']='Upload if applicable';
 $this->phrasen['bewerbung/legende_nachreichen']='Document will be submitted later';
+
+// UHSTAT
 $this->phrasen['bewerbung/menuUhstat']='Statistical data (UHSTAT)';
 $this->phrasen['bewerbung/uhstatNichtAusgefuellt']='Before registering for a placement test, the statistical data (UHSTAT) must be filled out.';
+
+// Zahlungen
 $this->phrasen['bewerbung/menuInvoices'] = 'Payments';
 $this->phrasen['bewerbung/erklaerungInvoices'] = 'Process and payment conditions';
+
+// Datenschutzerklärung
+$this->phrasen['bewerbung/bitteDatenschutzerklaerungZustimmen']='You have to consent to the privacy statement to send the application.';
+$this->phrasen['bewerbung/zustimmungDatenschutzerklaerung']='I have taken note of the privacy policy';
 ?>

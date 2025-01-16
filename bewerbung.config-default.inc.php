@@ -60,6 +60,9 @@ define('BEWERBERTOOL_STORNIERUNG_STATUSGRUND_ID', '');
 // Wenn true, wird bei der Registration die Checkbox mit der (verpflichtenden) Zustimmung zur Datenübermittlung angezeigt
 define('BEWERBERTOOL_SHOW_ZUSTIMMUNGSERKLAERUNG_REGISTRATION', false);
 
+// Wenn true, wird bei der Registration die Checkbox mit der (verpflichtenden) Zustimmung zur Datenschutzerklärung angezeigt
+define('BEWERBERTOOL_SHOW_ZUSTIMMUNGSERKLAERUNG_DATENSCHUTZERKLAERUNG', false);
+
 // Soll das DropDown zur Staatsbürgerschaft bei der Registration angezeigt werden?
 define('BEWERBERTOOL_SHOW_REGISTRATION_STAATSBUERGERSCHAFT', false);
 
