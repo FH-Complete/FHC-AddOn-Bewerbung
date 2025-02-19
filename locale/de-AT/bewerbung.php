@@ -685,7 +685,7 @@ Sollten Sie Fragen haben, kontaktieren Sie bitte unser Infocenter <a href="mailt
 Mit freundlichen Grüßen<br>
 Fachhochschule Technikum Wien';
 $this->phrasen['bewerbung/reihungstestInfoTextAngemeldet']='<div class="alert alert-info">
-<p>Wir starten pünktlich mit der Identitätskontrolle. Stellen Sie daher sicher, dass Sie zu diesem Zeitpunkt im Zoom Warteraum sind (Den Link erhalten Sie 2 Werktage vor Ihrem gewählten Reihungstesttermin). Nähere Details zum Ablauf des Reihungstests finden Sie unter: <a href="https://cis.technikum-wien.at/cms/dms.php?id=207694" target="_blank">https://cis.technikum-wien.at/cms/dms.php?id=207694</a></p>
+<p>Wir starten pünktlich mit der Identitätskontrolle. Stellen Sie daher sicher, dass Sie zu diesem Zeitpunkt im Zoom Warteraum sind (Den Link erhalten Sie 2 Werktage vor Ihrem gewählten Reihungstesttermin). Nähere Details zum Ablauf des Reihungstests finden Sie unter: <a href="https://cis.technikum-wien.at/cms/dms.php?id=330348" target="_blank">https://cis.technikum-wien.at/cms/dms.php?id=330348</a></p>
 <p>Den Einstieg zum Reihungstest finden Sie bei Ihrer Bachelorbewerbung unter <a href="https://cis.technikum-wien.at/cms/dms.php?id=147448" target="_blank">Ubersicht/Details/zum Reihungstest</a> hier im Online-Bewerbungstool.</p>
 </div><br>';
 $this->phrasen['bewerbung/anmeldefrist']='Anmeldefrist';
@@ -702,7 +702,7 @@ $this->phrasen['bewerbung/masterAnmerkung']='Nähere Informationen zum Reihungst
 $this->phrasen['bewerbung/reihungstestInfoTextAngemeldetMaster']='<div class="alert alert-info">
 <p>Alle Reihungstests werden per Video über Zoom begleitet. Den Link zum Zoom-Meetingraum erhalten Sie rechtzeitig von der zuständigen Studiengangsassistenz. Wir starten pünktlich mit der Identitätskontrolle. Stellen Sie daher sicher, dass Sie zu diesem Zeitpunkt im Zoom-Warteraum sind und Ihren Identitätsnachweis griffbereit haben.</p>
 </p>Nähere Details zum Ablauf des Reihungstests finden Sie unter: <a href="https://cis.technikum-wien.at/cms/dms.php?id=275533" target="_blank">https://cis.technikum-wien.at/cms/dms.php?id=275533</a></p>
-<p>Den Einstieg zum Reihungstest finden Sie bei Ihrer Masterbewerbung unter <a href="https://cis.technikum-wien.at/cms/dms.php?id=265268" target="_blank">Ubersicht/Details/zum Reihungstest</a> hier im Online-Bewerbungstool.</p>
+<p>Den Einstieg zum Reihungstest finden Sie bei Ihrer Masterbewerbung unter <a href="https://cis.technikum-wien.at/cms/dms.php?id=180785" target="_blank">Ubersicht/Details/zum Reihungstest</a> hier im Online-Bewerbungstool.</p>
 </div><br>';
 $this->phrasen['bewerbung/fuerReihungstestAnmeldenMaster']='Bitte melden Sie sich für einen Master-Reihungstesttermin an. Bitte beachten Sie, dass bei Mehrfachbewerbungen der Reihungstest für jeden gewählten Masterstudiengang zu absolvieren ist. <br/>
 Sie sehen die nächsten verfügbaren Reihungstesttermine des Studiengangs bzw. der gewählten Studiengänge. Sollte der angezeigte/die angezeigten Termine für Sie nicht möglich sein, wenden Sie sich bitte an die zuständige Studiengangsassistenz.';

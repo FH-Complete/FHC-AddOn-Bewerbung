@@ -652,7 +652,7 @@ $this->phrasen['bewerbung/masterAnmerkung']='You will receive more detailed info
 $this->phrasen['bewerbung/reihungstestInfoTextAngemeldetMaster']='<div class="alert alert-info">
 <p>All placement tests are accompanied by video via Zoom.
 You will receive the link to the Zoom meeting room in good time from the relevant degree program assistant. We start on time with the identity check. Therefore, please make sure that you are in the Zoom waiting room at this time and that you have your proof of identity to hand. </p>
-<p>For more details on the procedure of the placement test, please go to: <a href="https://cis.technikum-wien.at/cms/dms.php?id=275547" target="_blank">https://cis.technikum-wien.at/cms/dms.php?id=275547</a></p>
+<p>For more details on the procedure of the placement test, please go to: <a href="https://cis.technikum-wien.at/cms/dms.php?id=143930" target="_blank">https://cis.technikum-wien.at/cms/dms.php?id=330348</a></p>
 <p>You will find the entry button for the placement test in your Master\'s application under <a href="https://cis.technikum-wien.at/cms/dms.php?id=265268" target="_blank">Overview/Details/Placement Test</a> here in the online application tool.</p>
 </div><br>';
 // Ausbildung
