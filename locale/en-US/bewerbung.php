@@ -682,5 +682,5 @@ $this->phrasen['bewerbung/menuUhstat']='Statistical data (UHSTAT)';
 $this->phrasen['bewerbung/uhstatNichtAusgefuellt']='Before registering for a placement test, the statistical data (UHSTAT) must be filled out.';
 $this->phrasen['bewerbung/menuInvoices'] = 'Payments';
 $this->phrasen['bewerbung/erklaerungInvoices'] = 'Process and payment conditions';
-$this->phrasen['bewerbung/idAustriaLogin']='Login with <b>ID Austria</b>?';
+$this->phrasen['bewerbung/idAustriaLogin']='Registration/login with <b>ID Austria</b>?';
 ?>

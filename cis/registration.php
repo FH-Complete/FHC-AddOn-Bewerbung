@@ -1370,6 +1370,11 @@ elseif($username && $password)
 									<h3 class="panel-title"><?php echo $p->t('bewerbung/idAustriaLogin') ?></h3>
 								</div>
 								<div class="panel-body text-center">
+									<img
+										src="<?php echo APP_ROOT.'addons/bewerbung/include/images/ID_Austria_logo.png' ?>"
+										style="margin: 10px 10px"
+										alt="ID Austria Logo"
+									>
 									<br>
 									<a
 										class="btn btn-primary btn-lg"
