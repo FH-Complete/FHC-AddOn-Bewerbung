@@ -2904,6 +2904,8 @@ else
 										$tabs = array_values($tabs);
 									}
 								}
+								else
+									$display = 'style="display: none"';
 							}
 							elseif (CAMPUS_NAME == 'FH BFI Wien')
 							{
