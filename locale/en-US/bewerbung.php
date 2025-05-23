@@ -239,7 +239,6 @@ $this->phrasen['bewerbung/nichtAbgeschickt']='application not sent';
 $this->phrasen['bewerbung/studiengangHinzufuegen']='Add application for degree program';
 $this->phrasen['bewerbung/weiter']='continue';
 $this->phrasen['bewerbung/geburtsnation']='Country of Birth';
-$this->phrasen['bewerbung/svnr']='Austrian Social Security Number';
 $this->phrasen['bewerbung/maennlich']='male';
 $this->phrasen['bewerbung/weiblich']='female';
 $this->phrasen['bewerbung/berufstaetigkeit']='Job';
@@ -314,7 +313,6 @@ $this->phrasen['bewerbung/teilweiseVollstaendig']='partially complete';
 $this->phrasen['bewerbung/maxAnzahlTeilnehmer']='Maximum number of participants reached';
 $this->phrasen['bewerbung/erfolgreichBeworben']='You have applied successfully. Generally, we will get back to you within 5 working days.';
 $this->phrasen['bewerbung/fehlerBeimVersendenDerBewerbung']='An error occured while sending the application. Please try again.';
-$this->phrasen['bewerbung/svnrBereitsVorhanden']='Social Security Number already exists.';
 $this->phrasen['bewerbung/menuBewerbungFuerStudiengang']='Application for a degree program';
 $this->phrasen['bewerbung/emailBodyStart']='<html>
 	<head>
