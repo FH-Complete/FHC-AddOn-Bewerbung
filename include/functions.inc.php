@@ -197,7 +197,7 @@ function BewerbungPersonAddStudiengang($studiengang_kz, $anmerkung, $person, $st
 	return true;
 }
 // Fuegt eine Bewerbung für einen Studienplan hinzu
-function BewerbungPersonAddStudienplan($studienplan_id, $person, $studiensemester_kurzbz)
+function BewerbungPersonAddStudienplan($studienplan_id, $person, $studiensemester_kurzbz, $input_zgv_nation = null)
 {
 	// Studienplan laden
 	$studienplan = new studienplan();
@@ -408,7 +408,8 @@ function BewerbungPersonAddStudienplan($studienplan_id, $person, $studiensemeste
 		$prestudent->zgv_code = $zgv_code;
 		$prestudent->zgvort = $zgvort;
 		$prestudent->zgvdatum = $zgvdatum;
-		$prestudent->zgvnation = $zgvnation;
+		// user input zgv nation verwenden, wenn es sonst keine gibt
+		$prestudent->zgvnation = $zgvnation == '' && isset($input_zgv_nation)? $input_zgv_nation : $zgvnation;
 		$prestudent->zgvmas_code = $zgvmas_code;
 		$prestudent->zgvmaort = $zgvmaort;
 		$prestudent->zgvmadatum = $zgvmadatum;
@@ -499,7 +500,7 @@ function check_load_bewerbungen($mailadresse, $studiensemester_kurzbz = null)
 		$qry .= "	JOIN public.tbl_prestudent USING (person_id)
 							JOIN public.tbl_prestudentstatus USING (prestudent_id) ";
 	$qry .= "
-				WHERE kontakttyp='email'
+				WHERE kontakttyp IN ('email', 'email_unverifiziert')
 				AND (	LOWER(kontakt)=" . $db->db_add_param($mailadresse, FHC_STRING) . "
 						OR LOWER(alias||'@" . DOMAIN . "')=" . $db->db_add_param($mailadresse, FHC_STRING) . "
 			 			OR LOWER(uid||'@" . DOMAIN . "')=" . $db->db_add_param($mailadresse, FHC_STRING) . ")";

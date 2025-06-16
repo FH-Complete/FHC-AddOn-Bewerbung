@@ -867,6 +867,9 @@ $studiensemester_array = array();
 	// Zeige mögliche Studierendendaten an, wenn vorhanden
 	$benutzer = new benutzer();
 	$benutzer->getBenutzerFromPerson($person_id, true);
+	$zgvNations = new nation();
+	$zgvNations->getAll($ohnesperre = true, ($sprache == 'English' ? true : false));
+
 	if (count($benutzer->result) > 0)
 	{
 		echo '<p><b>'.$p->t('bewerbung/studierendenDaten').'</b></p>';
@@ -967,6 +970,32 @@ $studiensemester_array = array();
 
 				</div>
 				<div class="modal-body">
+					<?php if(defined('BEWERBERTOOL_SHOW_REGISTRATION_ZGVNATION') && BEWERBERTOOL_SHOW_REGISTRATION_ZGVNATION && (!isset($zgv_nation) || $zgv_nation == '')): ?>
+					<div class="form-group" id="zgv_nation_form-group">
+						<label for="zgv_nation" class="control-label">
+							<?php echo $p->t('bewerbung/studienberechtigungErlangtIn') ?>
+							<a id="infoDivStudienberechtigung" href="#" data-toggle="popover" data-placement="auto" title="" data-content="<?php echo $p->t('bewerbung/studienberechtigungErlangtInErklaerung') ?>">
+								<span style="font-size: 1em;" class="glyphicon glyphicon-info-sign glyph" aria-hidden="true"></span>
+							</a>
+						</label>
+						<select name="zgv_nation" id="zgv_nation" class="form-control"">
+							<option value=""><?php echo $p->t('bewerbung/bitteAuswaehlenBaMa') ?></option>
+							<option value="A"><?php	echo ($sprache=='German'? 'Österreich':'Austria'); ?></option>
+							<?php $selected = '';
+							foreach($zgvNations->nation as $nat):
+								$selected = ($zgv_nation == $nat->code) ? 'selected' : ''; ?>
+								<option value="<?php echo $nat->code ?>" <?php echo $selected ?>>
+									<?php
+									if($sprache=='German')
+										echo $nat->langtext;
+									else
+										echo $nat->engltext;
+									?>
+								</option>
+							<?php endforeach; ?>
+						</select>
+					</div>
+					<?php endif; ?>
 					<div class="form-group">
 						<label for="studiensemester_kurzbz" class="control-label">
 							<?php echo $p->t('bewerbung/geplanterStudienbeginn') ?>
@@ -1172,6 +1201,7 @@ $studiensemester_array = array();
 						$pstID = $pst->prestudent_id;
 					}
 				}
+				$zgv_nation = $zgv_nation == '' && isset($_POST['zgv_nation']) ? $_POST['zgv_nation'] : $zgv_nation;
 				$nation = new nation($zgv_nation);
 				$nationengruppe = $nation->nationengruppe_kurzbz;
 
@@ -1250,6 +1280,7 @@ $studiensemester_array = array();
 			var item = $('#modal-studiengaenge input[name="studienplaene[]"]:checked');
 			var studienplan_id = item.val();
 			var stsem = $('#studiensemester_kurzbz').val();
+			var zgv_nation = $('#zgv_nation').val();
 
 			if (undefined == studienplan_id || studienplan_id == '') {
 				alert('<?php echo $p->t('bewerbung/bitteEineStudienrichtungWaehlen')?>');
@@ -1259,18 +1290,24 @@ $studiensemester_array = array();
 				alert('<?php echo $p->t('bewerbung/bitteStudienbeginnWaehlen')?>');
 				return false;
 			}
-			saveStudienplan(studienplan_id, stsem);
+			if (zgv_nation == '' && !item.hasClass('checkbox_lg')) {
+				alert('<?php echo $p->t('bewerbung/bitteZGVausweahlen')?>');
+				return false;
+			}
+			saveStudienplan(studienplan_id, stsem, zgv_nation);
 		});
 
-		$('#studiensemester_kurzbz').change(function () {
+		$('#studiensemester_kurzbz, #zgv_nation').change(function () {
 			var studiensemester = $('#studiensemester_kurzbz').val();
+			var zgv_nation = $('#zgv_nation').val();
+
 			$("#liste-studiengaenge").hide();
 			$(".loaderIcon").show();
 
 			$("#form-group-stg").load
 			(
 				document.URL + ' #liste-studiengaenge',
-				{studiensemester_kurzbz: studiensemester},
+				{studiensemester_kurzbz: studiensemester, zgv_nation: zgv_nation},
 				function () {
 					$(".loaderIcon").hide();
 					if ($('#studiensemester_kurzbz').val() != "") {
@@ -1312,11 +1349,12 @@ $studiensemester_array = array();
 		});
 	});
 
-	function saveStudienplan(studienplan_id, stsem) {
+	function saveStudienplan(studienplan_id, stsem, zgv_nation) {
 		data = {
 			studienplan_id: studienplan_id,
 			addStudienplan: true,
-			studiensemester: stsem
+			studiensemester: stsem,
+			zgv_nation: zgv_nation
 		};
 
 		$.ajax({

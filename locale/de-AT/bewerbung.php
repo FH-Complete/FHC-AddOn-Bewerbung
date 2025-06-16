@@ -736,4 +736,6 @@ $this->phrasen['bewerbung/uhstatNichtAusgefuellt']='Vor Anmeldung zu einem Reihu
 
 $this->phrasen['bewerbung/menuInvoices'] = 'Meine Zahlungen';
 $this->phrasen['bewerbung/erklaerungInvoices'] = 'Ablauf und Zahlungsbedingungen';
+$this->phrasen['bewerbung/idAustriaLogin']='Mit <b>ID Austria</b> registrieren/einloggen?';
+
 ?>

@@ -113,6 +113,7 @@ require_once ('../../../include/studiensemester.class.php');
 require_once ('../../../include/zgv.class.php');
 require_once ('../include/functions.inc.php');
 require_once ('../../../include/rueckstellung.class.php');
+require_once ('../../../include/kennzeichen.class.php');
 
 
 if (isset($_GET['logout']))
@@ -131,6 +132,19 @@ if (! $person->load($person_id))
 {
 	die($p->t('global/fehlerBeimLadenDesDatensatzes'));
 }
+
+$kennzeichen = new kennzeichen();
+
+$eobLogin = false;
+if ($kennzeichen->load_pers($person_id, ['eobRegistrierungsId']))
+{
+	$eobLogin = count($kennzeichen->result) > 0;
+}
+else
+{
+	die($kennzeichen->errormsg);
+}
+
 
 $spracheGet = filter_input(INPUT_GET, 'sprache');
 
@@ -2272,8 +2286,9 @@ if ($addStudienplan)
 	$return = BewerbungPersonAddStudienplan(
 		$_POST['studienplan_id'],
 		$person,
-		$_POST['studiensemester']
-		);
+		$_POST['studiensemester'],
+		isset($_POST['zgv_nation']) ? $_POST['zgv_nation'] : null
+	);
 	if ($return === true)
 		echo json_encode(array('status'=>'ok'));
 	else
@@ -2889,6 +2904,8 @@ else
 										$tabs = array_values($tabs);
 									}
 								}
+								else
+									$display = 'style="display: none"';
 							}
 							elseif (CAMPUS_NAME == 'FH BFI Wien')
 							{
