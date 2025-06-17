@@ -136,6 +136,10 @@ if (! $person->load($person_id))
 $kennzeichen = new kennzeichen();
 
 $eobLogin = false;
+$eob_fields = defined('BEWERBERTOOL_ELECTRONIC_ONBOARDING_VORBEFUELLTE_PERSON_FELDER') ?
+	BEWERBERTOOL_ELECTRONIC_ONBOARDING_VORBEFUELLTE_PERSON_FELDER :
+	array();
+
 if ($kennzeichen->load_pers($person_id, ['eobRegistrierungsId']))
 {
 	$eobLogin = count($kennzeichen->result) > 0;
@@ -1061,40 +1065,55 @@ if (isset($_POST['btn_person']))
 	// Wenn Eingabe gesperrt darf nur die SVNR gespeichert werden
 	if (!$eingabegesperrt)
 	{
-		$person->titelpre = $_POST['titel_pre'];
-		$person->vorname = $_POST['vorname'];
-		$person->nachname = $_POST['nachname'];
-		$person->titelpost = $_POST['titelPost'];
-
-
-		if(!$datum->checkDatum($_POST['geburtsdatum']))
+		// Felder entfernen, die von Electronic Onboarding kommen (dürfen nicht manuell befüllt werden)
+		if ($eobLogin)
 		{
-			$save_error_daten=true;
-			$message = $_POST['geburtsdatum']. "<br>" . $p->t('bewerbung/datumUngueltig');;
-			$person->gebdatum = '';
-		}
-		else
-		{
-			//korrigiertes Geburtsdatum speichern
-			$person->gebdatum = $datum->formatDatum($_POST['geburtsdatum'], 'Y-m-d');
+			foreach ($eob_fields as $eob_field)
+			{
+				if (isset($_POST[$eob_field])) unset($_POST[$eob_field]);
+			}
 		}
 
-		$person->staatsbuergerschaft = $_POST['staatsbuergerschaft'];
-		$person->geschlecht = $_POST['geschlecht'];
-		if ($_POST['geschlecht'] == 'm')
+		if (isset($_POST['titel_pre'])) $person->titelpre = $_POST['titel_pre'];
+		if (isset($_POST['vorname'])) $person->vorname = $_POST['vorname'];
+		if (isset($_POST['nachname'])) $person->nachname = $_POST['nachname'];
+		if (isset($_POST['titelPost'])) $person->titelpost = $_POST['titelPost'];
+
+		if (isset($_POST['geburtsdatum']))
 		{
-			$person->anrede = 'Herr';
+			if(!$datum->checkDatum($_POST['geburtsdatum']))
+			{
+				$save_error_daten=true;
+				$message = $_POST['geburtsdatum']. "<br>" . $p->t('bewerbung/datumUngueltig');
+				$person->gebdatum = '';
+			}
+			else
+			{
+				//korrigiertes Geburtsdatum speichern
+				$person->gebdatum = $datum->formatDatum($_POST['geburtsdatum'], 'Y-m-d');
+			}
 		}
-		elseif ($_POST['geschlecht'] == 'w')
+
+		if (isset($_POST['staatsbuergerschaft'])) $person->staatsbuergerschaft = $_POST['staatsbuergerschaft'];
+
+		if (isset($_POST['geschlecht']))
 		{
-			$person->anrede = 'Frau';
+			$person->geschlecht = $_POST['geschlecht'];
+			if ($_POST['geschlecht'] == 'm')
+			{
+				$person->anrede = 'Herr';
+			}
+			elseif ($_POST['geschlecht'] == 'w')
+			{
+				$person->anrede = 'Frau';
+			}
+			else
+			{
+				$person->anrede = '';
+			}
 		}
-		else
-		{
-			$person->anrede = '';
-		}
-		$person->gebort = $_POST['gebort'];
-		$person->geburtsnation = $_POST['geburtsnation'];
+		if (isset($_POST['gebort'])) $person->gebort = $_POST['gebort'];
+		if (isset($_POST['geburtsnation'])) $person->geburtsnation = $_POST['geburtsnation'];
 	}
 
 	if ($person->svnr == ''
