@@ -50,8 +50,6 @@ if(!isset($person_id))
 		echo '<div class="alert alert-info">'.$p->t('bewerbung/accountVorhanden').'</div>';
 	}
 
-	//$eob_fields = array('vorname', 'nachname', 'gebdatum', 'geschlecht', 'staatsbuergerschaft');
-
 	foreach ($eob_fields as $eob_field)
 	{
 		${$eob_field.'_disabled'} = $eingabegesperrt || $eobLogin ? $disabled_text : '';
