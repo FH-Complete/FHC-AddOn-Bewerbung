@@ -117,7 +117,7 @@ define('BEWERBERTOOL_DONT_SEND_MAIL_STG', serialize(array()));
 define('BEWERBERTOOL_ELECTRONIC_ONBOARDING_REGISTRATION_LINK', 'index.ci.php/extensions/FHC-Core-ElectronicOnboarding/OnboardingRegistrierung/startOnboarding');
 
 // Felder, die beim Electronic Onboarding Login vorbefüllt sind und daher nicht manuell änderbar sind
-define('BEWERBERTOOL_ELECTRONIC_ONBOARDING_VORBEFUELLTE_FELDER', array(
+define('BEWERBERTOOL_ELECTRONIC_ONBOARDING_VORBEFUELLTE_PERSON_FELDER', array(
 		'vorname',
 		'nachname',
 		'geburtsdatum',
