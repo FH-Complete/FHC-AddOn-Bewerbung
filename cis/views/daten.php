@@ -50,11 +50,9 @@ if(!isset($person_id))
 		echo '<div class="alert alert-info">'.$p->t('bewerbung/accountVorhanden').'</div>';
 	}
 
-	$eob_fields = array('vorname', 'nachname', 'gebdatum', 'geschlecht', 'staatsbuergerschaft');
-
 	foreach ($eob_fields as $eob_field)
 	{
-		${$eob_field.'_disabled'} = $eingabegesperrt || ($eobLogin && $person->{$eob_field} != '') ? $disabled_text : '';
+		${$eob_field.'_disabled'} = $eingabegesperrt || $eobLogin ? $disabled_text : '';
 	}
 
 	$eob_disabled=$eingabegesperrt || $eobLogin ? $disabled_text : '';
@@ -104,13 +102,13 @@ if(!isset($person_id))
 		<div class="form-group <?php echo ($vorname==''?'has-error':'') ?>">
 			<label for="vorname" class="col-sm-3 control-label"><?php echo $p->t('global/vorname') ?>*</label>
 			<div class="col-sm-9">
-				<input type="text" name="vorname" id="vorname"  <?php echo $vorname_disabled; ?> value="<?php echo $vorname ?>" class="form-control">
+				<input type="text" name="vorname" id="vorname"  <?php echo $vorname_disabled ?? ''; ?> value="<?php echo $vorname ?>" class="form-control">
 			</div>
 		</div>
 		<div class="form-group <?php echo ($nachname==''?'has-error':'') ?>">
 			<label for="nachname" class="col-sm-3 control-label"><?php echo $p->t('global/nachname') ?>*</label>
 			<div class="col-sm-9">
-				<input type="text" name="nachname" id="nachname"  <?php echo $nachname_disabled; ?> value="<?php echo $nachname ?>" class="form-control">
+				<input type="text" name="nachname" id="nachname"  <?php echo $nachname_disabled ?? ''; ?> value="<?php echo $nachname ?>" class="form-control">
 			</div>
 		</div>
 		<?php
@@ -132,7 +130,7 @@ if(!isset($person_id))
 		<div class="form-group <?php echo ($geburtstag==''?'has-error':'') ?>">
 			<label for="gebdatum" class="col-sm-3 control-label"><?php echo $p->t('global/geburtsdatum') ?>* (<?php echo $p->t('bewerbung/datumFormat') ?>)</label>
 			<div class="col-sm-9">
-				<input type="text" name="geburtsdatum" id="gebdatum"  <?php echo $gebdatum_disabled; ?> value="<?php echo $geburtstag ?>" class="form-control">
+				<input type="text" name="geburtsdatum" id="gebdatum"  <?php echo $geburtsdatum_disabled ?? ''; ?> value="<?php echo $geburtstag ?>" class="form-control">
 			</div>
 		</div>
 
@@ -175,7 +173,7 @@ if(!isset($person_id))
 		<div class="form-group <?php echo ($person->staatsbuergerschaft==''?'has-error':'') ?>">
 			<label for="staatsbuergerschaft" class="col-sm-3 control-label"><?php echo $p->t('global/staatsbuergerschaft') ?>*</label>
 			<div class="col-sm-9">
-				<select name="staatsbuergerschaft" id="staatsbuergerschaft"  <?php echo $staatsbuergerschaft_disabled; ?> class="form-control">
+				<select name="staatsbuergerschaft" id="staatsbuergerschaft"  <?php echo $staatsbuergerschaft_disabled ?? ''; ?> class="form-control">
 					<option value=""><?php echo $p->t('bewerbung/bitteAuswaehlen') ?></option>
 					<option value="A"><?php	echo ($sprache=='German'? 'Österreich':'Austria'); ?></option>
 					<?php $selected = '';
@@ -227,7 +225,7 @@ if(!isset($person_id))
 						$checked = 'checked';
 					}
 					echo '	<label class="radio-inline">
-								<input type="radio" name="geschlecht" class="radio-inline" '.$geschlecht_disabled.' value="'.$gsch->geschlecht.'" '.$checked.'>
+								<input type="radio" name="geschlecht" class="radio-inline" '.($geschlecht_disabled ?? '').' value="'.$gsch->geschlecht.'" '.$checked.'>
 								'.$gsch->bezeichnung_mehrsprachig_arr[$sprache].'
 							</label>';
 				}
