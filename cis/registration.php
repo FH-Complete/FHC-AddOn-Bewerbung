@@ -1844,7 +1844,7 @@ function sendMail($zugangscode, $email, $person_id=null)
 
 	if(defined('MAIL_DEBUG') && MAIL_DEBUG!='')
 	{
-		$msg .= '<br><br>Zugangscode: <a href="'.APP_ROOT.'addons/bewerbung/cis/registration.php?code='.$zugangscode.'&emailAdresse='.$email.'">Link zur Bewerbung</a>';
+		$msg .= '<br><br>Zugangscode: <a href="'.APP_ROOT.'addons/bewerbung/cis/registration.php?code='.$zugangscode.'&emailAdresse='.$email.'&keepEmailUnverified=true">Link zur Bewerbung</a>';
 	}
 
 	return $msg;

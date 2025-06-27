@@ -1379,33 +1379,38 @@ if (isset($_POST['btn_kontakt']) && ! $eingabegesperrt)
 				// löschen
 				$kontakt_t->delete($kontakt_id);
 			}
-			elseif ($telefonnummer != '' && $telefonnummer != $telefonnummer_alt)
+			elseif ($telefonnummer != '')
 			{
-				$kontakt_t->person_id = $person->person_id;
-				$kontakt_t->kontakt_id = $kontakt_id;
-				$kontakt_t->zustellung = true;
-				$kontakt_t->kontakttyp = 'telefon';
-				$kontakt_t->kontakt = $telefonnummer;
-				$kontakt_t->updateamum = date('Y-m-d H:i:s');
-				$kontakt_t->updatevon = 'online';
-				$kontakt_t->new = false;
+				// neue Telefonnummer - speichern
+				if ($telefonnummer !== $telefonnummer_alt)
+				{
+					$kontakt_t->person_id = $person->person_id;
+					$kontakt_t->kontakt_id = $kontakt_id;
+					$kontakt_t->zustellung = true;
+					$kontakt_t->kontakttyp = 'telefon';
+					$kontakt_t->kontakt = $telefonnummer;
+					$kontakt_t->updateamum = date('Y-m-d H:i:s');
+					$kontakt_t->updatevon = 'online';
+					$kontakt_t->new = false;
 
-				if (! $kontakt_t->save())
-				{
-					$message = $kontakt_t->errormsg;
-					$save_error_kontakt = true;
-				}
-				else
-				{
-					$save_error_kontakt = false;
-					// Geparkten Logeintrag löschen
-					$rueckstellung->deleteParked($person->person_id);
-					// Logeintrag schreiben
-					$log->log($person->person_id, 'Action', array(
-						'name' => 'Phone number updated',
-						'success' => true,
-						'message' => 'Phone number ' . $telefonnummer_alt . ' changed to ' . $telefonnummer
-					), 'bewerbung', 'bewerbung', null, 'online');
+					if (! $kontakt_t->save())
+					{
+						$message = $kontakt_t->errormsg;
+						$save_error_kontakt = true;
+					}
+					else
+					{
+						$save_error_kontakt = false;
+						// Geparkten Logeintrag löschen
+						$rueckstellung->deleteParked($person->person_id);
+						// Logeintrag schreiben
+						$log->log($person->person_id, 'Action', array(
+							'name' => 'Phone number updated',
+							'success' => true,
+							'message' => 'Phone number ' . $telefonnummer_alt . ' changed to ' . $telefonnummer
+						), 'bewerbung', 'bewerbung', null, 'online');
+					}
+					
 				}
 			}
 			else
