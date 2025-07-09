@@ -693,8 +693,7 @@ $this->phrasen['bewerbung/infoVorgemerktFuerQualifikationskurs']='Sie sind als T
 $this->phrasen['bewerbung/raumzuteilungFolgt']='Details folgen 2 Werktage vor Testbeginn per E-Mail (Bitte auch Spamordner überprüfen!)';
 $this->phrasen['bewerbung/sieHabenFolgendenTerminGewaehltMaster']='Sie haben sich erfolgreich für folgende/n Master-Reihungstesttermin/e registriert.';
 $this->phrasen['bewerbung/sieHabenFolgendenTerminGewaehlt']='Danke für Ihre Anmeldung zum Bachelorreihungstest.<br>Ihre Priorisierung der Studiengänge ist fixiert und kann nur bis zur Anmeldefrist geändert werden.<br>Nach Absolvierung des Reihungstests kann die Priorisierung <b>NICHT</b> mehr geändert werden.';
-$this->phrasen['bewerbung/loginReihungstest']='<h3>Online-Reihungstest</h3>Klicken Sie <b>am Tag Ihres Reihungstesttermins</b> auf den Button "Zum Reihungstest"<br>
-												Bitte beachten Sie, dass Sie <u>Mozilla Firefox</u> als Browser verwenden, da es sonst zu Darstellungsproblemen kommen kann.<br><br>
+$this->phrasen['bewerbung/loginReihungstest']='<h3>Online-Reihungstest</h3>Klicken Sie <b>am Tag Ihres Reihungstesttermins</b> auf den Button "Zum Reihungstest"<br><br>
 												<a href="'.APP_ROOT.'cis/testtool/index.php?prestudent=%s" class="btn btn-primary" role="button" target="_blank">Zum Reihungstest</a>';
 $this->phrasen['bewerbung/informationenRTvorhanden']='Informationen zum Reihungstest vorhanden';
 $this->phrasen['bewerbung/anmerkungBerufstaetigkeit']='<b>NUR</b> für Studiengänge in Abendform (berufsbegleitend) und dualer Form verpflichtend<br>&nbsp;&nbsp;&nbsp;&nbsp;Wir weisen darauf hin, dass eine Berufstätigkeit nicht zwingend erforderlich ist!';

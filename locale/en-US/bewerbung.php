@@ -643,8 +643,7 @@ $this->phrasen['bewerbung/sieHabenFolgendenTerminGewaehlt']='Thank you for regis
 $this->phrasen['bewerbung/sieHabenFolgendenTerminGewaehltMaster']='You have successfully registered for the following Master placement test date(s).';
 $this->phrasen['bewerbung/informationenRTvorhanden']='Information for placement test';
 $this->phrasen['bewerbung/anmerkungBerufstaetigkeit']='<b>ONLY</b> obligatory for part-time degree programs<br>&nbsp;&nbsp;&nbsp;&nbsp;We would like to point out that a professional activity is not mandatory!';
-$this->phrasen['bewerbung/loginReihungstest']='<h3>Online-placement-test</h3><b>On the day of your placement test</b> click on the button "To placement test"<br>
-												Please note that you must use <u>Mozilla Firefox</u> as your browser, otherwise you may experience rendering problems.<br><br>
+$this->phrasen['bewerbung/loginReihungstest']='<h3>Online-placement-test</h3><b>On the day of your placement test</b> click on the button "To placement test"<br><br>
 												<a href="'.APP_ROOT.'cis/testtool/index.php?prestudent=%s" class="btn btn-primary" role="button" target="_blank">To placement test</a>';
 $this->phrasen['bewerbung/fuerReihungstestAnmeldenMaster']='Please register for a Master\'s placement test date. Please note that in the case of multiple applications, the placement test must be taken for each selected Master\'s degree program. </br >
 You will see the next available placement test dates for the chosen degree program(s). If the displayed date(s) is/are not possible for you, please contact the relevant degree program assistant.';
