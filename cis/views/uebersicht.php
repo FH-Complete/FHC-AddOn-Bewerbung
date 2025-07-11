@@ -1090,6 +1090,9 @@ $studiensemester_array = array();
 		}
 		else
 		{
+			// studiengang url parameter holen
+			$studiengang_get_arr = isset($studiengang_get) && is_string($studiengang_get) ? explode(',', $studiengang_get) : array();
+
 			foreach ($studienplan as $row)
 			{
 				if ($lasttyp != $row->typ)
@@ -1242,6 +1245,10 @@ $studiensemester_array = array();
 
 				if (!$fristAbgelaufen)
 				{
+					// if studiengangskennzahl passed as parameter, preselect it
+					if ($disabled == '' && $disabledExistsPrestudentstatus == '' && in_array($row->studiengang_kz, $studiengang_get_arr))
+						$checked = ' checked';
+
 					echo '<div class="panel-body">
 						<div class="radio '.$disabledExistsPrestudentstatus.'">
 							<label class="'.$textMuted.'">

@@ -125,6 +125,7 @@ if (isset($_GET['logout']))
 $person_id = (int)$_SESSION['bewerbung/personId'];
 $akte_id = isset($_POST['akte_id']) ? $_POST['akte_id'] : '';
 $method = isset($_POST['method']) ? $_POST['method'] : '';
+$studiengang_get = filter_input(INPUT_GET, 'stg_kz');
 $datum = new datum();
 $person = new person();
 
@@ -167,7 +168,6 @@ if(isset($spracheGet))
 }
 // $sprache = DEFAULT_LANGUAGE;
 $sprache = getSprache();
-//echo var_dump($sprache);
 $sprachindex = new sprache();
 $spracheIndex = $sprachindex->getIndexFromSprache($sprache);
 $p = new phrasen($sprache);
@@ -2315,7 +2315,19 @@ if ($addStudienplan)
 		isset($_POST['zgv_nation']) ? $_POST['zgv_nation'] : null
 	);
 	if ($return === true)
+	{
+		// wenn electronic onboarding login, dokumente für prestudent akzeptieren
+		if ($eobLogin)
+		{
+			$zuAkzeptieren = array('Meldezet', 'identity');
+			$dokument_akzeptieren = new dokument();
+			foreach ($zuAkzeptieren as $dokument_kurzbz)
+			{
+				$dokument_akzeptieren->akzeptiereDokument($dokument_kurzbz, $person->person_id, array('b', 'm', 'l'));
+			}
+		}
 		echo json_encode(array('status'=>'ok'));
+	}
 	else
 		echo json_encode(array(
 			'status' => 'fehler',

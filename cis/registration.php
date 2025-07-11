@@ -1365,6 +1365,22 @@ elseif($username && $password)
 							  </div>
 							</div>
 							<?php if (defined('BEWERBERTOOL_ELECTRONIC_ONBOARDING_REGISTRATION_LINK')): ?>
+							<?php
+								$onboardingRegistrationLink = APP_ROOT.BEWERBERTOOL_ELECTRONIC_ONBOARDING_REGISTRATION_LINK;
+
+								// wenn weitergeleitet mit studiengangskennzahl, get parameter anhängen
+								$studiengang_get = filter_input(INPUT_GET, 'stg_kz');
+								if($studiengang_get != '')
+								{
+									$hasParams = parse_url(BEWERBERTOOL_ELECTRONIC_ONBOARDING_REGISTRATION_LINK, PHP_URL_QUERY);
+									// parse_url returns a string if the URL has parameters or NULL if not
+									if ($hasParams) {
+										$onboardingRegistrationLink .= '&stg_kz='.$studiengang_get;
+									} else {
+										$onboardingRegistrationLink .= '?stg_kz='.$studiengang_get;
+									}
+								}
+							?>
 							<div class="panel panel-info">
 								<div class="panel-heading text-center">
 									<h3 class="panel-title"><?php echo $p->t('bewerbung/idAustriaLogin') ?></h3>
@@ -1379,7 +1395,7 @@ elseif($username && $password)
 									<a
 										class="btn btn-primary btn-lg"
 										style="width: 250px;"
-										href="<?php echo APP_ROOT.BEWERBERTOOL_ELECTRONIC_ONBOARDING_REGISTRATION_LINK ?>"
+										href="<?php echo $onboardingRegistrationLink ?>"
 										role="button">
 											<?php echo $p->t('bewerbung/login') ?>
 									</a>

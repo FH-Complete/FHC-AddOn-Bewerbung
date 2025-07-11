@@ -2195,13 +2195,12 @@ function setDokumenteMasterZGV($person_id)
 		$person->load($person_id);
 
 		//Dokumente akzeptieren
-		$zgvMaster ->akzeptiereDokument('zgv_mast', $person_id);
-		$zgvMaster ->akzeptiereDokument('zgv_bakk', $person_id);
-		$zgvMaster ->akzeptiereDokument('identity', $person_id);
-		$zgvMaster ->akzeptiereDokument('SprachB2', $person_id);
-		$zgvMaster ->akzeptiereDokument('Statisti', $person_id);
-		$zgvMaster ->akzeptiereDokument('ecard', $person_id);
+		$documentsToAccept = array('zgv_mast', 'zgv_bakk', 'identity', 'SprachB2', 'Statisti', 'ecard');
 
+		foreach ($documentsToAccept as $dokument_kurzbz)
+		{
+			$zgvMaster->akzeptiereDokument($dokument_kurzbz, $person_id, array('m'));
+		}
 
 		//Dokumente entakzeptieren
 		$zgvMaster ->entakzeptiereDokument('Meldezet', $person_id);
