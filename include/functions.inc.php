@@ -1149,12 +1149,10 @@ function getAllDokumenteBewerbungstoolForPerson($person_id, $studiensemester_arr
 			{
 				$i = 0;
 				$qry .= " AND (";
+				$qry .= " get_rolle_prestudent (tbl_prestudent.prestudent_id, NULL) NOT IN ('Abbrecher')";
 				foreach ($studiensemester_array as $studiensemester)
 				{
-					if ($i > 0)
-						$qry .= " OR ";
-					$qry .= " get_rolle_prestudent (tbl_prestudent.prestudent_id, " . $db->db_add_param($studiensemester, FHC_STRING) . ") NOT IN ('Abgewiesener','Abbrecher')";
-					$i ++;
+					$qry .= " OR get_rolle_prestudent (tbl_prestudent.prestudent_id, " . $db->db_add_param($studiensemester, FHC_STRING) . ") NOT IN ('Abgewiesener','Abbrecher')";
 				}
 				$qry .= " ) ";
 			}
@@ -2195,7 +2193,7 @@ function setDokumenteMasterZGV($person_id)
 		$person->load($person_id);
 
 		//Dokumente akzeptieren
-		$documentsToAccept = array('zgv_mast', 'zgv_bakk', 'identity', 'SprachB2', 'Statisti', 'ecard');
+		$documentsToAccept = array('zgv_mast', 'zgv_bakk', 'identity', 'SprachB2', 'Statisti');
 
 		foreach ($documentsToAccept as $dokument_kurzbz)
 		{

@@ -58,6 +58,7 @@ Should you require any additional information, please do not hesitate to contact
 		<a href="#datenschutzText" data-toggle="collapse">Privacy information: <span class="glyphicon glyphicon-collapse-down"></span></a>
 		<div id="datenschutzText" class="collapse">
 		The data communicated to us by you for the purpose of the application will be used by us exclusively for the processing of the application on the basis of pre-contractual or contractual purposes and will not be passed on to third parties with the exception described below in case of uncertainties regarding the entry requirements. If there is no further contact or enrolment, your data will be deleted after three years.<br><br>
+		UAS Technikum Wien is entitled to use your data in anonymized form for surveys for the purpose of quality assurance.<br><br>
 		Information on your data subject rights can be found here: <a href=\'https://www.technikum-wien.at/information-ueber-ihre-rechte-gemaess-datenschutz-grundverordnung/\' target=\'_blank\'>https://www.technikum-wien.at/information-ueber-ihre-rechte-gemaess-datenschutz-grundverordnung/</a><br><br>
 		If you have any questions, please contact us at <a href=\'mailto:datenschutz@technikum-wien.at\'>datenschutz@technikum-wien.at</a><br><br>
 		Data Processing Office:<br>
@@ -238,7 +239,6 @@ $this->phrasen['bewerbung/nichtAbgeschickt']='application not sent';
 $this->phrasen['bewerbung/studiengangHinzufuegen']='Add application for degree program';
 $this->phrasen['bewerbung/weiter']='continue';
 $this->phrasen['bewerbung/geburtsnation']='Country of Birth';
-$this->phrasen['bewerbung/svnr']='Austrian Social Security Number';
 $this->phrasen['bewerbung/maennlich']='male';
 $this->phrasen['bewerbung/weiblich']='female';
 $this->phrasen['bewerbung/berufstaetigkeit']='Job';
@@ -313,7 +313,6 @@ $this->phrasen['bewerbung/teilweiseVollstaendig']='partially complete';
 $this->phrasen['bewerbung/maxAnzahlTeilnehmer']='Maximum number of participants reached';
 $this->phrasen['bewerbung/erfolgreichBeworben']='You have applied successfully. Generally, we will get back to you within 5 working days.';
 $this->phrasen['bewerbung/fehlerBeimVersendenDerBewerbung']='An error occured while sending the application. Please try again.';
-$this->phrasen['bewerbung/svnrBereitsVorhanden']='Social Security Number already exists.';
 $this->phrasen['bewerbung/menuBewerbungFuerStudiengang']='Application for a degree program';
 $this->phrasen['bewerbung/emailBodyStart']='<html>
 	<head>
@@ -632,7 +631,7 @@ Yours sincerely<br>
 UAS Technikum Wien';
 
 $this->phrasen['bewerbung/reihungstestInfoTextAngemeldet']='<div class="alert alert-info">
-<p>We will start on time with the identity check. Therefore, make sure you are in the Zoom waiting room at that time (you will receive the link 2 working days before your chosen placement test date). Further details to the placement test can be found at: <a href="https://cis.technikum-wien.at/cms/dms.php?id=207694" target="_blank">https://cis.technikum-wien.at/cms/dms.php?id=207694</a></p>
+<p>We will start on time with the identity check. Therefore, make sure you are in the Zoom waiting room at that time (you will receive the link 2 working days before your chosen placement test date). Further details to the placement test can be found at: <a href="https://cis.technikum-wien.at/cms/dms.php?id=330348" target="_blank">https://cis.technikum-wien.at/cms/dms.php?id=207694</a></p>
 <p>You find the entry to the placement test in your Bachelor application under <a href="https://cis.technikum-wien.at/cms/dms.php?id=147448" target="_blank">overview/details/to the placement test</a> here in the online application tool.</p>
 </div><br>';
 $this->phrasen['bewerbung/anmeldefrist']='Term of application';
@@ -651,7 +650,7 @@ $this->phrasen['bewerbung/masterAnmerkung']='You will receive more detailed info
 $this->phrasen['bewerbung/reihungstestInfoTextAngemeldetMaster']='<div class="alert alert-info">
 <p>All placement tests are accompanied by video via Zoom.
 You will receive the link to the Zoom meeting room in good time from the relevant degree program assistant. We start on time with the identity check. Therefore, please make sure that you are in the Zoom waiting room at this time and that you have your proof of identity to hand. </p>
-<p>For more details on the procedure of the placement test, please go to: <a href="https://cis.technikum-wien.at/cms/dms.php?id=275547" target="_blank">https://cis.technikum-wien.at/cms/dms.php?id=275547</a></p>
+<p>For more details on the procedure of the placement test, please go to: <a href="https://cis.technikum-wien.at/cms/dms.php?id=143930" target="_blank">https://cis.technikum-wien.at/cms/dms.php?id=330348</a></p>
 <p>You will find the entry button for the placement test in your Master\'s application under <a href="https://cis.technikum-wien.at/cms/dms.php?id=265268" target="_blank">Overview/Details/Placement Test</a> here in the online application tool.</p>
 </div><br>';
 // Ausbildung

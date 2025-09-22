@@ -39,8 +39,6 @@ if(!isset($person_id))
 	$geburtstag = ($person->gebdatum != '')?$datum->formatDatum($person->gebdatum, 'd.m.Y'):'';
 	$gebort =  ($person->gebort != '')?$person->gebort:'';
 
-	$svnr = ($person->svnr != '')?$person->svnr:'';
-
 	$disabled_text = 'disabled="disabled"';
 
 	$disabled='';
@@ -191,21 +189,6 @@ if(!isset($person_id))
 				</select>
 			</div>
 		</div>
-		<?php
-		if(!defined('BEWERBERTOOL_SOZIALVERSICHERUNGSNUMMER_ANZEIGEN') || BEWERBERTOOL_SOZIALVERSICHERUNGSNUMMER_ANZEIGEN == true || is_string(BEWERBERTOOL_SOZIALVERSICHERUNGSNUMMER_ANZEIGEN)):
-			$svnrDisabled = 'disabled="disabled"';
-			if ($svnr == '')
-			{
-				$svnrDisabled = '';
-			}
-		?>
-		<div id="input_svnr" class="form-group" <?php echo ($svnr == '' && !in_array($person->staatsbuergerschaft, explode(";", BEWERBERTOOL_SOZIALVERSICHERUNGSNUMMER_ANZEIGEN)) && is_string(BEWERBERTOOL_SOZIALVERSICHERUNGSNUMMER_ANZEIGEN)?'style="display: none;"':'') ?>>
-			<label for="svnr" class="col-sm-3 control-label"><?php echo $p->t('bewerbung/svnr').' '.$p->t('bewerbung/fallsVorhanden') ?></label>
-			<div class="col-sm-9">
-				<input type="text" name="svnr" id="svnr"  <?php echo $svnrDisabled; ?> value="<?php echo $svnr ?>" class="form-control">
-			</div>
-		</div>
-		<?php endif; ?>
 		<div class="form-group">
 			<label for="geschlecht" class="col-sm-3 control-label"><?php echo $p->t('global/geschlecht') ?></label>
 			<div class="col-sm-9">
@@ -409,7 +392,7 @@ if(!isset($person_id))
 		<button class="btn-nav btn btn-default" type="submit" name="btn_person" data-jump-tab="<?php echo $tabs[array_search('daten', $tabs)-1] ?>" onclick="this.form.action='<?php echo $_SERVER['PHP_SELF'] ?>?active=<?php echo $tabs[array_search('daten', $tabs)-1] ?>'">
 			<?php echo $p->t('global/zurueck') ?>
 		</button>
-		<button class="btn btn-success" type="submit"  <?php /*echo ($svnrDisabled == '' ? '' : $disabled);*/ ?> name="btn_person">
+		<button class="btn btn-success" type="submit" name="btn_person">
 			<?php echo $p->t('global/speichern') ?>
 		</button>
 		<button class="btn-nav btn btn-default" type="submit" name="btn_person" data-jump-tab="<?php echo $tabs[array_search('daten', $tabs)+1] ?>" onclick="this.form.action='<?php echo $_SERVER['PHP_SELF'] ?>?active=<?php echo $tabs[array_search('daten', $tabs)+1] ?>'">
@@ -421,20 +404,6 @@ if(!isset($person_id))
 		$(function()
 		{
 			<?php
-			if(defined('BEWERBERTOOL_SOZIALVERSICHERUNGSNUMMER_ANZEIGEN') && is_string(BEWERBERTOOL_SOZIALVERSICHERUNGSNUMMER_ANZEIGEN)):
-			?>
-			$('#staatsbuergerschaft').change(function() {
-				var arrayFromPHP = <?php echo json_encode(explode(";", BEWERBERTOOL_SOZIALVERSICHERUNGSNUMMER_ANZEIGEN)) ?>;
-				if(jQuery.inArray($('#staatsbuergerschaft').val(), arrayFromPHP) > -1 ) {
-					$('#input_svnr').show();
-				}
-				else {
-					$('#input_svnr').hide();
-				}
-			});
-			<?php
-			endif;
-
 			if(defined('BEWERBERTOOL_BERUFSTAETIGKEIT_NOTIZ') && BEWERBERTOOL_BERUFSTAETIGKEIT_NOTIZ === false):
 			?>
 			var berufstaetigCode = $('#inputBerufstaetigCode').val();

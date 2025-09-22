@@ -61,34 +61,8 @@ function checkPerson()
 		}
 	}
 
-	// Berechnung der Sozialversicherungsnummer wenn AT
-	if ($("#staatsbuergerschaft").val() === 'A')
+	if (errors.length)
 	{
-		var soz_nr = $.trim($("#svnr").val());
-
-		if (!/^\d{10}$/.test(soz_nr))
-		{
-			$('#svnr').closest('div.form-group').removeClass('has-success').addClass('has-error');
-			errors.push('svnr');
-		}
-
-		var checksum = 0;
-
-		checksum = (3 * soz_nr[0]) + (7 * soz_nr[1]) + (9 * soz_nr[2]) + (5 * soz_nr[4]) + (8 * soz_nr[5]) + (4 * soz_nr[6]) + (2 * soz_nr[7]) + (1 * soz_nr[8]) + (6 * soz_nr[9]);
-		checksum = checksum % 11;
-
-		if (checksum !== parseInt(soz_nr[3], 10))
-		{
-			$('#svnr').closest('div.form-group').removeClass('has-success').addClass('has-error');
-			errors.push('svnr');
-		}
-		else
-		{
-			$('#svnr').closest('div.form-group').removeClass('has-error').addClass('has-success');
-		}
-	}
-
-	if(errors.length) {
 		return false;
 	}
 
