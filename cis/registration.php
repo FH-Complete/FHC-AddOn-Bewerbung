@@ -502,6 +502,13 @@ elseif($username && $password)
 						{
 							$message = '<p class="bg-danger padding-10">'.$p->t('bewerbung/bitteDatenuebermittlungZustimmen').'</p>';
 						}
+						// Wenn die Zusatimmung zur Datenschutzerklärung nicht gegeben ist
+						elseif (defined('BEWERBERTOOL_SHOW_ZUSTIMMUNGSERKLAERUNG_DATENSCHUTZERKLAERUNG')
+								&& BEWERBERTOOL_SHOW_ZUSTIMMUNGSERKLAERUNG_DATENSCHUTZERKLAERUNG
+								&& !isset($_POST['zustimmung_datenschutzerklaerung']))
+						{
+							$message = '<p class="bg-danger padding-10">'.$p->t('bewerbung/bitteDatenschutzerklaerungZustimmen').'</p>';
+						}
 						// Wenn die Zusatimmung zu AGB nicht gegeben ist
 						elseif (defined('BEWERBERTOOL_SHOW_ZUSTIMMUNGSERKLAERUNG_AGB')
 								&& BEWERBERTOOL_SHOW_ZUSTIMMUNGSERKLAERUNG_AGB
@@ -1087,6 +1094,13 @@ elseif($username && $password)
 								</div>
 								<br />
 							<?php endif; ?>
+							<?php if (defined('BEWERBERTOOL_SHOW_ZUSTIMMUNGSERKLAERUNG_DATENSCHUTZERKLAERUNG') && BEWERBERTOOL_SHOW_ZUSTIMMUNGSERKLAERUNG_DATENSCHUTZERKLAERUNG === true): ?>
+								<div class="checkbox-inline">
+									<input type="checkbox" name="zustimmung_datenschutzerklaerung" id="checkbox_zustimmung_datenschutzerklaerung" value="" required="required">
+									<?php echo $p->t('bewerbung/zustimmungDatenschutzerklaerung') ?>
+								</div>
+								<br />
+							<?php endif; ?>
 							<?php if (defined('BEWERBERTOOL_SHOW_ZUSTIMMUNGSERKLAERUNG_AGB') && BEWERBERTOOL_SHOW_ZUSTIMMUNGSERKLAERUNG_AGB === true): ?>
 								<div class="checkbox-inline">
 									<input type="checkbox" name="zustimmung_agb" id="checkbox_zustimmung_agb" value="" required="required">
@@ -1453,6 +1467,14 @@ elseif($username && $password)
 				if(document.getElementById('checkbox_zustimmung_datenuebermittlung').checked == false)
 				{
 					alert("<?php echo $p->t('bewerbung/bitteDatenuebermittlungZustimmen')?>");
+					return false;
+				}
+			<?php endif; ?>
+
+			<?php if (defined('BEWERBERTOOL_SHOW_ZUSTIMMUNGSERKLAERUNG_DATENSCHUTZERKLAERUNG') && BEWERBERTOOL_SHOW_ZUSTIMMUNGSERKLAERUNG_DATENSCHUTZERKLAERUNG): ?>
+				if(document.getElementById('checkbox_zustimmung_datenschutzerklaerung').checked == false)
+				{
+					alert("<?php echo $p->t('bewerbung/bitteDatenschutzerklaerungZustimmen')?>");
 					return false;
 				}
 			<?php endif; ?>
