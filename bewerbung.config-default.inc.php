@@ -39,9 +39,6 @@ define('BEWERBERTOOL_GTM', '');
 // Wenn leer, gibt es keine einschraenkung. Wenn zB 3, kann man nur 3 auswaehlen, dann sind alle Anderen optionen deaktiviert.
 define('BEWERBERTOOL_MAX_STUDIENGAENGE', '');
 
-//Zeigt das Input fuer die Sozialversicherungsnummer an.
-// Moegliche Werte sind true, false oder ein String, getrennt mit Semikolons, jener nation_codes, bei denen das SVNR-Input angezeigt werden soll (zB 'A;D;I,CH').
-define('BEWERBERTOOL_SOZIALVERSICHERUNGSNUMMER_ANZEIGEN', true);
 
 define('BEWERBERTOOL_DATEN_TITEL_ANZEIGEN', false);
 
