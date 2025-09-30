@@ -2197,8 +2197,6 @@ function setDokumenteMasterZGV($person_id)
 		$zgvMaster ->akzeptiereDokument('identity', $person_id);
 		$zgvMaster ->akzeptiereDokument('SprachB2', $person_id);
 		$zgvMaster ->akzeptiereDokument('Statisti', $person_id);
-		$zgvMaster ->akzeptiereDokument('ecard', $person_id);
-
 
 		//Dokumente entakzeptieren
 		$zgvMaster ->entakzeptiereDokument('Meldezet', $person_id);

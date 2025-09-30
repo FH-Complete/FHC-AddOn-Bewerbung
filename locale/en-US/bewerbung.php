@@ -239,7 +239,6 @@ $this->phrasen['bewerbung/nichtAbgeschickt']='application not sent';
 $this->phrasen['bewerbung/studiengangHinzufuegen']='Add application for degree program';
 $this->phrasen['bewerbung/weiter']='continue';
 $this->phrasen['bewerbung/geburtsnation']='Country of Birth';
-$this->phrasen['bewerbung/svnr']='Austrian Social Security Number';
 $this->phrasen['bewerbung/maennlich']='male';
 $this->phrasen['bewerbung/weiblich']='female';
 $this->phrasen['bewerbung/berufstaetigkeit']='Job';
@@ -314,7 +313,6 @@ $this->phrasen['bewerbung/teilweiseVollstaendig']='partially complete';
 $this->phrasen['bewerbung/maxAnzahlTeilnehmer']='Maximum number of participants reached';
 $this->phrasen['bewerbung/erfolgreichBeworben']='You have applied successfully. Generally, we will get back to you within 5 working days.';
 $this->phrasen['bewerbung/fehlerBeimVersendenDerBewerbung']='An error occured while sending the application. Please try again.';
-$this->phrasen['bewerbung/svnrBereitsVorhanden']='Social Security Number already exists.';
 $this->phrasen['bewerbung/menuBewerbungFuerStudiengang']='Application for a degree program';
 $this->phrasen['bewerbung/emailBodyStart']='<html>
 	<head>
@@ -633,7 +631,7 @@ Yours sincerely<br>
 UAS Technikum Wien';
 
 $this->phrasen['bewerbung/reihungstestInfoTextAngemeldet']='<div class="alert alert-info">
-<p>We will start on time with the identity check. Therefore, make sure you are in the Zoom waiting room at that time (you will receive the link 2 working days before your chosen placement test date). Further details to the placement test can be found at: <a href="https://cis.technikum-wien.at/cms/dms.php?id=207694" target="_blank">https://cis.technikum-wien.at/cms/dms.php?id=207694</a></p>
+<p>We will start on time with the identity check. Therefore, make sure you are in the Zoom waiting room at that time (you will receive the link 2 working days before your chosen placement test date). Further details to the placement test can be found at: <a href="https://cis.technikum-wien.at/cms/dms.php?id=330348" target="_blank">https://cis.technikum-wien.at/cms/dms.php?id=207694</a></p>
 <p>You find the entry to the placement test in your Bachelor application under <a href="https://cis.technikum-wien.at/cms/dms.php?id=147448" target="_blank">overview/details/to the placement test</a> here in the online application tool.</p>
 </div><br>';
 $this->phrasen['bewerbung/anmeldefrist']='Term of application';
@@ -679,8 +677,16 @@ $this->phrasen['bewerbung/legende_hochgeladen']='Required document already uploa
 $this->phrasen['bewerbung/legende_vorhanden']='Document already exists';
 $this->phrasen['bewerbung/legende_hochladen']='Upload if applicable';
 $this->phrasen['bewerbung/legende_nachreichen']='Document will be submitted later';
+
+// UHSTAT
 $this->phrasen['bewerbung/menuUhstat']='Statistical data (UHSTAT)';
 $this->phrasen['bewerbung/uhstatNichtAusgefuellt']='Before registering for a placement test, the statistical data (UHSTAT) must be filled out.';
+
+// Zahlungen
 $this->phrasen['bewerbung/menuInvoices'] = 'Payments';
 $this->phrasen['bewerbung/erklaerungInvoices'] = 'Process and payment conditions';
+
+// Datenschutzerklärung
+$this->phrasen['bewerbung/bitteDatenschutzerklaerungZustimmen']='You have to consent to the privacy statement to send the application.';
+$this->phrasen['bewerbung/zustimmungDatenschutzerklaerung']='I have taken note of the privacy information.';
 ?>

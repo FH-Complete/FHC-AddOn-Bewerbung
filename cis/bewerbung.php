@@ -1083,31 +1083,6 @@ if (isset($_POST['btn_person']))
 		$person->geburtsnation = $_POST['geburtsnation'];
 	}
 
-	if ($person->svnr == ''
-		&& isset($_POST['svnr'])
-		&& $_POST['svnr'] != '')
-	{
-		$svnr = $_POST['svnr'];
-		// Check SVNR
-		if ($person->checkSvnr($svnr, $person_id))
-		{
-			$message = $p->t('bewerbung/svnrBereitsVorhanden');
-			$save_error_daten = true;
-			// Geparkten Logeintrag löschen
-			$rueckstellung->deleteParked($person_id);
-			// Logeintrag schreiben
-			$log->log($person_id, 'Action', array(
-				'name' => 'Error saving Sozialversicherungsnummer',
-				'success' => false,
-				'message' => 'Sozialversicherungsnummer ' . $svnr . ' already present in database'
-			), 'bewerbung', 'bewerbung', null, 'online');
-		}
-		else
-		{
-			$person->svnr = $svnr;
-		}
-	}
-
 	$person->new = false;
 
 	if (!$save_error_daten)

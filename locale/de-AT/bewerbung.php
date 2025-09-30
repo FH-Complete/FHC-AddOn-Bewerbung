@@ -289,7 +289,6 @@ $this->phrasen['bewerbung/datenUnvollstaendig']='Daten vervollständigen';
 $this->phrasen['bewerbung/studiengangHinzufuegen']='Neue Bewerbung für Studiengang/Lehrgang hinzufügen';
 $this->phrasen['bewerbung/weiter']='Weiter';
 $this->phrasen['bewerbung/geburtsnation']='Geburtsnation';
-$this->phrasen['bewerbung/svnr']='Österr. Sozialversicherungsnr.';
 $this->phrasen['bewerbung/maennlich']='männlich';
 $this->phrasen['bewerbung/weiblich']='weiblich';
 $this->phrasen['bewerbung/berufstaetigkeit']='Aktuelle Berufstätigkeit **';
@@ -365,7 +364,6 @@ $this->phrasen['bewerbung/teilweiseVollstaendig']='teilweise vollständig';
 $this->phrasen['bewerbung/maxAnzahlTeilnehmer']='max. Teilnehmeranzahl erreicht';
 $this->phrasen['bewerbung/erfolgreichBeworben']='Sie haben sich erfolgreich für %s beworben. In der Regel werden Sie innerhalb von 5 Werktagen kontaktiert.';
 $this->phrasen['bewerbung/fehlerBeimVersendenDerBewerbung']='Es ist ein Fehler beim Versenden der Bewerbung aufgetreten. Bitte versuchen Sie es nocheinmal.';
-$this->phrasen['bewerbung/svnrBereitsVorhanden']='SVNR bereits vorhanden';
 $this->phrasen['bewerbung/menuBewerbungFuerStudiengang']='Bewerbung für einen Studiengang';
 $this->phrasen['bewerbung/dokumentOhneUploadGeprueft'] = 'Dokument ohne Upload überprüft.';
 $this->phrasen['bewerbung/emailBodyStart']='
@@ -731,9 +729,17 @@ $this->phrasen['bewerbung/legende_hochgeladen']='erforderliches Dokument bereits
 $this->phrasen['bewerbung/legende_vorhanden']='Dokument bereits vorhanden';
 $this->phrasen['bewerbung/legende_hochladen']='falls zutreffend hochladen';
 $this->phrasen['bewerbung/legende_nachreichen']='Dokument wird nachgereicht';
+
+// UHSTAT
 $this->phrasen['bewerbung/menuUhstat']='Statistische Daten (UHSTAT)';
 $this->phrasen['bewerbung/uhstatNichtAusgefuellt']='Vor Anmeldung zu einem Reihungstest müssen die statistischen Daten (UHSTAT) ausgefüllt werden.';
 
+// Zahlungen
 $this->phrasen['bewerbung/menuInvoices'] = 'Meine Zahlungen';
 $this->phrasen['bewerbung/erklaerungInvoices'] = 'Ablauf und Zahlungsbedingungen';
+
+// Datenschutzerklärung
+$this->phrasen['bewerbung/bitteDatenschutzerklaerungZustimmen']='Sie müssen der Datenschutzerklärung zustimmen, um Ihre Bewerbung abschicken zu können';
+$this->phrasen['bewerbung/zustimmungDatenschutzerklaerung']='Ich habe die Datenschutzerklärung zur Kenntnis genommen.';
+
 ?>
