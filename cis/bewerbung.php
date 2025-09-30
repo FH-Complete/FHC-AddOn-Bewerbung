@@ -113,6 +113,7 @@ require_once ('../../../include/studiensemester.class.php');
 require_once ('../../../include/zgv.class.php');
 require_once ('../include/functions.inc.php');
 require_once ('../../../include/rueckstellung.class.php');
+require_once('../../../include/sancho.inc.php');
 
 
 if (isset($_GET['logout']))
@@ -148,7 +149,6 @@ if(isset($spracheGet))
 }
 // $sprache = DEFAULT_LANGUAGE;
 $sprache = getSprache();
-//echo var_dump($sprache);
 $sprachindex = new sprache();
 $spracheIndex = $sprachindex->getIndexFromSprache($sprache);
 $p = new phrasen($sprache);
@@ -3152,39 +3152,32 @@ function sendBewerbung($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz,
 			$herkunft = 'extern';
 		}
 
-		$sanchoMailHeader = base64_encode(file_get_contents(APP_ROOT . 'skin/images/sancho/sancho_header_min_bw.jpg'));
-		$sanchoMailFooter = base64_encode(file_get_contents(APP_ROOT . 'skin/images/sancho/sancho_footer_min_bw.jpg'));
-		$email = $p->t('bewerbung/emailBodyStart', array(VILESCI_ROOT . 'vilesci/personen/personendetails.php?id='.$person_id, $sanchoMailHeader));
+		$mailInhaltLink = VILESCI_ROOT . 'vilesci/personen/personendetails.php?id='.$person_id;
+		$mailInhaltEmpfaenger = '';
+		$mailInhaltTable = '<table style="font-size:small"><tbody>';
+		$mailInhaltTable .= '<tr><td style="vertical-align:top"><b>' . $p->t('bewerbung/herkunftDesBewerbers') . '</b></td><td>'.$herkunft.'</td></tr>';
+		$mailInhaltTable .= '<tr><td><b>' . $p->t('global/studiengang') . '</b></td><td>' . $typ->bezeichnung . ' ' . $studiengangsbezeichnung . ($orgform_kurzbz != '' ? ' (' . $orgform_kurzbz . ')' : '') . '</td></tr>';
+		$mailInhaltTable .= '<tr><td><b>' . $p->t('global/studiensemester') . '</b></td><td>' . $studiensemester_kurzbz . '</td></tr>';
+
+		if ($studienplan_bezeichnung != '')
+			$mailInhaltTable.= '<tr><td><b>'.$p->t('studienplan/studienplan').'</b></td><td>'.$studienplan_bezeichnung.'</td></tr>';
+		else
+			$mailInhaltTable.= '<tr><td><b>'.$p->t('studienplan/studienplan').'</b></td><td><span style="color: red">Es konnte kein passender Studienplan ermittelt werden</span></td></tr>';
+
+		$geschlecht = new geschlecht($person->geschlecht);
+		$mailInhaltTable.= '<tr><td><b>'.$p->t('global/geschlecht').'</b></td><td>'.$geschlecht->bezeichnung_mehrsprachig_arr[$sprache].'</td></tr>';
+		$mailInhaltTable.= '<tr><td><b>'.$p->t('global/vorname').'</b></td><td>'.$person->vorname.'</td></tr>';
+		$mailInhaltTable.= '<tr><td><b>'.$p->t('global/nachname').'</b></td><td>'.$person->nachname.'</td></tr>';
+		$mailInhaltTable.= '<tr><td><b>'.$p->t('global/emailAdresse').'</b></td><td><a href="mailto:'.$mailadresse.'">'.$mailadresse.'</a></td></tr>';
+		$mailInhaltTable.= '<tr><td style="vertical-align:top"><b>'.$p->t('global/anmerkungen').'</b></td><td>'.$anmerkungen.'</td></tr>';
+		$mailInhaltTable.= '<tr><td><b>'.$p->t('bewerbung/prestudentID').'</b></td><td>'.$prestudent_id.'</td></tr>';
 
 		// Wenn MAIL_DEBUG aktiv ist, zeige auch den Empfänger an
 		if(defined('MAIL_DEBUG') && MAIL_DEBUG != '')
-			$email .= '<br><br>Empfänger: '.$empfaenger.'<br><br>';
-		$email .= '<br><table style="font-size:small"><tbody>';
-		$email .= '<tr><td style="vertical-align:top"><b>' . $p->t('bewerbung/herkunftDesBewerbers') . '</b></td><td>'.$herkunft.'</td></tr>';
-		$email .= '<tr><td><b>' . $p->t('global/studiengang') . '</b></td><td>' . $typ->bezeichnung . ' ' . $studiengangsbezeichnung . ($orgform_kurzbz != '' ? ' (' . $orgform_kurzbz . ')' : '') . '</td></tr>';
-		$email .= '<tr><td><b>' . $p->t('global/studiensemester') . '</b></td><td>' . $studiensemester_kurzbz . '</td></tr>';
-		if ($studienplan_bezeichnung != '')
-			$email.= '<tr><td><b>'.$p->t('studienplan/studienplan').'</b></td><td>'.$studienplan_bezeichnung.'</td></tr>';
-		else
-			$email.= '<tr><td><b>'.$p->t('studienplan/studienplan').'</b></td><td><span style="color: red">Es konnte kein passender Studienplan ermittelt werden</span></td></tr>';
-
-		$geschlecht = new geschlecht($person->geschlecht);
-		$email.= '<tr><td><b>'.$p->t('global/geschlecht').'</b></td><td>'.$geschlecht->bezeichnung_mehrsprachig_arr[$sprache].'</td></tr>';
-		//$email.= '<tr><td><b>'.$p->t('global/titel').'</b></td><td>'.$person->titelpre.'</td></tr>';
-		//$email.= '<tr><td><b>'.$p->t('global/postnomen').'</b></td><td>'.$person->titelpost.'</td></tr>';
-		$email.= '<tr><td><b>'.$p->t('global/vorname').'</b></td><td>'.$person->vorname.'</td></tr>';
-		$email.= '<tr><td><b>'.$p->t('global/nachname').'</b></td><td>'.$person->nachname.'</td></tr>';
-		//$email.= '<tr><td><b>'.$p->t('global/geburtsdatum').'</b></td><td>'.date('d.m.Y', strtotime($person->gebdatum)).'</td></tr>';
-		//$email.= '<tr><td><b>'.$p->t('global/adresse').'</b></td><td>'.$strasse.'</td></tr>';
-		//$email.= '<tr><td><b>'.$p->t('global/plz').'</b></td><td>'.$plz.'</td></tr>';
-		//$email.= '<tr><td><b>'.$p->t('global/ort').'</b></td><td>'.$ort.'</td></tr>';
-		//$email.= '<tr><td><b>'.$p->t('incoming/nation').'</b></td><td>'.$nation->langtext.'</td></tr>';
-		$email.= '<tr><td><b>'.$p->t('global/emailAdresse').'</b></td><td><a href="mailto:'.$mailadresse.'">'.$mailadresse.'</a></td></tr>';
-		//$email.= '<tr><td><b>'.$p->t('global/telefon').'</b></td><td>'.$telefon.'</td></tr>';
-		$email.= '<tr><td style="vertical-align:top"><b>'.$p->t('global/anmerkungen').'</b></td><td>'.$anmerkungen.'</td></tr>';
-		$email.= '<tr><td><b>'.$p->t('bewerbung/prestudentID').'</b></td><td>'.$prestudent_id.'</td></tr>';
-		$email.= '<tr><td style="vertical-align:top"><b>'.$p->t('tools/dokumente').'</b></td><td>';
+			$mailInhaltEmpfaenger = $empfaenger;
 		$akte = new akte;
+
+		$mailInhaltTable.= '<tr><td style="vertical-align:top"><b>'.$p->t('tools/dokumente').'</b></td><td>';
 
 		$akte->getAkten($person_id);
 		foreach ($akte->result as $row)
@@ -3194,54 +3187,33 @@ function sendBewerbung($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz,
 			if ($row->insertvon == 'online')
 			{
 				if ($row->nachgereicht == true)
-					$email .= '- ' . $dokument->bezeichnung_mehrsprachig[DEFAULT_LANGUAGE] . ' -> ' . $p->t('bewerbung/dokumentWirdNachgereicht') . '<br>';
+					$mailInhaltTable .= '- ' . $dokument->bezeichnung_mehrsprachig[DEFAULT_LANGUAGE] . ' -> ' . $p->t('bewerbung/dokumentWirdNachgereicht') . '<br>';
 				else
-					$email .= '- <a href="' . VILESCI_ROOT . '/content/akte.php?akte_id=' . $row->akte_id . '">' . $dokument->bezeichnung_mehrsprachig[DEFAULT_LANGUAGE] . '</a><br>';
+					$mailInhaltTable .= '- <a href="' . VILESCI_ROOT . '/content/akte.php?akte_id=' . $row->akte_id . '">' . $dokument->bezeichnung_mehrsprachig[DEFAULT_LANGUAGE] . '</a><br>';
 			}
 		}
-		$email .= '</td></tr></tbody></table>';
-		$email .= '<br>';
-		$email .= '<table border="0" cellspacing="0" cellpadding="0">
-					<tr><td>
-						<a href="' . APP_ROOT . 'addons/bewerbung/cis/status_bestaetigen.php?prestudent_id=' . $prestudent_id . '&studiensemester_kurzbz=' . $studiensemester_kurzbz . '&bestaetigen=true" target="_blank" style="font-size: 16px; font-family: Helvetica, Arial, sans-serif; color: #ffffff; text-decoration: none; border-radius: 3px; -webkit-border-radius: 3px; -moz-border-radius: 3px; background-color: #5cb85c; border-top: 6px solid #5cb85c; border-bottom: 6px solid #5cb85c; border-right: 12px solid #5cb85c; border-left: 12px solid #5cb85c; display: inline-block;">
-							' . $p->t('bewerbung/statusBestaetigen') . '
-						</a>
-					</td></tr>
-					</table>';
-		$email .= '<br>';
-		$email .= $p->t('bewerbung/emailBodyEnde', array($sanchoMailFooter));
+		$mailInhaltTable .= '</td></tr></tbody></table>';
+
+		$mailInhaltBesaetigenLink = APP_ROOT . 'addons/bewerbung/cis/status_bestaetigen.php?prestudent_id=' . $prestudent_id . '&studiensemester_kurzbz=' . $studiensemester_kurzbz . '&bestaetigen=true';
+		$sanchoFields = array(
+			'link' => $mailInhaltLink,
+			'empfaenger' => $mailInhaltEmpfaenger,
+			'table' => $mailInhaltTable,
+			'bestaetigenLink' => $mailInhaltBesaetigenLink
+		);
 	}
 	else
 	{
-		$sanchoMailHeader = base64_encode(file_get_contents(APP_ROOT . 'skin/images/sancho/sancho_header_min_bw.jpg'));
-		$sanchoMailFooter = base64_encode(file_get_contents(APP_ROOT . 'skin/images/sancho/sancho_footer_min_bw.jpg'));
-		$email = $p->t('bewerbung/emailBodyStart', array(VILESCI_ROOT . 'vilesci/personen/personendetails.php?id='.$person_id, $sanchoMailHeader));
-		$email .= '<br>';
-		$email .= $p->t('global/studiengang') . ': ' . $typ->bezeichnung . ' ' . $studiengangsbezeichnung . ($orgform_kurzbz != '' ? ' (' . $orgform_kurzbz . ')' : '') . ' <br>';
-		$email .= $p->t('global/studiensemester') . ': ' . $studiensemester_kurzbz . '<br>';
-		$email .= $p->t('global/name') . ': ' . $person->vorname . ' ' . $person->nachname . '<br>';
-		$email .= $p->t('bewerbung/prestudentID') . ': ' . $prestudent_id . '<br><br>';
-		$email .= $p->t('bewerbung/emailBodyEnde', array($sanchoMailFooter));
-	}
+		$mailInhaltLink = VILESCI_ROOT . 'vilesci/personen/personendetails.php?id='.$person_id;
+		$mailInhaltTable = $p->t('global/studiengang') . ': ' . $typ->bezeichnung . ' ' . $studiengangsbezeichnung . ($orgform_kurzbz != '' ? ' (' . $orgform_kurzbz . ')' : '') . ' <br>';
+		$mailInhaltTable .= $p->t('global/studiensemester') . ': ' . $studiensemester_kurzbz . '<br>';
+		$mailInhaltTable .= $p->t('global/name') . ': ' . $person->vorname . ' ' . $person->nachname . '<br>';
+		$mailInhaltTable .= $p->t('bewerbung/prestudentID') . ': ' . $prestudent_id . '<br><br>';
 
-	// An der FHTW werden alle Bachelor-Studiengänge und Master vom Infocenter abgearbeitet und deshalb keine Mail verschickt
-	// Die FIT-Studiengänge erhalten auch kein Mail
-	if (CAMPUS_NAME == 'FH Technikum Wien')
-	{
-		if ($studiengang->typ != 'b' && $studiengang->typ != 'm' && defined('BEWERBERTOOL_DONT_SEND_MAIL_STG') && !in_array($studiengang->studiengang_kz, unserialize(BEWERBERTOOL_DONT_SEND_MAIL_STG)))
-		{
-			$email = wordwrap($email, 70); // Bricht den Code um, da es sonst zu Anzeigefehlern im Mail kommen kann
-
-			$mail = new mail($empfaenger, 'no-reply', $p->t('bewerbung/bewerbung') . ' ' . $person->vorname . ' ' . $person->nachname . ($orgform_kurzbz != '' ? ' (' . $orgform_kurzbz . ')' : ''), 'Bitte sehen Sie sich die Nachricht in HTML Sicht an, um den Link vollständig darzustellen.');
-			$mail->setHTMLContent($email);
-		}
-	}
-	else
-	{
-		$email = wordwrap($email, 70); // Bricht den Code um, da es sonst zu Anzeigefehlern im Mail kommen kann
-
-		$mail = new mail($empfaenger, 'no-reply', $p->t('bewerbung/bewerbung') . ' ' . $person->vorname . ' ' . $person->nachname . ($orgform_kurzbz != '' ? ' (' . $orgform_kurzbz . ')' : ''), 'Bitte sehen Sie sich die Nachricht in HTML Sicht an, um den Link vollständig darzustellen.');
-		$mail->setHTMLContent($email);
+		$sanchoFields = array(
+			'link' => $mailInhaltLink,
+			'table' => $mailInhaltTable,
+		);
 	}
 
 	// send mail to Interessent
@@ -3259,28 +3231,25 @@ function sendBewerbung($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz,
 		else
 			$anrede = $p->t('bewerbung/anredeNeutral');
 
-		$mail_bewerber = new mail($mailadresse, 'no-reply', $p->t('bewerbung/erfolgreichBeworbenMailBetreff'), 'Bitte sehen Sie sich die Nachricht in HTML Sicht an, um den Inhalt vollständig darzustellen.');
-		// Unterschiedliche Ansprechpersonen für Bachelor und Master
-		$sanchoMailHeader = base64_encode(file_get_contents(APP_ROOT . 'skin/images/sancho/sancho_header_DEFAULT.jpg'));
-		$sanchoMailFooter = base64_encode(file_get_contents(APP_ROOT . 'skin/images/sancho/sancho_footer.jpg'));
-		if ($studiengang->typ == 'b')
+		if ($studiengang->typ === 'b')
 		{
-			$email_bewerber_content = $p->t('bewerbung/erfolgreichBeworbenMailBachelor', array($person->vorname, $person->nachname, $anrede, $studiengangsbezeichnung, $sanchoMailHeader, $sanchoMailFooter));
+			$vorlage = 'SanchoBewerbungsbestaetigungB';
+		}
+		else if ($studiengang->typ === 'm')
+		{
+			if ($sprache === 'English')
+				$vorlage = 'SanchoBewerbungsbestaetigungM_EN';
+			else
+				$vorlage = 'SanchoBewerbungsbestaetigungM';
 		}
 		else
-		{
-			$email_bewerber_content = $p->t('bewerbung/erfolgreichBeworbenMail', array($person->vorname, $person->nachname, $anrede, $studiengangsbezeichnung, $empfaenger, $sanchoMailHeader, $sanchoMailFooter));
-		}
+			$vorlage = "SanchoBewerbungsbestaetigung";
 
-		$mail_bewerber->setHTMLContent($email_bewerber_content);
-		// BFI braucht keine eingebetteten Images
-		if (CAMPUS_NAME != 'FH BFI Wien')
-		{
-			$mail_bewerber->addEmbeddedImage(APP_ROOT.'skin/images/sancho/sancho_header_DEFAULT.jpg', 'image/jpg', 'header_image', 'sancho_header');
-			$mail_bewerber->addEmbeddedImage(APP_ROOT.'skin/images/sancho/sancho_footer.jpg', 'image/jpg', 'footer_image', 'sancho_footer');
-		}
-		if (! $mail_bewerber->send())
+		$fields = array('nachname' => $person->nachname, 'anrede' => $anrede, 'studiengang' => $studiengangsbezeichnung);
+
+		if (!sendSanchoMail($vorlage, $fields, $mailadresse, $p->t('bewerbung/erfolgreichBeworbenMailBetreff')))
 			return false;
+
 	}
 
 	// An der FHTW werden alle Bachelor-Studiengänge und Master vom Infocenter abgearbeitet und deshalb keine Mail verschickt
@@ -3288,20 +3257,14 @@ function sendBewerbung($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz,
 	{
 		if ($studiengang->typ != 'b' && $studiengang->typ != 'm' && defined('BEWERBERTOOL_DONT_SEND_MAIL_STG') && !in_array($studiengang->studiengang_kz, unserialize(BEWERBERTOOL_DONT_SEND_MAIL_STG)))
 		{
-			if (! $mail->send())
-				return false;
-			else
-				return true;
+			return sendSanchoMail("SanchoBewerbung", $sanchoFields, $empfaenger, $p->t('bewerbung/bewerbung') . ' ' . $person->vorname . ' ' . $person->nachname . ($orgform_kurzbz != '' ? ' (' . $orgform_kurzbz . ')' : ''), 'sancho_header_min_bw.jpg', 'sancho_footer_min_bw.jpg');
 		}
 		else
 			return true;
 	}
 	else
 	{
-		if (! $mail->send())
-			return false;
-		else
-			return true;
+		return sendSanchoMail("SanchoBewerbung", $sanchoFields, $empfaenger, $p->t('bewerbung/bewerbung') . ' ' . $person->vorname . ' ' . $person->nachname . ($orgform_kurzbz != '' ? ' (' . $orgform_kurzbz . ')' : ''), 'sancho_header_min_bw.jpg', 'sancho_footer_min_bw.jpg');
 	}
 }
 // sendet eine Email an die Assistenz, wenn nachträglich eine Bewerbung hinzugefügt wird
