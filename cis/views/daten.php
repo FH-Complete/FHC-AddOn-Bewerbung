@@ -256,7 +256,9 @@ if(!isset($person_id))
 		if(!defined('BEWERBERTOOL_BERUFSTAETIGKEIT_ANZEIGEN') || BEWERBERTOOL_BERUFSTAETIGKEIT_ANZEIGEN):
 		?>
 		<fieldset>
-			<legend><?php echo $p->t('bewerbung/berufstaetigkeit') ?></legend>
+			<legend><?php
+				echo $p->t('bewerbung/berufstaetigkeit') . ((!defined('BEWERBERTOOL_BERUFSTAETIGKEIT_NOTIZ') || BEWERBERTOOL_BERUFSTAETIGKEIT_NOTIZ !== false) ? ' **' : ''); ?>
+			</legend>
 			<?php
 			if (defined('BEWERBERTOOL_BERUFSTAETIGKEIT_NOTIZ') && BEWERBERTOOL_BERUFSTAETIGKEIT_NOTIZ === false):
 
@@ -272,8 +274,8 @@ if(!isset($person_id))
 					}
 				}
 			?>
-				<div class="form-group">
-					<label for="berufstaetig" class="col-sm-3 control-label"><?php echo $p->t('bewerbung/artDerBerufstaetigkeit') ?></label>
+				<div class="form-group <?php echo !$berufstaetigkeit_code ?'has-error':'' ?>">
+					<label for="berufstaetig" class="col-sm-3 control-label"><?php echo $p->t('bewerbung/artDerBerufstaetigkeit') ?>*</label>
 					<div class="col-sm-9">
 						<input type="hidden" id="inputBerufstaetigCode" value="<?php echo $berufstaetigkeit_code?>"/>
 						<label class="radio-inline"><input type="radio" class="inputBerufstaetigArt" name="berufstaetig" value="Vollzeit"><?php echo $p->t('bewerbung/vollzeit') ?></label>
@@ -282,8 +284,8 @@ if(!isset($person_id))
 						<label class="radio-inline"></label>
 					</div>
 				</div>
-				<div class="form-group">
-					<label for="facheinschlaegig" class="col-sm-3 control-label"><?php echo $p->t('bewerbung/facheinschlaegig') ?>
+				<div class="form-group <?php echo !$berufstaetigkeit_code ?'has-error':'' ?>">
+					<label for="facheinschlaegig" class="col-sm-3 control-label"><?php echo $p->t('bewerbung/facheinschlaegig') ?>*
 						<a href="#" data-toggle="tooltip" data-html="true" data-placement="auto" title="" data-original-title="<?php echo $p->t('bewerbung/facheinschlaegigText') ?>">
 							<span style="font-size: 1em;" class="glyphicon glyphicon-info-sign glyph" aria-hidden="true"></span>
 						</a>
@@ -373,7 +375,12 @@ if(!isset($person_id))
 				<div class="form-group">
 					<label class="col-sm-3 control-label"></label>
 					<div class="col-sm-9">
-						** <?php echo $p->t('bewerbung/anmerkungBerufstaetigkeit') ?>
+						<?php if (!defined('BEWERBERTOOL_BERUFSTAETIGKEIT_NOTIZ') || BEWERBERTOOL_BERUFSTAETIGKEIT_NOTIZ !== false):
+							echo '** ' . $p->t('bewerbung/anmerkungBerufstaetigkeit');
+						else:
+							echo '* ' . $p->t('bewerbung/pflichtfelder');
+						?>
+						<?php endif; ?>
 					</div>
 				</div>
 		</fieldset>
