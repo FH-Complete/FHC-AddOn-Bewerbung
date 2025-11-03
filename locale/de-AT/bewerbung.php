@@ -729,11 +729,18 @@ $this->phrasen['bewerbung/legende_hochgeladen']='erforderliches Dokument bereits
 $this->phrasen['bewerbung/legende_vorhanden']='Dokument bereits vorhanden';
 $this->phrasen['bewerbung/legende_hochladen']='falls zutreffend hochladen';
 $this->phrasen['bewerbung/legende_nachreichen']='Dokument wird nachgereicht';
+
+// UHSTAT
 $this->phrasen['bewerbung/menuUhstat']='Statistische Daten (UHSTAT)';
 $this->phrasen['bewerbung/uhstatNichtAusgefuellt']='Vor Anmeldung zu einem Reihungstest müssen die statistischen Daten (UHSTAT) ausgefüllt werden.';
 
+// Zahlungen
 $this->phrasen['bewerbung/menuInvoices'] = 'Meine Zahlungen';
 $this->phrasen['bewerbung/erklaerungInvoices'] = 'Ablauf und Zahlungsbedingungen';
 $this->phrasen['bewerbung/idAustriaLogin']='Mit <b>ID Austria</b> registrieren/einloggen?';
+
+// Datenschutzerklärung
+$this->phrasen['bewerbung/bitteDatenschutzerklaerungZustimmen']='Sie müssen der Datenschutzerklärung zustimmen, um Ihre Bewerbung abschicken zu können';
+$this->phrasen['bewerbung/zustimmungDatenschutzerklaerung']='Ich habe die Datenschutzerklärung zur Kenntnis genommen.';
 
 ?>
