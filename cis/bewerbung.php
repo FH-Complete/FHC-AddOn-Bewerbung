@@ -113,6 +113,7 @@ require_once ('../../../include/studiensemester.class.php');
 require_once ('../../../include/zgv.class.php');
 require_once ('../include/functions.inc.php');
 require_once ('../../../include/rueckstellung.class.php');
+require_once ('../../../include/kennzeichen.class.php');
 require_once('../../../include/sancho.inc.php');
 
 
@@ -125,6 +126,7 @@ if (isset($_GET['logout']))
 $person_id = (int)$_SESSION['bewerbung/personId'];
 $akte_id = isset($_POST['akte_id']) ? $_POST['akte_id'] : '';
 $method = isset($_POST['method']) ? $_POST['method'] : '';
+$studiengang_get = filter_input(INPUT_GET, 'stg_kz');
 $datum = new datum();
 $person = new person();
 
@@ -132,6 +134,24 @@ if (! $person->load($person_id))
 {
 	die($p->t('global/fehlerBeimLadenDesDatensatzes'));
 }
+
+$kennzeichen = new kennzeichen();
+
+$eobLogin = false;
+$eob_fields = defined('BEWERBERTOOL_ELECTRONIC_ONBOARDING_VORBEFUELLTE_PERSON_FELDER')
+	&& is_array(BEWERBERTOOL_ELECTRONIC_ONBOARDING_VORBEFUELLTE_PERSON_FELDER) ?
+	BEWERBERTOOL_ELECTRONIC_ONBOARDING_VORBEFUELLTE_PERSON_FELDER :
+	array();
+
+if ($kennzeichen->load_pers($person_id, ['eobRegistrierungsId']))
+{
+	$eobLogin = count($kennzeichen->result) > 0;
+}
+else
+{
+	die($kennzeichen->errormsg);
+}
+
 
 $spracheGet = filter_input(INPUT_GET, 'sprache');
 
@@ -1047,40 +1067,55 @@ if (isset($_POST['btn_person']))
 	// Wenn Eingabe gesperrt darf nur die SVNR gespeichert werden
 	if (!$eingabegesperrt)
 	{
-		$person->titelpre = $_POST['titel_pre'];
-		$person->vorname = $_POST['vorname'];
-		$person->nachname = $_POST['nachname'];
-		$person->titelpost = $_POST['titelPost'];
-
-
-		if(!$datum->checkDatum($_POST['geburtsdatum']))
+		// Felder entfernen, die von Electronic Onboarding kommen (dürfen nicht manuell befüllt werden)
+		if ($eobLogin)
 		{
-			$save_error_daten=true;
-			$message = $_POST['geburtsdatum']. "<br>" . $p->t('bewerbung/datumUngueltig');;
-			$person->gebdatum = '';
-		}
-		else
-		{
-			//korrigiertes Geburtsdatum speichern
-			$person->gebdatum = $datum->formatDatum($_POST['geburtsdatum'], 'Y-m-d');
+			foreach ($eob_fields as $eob_field)
+			{
+				if (isset($_POST[$eob_field])) unset($_POST[$eob_field]);
+			}
 		}
 
-		$person->staatsbuergerschaft = $_POST['staatsbuergerschaft'];
-		$person->geschlecht = $_POST['geschlecht'];
-		if ($_POST['geschlecht'] == 'm')
+		if (isset($_POST['titel_pre'])) $person->titelpre = $_POST['titel_pre'];
+		if (isset($_POST['vorname'])) $person->vorname = $_POST['vorname'];
+		if (isset($_POST['nachname'])) $person->nachname = $_POST['nachname'];
+		if (isset($_POST['titelPost'])) $person->titelpost = $_POST['titelPost'];
+
+		if (isset($_POST['geburtsdatum']))
 		{
-			$person->anrede = 'Herr';
+			if(!$datum->checkDatum($_POST['geburtsdatum']))
+			{
+				$save_error_daten=true;
+				$message = $_POST['geburtsdatum']. "<br>" . $p->t('bewerbung/datumUngueltig');
+				$person->gebdatum = '';
+			}
+			else
+			{
+				//korrigiertes Geburtsdatum speichern
+				$person->gebdatum = $datum->formatDatum($_POST['geburtsdatum'], 'Y-m-d');
+			}
 		}
-		elseif ($_POST['geschlecht'] == 'w')
+
+		if (isset($_POST['staatsbuergerschaft'])) $person->staatsbuergerschaft = $_POST['staatsbuergerschaft'];
+
+		if (isset($_POST['geschlecht']))
 		{
-			$person->anrede = 'Frau';
+			$person->geschlecht = $_POST['geschlecht'];
+			if ($_POST['geschlecht'] == 'm')
+			{
+				$person->anrede = 'Herr';
+			}
+			elseif ($_POST['geschlecht'] == 'w')
+			{
+				$person->anrede = 'Frau';
+			}
+			else
+			{
+				$person->anrede = '';
+			}
 		}
-		else
-		{
-			$person->anrede = '';
-		}
-		$person->gebort = $_POST['gebort'];
-		$person->geburtsnation = $_POST['geburtsnation'];
+		if (isset($_POST['gebort'])) $person->gebort = $_POST['gebort'];
+		if (isset($_POST['geburtsnation'])) $person->geburtsnation = $_POST['geburtsnation'];
 	}
 
 	$person->new = false;
@@ -1320,33 +1355,38 @@ if (isset($_POST['btn_kontakt']) && ! $eingabegesperrt)
 				// löschen
 				$kontakt_t->delete($kontakt_id);
 			}
-			elseif ($telefonnummer != '' && $telefonnummer != $telefonnummer_alt)
+			elseif ($telefonnummer != '')
 			{
-				$kontakt_t->person_id = $person->person_id;
-				$kontakt_t->kontakt_id = $kontakt_id;
-				$kontakt_t->zustellung = true;
-				$kontakt_t->kontakttyp = 'telefon';
-				$kontakt_t->kontakt = $telefonnummer;
-				$kontakt_t->updateamum = date('Y-m-d H:i:s');
-				$kontakt_t->updatevon = 'online';
-				$kontakt_t->new = false;
+				// neue Telefonnummer - speichern
+				if ($telefonnummer !== $telefonnummer_alt)
+				{
+					$kontakt_t->person_id = $person->person_id;
+					$kontakt_t->kontakt_id = $kontakt_id;
+					$kontakt_t->zustellung = true;
+					$kontakt_t->kontakttyp = 'telefon';
+					$kontakt_t->kontakt = $telefonnummer;
+					$kontakt_t->updateamum = date('Y-m-d H:i:s');
+					$kontakt_t->updatevon = 'online';
+					$kontakt_t->new = false;
 
-				if (! $kontakt_t->save())
-				{
-					$message = $kontakt_t->errormsg;
-					$save_error_kontakt = true;
-				}
-				else
-				{
-					$save_error_kontakt = false;
-					// Geparkten Logeintrag löschen
-					$rueckstellung->deleteParked($person->person_id);
-					// Logeintrag schreiben
-					$log->log($person->person_id, 'Action', array(
-						'name' => 'Phone number updated',
-						'success' => true,
-						'message' => 'Phone number ' . $telefonnummer_alt . ' changed to ' . $telefonnummer
-					), 'bewerbung', 'bewerbung', null, 'online');
+					if (! $kontakt_t->save())
+					{
+						$message = $kontakt_t->errormsg;
+						$save_error_kontakt = true;
+					}
+					else
+					{
+						$save_error_kontakt = false;
+						// Geparkten Logeintrag löschen
+						$rueckstellung->deleteParked($person->person_id);
+						// Logeintrag schreiben
+						$log->log($person->person_id, 'Action', array(
+							'name' => 'Phone number updated',
+							'success' => true,
+							'message' => 'Phone number ' . $telefonnummer_alt . ' changed to ' . $telefonnummer
+						), 'bewerbung', 'bewerbung', null, 'online');
+					}
+
 				}
 			}
 			else
@@ -2247,10 +2287,23 @@ if ($addStudienplan)
 	$return = BewerbungPersonAddStudienplan(
 		$_POST['studienplan_id'],
 		$person,
-		$_POST['studiensemester']
-		);
+		$_POST['studiensemester'],
+		isset($_POST['zgv_nation']) ? $_POST['zgv_nation'] : null
+	);
 	if ($return === true)
+	{
+		// wenn electronic onboarding login, dokumente für prestudent akzeptieren
+		if ($eobLogin)
+		{
+			$zuAkzeptieren = array('Meldezet', 'identity');
+			$dokument_akzeptieren = new dokument();
+			foreach ($zuAkzeptieren as $dokument_kurzbz)
+			{
+				$dokument_akzeptieren->akzeptiereDokument($dokument_kurzbz, $person->person_id, array('b', 'm', 'l'));
+			}
+		}
 		echo json_encode(array('status'=>'ok'));
+	}
 	else
 		echo json_encode(array(
 			'status' => 'fehler',
@@ -2864,6 +2917,8 @@ else
 										$tabs = array_values($tabs);
 									}
 								}
+								else
+									$display = 'style="display: none"';
 							}
 							elseif (CAMPUS_NAME == 'FH BFI Wien')
 							{

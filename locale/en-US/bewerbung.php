@@ -686,6 +686,8 @@ $this->phrasen['bewerbung/uhstatNichtAusgefuellt']='Before registering for a pla
 $this->phrasen['bewerbung/menuInvoices'] = 'Payments';
 $this->phrasen['bewerbung/erklaerungInvoices'] = 'Process and payment conditions';
 
+$this->phrasen['bewerbung/idAustriaLogin']='Registration/login with <b>ID Austria</b>?';
+
 // Datenschutzerklärung
 $this->phrasen['bewerbung/bitteDatenschutzerklaerungZustimmen']='You have to consent to the privacy statement to send the application.';
 $this->phrasen['bewerbung/zustimmungDatenschutzerklaerung']='I have taken note of the privacy information.';
