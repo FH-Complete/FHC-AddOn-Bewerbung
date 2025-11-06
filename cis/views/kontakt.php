@@ -48,6 +48,10 @@ elseif($save_error_kontakt===true)
 	$kontakt->load_persKontakttyp($person->person_id, 'email', 'zustellung DESC, updateamum DESC');
 	$email = isset($kontakt->result[0]->kontakt)?$kontakt->result[0]->kontakt:'';
 
+	$kontakt = new kontakt();
+	$kontakt->load_persKontakttyp($person->person_id, 'email_unverifiziert', 'zustellung DESC, updateamum DESC');
+	$email_unverifiziert = isset($kontakt->result[0]->kontakt)?$kontakt->result[0]->kontakt:'';
+
 	$kontakt_t = new kontakt();
 	$kontakt_t->load_persKontakttyp($person->person_id, 'telefon', 'updateamum DESC');
 	$telefon = isset($kontakt_t->result[0]->kontakt)?$kontakt_t->result[0]->kontakt:'';
@@ -83,10 +87,11 @@ elseif($save_error_kontakt===true)
 	<form method="POST" action="<?php echo $_SERVER['PHP_SELF'] ?>?active=kontakt" class="form-horizontal">
 		<fieldset>
 			<legend><?php echo $p->t('bewerbung/kontakt') ?></legend>
-			<div class="form-group <?php echo ($email==''?'has-error':'') ?>">
+			<?php $displayed_email = $email == '' ? $email_unverifiziert : $email; ?>
+			<div class="form-group <?php echo ($displayed_email==''?'has-error':'') ?>">
 				<label for="email" class="col-sm-2 control-label"><?php echo $p->t('global/emailAdresse') ?>*</label>
 				<div class="col-sm-10">
-					<input type="text" name="email" id="email" value="<?php echo $email ?>" <?php echo ($email != ''?'disabled="disabled"':''); ?> size="32" class="form-control">
+					<input type="text" name="email" id="email" value="<?php echo $displayed_email ?>" <?php echo ($displayed_email != ''?'disabled="disabled"':''); ?> size="32" class="form-control">
 				</div>
 			</div>
 			<div class="form-group <?php echo ($telefon==''?'has-error':'') ?>">
