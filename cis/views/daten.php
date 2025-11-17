@@ -274,7 +274,7 @@ if(!isset($person_id))
 					}
 				}
 			?>
-				<div class="form-group <?php echo !$berufstaetigkeit_code ?'has-error':'' ?>">
+				<div class="form-group <?php echo $berufstaetigkeit_code==''?'has-error':'' ?>">
 					<label for="berufstaetig" class="col-sm-3 control-label"><?php echo $p->t('bewerbung/artDerBerufstaetigkeit') ?>*</label>
 					<div class="col-sm-9">
 						<input type="hidden" id="inputBerufstaetigCode" value="<?php echo $berufstaetigkeit_code?>"/>
@@ -284,7 +284,7 @@ if(!isset($person_id))
 						<label class="radio-inline"></label>
 					</div>
 				</div>
-				<div class="form-group <?php echo !$berufstaetigkeit_code ?'has-error':'' ?>">
+				<div class="form-group <?php echo $berufstaetigkeit_code==''?'has-error':'' ?>">
 					<label for="facheinschlaegig" class="col-sm-3 control-label"><?php echo $p->t('bewerbung/facheinschlaegig') ?>*
 						<a href="#" data-toggle="tooltip" data-html="true" data-placement="auto" title="" data-original-title="<?php echo $p->t('bewerbung/facheinschlaegigText') ?>">
 							<span style="font-size: 1em;" class="glyphicon glyphicon-info-sign glyph" aria-hidden="true"></span>

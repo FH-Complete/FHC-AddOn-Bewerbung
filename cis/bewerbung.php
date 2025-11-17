@@ -2312,7 +2312,7 @@ if ($person->vorname
 	}
 	else if (defined('BEWERBERTOOL_BERUFSTAETIGKEIT_NOTIZ') && BEWERBERTOOL_BERUFSTAETIGKEIT_NOTIZ === false
 		&& isset($prestudent->result[0])
-		&& !$prestudent->result[0]->berufstaetigkeit_code)
+		&& $prestudent->result[0]->berufstaetigkeit_code=='')
 	{
 		$status_person = false;
 		$status_person_text = $unvollstaendig;
