@@ -633,7 +633,7 @@ UAS Technikum Wien';
 $this->phrasen['bewerbung/reihungstestInfoTextAngemeldet']='<div class="alert alert-info">
 <p>We will start the online placement test on time. Please ensure that you are logged into the online application tool at this time and have an identity document (passport or ID card) ready.</p>
 <p>You will receive more detailed information about the placement test process in a message in the online application tool in good time before your placement test date. Please check your messages regularly.</p>
-<p>You can find the link to the placement test in your Bachelor\'s application under Overview/Details/To placement test here in the online application tool.</p>
+<p>You can find the link to the placement test in your Bachelor\'s application under <a href=\''.APP_ROOT.'cms/dms.php?id=147448\' target=\'_blank\'>Overview/Details/To</a> placement test here in the online application tool.</p>
 </div><br>';
 $this->phrasen['bewerbung/anmeldefrist']='Term of application';
 $this->phrasen['bewerbung/infoVorgemerktFuerQualifikationskurs']='You are pencilled in as a participant for the qualification courses. Once you are confirmed there, you can choose an appointment for the placement test here.';
@@ -650,7 +650,7 @@ $this->phrasen['bewerbung/masterAnmerkung']='You will receive more detailed info
 $this->phrasen['bewerbung/reihungstestInfoTextAngemeldetMaster']='<div class="alert alert-info">
 <p>We will start the online placement test on time. Please ensure that you are logged into the online application tool at this time and have an identity document (passport or ID card) ready.</p>
 <p>You will receive more detailed information about the placement test process in a message in the online application tool in good time before your placement test date.</p>
-<p>Please check your messages regularly. You can find the link to the placement test in your Master\'s application under Overview/Details/To placement test here in the online application tool.</p>
+<p>Please check your messages regularly. You can find the link to the placement test in your Master\'s application under <a href=\''.APP_ROOT.'cms/dms.php?id=323305\' target=\'_blank\'>Overview/Details/To</a> placement test here in the online application tool.</p>
 </div><br>';
 // Ausbildung
 $this->phrasen['bewerbung/menuAusbildung']='Ausbildung';

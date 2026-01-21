@@ -684,7 +684,7 @@ Mit freundlichen Grüßen<br>
 Fachhochschule Technikum Wien';
 $this->phrasen['bewerbung/reihungstestInfoTextAngemeldet']='<div class="alert alert-info">
 <p>Wir starten pünktlich mit dem Online-Reihungstest. Stellen Sie sicher, dass Sie zu diesem Zeitpunkt im Online-Bewerbungstool eingeloggt sind und ein Identitätsdokument (Reisepass oder Personalausweis) griffbereit haben.</p>
-<p>Nähere Details zum Ablauf des Reihungstests erhalten Sie rechtzeitig vor Ihrem Reihungstest-Termin per Message im Online-Bewerbungstool. Bitte überprüfen Sie daher regelmäßig Ihre Nachrichten.</p></p> Den Einstieg zum Reihungstest finden Sie bei Ihrer Bachelorbewerbung unter Übersicht/Details/zum Reihungstest hier im Online-Bewerbungstool.</p>
+<p>Nähere Details zum Ablauf des Reihungstests erhalten Sie rechtzeitig vor Ihrem Reihungstest-Termin per Message im Online-Bewerbungstool. Bitte überprüfen Sie daher regelmäßig Ihre Nachrichten.</p></p> Den Einstieg zum Reihungstest finden Sie bei Ihrer Bachelorbewerbung unter <a href=\''.APP_ROOT.'cms/dms.php?id=147448\' target=\'_blank\'>Übersicht/Details/zum Reihungstest</a> hier im Online-Bewerbungstool.</p>
 </div><br>';
 $this->phrasen['bewerbung/anmeldefrist']='Anmeldefrist';
 $this->phrasen['bewerbung/infoVorgemerktFuerQualifikationskurs']='Sie sind als TeilnehmerIn für die Qualifikationskurse vorgemerkt. Sobald sie dort bestätigt wurden, können Sie hier einen Termin für den Reihungstest wählen.';
@@ -699,7 +699,7 @@ $this->phrasen['bewerbung/masterAnmerkung']='Nähere Informationen zum Reihungst
 $this->phrasen['bewerbung/reihungstestInfoTextAngemeldetMaster']='<div class="alert alert-info">
 <p>Wir starten pünktlich mit dem Online-Reihungstest. Stellen Sie sicher, dass Sie zu diesem Zeitpunkt im Online-Bewerbungstool eingeloggt sind und ein Identitätsdokument (Reisepass oder Personalausweis) griffbereit haben. </p>
 <p>Nähere Details zum Ablauf des Reihungstests erhalten Sie rechtzeitig vor Ihrem Reihungstest-Termin per Message im Online-Bewerbungstool. Bitte überprüfen Sie daher regelmäßig Ihre Nachrichten.</p>
-<p>Den Einstieg zum Reihungstest finden Sie bei Ihrer Masterbewerbung unter Übersicht/Details/zum Reihungstest hier im Online-Bewerbungstool.</p>
+<p>Den Einstieg zum Reihungstest finden Sie bei Ihrer Masterbewerbung unter <a href=\''.APP_ROOT.'cms/dms.php?id=180785\' target=\'_blank\'>Übersicht/Details/zum Reihungstest</a> hier im Online-Bewerbungstool.</p>
 </div><br>';
 $this->phrasen['bewerbung/fuerReihungstestAnmeldenMaster']='Bitte melden Sie sich für einen Master-Reihungstesttermin an. Bitte beachten Sie, dass bei Mehrfachbewerbungen der Reihungstest für jeden gewählten Masterstudiengang zu absolvieren ist. <br/>
 Sie sehen die nächsten verfügbaren Reihungstesttermine des Studiengangs bzw. der gewählten Studiengänge. Sollte der angezeigte/die angezeigten Termine für Sie nicht möglich sein, wenden Sie sich bitte an die zuständige Studiengangsassistenz.';
