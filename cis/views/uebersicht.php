@@ -981,10 +981,9 @@ $studiensemester_array = array();
 						<select name="zgv_nation" id="zgv_nation" class="form-control"">
 							<option value=""><?php echo $p->t('bewerbung/bitteAuswaehlenBaMa') ?></option>
 							<option value="A"><?php	echo ($sprache=='German'? 'Österreich':'Austria'); ?></option>
-							<?php $selected = '';
-							foreach($zgvNations->nation as $nat):
-								$selected = ($zgv_nation == $nat->code) ? 'selected' : ''; ?>
-								<option value="<?php echo $nat->code ?>" <?php echo $selected ?>>
+							<?php
+							foreach($zgvNations->nation as $nat): ?>
+								<option value="<?php echo $nat->code ?>">
 									<?php
 									if($sprache=='German')
 										echo $nat->langtext;
