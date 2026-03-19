@@ -1070,9 +1070,11 @@ if (isset($_POST['btn_person']))
 		// Felder entfernen, die von Electronic Onboarding kommen (dürfen nicht manuell befüllt werden)
 		if ($eobLogin)
 		{
-			foreach ($eob_fields as $eob_field)
+			foreach ($eob_fields as $postName => $dbName)
 			{
-				if (isset($_POST[$eob_field])) unset($_POST[$eob_field]);
+				// wenn keine Daten für das Feld gespeichert sind, POST Wert trotzdem übernehmen
+				if ($person->{$dbName} == null || $person->{$dbName} == '') continue;
+				if (isset($_POST[$postName])) unset($_POST[$postName]);
 			}
 		}
 
