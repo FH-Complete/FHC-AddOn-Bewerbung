@@ -958,6 +958,30 @@ $studiensemester_array = array();
 	</button>
 	<br/>
 	<br/>
+	<?php
+		// Aktuellste ZGV-Nation suchen. Master > Bachelor
+		$zgv_nation = '';
+		$pstID = 0;
+		$prestudenten = new prestudent();
+		$prestudenten->getPrestudenten($person_id);
+		foreach ($prestudenten->result as $pst)
+		{
+			if ($pst->prestudent_id > $pstID)
+			{
+				if ($pst->zgvmanation != '')
+				{
+					$zgv_nation = $pst->zgvmanation;
+				}
+				elseif ($pst->zgvnation != '')
+				{
+					$zgv_nation = $pst->zgvnation;
+				}
+				$pstID = $pst->prestudent_id;
+			}
+		}
+		// input übernehmen, wenn vorhanden
+		$zgv_nation = isset($_POST['zgv_nation']) ? $_POST['zgv_nation'] : $zgv_nation;
+	?>
 	<div class="modal fade" id="modal-studiengaenge">
 		<div class="modal-dialog">
 			<div class="modal-content">
@@ -970,7 +994,7 @@ $studiensemester_array = array();
 
 				</div>
 				<div class="modal-body">
-					<?php if(defined('BEWERBERTOOL_SHOW_REGISTRATION_ZGVNATION') && BEWERBERTOOL_SHOW_REGISTRATION_ZGVNATION && (!isset($zgv_nation) || $zgv_nation == '')): ?>
+					<?php if(defined('BEWERBERTOOL_SHOW_REGISTRATION_ZGVNATION') && BEWERBERTOOL_SHOW_REGISTRATION_ZGVNATION): ?>
 					<div class="form-group" id="zgv_nation_form-group">
 						<label for="zgv_nation" class="control-label">
 							<?php echo $p->t('bewerbung/studienberechtigungErlangtIn') ?>
@@ -1184,27 +1208,6 @@ $studiensemester_array = array();
 				$stg_bezeichnung .= ' | <i>'.$organisationsform->bezeichnung_mehrsprachig[$sprache].' - '.$p->t('bewerbung/'.$row->sprache).'</i>';
 
 				// Bewerbungsfristen laden
-				// Aktuellste ZGV-Nation suchen. Master > Bachelor
-				$zgv_nation = '';
-				$pstID = 0;
-				$prestudenten = new prestudent();
-				$prestudenten->getPrestudenten($person_id);
-				foreach ($prestudenten->result as $pst)
-				{
-					if ($pst->prestudent_id > $pstID)
-					{
-						if ($pst->zgvmanation != '')
-						{
-							$zgv_nation = $pst->zgvmanation;
-						}
-						elseif ($pst->zgvnation != '')
-						{
-							$zgv_nation = $pst->zgvnation;
-						}
-						$pstID = $pst->prestudent_id;
-					}
-				}
-				$zgv_nation = $zgv_nation == '' && isset($_POST['zgv_nation']) ? $_POST['zgv_nation'] : $zgv_nation;
 				$nation = new nation($zgv_nation);
 				$nationengruppe = $nation->nationengruppe_kurzbz;
 

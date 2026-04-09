@@ -1301,6 +1301,7 @@ if (isset($_POST['btn_kontakt']) && ! $eingabegesperrt)
 	else
 	{
 		// Pruefen, ob die Mailadresse schon im System existiert
+		// TODO: auch email_unverifiziert pruefen?
 		$return = check_load_bewerbungen(trim($_POST['email']));
 		if ($return)
 		{
