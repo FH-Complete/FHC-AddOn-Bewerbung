@@ -2296,7 +2296,7 @@ if ($addStudienplan)
 	if ($return === true)
 	{
 		// wenn electronic onboarding login, dokumente für prestudent akzeptieren
-		if ($eobLogin)
+		if ($eobLogin && isset($person->staatsbuergerschaft))
 		{
 			$zuAkzeptieren = array('Meldezet', 'identity');
 			$dokument_akzeptieren = new dokument();
