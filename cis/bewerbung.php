@@ -2295,10 +2295,16 @@ if ($addStudienplan)
 	);
 	if ($return === true)
 	{
-		// wenn electronic onboarding login, dokumente für prestudent akzeptieren
-		if ($eobLogin && isset($person->staatsbuergerschaft))
+		// wenn electronic onboarding login, dokumente für person akzeptieren
+		if ($eobLogin)
 		{
-			$zuAkzeptieren = array('Meldezet', 'identity');
+			$adresse = new adresse();
+
+			// nur dann akzeptieren wenn Staatsbürgerschaft/Adresse vorhanden ist
+			$zuAkzeptieren = array();
+			if (isset($person->staatsbuergerschaft)) $zuAkzeptieren[] = 'identity';
+			if ($adresse->loadOesterreichischeZustellAdresse($person->person_id, 'm')) $zuAkzeptieren[] = 'Meldezet';
+
 			$dokument_akzeptieren = new dokument();
 			foreach ($zuAkzeptieren as $dokument_kurzbz)
 			{
