@@ -292,7 +292,7 @@ if($result = $db->db_query($qry))
 				$mailcontent = wordwrap($mailcontent,70);
 
 				$mail = new mail($empfaenger, 'no-reply', 'Neue Dokumentenuploads '.$bezeichnung.' '.$orgform, 'Bitte sehen Sie sich die Nachricht in HTML Sicht an, um den Inhalt vollständig darzustellen.');
-				$mail->setBCCRecievers('kindlm@technikum-wien.at');
+				//$mail->setBCCRecievers('kindlm@technikum-wien.at');
 				$mail->setHTMLContent($mailcontent);
 				$mail->send();
 				
