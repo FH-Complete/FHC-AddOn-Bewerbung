@@ -96,7 +96,7 @@ if(defined('BEWERBERTOOL_BEWERBUNG_EMPFAENGER'))
 $qry = "
 SELECT DISTINCT
 	studiengang_kz,
-	tbl_prestudentstatus.orgform_kurzbz,
+	COALESCE(tbl_prestudentstatus.orgform_kurzbz,tbl_studiengang.orgform_kurzbz) AS orgform_kurzbz,
 	person_id,
 	tbl_prestudent.insertamum,
 	vorname,
@@ -138,13 +138,11 @@ AND CASE
 					)
 		ELSE 1=1
 		END
-
--- Upload nach Nachreichung
+/*Upload nach Nachreichung*/
 UNION
-
 SELECT DISTINCT
 	studiengang_kz,
-	tbl_prestudentstatus.orgform_kurzbz,
+	COALESCE(tbl_prestudentstatus.orgform_kurzbz,tbl_studiengang.orgform_kurzbz) AS orgform_kurzbz,
 	person_id,
 	tbl_prestudent.insertamum,
 	vorname,
@@ -169,6 +167,8 @@ JOIN
 	public.tbl_akte USING (person_id)
 JOIN
 	public.tbl_dokument USING (dokument_kurzbz)
+JOIN
+	public.tbl_studiengang USING (studiengang_kz)
 WHERE
 	tbl_akte.updatevon='online'
 AND (tbl_akte.updateamum >= (SELECT (CURRENT_DATE -1||' '||'03:00:00')::timestamp))
@@ -394,6 +394,7 @@ if($result = $db->db_query($qry))
 		}
 
 		$mailcontent = wordwrap($mailcontent,70);
+		//echo $mailcontent;exit();
 
 		$mail = new mail($empfaenger, 'no-reply', 'Neue Dokumentenuploads '.$bezeichnung.' '.$orgform, 'Bitte sehen Sie sich die Nachricht in HTML Sicht an, um den Inhalt vollständig darzustellen.');
 		$mail->setBCCRecievers('kindlm@technikum-wien.at');
