@@ -113,6 +113,8 @@ require_once ('../../../include/studiensemester.class.php');
 require_once ('../../../include/zgv.class.php');
 require_once ('../include/functions.inc.php');
 require_once ('../../../include/rueckstellung.class.php');
+require_once ('../../../include/kennzeichen.class.php');
+require_once('../../../include/sancho.inc.php');
 
 
 if (isset($_GET['logout']))
@@ -124,6 +126,7 @@ if (isset($_GET['logout']))
 $person_id = (int)$_SESSION['bewerbung/personId'];
 $akte_id = isset($_POST['akte_id']) ? $_POST['akte_id'] : '';
 $method = isset($_POST['method']) ? $_POST['method'] : '';
+$studiengang_get = filter_input(INPUT_GET, 'stg_kz');
 $datum = new datum();
 $person = new person();
 
@@ -131,6 +134,24 @@ if (! $person->load($person_id))
 {
 	die($p->t('global/fehlerBeimLadenDesDatensatzes'));
 }
+
+$kennzeichen = new kennzeichen();
+
+$eobLogin = false;
+$eob_fields = defined('BEWERBERTOOL_ELECTRONIC_ONBOARDING_VORBEFUELLTE_PERSON_FELDER')
+	&& is_array(BEWERBERTOOL_ELECTRONIC_ONBOARDING_VORBEFUELLTE_PERSON_FELDER) ?
+	BEWERBERTOOL_ELECTRONIC_ONBOARDING_VORBEFUELLTE_PERSON_FELDER :
+	array();
+
+if ($kennzeichen->load_pers($person_id, ['eobRegistrierungsId']))
+{
+	$eobLogin = count($kennzeichen->result) > 0;
+}
+else
+{
+	die($kennzeichen->errormsg);
+}
+
 
 $spracheGet = filter_input(INPUT_GET, 'sprache');
 
@@ -148,7 +169,6 @@ if(isset($spracheGet))
 }
 // $sprache = DEFAULT_LANGUAGE;
 $sprache = getSprache();
-//echo var_dump($sprache);
 $sprachindex = new sprache();
 $spracheIndex = $sprachindex->getIndexFromSprache($sprache);
 $p = new phrasen($sprache);
@@ -1047,65 +1067,55 @@ if (isset($_POST['btn_person']))
 	// Wenn Eingabe gesperrt darf nur die SVNR gespeichert werden
 	if (!$eingabegesperrt)
 	{
-		$person->titelpre = $_POST['titel_pre'];
-		$person->vorname = $_POST['vorname'];
-		$person->nachname = $_POST['nachname'];
-		$person->titelpost = $_POST['titelPost'];
-
-
-		if(!$datum->checkDatum($_POST['geburtsdatum']))
+		// Felder entfernen, die von Electronic Onboarding kommen (dürfen nicht manuell befüllt werden)
+		if ($eobLogin)
 		{
-			$save_error_daten=true;
-			$message = $_POST['geburtsdatum']. "<br>" . $p->t('bewerbung/datumUngueltig');;
-			$person->gebdatum = '';
-		}
-		else
-		{
-			//korrigiertes Geburtsdatum speichern
-			$person->gebdatum = $datum->formatDatum($_POST['geburtsdatum'], 'Y-m-d');
+			foreach ($eob_fields as $eob_field)
+			{
+				if (isset($_POST[$eob_field])) unset($_POST[$eob_field]);
+			}
 		}
 
-		$person->staatsbuergerschaft = $_POST['staatsbuergerschaft'];
-		$person->geschlecht = $_POST['geschlecht'];
-		if ($_POST['geschlecht'] == 'm')
-		{
-			$person->anrede = 'Herr';
-		}
-		elseif ($_POST['geschlecht'] == 'w')
-		{
-			$person->anrede = 'Frau';
-		}
-		else
-		{
-			$person->anrede = '';
-		}
-		$person->gebort = $_POST['gebort'];
-		$person->geburtsnation = $_POST['geburtsnation'];
-	}
+		if (isset($_POST['titel_pre'])) $person->titelpre = $_POST['titel_pre'];
+		if (isset($_POST['vorname'])) $person->vorname = $_POST['vorname'];
+		if (isset($_POST['nachname'])) $person->nachname = $_POST['nachname'];
+		if (isset($_POST['titelPost'])) $person->titelpost = $_POST['titelPost'];
 
-	if ($person->svnr == ''
-		&& isset($_POST['svnr'])
-		&& $_POST['svnr'] != '')
-	{
-		$svnr = $_POST['svnr'];
-		// Check SVNR
-		if ($person->checkSvnr($svnr, $person_id))
+		if (isset($_POST['geburtsdatum']))
 		{
-			$message = $p->t('bewerbung/svnrBereitsVorhanden');
-			$save_error_daten = true;
-			// Geparkten Logeintrag löschen
-			$rueckstellung->deleteParked($person_id);
-			// Logeintrag schreiben
-			$log->log($person_id, 'Action', array(
-				'name' => 'Error saving Sozialversicherungsnummer',
-				'success' => false,
-				'message' => 'Sozialversicherungsnummer ' . $svnr . ' already present in database'
-			), 'bewerbung', 'bewerbung', null, 'online');
+			if(!$datum->checkDatum($_POST['geburtsdatum']))
+			{
+				$save_error_daten=true;
+				$message = $_POST['geburtsdatum']. "<br>" . $p->t('bewerbung/datumUngueltig');
+				$person->gebdatum = '';
+			}
+			else
+			{
+				//korrigiertes Geburtsdatum speichern
+				$person->gebdatum = $datum->formatDatum($_POST['geburtsdatum'], 'Y-m-d');
+			}
 		}
-		else
+
+		if (isset($_POST['staatsbuergerschaft'])) $person->staatsbuergerschaft = $_POST['staatsbuergerschaft'];
+
+		if (isset($_POST['geschlecht']))
 		{
-			$person->svnr = $svnr;
+			$person->geschlecht = $_POST['geschlecht'];
+			if ($_POST['geschlecht'] == 'm')
+			{
+				$person->anrede = 'Herr';
+			}
+			elseif ($_POST['geschlecht'] == 'w')
+			{
+				$person->anrede = 'Frau';
+			}
+			else
+			{
+				$person->anrede = '';
+			}
 		}
+		if (isset($_POST['gebort'])) $person->gebort = $_POST['gebort'];
+		if (isset($_POST['geburtsnation'])) $person->geburtsnation = $_POST['geburtsnation'];
 	}
 
 	$person->new = false;
@@ -1345,33 +1355,38 @@ if (isset($_POST['btn_kontakt']) && ! $eingabegesperrt)
 				// löschen
 				$kontakt_t->delete($kontakt_id);
 			}
-			elseif ($telefonnummer != '' && $telefonnummer != $telefonnummer_alt)
+			elseif ($telefonnummer != '')
 			{
-				$kontakt_t->person_id = $person->person_id;
-				$kontakt_t->kontakt_id = $kontakt_id;
-				$kontakt_t->zustellung = true;
-				$kontakt_t->kontakttyp = 'telefon';
-				$kontakt_t->kontakt = $telefonnummer;
-				$kontakt_t->updateamum = date('Y-m-d H:i:s');
-				$kontakt_t->updatevon = 'online';
-				$kontakt_t->new = false;
+				// neue Telefonnummer - speichern
+				if ($telefonnummer !== $telefonnummer_alt)
+				{
+					$kontakt_t->person_id = $person->person_id;
+					$kontakt_t->kontakt_id = $kontakt_id;
+					$kontakt_t->zustellung = true;
+					$kontakt_t->kontakttyp = 'telefon';
+					$kontakt_t->kontakt = $telefonnummer;
+					$kontakt_t->updateamum = date('Y-m-d H:i:s');
+					$kontakt_t->updatevon = 'online';
+					$kontakt_t->new = false;
 
-				if (! $kontakt_t->save())
-				{
-					$message = $kontakt_t->errormsg;
-					$save_error_kontakt = true;
-				}
-				else
-				{
-					$save_error_kontakt = false;
-					// Geparkten Logeintrag löschen
-					$rueckstellung->deleteParked($person->person_id);
-					// Logeintrag schreiben
-					$log->log($person->person_id, 'Action', array(
-						'name' => 'Phone number updated',
-						'success' => true,
-						'message' => 'Phone number ' . $telefonnummer_alt . ' changed to ' . $telefonnummer
-					), 'bewerbung', 'bewerbung', null, 'online');
+					if (! $kontakt_t->save())
+					{
+						$message = $kontakt_t->errormsg;
+						$save_error_kontakt = true;
+					}
+					else
+					{
+						$save_error_kontakt = false;
+						// Geparkten Logeintrag löschen
+						$rueckstellung->deleteParked($person->person_id);
+						// Logeintrag schreiben
+						$log->log($person->person_id, 'Action', array(
+							'name' => 'Phone number updated',
+							'success' => true,
+							'message' => 'Phone number ' . $telefonnummer_alt . ' changed to ' . $telefonnummer
+						), 'bewerbung', 'bewerbung', null, 'online');
+					}
+
 				}
 			}
 			else
@@ -2272,10 +2287,23 @@ if ($addStudienplan)
 	$return = BewerbungPersonAddStudienplan(
 		$_POST['studienplan_id'],
 		$person,
-		$_POST['studiensemester']
-		);
+		$_POST['studiensemester'],
+		isset($_POST['zgv_nation']) ? $_POST['zgv_nation'] : null
+	);
 	if ($return === true)
+	{
+		// wenn electronic onboarding login, dokumente für prestudent akzeptieren
+		if ($eobLogin)
+		{
+			$zuAkzeptieren = array('Meldezet', 'identity');
+			$dokument_akzeptieren = new dokument();
+			foreach ($zuAkzeptieren as $dokument_kurzbz)
+			{
+				$dokument_akzeptieren->akzeptiereDokument($dokument_kurzbz, $person->person_id, array('b', 'm', 'l'));
+			}
+		}
 		echo json_encode(array('status'=>'ok'));
+	}
 	else
 		echo json_encode(array(
 			'status' => 'fehler',
@@ -2889,6 +2917,8 @@ else
 										$tabs = array_values($tabs);
 									}
 								}
+								else
+									$display = 'style="display: none"';
 							}
 							elseif (CAMPUS_NAME == 'FH BFI Wien')
 							{
@@ -3177,39 +3207,32 @@ function sendBewerbung($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz,
 			$herkunft = 'extern';
 		}
 
-		$sanchoMailHeader = base64_encode(file_get_contents(APP_ROOT . 'skin/images/sancho/sancho_header_min_bw.jpg'));
-		$sanchoMailFooter = base64_encode(file_get_contents(APP_ROOT . 'skin/images/sancho/sancho_footer_min_bw.jpg'));
-		$email = $p->t('bewerbung/emailBodyStart', array(VILESCI_ROOT . 'vilesci/personen/personendetails.php?id='.$person_id, $sanchoMailHeader));
+		$mailInhaltLink = VILESCI_ROOT . 'vilesci/personen/personendetails.php?id='.$person_id;
+		$mailInhaltEmpfaenger = '';
+		$mailInhaltTable = '<table style="font-size:small"><tbody>';
+		$mailInhaltTable .= '<tr><td style="vertical-align:top"><b>' . $p->t('bewerbung/herkunftDesBewerbers') . '</b></td><td>'.$herkunft.'</td></tr>';
+		$mailInhaltTable .= '<tr><td><b>' . $p->t('global/studiengang') . '</b></td><td>' . $typ->bezeichnung . ' ' . $studiengangsbezeichnung . ($orgform_kurzbz != '' ? ' (' . $orgform_kurzbz . ')' : '') . '</td></tr>';
+		$mailInhaltTable .= '<tr><td><b>' . $p->t('global/studiensemester') . '</b></td><td>' . $studiensemester_kurzbz . '</td></tr>';
+
+		if ($studienplan_bezeichnung != '')
+			$mailInhaltTable.= '<tr><td><b>'.$p->t('studienplan/studienplan').'</b></td><td>'.$studienplan_bezeichnung.'</td></tr>';
+		else
+			$mailInhaltTable.= '<tr><td><b>'.$p->t('studienplan/studienplan').'</b></td><td><span style="color: red">Es konnte kein passender Studienplan ermittelt werden</span></td></tr>';
+
+		$geschlecht = new geschlecht($person->geschlecht);
+		$mailInhaltTable.= '<tr><td><b>'.$p->t('global/geschlecht').'</b></td><td>'.$geschlecht->bezeichnung_mehrsprachig_arr[$sprache].'</td></tr>';
+		$mailInhaltTable.= '<tr><td><b>'.$p->t('global/vorname').'</b></td><td>'.$person->vorname.'</td></tr>';
+		$mailInhaltTable.= '<tr><td><b>'.$p->t('global/nachname').'</b></td><td>'.$person->nachname.'</td></tr>';
+		$mailInhaltTable.= '<tr><td><b>'.$p->t('global/emailAdresse').'</b></td><td><a href="mailto:'.$mailadresse.'">'.$mailadresse.'</a></td></tr>';
+		$mailInhaltTable.= '<tr><td style="vertical-align:top"><b>'.$p->t('global/anmerkungen').'</b></td><td>'.$anmerkungen.'</td></tr>';
+		$mailInhaltTable.= '<tr><td><b>'.$p->t('bewerbung/prestudentID').'</b></td><td>'.$prestudent_id.'</td></tr>';
 
 		// Wenn MAIL_DEBUG aktiv ist, zeige auch den Empfänger an
 		if(defined('MAIL_DEBUG') && MAIL_DEBUG != '')
-			$email .= '<br><br>Empfänger: '.$empfaenger.'<br><br>';
-		$email .= '<br><table style="font-size:small"><tbody>';
-		$email .= '<tr><td style="vertical-align:top"><b>' . $p->t('bewerbung/herkunftDesBewerbers') . '</b></td><td>'.$herkunft.'</td></tr>';
-		$email .= '<tr><td><b>' . $p->t('global/studiengang') . '</b></td><td>' . $typ->bezeichnung . ' ' . $studiengangsbezeichnung . ($orgform_kurzbz != '' ? ' (' . $orgform_kurzbz . ')' : '') . '</td></tr>';
-		$email .= '<tr><td><b>' . $p->t('global/studiensemester') . '</b></td><td>' . $studiensemester_kurzbz . '</td></tr>';
-		if ($studienplan_bezeichnung != '')
-			$email.= '<tr><td><b>'.$p->t('studienplan/studienplan').'</b></td><td>'.$studienplan_bezeichnung.'</td></tr>';
-		else
-			$email.= '<tr><td><b>'.$p->t('studienplan/studienplan').'</b></td><td><span style="color: red">Es konnte kein passender Studienplan ermittelt werden</span></td></tr>';
-
-		$geschlecht = new geschlecht($person->geschlecht);
-		$email.= '<tr><td><b>'.$p->t('global/geschlecht').'</b></td><td>'.$geschlecht->bezeichnung_mehrsprachig_arr[$sprache].'</td></tr>';
-		//$email.= '<tr><td><b>'.$p->t('global/titel').'</b></td><td>'.$person->titelpre.'</td></tr>';
-		//$email.= '<tr><td><b>'.$p->t('global/postnomen').'</b></td><td>'.$person->titelpost.'</td></tr>';
-		$email.= '<tr><td><b>'.$p->t('global/vorname').'</b></td><td>'.$person->vorname.'</td></tr>';
-		$email.= '<tr><td><b>'.$p->t('global/nachname').'</b></td><td>'.$person->nachname.'</td></tr>';
-		//$email.= '<tr><td><b>'.$p->t('global/geburtsdatum').'</b></td><td>'.date('d.m.Y', strtotime($person->gebdatum)).'</td></tr>';
-		//$email.= '<tr><td><b>'.$p->t('global/adresse').'</b></td><td>'.$strasse.'</td></tr>';
-		//$email.= '<tr><td><b>'.$p->t('global/plz').'</b></td><td>'.$plz.'</td></tr>';
-		//$email.= '<tr><td><b>'.$p->t('global/ort').'</b></td><td>'.$ort.'</td></tr>';
-		//$email.= '<tr><td><b>'.$p->t('incoming/nation').'</b></td><td>'.$nation->langtext.'</td></tr>';
-		$email.= '<tr><td><b>'.$p->t('global/emailAdresse').'</b></td><td><a href="mailto:'.$mailadresse.'">'.$mailadresse.'</a></td></tr>';
-		//$email.= '<tr><td><b>'.$p->t('global/telefon').'</b></td><td>'.$telefon.'</td></tr>';
-		$email.= '<tr><td style="vertical-align:top"><b>'.$p->t('global/anmerkungen').'</b></td><td>'.$anmerkungen.'</td></tr>';
-		$email.= '<tr><td><b>'.$p->t('bewerbung/prestudentID').'</b></td><td>'.$prestudent_id.'</td></tr>';
-		$email.= '<tr><td style="vertical-align:top"><b>'.$p->t('tools/dokumente').'</b></td><td>';
+			$mailInhaltEmpfaenger = $empfaenger;
 		$akte = new akte;
+
+		$mailInhaltTable.= '<tr><td style="vertical-align:top"><b>'.$p->t('tools/dokumente').'</b></td><td>';
 
 		$akte->getAkten($person_id);
 		foreach ($akte->result as $row)
@@ -3219,54 +3242,33 @@ function sendBewerbung($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz,
 			if ($row->insertvon == 'online')
 			{
 				if ($row->nachgereicht == true)
-					$email .= '- ' . $dokument->bezeichnung_mehrsprachig[DEFAULT_LANGUAGE] . ' -> ' . $p->t('bewerbung/dokumentWirdNachgereicht') . '<br>';
+					$mailInhaltTable .= '- ' . $dokument->bezeichnung_mehrsprachig[DEFAULT_LANGUAGE] . ' -> ' . $p->t('bewerbung/dokumentWirdNachgereicht') . '<br>';
 				else
-					$email .= '- <a href="' . VILESCI_ROOT . '/content/akte.php?akte_id=' . $row->akte_id . '">' . $dokument->bezeichnung_mehrsprachig[DEFAULT_LANGUAGE] . '</a><br>';
+					$mailInhaltTable .= '- <a href="' . VILESCI_ROOT . '/content/akte.php?akte_id=' . $row->akte_id . '">' . $dokument->bezeichnung_mehrsprachig[DEFAULT_LANGUAGE] . '</a><br>';
 			}
 		}
-		$email .= '</td></tr></tbody></table>';
-		$email .= '<br>';
-		$email .= '<table border="0" cellspacing="0" cellpadding="0">
-					<tr><td>
-						<a href="' . APP_ROOT . 'addons/bewerbung/cis/status_bestaetigen.php?prestudent_id=' . $prestudent_id . '&studiensemester_kurzbz=' . $studiensemester_kurzbz . '&bestaetigen=true" target="_blank" style="font-size: 16px; font-family: Helvetica, Arial, sans-serif; color: #ffffff; text-decoration: none; border-radius: 3px; -webkit-border-radius: 3px; -moz-border-radius: 3px; background-color: #5cb85c; border-top: 6px solid #5cb85c; border-bottom: 6px solid #5cb85c; border-right: 12px solid #5cb85c; border-left: 12px solid #5cb85c; display: inline-block;">
-							' . $p->t('bewerbung/statusBestaetigen') . '
-						</a>
-					</td></tr>
-					</table>';
-		$email .= '<br>';
-		$email .= $p->t('bewerbung/emailBodyEnde', array($sanchoMailFooter));
+		$mailInhaltTable .= '</td></tr></tbody></table>';
+
+		$mailInhaltBesaetigenLink = APP_ROOT . 'addons/bewerbung/cis/status_bestaetigen.php?prestudent_id=' . $prestudent_id . '&studiensemester_kurzbz=' . $studiensemester_kurzbz . '&bestaetigen=true';
+		$sanchoFields = array(
+			'link' => $mailInhaltLink,
+			'empfaenger' => $mailInhaltEmpfaenger,
+			'table' => $mailInhaltTable,
+			'bestaetigenLink' => $mailInhaltBesaetigenLink
+		);
 	}
 	else
 	{
-		$sanchoMailHeader = base64_encode(file_get_contents(APP_ROOT . 'skin/images/sancho/sancho_header_min_bw.jpg'));
-		$sanchoMailFooter = base64_encode(file_get_contents(APP_ROOT . 'skin/images/sancho/sancho_footer_min_bw.jpg'));
-		$email = $p->t('bewerbung/emailBodyStart', array(VILESCI_ROOT . 'vilesci/personen/personendetails.php?id='.$person_id, $sanchoMailHeader));
-		$email .= '<br>';
-		$email .= $p->t('global/studiengang') . ': ' . $typ->bezeichnung . ' ' . $studiengangsbezeichnung . ($orgform_kurzbz != '' ? ' (' . $orgform_kurzbz . ')' : '') . ' <br>';
-		$email .= $p->t('global/studiensemester') . ': ' . $studiensemester_kurzbz . '<br>';
-		$email .= $p->t('global/name') . ': ' . $person->vorname . ' ' . $person->nachname . '<br>';
-		$email .= $p->t('bewerbung/prestudentID') . ': ' . $prestudent_id . '<br><br>';
-		$email .= $p->t('bewerbung/emailBodyEnde', array($sanchoMailFooter));
-	}
+		$mailInhaltLink = VILESCI_ROOT . 'vilesci/personen/personendetails.php?id='.$person_id;
+		$mailInhaltTable = $p->t('global/studiengang') . ': ' . $typ->bezeichnung . ' ' . $studiengangsbezeichnung . ($orgform_kurzbz != '' ? ' (' . $orgform_kurzbz . ')' : '') . ' <br>';
+		$mailInhaltTable .= $p->t('global/studiensemester') . ': ' . $studiensemester_kurzbz . '<br>';
+		$mailInhaltTable .= $p->t('global/name') . ': ' . $person->vorname . ' ' . $person->nachname . '<br>';
+		$mailInhaltTable .= $p->t('bewerbung/prestudentID') . ': ' . $prestudent_id . '<br><br>';
 
-	// An der FHTW werden alle Bachelor-Studiengänge und Master vom Infocenter abgearbeitet und deshalb keine Mail verschickt
-	// Die FIT-Studiengänge erhalten auch kein Mail
-	if (CAMPUS_NAME == 'FH Technikum Wien')
-	{
-		if ($studiengang->typ != 'b' && $studiengang->typ != 'm' && defined('BEWERBERTOOL_DONT_SEND_MAIL_STG') && !in_array($studiengang->studiengang_kz, unserialize(BEWERBERTOOL_DONT_SEND_MAIL_STG)))
-		{
-			$email = wordwrap($email, 70); // Bricht den Code um, da es sonst zu Anzeigefehlern im Mail kommen kann
-
-			$mail = new mail($empfaenger, 'no-reply', $p->t('bewerbung/bewerbung') . ' ' . $person->vorname . ' ' . $person->nachname . ($orgform_kurzbz != '' ? ' (' . $orgform_kurzbz . ')' : ''), 'Bitte sehen Sie sich die Nachricht in HTML Sicht an, um den Link vollständig darzustellen.');
-			$mail->setHTMLContent($email);
-		}
-	}
-	else
-	{
-		$email = wordwrap($email, 70); // Bricht den Code um, da es sonst zu Anzeigefehlern im Mail kommen kann
-
-		$mail = new mail($empfaenger, 'no-reply', $p->t('bewerbung/bewerbung') . ' ' . $person->vorname . ' ' . $person->nachname . ($orgform_kurzbz != '' ? ' (' . $orgform_kurzbz . ')' : ''), 'Bitte sehen Sie sich die Nachricht in HTML Sicht an, um den Link vollständig darzustellen.');
-		$mail->setHTMLContent($email);
+		$sanchoFields = array(
+			'link' => $mailInhaltLink,
+			'table' => $mailInhaltTable,
+		);
 	}
 
 	// send mail to Interessent
@@ -3284,28 +3286,25 @@ function sendBewerbung($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz,
 		else
 			$anrede = $p->t('bewerbung/anredeNeutral');
 
-		$mail_bewerber = new mail($mailadresse, 'no-reply', $p->t('bewerbung/erfolgreichBeworbenMailBetreff'), 'Bitte sehen Sie sich die Nachricht in HTML Sicht an, um den Inhalt vollständig darzustellen.');
-		// Unterschiedliche Ansprechpersonen für Bachelor und Master
-		$sanchoMailHeader = base64_encode(file_get_contents(APP_ROOT . 'skin/images/sancho/sancho_header_DEFAULT.jpg'));
-		$sanchoMailFooter = base64_encode(file_get_contents(APP_ROOT . 'skin/images/sancho/sancho_footer.jpg'));
-		if ($studiengang->typ == 'b')
+		if ($studiengang->typ === 'b')
 		{
-			$email_bewerber_content = $p->t('bewerbung/erfolgreichBeworbenMailBachelor', array($person->vorname, $person->nachname, $anrede, $studiengangsbezeichnung, $sanchoMailHeader, $sanchoMailFooter));
+			$vorlage = 'SanchoBewerbungsbestaetigungB';
+		}
+		else if ($studiengang->typ === 'm')
+		{
+			if ($sprache === 'English')
+				$vorlage = 'SanchoBewerbungsbestaetigungM_EN';
+			else
+				$vorlage = 'SanchoBewerbungsbestaetigungM';
 		}
 		else
-		{
-			$email_bewerber_content = $p->t('bewerbung/erfolgreichBeworbenMail', array($person->vorname, $person->nachname, $anrede, $studiengangsbezeichnung, $empfaenger, $sanchoMailHeader, $sanchoMailFooter));
-		}
+			$vorlage = "SanchoBewerbungsbestaetigung";
 
-		$mail_bewerber->setHTMLContent($email_bewerber_content);
-		// BFI braucht keine eingebetteten Images
-		if (CAMPUS_NAME != 'FH BFI Wien')
-		{
-			$mail_bewerber->addEmbeddedImage(APP_ROOT.'skin/images/sancho/sancho_header_DEFAULT.jpg', 'image/jpg', 'header_image', 'sancho_header');
-			$mail_bewerber->addEmbeddedImage(APP_ROOT.'skin/images/sancho/sancho_footer.jpg', 'image/jpg', 'footer_image', 'sancho_footer');
-		}
-		if (! $mail_bewerber->send())
+		$fields = array('nachname' => $person->nachname, 'anrede' => $anrede, 'studiengang' => $studiengangsbezeichnung);
+
+		if (!sendSanchoMail($vorlage, $fields, $mailadresse, $p->t('bewerbung/erfolgreichBeworbenMailBetreff')))
 			return false;
+
 	}
 
 	// An der FHTW werden alle Bachelor-Studiengänge und Master vom Infocenter abgearbeitet und deshalb keine Mail verschickt
@@ -3313,20 +3312,14 @@ function sendBewerbung($prestudent_id, $studiensemester_kurzbz, $orgform_kurzbz,
 	{
 		if ($studiengang->typ != 'b' && $studiengang->typ != 'm' && defined('BEWERBERTOOL_DONT_SEND_MAIL_STG') && !in_array($studiengang->studiengang_kz, unserialize(BEWERBERTOOL_DONT_SEND_MAIL_STG)))
 		{
-			if (! $mail->send())
-				return false;
-			else
-				return true;
+			return sendSanchoMail("SanchoBewerbung", $sanchoFields, $empfaenger, $p->t('bewerbung/bewerbung') . ' ' . $person->vorname . ' ' . $person->nachname . ($orgform_kurzbz != '' ? ' (' . $orgform_kurzbz . ')' : ''), 'sancho_header_min_bw.jpg', 'sancho_footer_min_bw.jpg');
 		}
 		else
 			return true;
 	}
 	else
 	{
-		if (! $mail->send())
-			return false;
-		else
-			return true;
+		return sendSanchoMail("SanchoBewerbung", $sanchoFields, $empfaenger, $p->t('bewerbung/bewerbung') . ' ' . $person->vorname . ' ' . $person->nachname . ($orgform_kurzbz != '' ? ' (' . $orgform_kurzbz . ')' : ''), 'sancho_header_min_bw.jpg', 'sancho_footer_min_bw.jpg');
 	}
 }
 // sendet eine Email an die Assistenz, wenn nachträglich eine Bewerbung hinzugefügt wird

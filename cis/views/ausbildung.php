@@ -43,8 +43,6 @@ if(!isset($person_id))
 	$geburtstag = ($person->gebdatum != '')?$datum->formatDatum($person->gebdatum, 'd.m.Y'):'';
 	$gebort =  ($person->gebort != '')?$person->gebort:'';
 
-	$svnr = ($person->svnr != '')?$person->svnr:'';
-
 	$disabled='';
 	if($eingabegesperrt)
 	{

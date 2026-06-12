@@ -239,7 +239,6 @@ $this->phrasen['bewerbung/nichtAbgeschickt']='application not sent';
 $this->phrasen['bewerbung/studiengangHinzufuegen']='Add application for degree program';
 $this->phrasen['bewerbung/weiter']='continue';
 $this->phrasen['bewerbung/geburtsnation']='Country of Birth';
-$this->phrasen['bewerbung/svnr']='Austrian Social Security Number';
 $this->phrasen['bewerbung/maennlich']='male';
 $this->phrasen['bewerbung/weiblich']='female';
 $this->phrasen['bewerbung/berufstaetigkeit']='Job';
@@ -314,7 +313,6 @@ $this->phrasen['bewerbung/teilweiseVollstaendig']='partially complete';
 $this->phrasen['bewerbung/maxAnzahlTeilnehmer']='Maximum number of participants reached';
 $this->phrasen['bewerbung/erfolgreichBeworben']='You have applied successfully. Generally, we will get back to you within 5 working days.';
 $this->phrasen['bewerbung/fehlerBeimVersendenDerBewerbung']='An error occured while sending the application. Please try again.';
-$this->phrasen['bewerbung/svnrBereitsVorhanden']='Social Security Number already exists.';
 $this->phrasen['bewerbung/menuBewerbungFuerStudiengang']='Application for a degree program';
 $this->phrasen['bewerbung/emailBodyStart']='<html>
 	<head>
@@ -633,8 +631,9 @@ Yours sincerely<br>
 UAS Technikum Wien';
 
 $this->phrasen['bewerbung/reihungstestInfoTextAngemeldet']='<div class="alert alert-info">
-<p>We will start on time with the identity check. Therefore, make sure you are in the Zoom waiting room at that time (you will receive the link 2 working days before your chosen placement test date). Further details to the placement test can be found at: <a href="https://cis.technikum-wien.at/cms/dms.php?id=330348" target="_blank">https://cis.technikum-wien.at/cms/dms.php?id=207694</a></p>
-<p>You find the entry to the placement test in your Bachelor application under <a href="https://cis.technikum-wien.at/cms/dms.php?id=147448" target="_blank">overview/details/to the placement test</a> here in the online application tool.</p>
+<p>We will start the online placement test on time. Please ensure that you are logged into the online application tool at this time and have an identity document (passport or ID card) ready.</p>
+<p>You will receive more detailed information about the placement test process in a message in the online application tool in good time before your placement test date. Please check your messages regularly.</p>
+<p>You can find the link to the placement test in your Bachelor\'s application under <a href=\''.APP_ROOT.'cms/dms.php?id=147448\' target=\'_blank\'>Overview/Details/To</a> placement test here in the online application tool.</p>
 </div><br>';
 $this->phrasen['bewerbung/anmeldefrist']='Term of application';
 $this->phrasen['bewerbung/infoVorgemerktFuerQualifikationskurs']='You are pencilled in as a participant for the qualification courses. Once you are confirmed there, you can choose an appointment for the placement test here.';
@@ -643,17 +642,15 @@ $this->phrasen['bewerbung/sieHabenFolgendenTerminGewaehlt']='Thank you for regis
 $this->phrasen['bewerbung/sieHabenFolgendenTerminGewaehltMaster']='You have successfully registered for the following Master placement test date(s).';
 $this->phrasen['bewerbung/informationenRTvorhanden']='Information for placement test';
 $this->phrasen['bewerbung/anmerkungBerufstaetigkeit']='<b>ONLY</b> obligatory for part-time degree programs<br>&nbsp;&nbsp;&nbsp;&nbsp;We would like to point out that a professional activity is not mandatory!';
-$this->phrasen['bewerbung/loginReihungstest']='<h3>Online-placement-test</h3><b>On the day of your placement test</b> click on the button "To placement test"<br>
-												Please note that you must use <u>Mozilla Firefox</u> as your browser, otherwise you may experience rendering problems.<br><br>
+$this->phrasen['bewerbung/loginReihungstest']='<h3>Online-placement-test</h3><b>On the day of your placement test</b> click on the button "To placement test"<br><br>
 												<a href="'.APP_ROOT.'cis/testtool/index.php?prestudent=%s" class="btn btn-primary" role="button" target="_blank">To placement test</a>';
 $this->phrasen['bewerbung/fuerReihungstestAnmeldenMaster']='Please register for a Master\'s placement test date. Please note that in the case of multiple applications, the placement test must be taken for each selected Master\'s degree program. </br >
 You will see the next available placement test dates for the chosen degree program(s). If the displayed date(s) is/are not possible for you, please contact the relevant degree program assistant.';
 $this->phrasen['bewerbung/masterAnmerkung']='You will receive more detailed information on the placement test in good time from the relevant degree program assistant.';
 $this->phrasen['bewerbung/reihungstestInfoTextAngemeldetMaster']='<div class="alert alert-info">
-<p>All placement tests are accompanied by video via Zoom.
-You will receive the link to the Zoom meeting room in good time from the relevant degree program assistant. We start on time with the identity check. Therefore, please make sure that you are in the Zoom waiting room at this time and that you have your proof of identity to hand. </p>
-<p>For more details on the procedure of the placement test, please go to: <a href="https://cis.technikum-wien.at/cms/dms.php?id=143930" target="_blank">https://cis.technikum-wien.at/cms/dms.php?id=330348</a></p>
-<p>You will find the entry button for the placement test in your Master\'s application under <a href="https://cis.technikum-wien.at/cms/dms.php?id=265268" target="_blank">Overview/Details/Placement Test</a> here in the online application tool.</p>
+<p>We will start the online placement test on time. Please ensure that you are logged into the online application tool at this time and have an identity document (passport or ID card) ready.</p>
+<p>You will receive more detailed information about the placement test process in a message in the online application tool in good time before your placement test date.</p>
+<p>Please check your messages regularly. You can find the link to the placement test in your Master\'s application under <a href=\''.APP_ROOT.'cms/dms.php?id=323305\' target=\'_blank\'>Overview/Details/To</a> placement test here in the online application tool.</p>
 </div><br>';
 // Ausbildung
 $this->phrasen['bewerbung/menuAusbildung']='Ausbildung';
@@ -679,8 +676,18 @@ $this->phrasen['bewerbung/legende_hochgeladen']='Required document already uploa
 $this->phrasen['bewerbung/legende_vorhanden']='Document already exists';
 $this->phrasen['bewerbung/legende_hochladen']='Upload if applicable';
 $this->phrasen['bewerbung/legende_nachreichen']='Document will be submitted later';
+
+// UHSTAT
 $this->phrasen['bewerbung/menuUhstat']='Statistical data (UHSTAT)';
 $this->phrasen['bewerbung/uhstatNichtAusgefuellt']='Before registering for a placement test, the statistical data (UHSTAT) must be filled out.';
+
+// Zahlungen
 $this->phrasen['bewerbung/menuInvoices'] = 'Payments';
 $this->phrasen['bewerbung/erklaerungInvoices'] = 'Process and payment conditions';
+
+$this->phrasen['bewerbung/idAustriaLogin']='Registration/login with <b>ID Austria</b>?';
+
+// Datenschutzerklärung
+$this->phrasen['bewerbung/bitteDatenschutzerklaerungZustimmen']='You have to consent to the privacy statement to send the application.';
+$this->phrasen['bewerbung/zustimmungDatenschutzerklaerung']='I have taken note of the privacy information.';
 ?>
