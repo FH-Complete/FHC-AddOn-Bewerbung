@@ -101,7 +101,7 @@ $this->phrasen['bewerbung/mailtext']='
 									Sehr %4$s %1$s %2$s!<br><br>
 									Vielen Dank für Ihr Interesse an einem Studiengang oder Lehrgang der '.CAMPUS_NAME.'. <br>
 									Verwenden Sie für Ihre Bewerbung bitte folgenden Link und Zugangscode: <br><br>
-									<a href="'.APP_ROOT.'addons/bewerbung/cis/registration.php?code=%3$s&emailAdresse=%5$s">Link zur Bewerbung</a><br>
+									<a href="'.APP_ROOT.'addons/bewerbung/cis/registration.php">Link zur Bewerbung</a><br>
 									Zugangscode: %3$s<br><br>
 									Wir empfehlen Ihnen aus Sicherheitsgründen, sich einen neuen Zugangscode nach dem Login generieren zu lassen (Menüpunkt "Sicherheit").<br><br>
 									Mit freundlichen Grüßen, <br>
