@@ -17,6 +17,7 @@
 require_once('../../../config/global.config.inc.php');
 require_once('../bewerbung.config.inc.php');
 require_once('../../../include/statusgrund.class.php');
+require_once('../../../include/mitarbeiter.class.php');
 
 if (!isset($person_id))
 {
