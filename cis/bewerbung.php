@@ -143,6 +143,9 @@ $eob_fields = defined('BEWERBERTOOL_ELECTRONIC_ONBOARDING_VORBEFUELLTE_PERSON_FE
 	BEWERBERTOOL_ELECTRONIC_ONBOARDING_VORBEFUELLTE_PERSON_FELDER :
 	array();
 
+// eob Felder nicht disablen wenn diese Werte vorhanden sind
+//$exceptionsFromDisabled = array('geschlecht' => 'u');
+
 if ($kennzeichen->load_pers($person_id, ['eobRegistrierungsId']))
 {
 	$eobLogin = count($kennzeichen->result) > 0;
@@ -1073,7 +1076,11 @@ if (isset($_POST['btn_person']))
 			foreach ($eob_fields as $postName => $dbName)
 			{
 				// wenn keine Daten für das Feld gespeichert sind, POST Wert trotzdem übernehmen
-				if ($person->{$dbName} == null || $person->{$dbName} == '') continue;
+				if (
+					$person->{$dbName} == null
+					|| $person->{$dbName} == ''
+					//|| (isset($exceptionsFromDisabled[$postName]) && $person->{$dbName} == $exceptionsFromDisabled[$postName])
+				) continue;
 				if (isset($_POST[$postName])) unset($_POST[$postName]);
 			}
 		}

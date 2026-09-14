@@ -50,7 +50,14 @@ if(!isset($person_id))
 
 	foreach ($eob_fields as $postName => $dbName)
 	{
-		${$postName.'_disabled'} = $eingabegesperrt || ($eobLogin && $person->{$dbName} != null && $person->{$dbName} != '') ? $disabled_text : '';
+		${$postName.'_disabled'} = $eingabegesperrt
+			|| (
+				$eobLogin
+				&& $person->{$dbName} != null
+				&& $person->{$dbName} != ''
+				//&& !(isset($exceptionsFromDisabled[$postName]) && $person->{$dbName} == $exceptionsFromDisabled[$postName])
+			)
+			? $disabled_text : '';
 	}
 
 	/*if($save_error)
