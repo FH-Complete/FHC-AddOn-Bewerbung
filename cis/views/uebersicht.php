@@ -17,6 +17,7 @@
 require_once('../../../config/global.config.inc.php');
 require_once('../bewerbung.config.inc.php');
 require_once('../../../include/statusgrund.class.php');
+require_once('../../../include/mitarbeiter.class.php');
 
 if (!isset($person_id))
 {
@@ -51,6 +52,21 @@ $studiensemester_array = array();
 	else
 	{
 		echo '<p>'.$p->t('bewerbung/allgemeineErklaerung').'</p>';
+	}
+
+
+	//Check ob, es sich bei eingeloggtem User um Mitarbeiter handelt
+	$benutzer = new benutzer();
+	$benutzer->getBenutzerFromPerson($person_id, true);
+	$is_mitarbeiter = false;
+	if (count($benutzer->result) > 0)
+	{
+		foreach ($benutzer->result as $ben)
+		{
+				$mitarbeiter = new mitarbeiter();
+				if($mitarbeiter->load($ben->uid))
+					$is_mitarbeiter = true;
+		}
 	}
 
 	// Button zum hinzufügen neuer Studiengänge
@@ -313,6 +329,10 @@ $studiensemester_array = array();
 			{
 				$nationengruppe = 'drittstaat';
 			}
+
+			//für Mitarbeiter immer Bewerbungsfrist EU annehmen
+			if ($is_mitarbeiter)
+				$nationengruppe = 'eu';
 
 			// Bewerbungsfristen laden
 			$bewerbungszeitraum = getBewerbungszeitraum($stg->studiengang_kz, $prestudent_status->studiensemester_kurzbz, $prestudent_status->studienplan_id, $nationengruppe);
@@ -958,6 +978,30 @@ $studiensemester_array = array();
 	</button>
 	<br/>
 	<br/>
+	<?php
+		// Aktuellste ZGV-Nation suchen. Master > Bachelor
+		$zgv_nation = '';
+		$pstID = 0;
+		$prestudenten = new prestudent();
+		$prestudenten->getPrestudenten($person_id);
+		foreach ($prestudenten->result as $pst)
+		{
+			if ($pst->prestudent_id > $pstID)
+			{
+				if ($pst->zgvmanation != '')
+				{
+					$zgv_nation = $pst->zgvmanation;
+				}
+				elseif ($pst->zgvnation != '')
+				{
+					$zgv_nation = $pst->zgvnation;
+				}
+				$pstID = $pst->prestudent_id;
+			}
+		}
+		// input übernehmen, wenn vorhanden
+		$zgv_nation = isset($_POST['zgv_nation']) ? $_POST['zgv_nation'] : $zgv_nation;
+	?>
 	<div class="modal fade" id="modal-studiengaenge">
 		<div class="modal-dialog">
 			<div class="modal-content">
@@ -970,7 +1014,7 @@ $studiensemester_array = array();
 
 				</div>
 				<div class="modal-body">
-					<?php if(defined('BEWERBERTOOL_SHOW_REGISTRATION_ZGVNATION') && BEWERBERTOOL_SHOW_REGISTRATION_ZGVNATION && (!isset($zgv_nation) || $zgv_nation == '')): ?>
+					<?php if(defined('BEWERBERTOOL_SHOW_REGISTRATION_ZGVNATION') && BEWERBERTOOL_SHOW_REGISTRATION_ZGVNATION): ?>
 					<div class="form-group" id="zgv_nation_form-group">
 						<label for="zgv_nation" class="control-label">
 							<?php echo $p->t('bewerbung/studienberechtigungErlangtIn') ?>
@@ -1184,35 +1228,18 @@ $studiensemester_array = array();
 				$stg_bezeichnung .= ' | <i>'.$organisationsform->bezeichnung_mehrsprachig[$sprache].' - '.$p->t('bewerbung/'.$row->sprache).'</i>';
 
 				// Bewerbungsfristen laden
-				// Aktuellste ZGV-Nation suchen. Master > Bachelor
-				$zgv_nation = '';
-				$pstID = 0;
-				$prestudenten = new prestudent();
-				$prestudenten->getPrestudenten($person_id);
-				foreach ($prestudenten->result as $pst)
-				{
-					if ($pst->prestudent_id > $pstID)
-					{
-						if ($pst->zgvmanation != '')
-						{
-							$zgv_nation = $pst->zgvmanation;
-						}
-						elseif ($pst->zgvnation != '')
-						{
-							$zgv_nation = $pst->zgvnation;
-						}
-						$pstID = $pst->prestudent_id;
-					}
-				}
-				$zgv_nation = $zgv_nation == '' && isset($_POST['zgv_nation']) ? $_POST['zgv_nation'] : $zgv_nation;
 				$nation = new nation($zgv_nation);
 				$nationengruppe = $nation->nationengruppe_kurzbz;
 
 				//wenn nichts angegeben, wird die Bewerbungsfrist für Drittstaaten angenommen
 				if ($nationengruppe == '')
 				{
-					$nationengruppe = 'eu';
+					$nationengruppe = 'drittstaat';
 				}
+
+				//für Mitarbeiter immer Bewerbungsfrist EU annehmen
+				if ($is_mitarbeiter)
+					$nationengruppe = 'eu';
 
 				$bewerbungszeitraum = getBewerbungszeitraum($row->studiengang_kz, $std_semester, $row->studienplan_id, $nationengruppe, $person_id);
 				$stg_bezeichnung .= ' '.$bewerbungszeitraum['infoDiv'];

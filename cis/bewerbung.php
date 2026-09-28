@@ -143,6 +143,9 @@ $eob_fields = defined('BEWERBERTOOL_ELECTRONIC_ONBOARDING_VORBEFUELLTE_PERSON_FE
 	BEWERBERTOOL_ELECTRONIC_ONBOARDING_VORBEFUELLTE_PERSON_FELDER :
 	array();
 
+// eob Felder nicht disablen wenn diese Werte vorhanden sind
+//$exceptionsFromDisabled = array('geschlecht' => 'u');
+
 if ($kennzeichen->load_pers($person_id, ['eobRegistrierungsId']))
 {
 	$eobLogin = count($kennzeichen->result) > 0;
@@ -1070,9 +1073,15 @@ if (isset($_POST['btn_person']))
 		// Felder entfernen, die von Electronic Onboarding kommen (dürfen nicht manuell befüllt werden)
 		if ($eobLogin)
 		{
-			foreach ($eob_fields as $eob_field)
+			foreach ($eob_fields as $postName => $dbName)
 			{
-				if (isset($_POST[$eob_field])) unset($_POST[$eob_field]);
+				// wenn keine Daten für das Feld gespeichert sind, POST Wert trotzdem übernehmen
+				if (
+					$person->{$dbName} == null
+					|| $person->{$dbName} == ''
+					//|| (isset($exceptionsFromDisabled[$postName]) && $person->{$dbName} == $exceptionsFromDisabled[$postName])
+				) continue;
+				if (isset($_POST[$postName])) unset($_POST[$postName]);
 			}
 		}
 
@@ -1299,6 +1308,7 @@ if (isset($_POST['btn_kontakt']) && ! $eingabegesperrt)
 	else
 	{
 		// Pruefen, ob die Mailadresse schon im System existiert
+		// TODO: auch email_unverifiziert pruefen?
 		$return = check_load_bewerbungen(trim($_POST['email']));
 		if ($return)
 		{
@@ -2292,10 +2302,16 @@ if ($addStudienplan)
 	);
 	if ($return === true)
 	{
-		// wenn electronic onboarding login, dokumente für prestudent akzeptieren
+		// wenn electronic onboarding login, dokumente für person akzeptieren
 		if ($eobLogin)
 		{
-			$zuAkzeptieren = array('Meldezet', 'identity');
+			$adresse = new adresse();
+
+			// nur dann akzeptieren wenn Staatsbürgerschaft/Adresse vorhanden ist
+			$zuAkzeptieren = array();
+			if (isset($person->staatsbuergerschaft)) $zuAkzeptieren[] = 'identity';
+			if ($adresse->loadOesterreichischeZustellAdresse($person->person_id, 'm')) $zuAkzeptieren[] = 'Meldezet';
+
 			$dokument_akzeptieren = new dokument();
 			foreach ($zuAkzeptieren as $dokument_kurzbz)
 			{

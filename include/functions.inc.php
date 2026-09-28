@@ -241,6 +241,7 @@ function BewerbungPersonAddStudienplan($studienplan_id, $person, $studiensemeste
 		$studiengaenge_arr[$row->studiengang_kz]['typ'] = $row->typ;
 		$studiengaenge_arr[$row->studiengang_kz]['orgform_kurzbz'] = $row->orgform_kurzbz;
 		$studiengaenge_arr[$row->studiengang_kz]['oe_kurzbz'] = $row->oe_kurzbz;
+		$studiengaenge_arr[$row->studiengang_kz]['lgartcode'] = $row->lgartcode;
 	}
 
 	// Höchsten PreStudenten ermitteln, um ggf ZGV übernehmen zu können
@@ -381,8 +382,9 @@ function BewerbungPersonAddStudienplan($studienplan_id, $person, $studiensemeste
 			$zgvmanation = '';
 		}
 
+		$istMaster = $studiengaenge_arr[$studiengang_kz]['typ'] == 'm' || $studiengaenge_arr[$studiengang_kz]['lgartcode'] == '1';
 		// Bewerber die keinen vorhanden Bachelor bei uns haben und nachträglich noch Studiengänge hinzufügen, müssen die Nation gesetzt bekommen da sie sonst in die Bewerbungsfrist von Drittstaaten fallen.
-		if ($zgvmanation === '' && $studiengaenge_arr[$studiengang_kz]['typ'] == 'm')
+		if ($zgvmanation === '' && $istMaster)
 		{
 			$prestudent_id_for_zgv_nation = 0;
 			foreach ($pre->result as $row)
@@ -395,6 +397,20 @@ function BewerbungPersonAddStudienplan($studienplan_id, $person, $studiensemeste
 				}
 			}
 		}
+
+		// wenn input zgv nation gegeben, input setzen (hat priorität über vorhanden zgvs)
+		if (isset($input_zgv_nation))
+		{
+			if ($istMaster)
+			{
+				$zgvmanation = $input_zgv_nation;
+			}
+			else
+			{
+				$zgvnation = $input_zgv_nation;
+			}
+		}
+
 		// Höchste Priorität in diesem Studiensemester laden und ggf. um 1 erhöhen
 		$prestudent = new prestudent();
 		$hoechstePrio = new prestudent();
@@ -408,8 +424,7 @@ function BewerbungPersonAddStudienplan($studienplan_id, $person, $studiensemeste
 		$prestudent->zgv_code = $zgv_code;
 		$prestudent->zgvort = $zgvort;
 		$prestudent->zgvdatum = $zgvdatum;
-		// user input zgv nation verwenden, wenn es sonst keine gibt
-		$prestudent->zgvnation = $zgvnation == '' && isset($input_zgv_nation)? $input_zgv_nation : $zgvnation;
+		$prestudent->zgvnation = $zgvnation;
 		$prestudent->zgvmas_code = $zgvmas_code;
 		$prestudent->zgvmaort = $zgvmaort;
 		$prestudent->zgvmadatum = $zgvmadatum;
