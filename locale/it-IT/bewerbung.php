@@ -18,7 +18,7 @@ $this->phrasen['bewerbung/anredeWeiblich']='Signora';
 $this->phrasen['bewerbung/mailtext']='Gentile %4$s %1$s %2$s,<br><br>
         Grazie per l’interesse a un corso di studi di '.CAMPUS_NAME.'. <br>
         Per la sua richiesta colloquio utilizzi il seguente link e codice di accesso: <br><br>
-        <a href="'.APP_ROOT.'addons/bewerbung/cis/registration.php?code=%3$s">Link alla richiesta colloquio</a><br>
+        <a href="'.APP_ROOT.'addons/bewerbung/cis/registration.php">Link alla richiesta colloquio</a><br>
         Codice di accesso: %3$s<br><br>
         Cordiali saluti, <br>
         '.CAMPUS_NAME;
@@ -97,7 +97,6 @@ $this->phrasen['bewerbung/nichtBestaetigt']='non ancora confermato';
 $this->phrasen['bewerbung/studiengangHinzufuegen']='Aggiungi corso di studi';
 $this->phrasen['bewerbung/weiter']='Avanti';
 $this->phrasen['bewerbung/geburtsnation']='Paese di nascita';
-$this->phrasen['bewerbung/svnr']='Codice fiscale';
 $this->phrasen['bewerbung/maennlich']='maschio';
 $this->phrasen['bewerbung/weiblich']='femmina';
 $this->phrasen['bewerbung/berufstaetigkeit']='Occupazione';
@@ -165,7 +164,6 @@ $this->phrasen['bewerbung/unvollstaendig']='incompleto';
 $this->phrasen['bewerbung/maxAnzahlTeilnehmer']='numero massimo di partecipanti raggiunto';
 $this->phrasen['bewerbung/erfolgreichBeworben']='Ha inviato con successo la sua richiesta colloquio per %s. La segreteria la contatterà nei prossimi giorni.';
 $this->phrasen['bewerbung/fehlerBeimVersendenDerBewerbung']='Si è verificato un errore durante l’invio della richiesta colloquio. Si prega di riprovare.';
-$this->phrasen['bewerbung/svnrBereitsVorhanden']='Codice fiscale già presente';
 $this->phrasen['bewerbung/menuBewerbungFuerStudiengang']='richiesta colloquio per il corso di studi';
 $this->phrasen['bewerbung/emailBodyStart']='E’ presente una nuova richiesta colloquio con i seguenti dati: <br>';
 $this->phrasen['bewerbung/emailDokumentuploadStart']='Il seguente documento è stato caricato: <br>';

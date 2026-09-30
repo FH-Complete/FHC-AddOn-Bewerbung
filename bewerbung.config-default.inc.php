@@ -14,7 +14,10 @@ define('BEWERBERTOOL_UEBERSICHT_ANZEIGEN', true);
 define('BEWERBERTOOL_ABSCHICKEN_ANZEIGEN', true); // Deprecated
 define('BEWERBERTOOL_SICHERHEIT_ANZEIGEN', false);
 define('BEWERBERTOOL_MESSAGES_ANZEIGEN', false);
+define('BEWERBERTOOL_INVOICES_ANZEIGEN', false);
 define('BEWERBERTOOL_AKTEN_ANZEIGEN', false);
+define('BEWERBERTOOL_UHSTAT1_ANZEIGEN', true);
+
 // Initialbelastung auf das Konto des Interessenten. Buchungstyp_kurzbz aus public.tbl_buchungstyp
 define('BEWERBERTOOL_KONTOBELASTUNG_BUCHUNGSTYP', '');
 // Wenn hier eine Mailadresse angegeben ist, werden die Bewerbungen aus der Onlinebwerbung an diese Adresse gesendet.
@@ -36,9 +39,6 @@ define('BEWERBERTOOL_GTM', '');
 // Wenn leer, gibt es keine einschraenkung. Wenn zB 3, kann man nur 3 auswaehlen, dann sind alle Anderen optionen deaktiviert.
 define('BEWERBERTOOL_MAX_STUDIENGAENGE', '');
 
-//Zeigt das Input fuer die Sozialversicherungsnummer an.
-// Moegliche Werte sind true, false oder ein String, getrennt mit Semikolons, jener nation_codes, bei denen das SVNR-Input angezeigt werden soll (zB 'A;D;I,CH').
-define('BEWERBERTOOL_SOZIALVERSICHERUNGSNUMMER_ANZEIGEN', true);
 
 define('BEWERBERTOOL_DATEN_TITEL_ANZEIGEN', false);
 
@@ -56,6 +56,9 @@ define('BEWERBERTOOL_STORNIERUNG_STATUSGRUND_ID', '');
 
 // Wenn true, wird bei der Registration die Checkbox mit der (verpflichtenden) Zustimmung zur Datenübermittlung angezeigt
 define('BEWERBERTOOL_SHOW_ZUSTIMMUNGSERKLAERUNG_REGISTRATION', false);
+
+// Wenn true, wird bei der Registration die Checkbox mit der (verpflichtenden) Zustimmung zur Datenschutzerklärung angezeigt
+define('BEWERBERTOOL_SHOW_ZUSTIMMUNGSERKLAERUNG_DATENSCHUTZERKLAERUNG', false);
 
 // Soll das DropDown zur Staatsbürgerschaft bei der Registration angezeigt werden?
 define('BEWERBERTOOL_SHOW_REGISTRATION_STAATSBUERGERSCHAFT', false);
@@ -99,4 +102,29 @@ define('BEWERBERTOOL_UPLOAD_DOKUMENT_WENN_AKZEPTIERT', true);
 //Für welche Studiengänge (Kennzahlen) soll die Option "Reihungstest-Login" angezeigt werden?
 define('TESTTOOL_LOGIN_BEWERBUNGSTOOL_STUDIENGAENGE', serialize(
 	array()));
+
+/* Soll die Berufstätigkeit als Notiz abgespeichert werden?
+ * Wenn false, wird die Berufstätigkeit bei allen PreStudenten von der Person gespeichert, die keine Berufstätigkeit eingetragen haben
+ * und zusätzlich beim PreStudenten mit der höchsten ID
+ * */
+define('BEWERBERTOOL_BERUFSTAETIGKEIT_NOTIZ', false);
+
+
+// FHTW: Zusaetzlich zu den Bachelor- & Masterstudiengaenge Studiengaenge an die keine Mail geschickt werden soll
+define('BEWERBERTOOL_DONT_SEND_MAIL_STG', serialize(array()));
+
+// Wenn Id Austria Login verwendet wird: Link zum Electronic Onboarding Start
+define('BEWERBERTOOL_ELECTRONIC_ONBOARDING_REGISTRATION_LINK', 'index.ci.php/extensions/FHC-Core-ElectronicOnboarding/OnboardingRegistrierung/startOnboarding');
+
+// Felder, die beim Electronic Onboarding Login vorbefüllt sind und daher nicht manuell änderbar sind
+define('BEWERBERTOOL_ELECTRONIC_ONBOARDING_VORBEFUELLTE_PERSON_FELDER', array(
+		'vorname',
+		'nachname',
+		'geburtsdatum',
+		'geschlecht',
+		'staatsbuergerschaft'
+	)
+);
+
+
 ?>

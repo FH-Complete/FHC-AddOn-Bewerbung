@@ -48,6 +48,10 @@ elseif($save_error_kontakt===true)
 	$kontakt->load_persKontakttyp($person->person_id, 'email', 'zustellung DESC, updateamum DESC');
 	$email = isset($kontakt->result[0]->kontakt)?$kontakt->result[0]->kontakt:'';
 
+	$kontakt = new kontakt();
+	$kontakt->load_persKontakttyp($person->person_id, 'email_unverifiziert', 'zustellung DESC, updateamum DESC');
+	$email_unverifiziert = isset($kontakt->result[0]->kontakt)?$kontakt->result[0]->kontakt:'';
+
 	$kontakt_t = new kontakt();
 	$kontakt_t->load_persKontakttyp($person->person_id, 'telefon', 'updateamum DESC');
 	$telefon = isset($kontakt_t->result[0]->kontakt)?$kontakt_t->result[0]->kontakt:'';
@@ -56,8 +60,8 @@ elseif($save_error_kontakt===true)
 	{
 		$kontakt_t->load_persKontakttyp($person->person_id, 'mobil');
 		$telefon = isset($kontakt_t->result[0]->kontakt)?$kontakt_t->result[0]->kontakt:'';
-	}	
-		
+	}
+
 	$adresse = new adresse();
 	$adresse->load_pers($person->person_id);
 	$strasse = isset($adresse->result[0]->strasse)?$adresse->result[0]->strasse:'';
@@ -67,21 +71,27 @@ elseif($save_error_kontakt===true)
 	$adr_nation = isset($adresse->result[0]->nation)?$adresse->result[0]->nation:'';
 
 	$disabled = '';
+	$adresse_disabled = '';
 	if($eingabegesperrt)
 	{
 		$disabled='disabled="disabled"';
 		echo '<div class="alert alert-info">'.$p->t('bewerbung/accountVorhanden').'</div>';
 	}
+
+	// prüfen, ob Adresse Meldeadresse ist - darf dann nicht mehr bearbeitet werden
+	if ((isset($adresse->result[0]->typ) && $adresse->result[0]->typ == 'm') || $eingabegesperrt) $adresse_disabled = 'disabled="disabled"';
+
 	?>
 
 
 	<form method="POST" action="<?php echo $_SERVER['PHP_SELF'] ?>?active=kontakt" class="form-horizontal">
 		<fieldset>
 			<legend><?php echo $p->t('bewerbung/kontakt') ?></legend>
-			<div class="form-group <?php echo ($email==''?'has-error':'') ?>">
+			<?php $displayed_email = $email == '' ? $email_unverifiziert : $email; ?>
+			<div class="form-group <?php echo ($displayed_email==''?'has-error':'') ?>">
 				<label for="email" class="col-sm-2 control-label"><?php echo $p->t('global/emailAdresse') ?>*</label>
 				<div class="col-sm-10">
-					<input type="text" name="email" id="email" value="<?php echo $email ?>" <?php echo ($email != ''?'disabled="disabled"':''); ?> size="32" class="form-control">
+					<input type="text" name="email" id="email" value="<?php echo $displayed_email ?>" <?php echo ($displayed_email != ''?'disabled="disabled"':''); ?> size="32" class="form-control">
 				</div>
 			</div>
 			<div class="form-group <?php echo ($telefon==''?'has-error':'') ?>">
@@ -101,9 +111,9 @@ elseif($save_error_kontakt===true)
 		<fieldset>
 			<legend><?php echo $p->t('bewerbung/adresse') ?></legend>
 			<div class="form-group <?php echo ($adr_nation==''?'has-error':'') ?>">
-				<label for="nation" class="col-sm-2 control-label"><?php echo $p->t('bewerbung/nation') ?>*</label>
+				<label for="nation" class="col-sm-2 control-label"><?php echo $p->t('bewerbung/wohnsitznation') ?>*</label>
 				<div class="col-sm-10">
-					<select name="nation" id="nation" class="form-control" <?php echo $disabled; ?> >
+					<select name="nation" id="nation" class="form-control" <?php echo $adresse_disabled; ?> >
 						<option value=""><?php echo $p->t('bewerbung/bitteAuswaehlen') ?></option>
 						<option value="A"><?php	echo ($sprache=='German'? 'Österreich':'Austria'); ?></option>
 						<?php
@@ -122,22 +132,22 @@ elseif($save_error_kontakt===true)
 				</div>
 			</div>
 			<div class="form-group <?php echo ($strasse==''?'has-error':'') ?>">
-				<label for="strasse" class="col-sm-2 control-label"><?php echo $p->t('global/strasse') ?>*</label>
+				<label for="strasse" class="col-sm-2 control-label"><?php echo $p->t('bewerbung/strasse') ?>*</label>
 				<div class="col-sm-10">
-					<input type="text" name="strasse" id="strasse" maxlength="256" value="<?php echo $strasse ?>" <?php echo $disabled ?> class="form-control">
+					<input type="text" name="strasse" id="strasse" maxlength="256" value="<?php echo $strasse ?>" <?php echo $adresse_disabled ?> class="form-control">
 				</div>
 			</div>
 			<div class="form-group <?php echo ($plz==''?'has-error':'') ?>">
 				<label for="plz" class="col-sm-2 control-label"><?php echo $p->t('global/plz') ?>*</label>
 				<div class="col-sm-10">
-					<input type="text" name="plz" id="plz" maxlength="16" value="<?php echo $plz ?>" <?php echo $disabled ?> class="form-control">
+					<input type="text" name="plz" id="plz" maxlength="16" value="<?php echo $plz ?>" <?php echo $adresse_disabled ?> class="form-control">
 				</div>
 			</div>
 			<div class="form-group <?php echo ($ort==''?'has-error':'') ?>">
 				<label for="ort" class="col-sm-2 control-label"><?php echo $p->t('global/ort') ?>*</label>
 				<div class="col-sm-10">
-					<input type="text" name="ort" id="ort_input" maxlength="256" value="<?php echo $ort ?>" <?php echo $disabled.' '.($ort == ''?'disabled="disabled"':'') ?> class="form-control">
-					<select id="ort_dropdown" name="ort" class="form-control" <?php echo $disabled.' '.($ort == ''?'':'') ?>></select>
+					<input type="text" name="ort" id="ort_input" maxlength="256" value="<?php echo $ort ?>" <?php echo $adresse_disabled.' '.($ort == ''?'disabled="disabled"':'') ?> class="form-control">
+					<select id="ort_dropdown" name="ort" class="form-control" <?php echo $adresse_disabled.' '.($ort == ''?'':'') ?>></select>
 					<input type="hidden" name="gemeinde" id="gemeinde_input" value="<?php echo $gemeinde ?>" class="form-control">
 				</div>
 			</div>
@@ -159,7 +169,7 @@ elseif($save_error_kontakt===true)
 		</button><br/><br/>
 	</form>
 	<script type="text/javascript">
-		$(function() 
+		$(function()
 		{
 			$(document).ready(function()
 			{
@@ -179,7 +189,7 @@ elseif($save_error_kontakt===true)
 						$("#ort_input").prop('disabled', false);
 				}
 			});
-			$('#nation').change(function() 
+			$('#nation').change(function()
 			{
 				if($('#nation').val() != "")
 				{
@@ -206,7 +216,7 @@ elseif($save_error_kontakt===true)
 					$('#plz').prop('disabled', true);
 				}
 			});
-			$('#plz').on("input", function() 
+			$('#plz').on("input", function()
 			{
 				if ($('#nation').val() == "A")
 				{
@@ -242,7 +252,7 @@ elseif($save_error_kontakt===true)
 						$('#ort_input').empty();
 						if (data.gemeinden != '')
 						{
-							$.each(data.gemeinden, function (i, v) 
+							$.each(data.gemeinden, function (i, v)
 							{
 								if (v.ortschaftsname === '<?php echo $ort ?>')
 								{
@@ -254,7 +264,7 @@ elseif($save_error_kontakt===true)
 									$(element).append("<option value='" + v.ortschaftsname + "'>" + v.ortschaftsname + "</option>");
 									$('#gemeinde_input').val(v.gemeindename);
 								}
-								/*if ($(select).attr("name") === "ort_dd") 
+								/*if ($(select).attr("name") === "ort_dd")
 								{
 									if (v.ortschaftskennziffer === '')
 									{

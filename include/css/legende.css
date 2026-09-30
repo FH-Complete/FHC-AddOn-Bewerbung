@@ -77,3 +77,15 @@
   color: white;
   background-color: dimgrey;
 }
+
+.warning
+{
+	background-color: #fcf8e3;
+	color: #fcf8e3;
+}
+
+.info
+{
+	background-color: #d9edf7;
+	color: #d9edf7;
+}

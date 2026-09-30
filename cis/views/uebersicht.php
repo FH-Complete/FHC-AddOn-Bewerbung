@@ -17,6 +17,7 @@
 require_once('../../../config/global.config.inc.php');
 require_once('../bewerbung.config.inc.php');
 require_once('../../../include/statusgrund.class.php');
+require_once('../../../include/mitarbeiter.class.php');
 
 if (!isset($person_id))
 {
@@ -51,6 +52,21 @@ $studiensemester_array = array();
 	else
 	{
 		echo '<p>'.$p->t('bewerbung/allgemeineErklaerung').'</p>';
+	}
+
+
+	//Check ob, es sich bei eingeloggtem User um Mitarbeiter handelt
+	$benutzer = new benutzer();
+	$benutzer->getBenutzerFromPerson($person_id, true);
+	$is_mitarbeiter = false;
+	if (count($benutzer->result) > 0)
+	{
+		foreach ($benutzer->result as $ben)
+		{
+				$mitarbeiter = new mitarbeiter();
+				if($mitarbeiter->load($ben->uid))
+					$is_mitarbeiter = true;
+		}
 	}
 
 	// Button zum hinzufügen neuer Studiengänge
@@ -164,6 +180,7 @@ $studiensemester_array = array();
 
 			$prestudent_status = new prestudent();
 			$prestatus_help = ($prestudent_status->getLastStatus($row->prestudent_id)) ? $prestudent_status->status_mehrsprachig[$sprache] : $p->t('bewerbung/keinStatus');
+			$prestatus_help_status_kurzbz = $prestudent_status->status_kurzbz;
 
 			$bereits_angemeldet[$prestudent_status->studiensemester_kurzbz][] = $stg->studiengang_kz;
 
@@ -178,7 +195,7 @@ $studiensemester_array = array();
 
 				$anzahl_studiengaenge[$prestudent_status->studiensemester_kurzbz]++;
 
-				if ($row->studiengang_kz > 0 && $row->studiengang_kz < 10000)
+				if ($row->typ == 'b' || $row->typ == 'm')
 				{
 					$studiengaengeBaMa[$prestudent_status->studiensemester_kurzbz][] = $row->studiengang_kz;
 				}
@@ -312,6 +329,10 @@ $studiensemester_array = array();
 			{
 				$nationengruppe = 'drittstaat';
 			}
+
+			//für Mitarbeiter immer Bewerbungsfrist EU annehmen
+			if ($is_mitarbeiter)
+				$nationengruppe = 'eu';
 
 			// Bewerbungsfristen laden
 			$bewerbungszeitraum = getBewerbungszeitraum($stg->studiengang_kz, $prestudent_status->studiensemester_kurzbz, $prestudent_status->studienplan_id, $nationengruppe);
@@ -554,9 +575,9 @@ $studiensemester_array = array();
 										<div class="form-group">
 											<label for="status" class="col-sm-3 col-md-5 text-right">'.$p->t('bewerbung/status').':</label>
 											<div class="col-sm-9 col-md-7" id="status">'.$prestatus_help;
-										if ($prestatus_help == 'BewerberIn')
+										if ($prestatus_help_status_kurzbz == 'Bewerber')
 										{
-											echo '<br>Innerhalb von ca. einer Woche nach Absolvierung Ihres Reihungstests erfahren Sie, ob Sie einen Studienplatz (Status Aufgenomme/r) erhalten oder Sie vorerst auf Warteliste (Status Wartende/r) gesetzt wurden.';
+											echo '<br>'.$p->t('bewerbung/beschreibungUebersichtBewerberstatus');
 										}
 										echo '	</div>
 										</div>
@@ -770,7 +791,7 @@ $studiensemester_array = array();
 
 						$anzahl_studiengaenge[$prestudent_status->studiensemester_kurzbz]++;
 
-						if ($row->studiengang_kz > 0 && $row->studiengang_kz < 10000)
+						if ($row->typ == 'b' || $row->typ == 'm')
 						{
 							$studiengaengeBaMa[$prestudent_status->studiensemester_kurzbz][] = $row->studiengang_kz;
 						}
@@ -866,6 +887,9 @@ $studiensemester_array = array();
 	// Zeige mögliche Studierendendaten an, wenn vorhanden
 	$benutzer = new benutzer();
 	$benutzer->getBenutzerFromPerson($person_id, true);
+	$zgvNations = new nation();
+	$zgvNations->getAll($ohnesperre = true, ($sprache == 'English' ? true : false));
+
 	if (count($benutzer->result) > 0)
 	{
 		echo '<p><b>'.$p->t('bewerbung/studierendenDaten').'</b></p>';
@@ -954,6 +978,30 @@ $studiensemester_array = array();
 	</button>
 	<br/>
 	<br/>
+	<?php
+		// Aktuellste ZGV-Nation suchen. Master > Bachelor
+		$zgv_nation = '';
+		$pstID = 0;
+		$prestudenten = new prestudent();
+		$prestudenten->getPrestudenten($person_id);
+		foreach ($prestudenten->result as $pst)
+		{
+			if ($pst->prestudent_id > $pstID)
+			{
+				if ($pst->zgvmanation != '')
+				{
+					$zgv_nation = $pst->zgvmanation;
+				}
+				elseif ($pst->zgvnation != '')
+				{
+					$zgv_nation = $pst->zgvnation;
+				}
+				$pstID = $pst->prestudent_id;
+			}
+		}
+		// input übernehmen, wenn vorhanden
+		$zgv_nation = isset($_POST['zgv_nation']) ? $_POST['zgv_nation'] : $zgv_nation;
+	?>
 	<div class="modal fade" id="modal-studiengaenge">
 		<div class="modal-dialog">
 			<div class="modal-content">
@@ -966,6 +1014,32 @@ $studiensemester_array = array();
 
 				</div>
 				<div class="modal-body">
+					<?php if(defined('BEWERBERTOOL_SHOW_REGISTRATION_ZGVNATION') && BEWERBERTOOL_SHOW_REGISTRATION_ZGVNATION): ?>
+					<div class="form-group" id="zgv_nation_form-group">
+						<label for="zgv_nation" class="control-label">
+							<?php echo $p->t('bewerbung/studienberechtigungErlangtIn') ?>
+							<a id="infoDivStudienberechtigung" href="#" data-toggle="popover" data-placement="auto" title="" data-content="<?php echo $p->t('bewerbung/studienberechtigungErlangtInErklaerung') ?>">
+								<span style="font-size: 1em;" class="glyphicon glyphicon-info-sign glyph" aria-hidden="true"></span>
+							</a>
+						</label>
+						<select name="zgv_nation" id="zgv_nation" class="form-control"">
+							<option value=""><?php echo $p->t('bewerbung/bitteAuswaehlenBaMa') ?></option>
+							<option value="A"><?php	echo ($sprache=='German'? 'Österreich':'Austria'); ?></option>
+							<?php $selected = '';
+							foreach($zgvNations->nation as $nat):
+								$selected = ($zgv_nation == $nat->code) ? 'selected' : ''; ?>
+								<option value="<?php echo $nat->code ?>" <?php echo $selected ?>>
+									<?php
+									if($sprache=='German')
+										echo $nat->langtext;
+									else
+										echo $nat->engltext;
+									?>
+								</option>
+							<?php endforeach; ?>
+						</select>
+					</div>
+					<?php endif; ?>
 					<div class="form-group">
 						<label for="studiensemester_kurzbz" class="control-label">
 							<?php echo $p->t('bewerbung/geplanterStudienbeginn') ?>
@@ -1060,6 +1134,9 @@ $studiensemester_array = array();
 		}
 		else
 		{
+			// studiengang url parameter holen
+			$studiengang_get_arr = isset($studiengang_get) && is_string($studiengang_get) ? explode(',', $studiengang_get) : array();
+
 			foreach ($studienplan as $row)
 			{
 				if ($lasttyp != $row->typ)
@@ -1099,9 +1176,9 @@ $studiensemester_array = array();
 						&& BEWERBERTOOL_MAX_STUDIENGAENGE != ''
 						&& isset($studiengaengeBaMa[$std_semester])
 						&& count($studiengaengeBaMa[$std_semester]) >= BEWERBERTOOL_MAX_STUDIENGAENGE
-						&& $row->studiengang_kz > 0
-						&& $row->studiengang_kz < 10000
-						&& $row->typ != 'l')
+						//&& $row->studiengang_kz > 0
+						//&& $row->studiengang_kz < 10000
+						&& ($row->typ == 'b' || $row->typ == 'm'))
 					{
 						echo '<div class="alert alert-warning" name="checkboxInfoDiv">'.$p->t('bewerbung/sieKoennenMaximalXStudiengaengeWaehlen', array(BEWERBERTOOL_MAX_STUDIENGAENGE)).'</div>';
 					}
@@ -1117,16 +1194,19 @@ $studiensemester_array = array();
 
 				$checked = '';
 				$disabled = '';
+				$textMuted = '';
 
 				// Checkboxen deaktivieren, wenn BEWERBERTOOL_MAX_STUDIENGAENGE gesetzt ist und mehr als oder genau BEWERBERTOOL_MAX_STUDIENGAENGE uebergeben werden.
 				if (defined('BEWERBERTOOL_MAX_STUDIENGAENGE')
 					&& BEWERBERTOOL_MAX_STUDIENGAENGE != ''
 					&& isset($studiengaengeBaMa[$std_semester])
 					&& count($studiengaengeBaMa[$std_semester]) >= BEWERBERTOOL_MAX_STUDIENGAENGE
-					&& $row->studiengang_kz > 0
-					&& $row->studiengang_kz < 10000)
+					//&& $row->studiengang_kz > 0
+					//&& $row->studiengang_kz < 10000
+					&& ($row->typ == 'b' || $row->typ == 'm'))
 				{
 					$disabled = 'disabled';
+					$textMuted = 'text-muted';
 				}
 
 				// Wenn es nur einen gueltigen Studienplan gibt, kommt der Name des Studiengangs aus dem Studienplan
@@ -1148,26 +1228,6 @@ $studiensemester_array = array();
 				$stg_bezeichnung .= ' | <i>'.$organisationsform->bezeichnung_mehrsprachig[$sprache].' - '.$p->t('bewerbung/'.$row->sprache).'</i>';
 
 				// Bewerbungsfristen laden
-				// Aktuellste ZGV-Nation suchen. Master > Bachelor
-				$zgv_nation = '';
-				$pstID = 0;
-				$prestudenten = new prestudent();
-				$prestudenten->getPrestudenten($person_id);
-				foreach ($prestudenten->result as $pst)
-				{
-					if ($pst->prestudent_id > $pstID)
-					{
-						if ($pst->zgvmanation != '')
-						{
-							$zgv_nation = $pst->zgvmanation;
-						}
-						elseif ($pst->zgvnation != '')
-						{
-							$zgv_nation = $pst->zgvnation;
-						}
-						$pstID = $pst->prestudent_id;
-					}
-				}
 				$nation = new nation($zgv_nation);
 				$nationengruppe = $nation->nationengruppe_kurzbz;
 
@@ -1177,13 +1237,17 @@ $studiensemester_array = array();
 					$nationengruppe = 'drittstaat';
 				}
 
+				//für Mitarbeiter immer Bewerbungsfrist EU annehmen
+				if ($is_mitarbeiter)
+					$nationengruppe = 'eu';
+
 				$bewerbungszeitraum = getBewerbungszeitraum($row->studiengang_kz, $std_semester, $row->studienplan_id, $nationengruppe, $person_id);
 				$stg_bezeichnung .= ' '.$bewerbungszeitraum['infoDiv'];
 				$fristAbgelaufen = $bewerbungszeitraum['frist_abgelaufen'];
 
 				// Wenn es für das gewählte Studiensemester schon eine Bewerbung gibt, kann man sich nicht mehr dafür bewerben
 				$disabledExistsPrestudentstatus = '';
-				$textMuted = '';
+
 				$prestudent_status = new prestudent();
 				if ($prestudent_status->existsPrestudentstatus($person_id, $row->studiengang_kz, $std_semester, null, $row->studienplan_id))
 				{
@@ -1208,6 +1272,10 @@ $studiensemester_array = array();
 
 				if (!$fristAbgelaufen)
 				{
+					// if studiengangskennzahl passed as parameter, preselect it
+					if ($disabled == '' && $disabledExistsPrestudentstatus == '' && in_array($row->studiengang_kz, $studiengang_get_arr))
+						$checked = ' checked';
+
 					echo '<div class="panel-body">
 						<div class="radio '.$disabledExistsPrestudentstatus.'">
 							<label class="'.$textMuted.'">
@@ -1246,6 +1314,7 @@ $studiensemester_array = array();
 			var item = $('#modal-studiengaenge input[name="studienplaene[]"]:checked');
 			var studienplan_id = item.val();
 			var stsem = $('#studiensemester_kurzbz').val();
+			var zgv_nation = $('#zgv_nation').val();
 
 			if (undefined == studienplan_id || studienplan_id == '') {
 				alert('<?php echo $p->t('bewerbung/bitteEineStudienrichtungWaehlen')?>');
@@ -1255,18 +1324,24 @@ $studiensemester_array = array();
 				alert('<?php echo $p->t('bewerbung/bitteStudienbeginnWaehlen')?>');
 				return false;
 			}
-			saveStudienplan(studienplan_id, stsem);
+			if (zgv_nation == '' && !item.hasClass('checkbox_lg')) {
+				alert('<?php echo $p->t('bewerbung/bitteZGVausweahlen')?>');
+				return false;
+			}
+			saveStudienplan(studienplan_id, stsem, zgv_nation);
 		});
 
-		$('#studiensemester_kurzbz').change(function () {
+		$('#studiensemester_kurzbz, #zgv_nation').change(function () {
 			var studiensemester = $('#studiensemester_kurzbz').val();
+			var zgv_nation = $('#zgv_nation').val();
+
 			$("#liste-studiengaenge").hide();
 			$(".loaderIcon").show();
 
 			$("#form-group-stg").load
 			(
 				document.URL + ' #liste-studiengaenge',
-				{studiensemester_kurzbz: studiensemester},
+				{studiensemester_kurzbz: studiensemester, zgv_nation: zgv_nation},
 				function () {
 					$(".loaderIcon").hide();
 					if ($('#studiensemester_kurzbz').val() != "") {
@@ -1308,11 +1383,12 @@ $studiensemester_array = array();
 		});
 	});
 
-	function saveStudienplan(studienplan_id, stsem) {
+	function saveStudienplan(studienplan_id, stsem, zgv_nation) {
 		data = {
 			studienplan_id: studienplan_id,
 			addStudienplan: true,
-			studiensemester: stsem
+			studiensemester: stsem,
+			zgv_nation: zgv_nation
 		};
 
 		$.ajax({
@@ -1460,4 +1536,5 @@ $studiensemester_array = array();
 		});
 	}
 </script>
+</div>
 </div>

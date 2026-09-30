@@ -27,7 +27,7 @@ if(!isset($person_id))
 
 <div role="tabpanel" class="tab-pane" id="daten">
 	<h2><?php echo $p->t('bewerbung/menuPersDaten') ?></h2>
-	
+
 	<?php
 
 	$nation = new nation();
@@ -39,13 +39,25 @@ if(!isset($person_id))
 	$geburtstag = ($person->gebdatum != '')?$datum->formatDatum($person->gebdatum, 'd.m.Y'):'';
 	$gebort =  ($person->gebort != '')?$person->gebort:'';
 
-	$svnr = ($person->svnr != '')?$person->svnr:'';
+	$disabled_text = 'disabled="disabled"';
 
 	$disabled='';
 	if($eingabegesperrt)
 	{
-		$disabled='disabled="disabled"';
+		$disabled=$disabled_text;
 		echo '<div class="alert alert-info">'.$p->t('bewerbung/accountVorhanden').'</div>';
+	}
+
+	foreach ($eob_fields as $postName => $dbName)
+	{
+		${$postName.'_disabled'} = $eingabegesperrt
+			|| (
+				$eobLogin
+				&& $person->{$dbName} != null
+				&& $person->{$dbName} != ''
+				//&& !(isset($exceptionsFromDisabled[$postName]) && $person->{$dbName} == $exceptionsFromDisabled[$postName])
+			)
+			? $disabled_text : '';
 	}
 
 	/*if($save_error)
@@ -93,13 +105,13 @@ if(!isset($person_id))
 		<div class="form-group <?php echo ($vorname==''?'has-error':'') ?>">
 			<label for="vorname" class="col-sm-3 control-label"><?php echo $p->t('global/vorname') ?>*</label>
 			<div class="col-sm-9">
-				<input type="text" name="vorname" id="vorname"  <?php echo $disabled; ?> value="<?php echo $vorname ?>" class="form-control">
+				<input type="text" name="vorname" id="vorname" <?php echo $vorname_disabled ?? $disabled; ?> value="<?php echo $vorname ?>" class="form-control">
 			</div>
 		</div>
 		<div class="form-group <?php echo ($nachname==''?'has-error':'') ?>">
 			<label for="nachname" class="col-sm-3 control-label"><?php echo $p->t('global/nachname') ?>*</label>
 			<div class="col-sm-9">
-				<input type="text" name="nachname" id="nachname"  <?php echo $disabled; ?> value="<?php echo $nachname ?>" class="form-control">
+				<input type="text" name="nachname" id="nachname" <?php echo $nachname_disabled ?? $disabled; ?> value="<?php echo $nachname ?>" class="form-control">
 			</div>
 		</div>
 		<?php
@@ -121,19 +133,19 @@ if(!isset($person_id))
 		<div class="form-group <?php echo ($geburtstag==''?'has-error':'') ?>">
 			<label for="gebdatum" class="col-sm-3 control-label"><?php echo $p->t('global/geburtsdatum') ?>* (<?php echo $p->t('bewerbung/datumFormat') ?>)</label>
 			<div class="col-sm-9">
-				<input type="text" name="geburtsdatum" id="gebdatum"  <?php echo $disabled; ?> value="<?php echo $geburtstag ?>" class="form-control">
+				<input type="text" name="geburtsdatum" id="gebdatum" <?php echo $geburtsdatum_disabled ?? $disabled; ?> value="<?php echo $geburtstag ?>" class="form-control">
 			</div>
 		</div>
 
 		<div>
 			<div class="col-sm-3">
 				<div></div>
-			</div>	
+			</div>
 			<div id="danger-alert" class="col-sm-9 font-weight-bold">
 				<div id="responseGeb"></div>
-			</div>			
+			</div>
 		</div>
-			
+
 		<div class="form-group <?php echo (defined('BEWERBERTOOL_GEBURTSORT_PFLICHT') && BEWERBERTOOL_GEBURTSORT_PFLICHT === true && $gebort == '' ?'has-error':'') ?>">
 			<label for="gebort" class="col-sm-3 control-label"><?php echo $p->t('global/geburtsort');echo (defined('BEWERBERTOOL_GEBURTSORT_PFLICHT') && BEWERBERTOOL_GEBURTSORT_PFLICHT === true?'*':''); ?></label>
 			<div class="col-sm-9">
@@ -164,7 +176,7 @@ if(!isset($person_id))
 		<div class="form-group <?php echo ($person->staatsbuergerschaft==''?'has-error':'') ?>">
 			<label for="staatsbuergerschaft" class="col-sm-3 control-label"><?php echo $p->t('global/staatsbuergerschaft') ?>*</label>
 			<div class="col-sm-9">
-				<select name="staatsbuergerschaft" id="staatsbuergerschaft"  <?php echo $disabled; ?> class="form-control">
+				<select name="staatsbuergerschaft" id="staatsbuergerschaft" <?php echo $staatsbuergerschaft_disabled ?? $disabled; ?> class="form-control">
 					<option value=""><?php echo $p->t('bewerbung/bitteAuswaehlen') ?></option>
 					<option value="A"><?php	echo ($sprache=='German'? 'Österreich':'Austria'); ?></option>
 					<?php $selected = '';
@@ -182,21 +194,6 @@ if(!isset($person_id))
 				</select>
 			</div>
 		</div>
-		<?php
-		if(!defined('BEWERBERTOOL_SOZIALVERSICHERUNGSNUMMER_ANZEIGEN') || BEWERBERTOOL_SOZIALVERSICHERUNGSNUMMER_ANZEIGEN == true || is_string(BEWERBERTOOL_SOZIALVERSICHERUNGSNUMMER_ANZEIGEN)):
-			$svnrDisabled = 'disabled="disabled"';
-			if ($svnr == '')
-			{
-				$svnrDisabled = '';
-			}
-		?>
-		<div id="input_svnr" class="form-group" <?php echo ($svnr == '' && !in_array($person->staatsbuergerschaft, explode(";", BEWERBERTOOL_SOZIALVERSICHERUNGSNUMMER_ANZEIGEN)) && is_string(BEWERBERTOOL_SOZIALVERSICHERUNGSNUMMER_ANZEIGEN)?'style="display: none;"':'') ?>>
-			<label for="svnr" class="col-sm-3 control-label"><?php echo $p->t('bewerbung/svnr').' '.$p->t('bewerbung/fallsVorhanden') ?></label>
-			<div class="col-sm-9">
-				<input type="text" name="svnr" id="svnr"  <?php echo $svnrDisabled; ?> value="<?php echo $svnr ?>" class="form-control">
-			</div>
-		</div>
-		<?php endif; ?>
 		<div class="form-group">
 			<label for="geschlecht" class="col-sm-3 control-label"><?php echo $p->t('global/geschlecht') ?></label>
 			<div class="col-sm-9">
@@ -204,11 +201,16 @@ if(!isset($person_id))
 				$geschlechter = new geschlecht();
 				$geschlechter->getAll();
 
-				foreach ($geschlechter->result AS $gsch)
+				foreach ($geschlechter->result as $gsch)
 				{
 					if ($gsch->geschlecht == 'u')
 					{
-						continue;
+						if ($person->geschlecht == 'u')
+						{
+							$geschlecht_disabled = $disabled_text;
+						}
+						else
+							continue;
 					}
 					$checked = '';
 					if ($gsch->geschlecht == $person->geschlecht)
@@ -216,14 +218,14 @@ if(!isset($person_id))
 						$checked = 'checked';
 					}
 					echo '	<label class="radio-inline">
-								<input type="radio" name="geschlecht" class="radio-inline" '.$disabled.' value="'.$gsch->geschlecht.'" '.$checked.'>
+								<input type="radio" name="geschlecht" class="radio-inline" '.($geschlecht_disabled ?? $disabled).' value="'.$gsch->geschlecht.'" '.$checked.'>
 								'.$gsch->bezeichnung_mehrsprachig_arr[$sprache].'
 							</label>';
 				}
 				?>
 			</div>
 		</div>
-		<?php 
+		<?php
 		$prestudent = new prestudent();
 		$prestudent->getPrestudenten($person->person_id);
 		if(isset($prestudent->result[0])): ?>
@@ -234,7 +236,7 @@ if(!isset($person_id))
 					<?php
 					$aufmerksamdurch = new aufmerksamdurch();
 					$aufmerksamdurch->getAll();
-					
+
 					//Sortiert aufmerksamdurch je nach Sprache alphabetisch nach bezeichnung_mehrsprachig
 					function sortAufmerksamdurch($a, $b)
 					{
@@ -248,10 +250,10 @@ if(!isset($person_id))
 						$aufmerksamdurch_kurzbz = $prestudent->result[0]->aufmerksamdurch_kurzbz;
 					else
 						$aufmerksamdurch_kurzbz ='';?>
-						
+
 					<option value=""><?php echo $p->t('bewerbung/bitteAuswaehlen');?></option>
 
-					<?php 
+					<?php
 					foreach($aufmerksamdurch->result as $row_aufm):
 						if($row_aufm->aktiv):
 						$selected = ($aufmerksamdurch_kurzbz == $row_aufm->aufmerksamdurch_kurzbz) ? 'selected' : ''; ?>
@@ -273,55 +275,96 @@ if(!isset($person_id))
 		if(!defined('BEWERBERTOOL_BERUFSTAETIGKEIT_ANZEIGEN') || BEWERBERTOOL_BERUFSTAETIGKEIT_ANZEIGEN):
 		?>
 		<fieldset>
-			<legend><?php echo $p->t('bewerbung/berufstaetigkeit') ?></legend>
+			<legend><?php
+				echo $p->t('bewerbung/berufstaetigkeit') . ((!defined('BEWERBERTOOL_BERUFSTAETIGKEIT_NOTIZ') || BEWERBERTOOL_BERUFSTAETIGKEIT_NOTIZ !== false) ? ' **' : ''); ?>
+			</legend>
 			<?php
-			$notiz = new notiz;
-			$notiz->getBewerbungstoolNotizen($person_id, null, 'tbl_notiz.insertamum DESC');
-			$counter = 0;
-			if(count($notiz->result) > 0):
-				foreach($notiz->result as $berufstaetig)
+			if (defined('BEWERBERTOOL_BERUFSTAETIGKEIT_NOTIZ') && BEWERBERTOOL_BERUFSTAETIGKEIT_NOTIZ === false):
+
+				$berufstaetigkeit_code = '';
+
+				$prestudenten_desc = array_reverse($prestudent->result);
+				foreach($prestudenten_desc AS $row)
 				{
-					if($berufstaetig->insertvon == 'online')
+					if($row->berufstaetigkeit_code !== '')
 					{
-						$counter++;
-						echo '	<div class="form-group">
-									<label for="berufstaetig" class="col-sm-3 control-label">
-										'.$p->t('bewerbung/eintragVom').' '.date('d.m.Y', strtotime($berufstaetig->insertamum)).'
-									</label>
-									<div class="col-sm-9">
-										<input type="text" class="form-control" disabled value="'.htmlspecialchars($berufstaetig->text).'">
-									</div>
-								</div>';
+						$berufstaetigkeit_code = $row->berufstaetigkeit_code;
 						break;
 					}
 				}
-				$berufstaetigkeit_code='';
-				//if($counter == 0)
-				{
-					foreach($prestudent->result AS $row)
+			?>
+				<div class="form-group <?php echo $berufstaetigkeit_code==''?'has-error':'' ?>">
+					<label for="berufstaetig" class="col-sm-3 control-label"><?php echo $p->t('bewerbung/artDerBerufstaetigkeit') ?>*</label>
+					<div class="col-sm-9">
+						<input type="hidden" id="inputBerufstaetigCode" value="<?php echo $berufstaetigkeit_code?>"/>
+						<label class="radio-inline"><input type="radio" class="inputBerufstaetigArt" name="berufstaetig" value="Vollzeit"><?php echo $p->t('bewerbung/vollzeit') ?></label>
+						<label class="radio-inline"><input type="radio" class="inputBerufstaetigArt" name="berufstaetig" value="Teilzeit"><?php echo $p->t('bewerbung/teilzeit') ?></label>
+						<label class="radio-inline"><input type="radio" class="inputBerufstaetigArt" name="berufstaetig" value="Nein"><?php echo $p->t('bewerbung/nichtBerufstaetig') ?></label>
+						<label class="radio-inline"></label>
+					</div>
+				</div>
+				<div class="form-group <?php echo $berufstaetigkeit_code==''?'has-error':'' ?>">
+					<label for="facheinschlaegig" class="col-sm-3 control-label"><?php echo $p->t('bewerbung/facheinschlaegig') ?>*
+						<a href="#" data-toggle="tooltip" data-html="true" data-placement="auto" title="" data-original-title="<?php echo $p->t('bewerbung/facheinschlaegigText') ?>">
+							<span style="font-size: 1em;" class="glyphicon glyphicon-info-sign glyph" aria-hidden="true"></span>
+						</a>
+					</label>
+					<div class="col-sm-9">
+						<label class="radio-inline"><input type="radio" class="inputFacheinschlaegig" name="facheinschlaegig" value="Ja"><?php echo $p->t('global/ja') ?></label>
+						<label class="radio-inline"><input type="radio" class="inputFacheinschlaegig" name="facheinschlaegig" value="Nein"><?php echo $p->t('global/nein') ?></label>
+					</div>
+				</div>
+			<?php
+
+			else:
+				$notiz = new notiz;
+				$notiz->getBewerbungstoolNotizen($person_id, null, 'tbl_notiz.insertamum DESC');
+				$counter = 0;
+				if(count($notiz->result) > 0):
+					foreach($notiz->result as $berufstaetig)
 					{
-						if($row->berufstaetigkeit_code!='')
+						if($berufstaetig->insertvon == 'online')
 						{
-							$berufstaetigkeit_code = $row->berufstaetigkeit_code;
 							$counter++;
+							echo '	<div class="form-group">
+										<label for="berufstaetig" class="col-sm-3 control-label">
+											'.$p->t('bewerbung/eintragVom').' '.date('d.m.Y', strtotime($berufstaetig->insertamum)).'
+										</label>
+										<div class="col-sm-9">
+											<input type="text" class="form-control" disabled value="'.htmlspecialchars($berufstaetig->text).'">
+										</div>
+									</div>';
+							break;
 						}
 					}
-					if(CAMPUS_NAME != 'FH Technikum Wien' && $berufstaetigkeit_code!='')
+					$berufstaetigkeit_code='';
+					//if($counter == 0)
 					{
-						$berufstaetigkeit = new bisberufstaetigkeit();
-						$berufstaetigkeit->load($berufstaetigkeit_code);
+						foreach($prestudent->result AS $row)
+						{
+							if($row->berufstaetigkeit_code!='')
+							{
+								$berufstaetigkeit_code = $row->berufstaetigkeit_code;
+								$counter++;
+							}
+						}
+						if(CAMPUS_NAME != 'FH Technikum Wien' && $berufstaetigkeit_code!='')
+						{
+							$berufstaetigkeit = new bisberufstaetigkeit();
+							$berufstaetigkeit->load($berufstaetigkeit_code);
 
-						echo '<div class="form-group">
-								<label for="berufstaetig" class="col-sm-3 control-label">
-									'.$p->t('bewerbung/berufstaetigkeit').'
-								</label>
-								<div class="col-sm-9">
-									<input type="text" class="form-control" disabled value="'.($berufstaetigkeit->berufstaetigkeit_bez).'">
-								</div>
-							</div>';
+							echo '<div class="form-group">
+									<label for="berufstaetig" class="col-sm-3 control-label">
+										'.$p->t('bewerbung/berufstaetigkeit').'
+									</label>
+									<div class="col-sm-9">
+										<input type="text" class="form-control" disabled value="'.($berufstaetigkeit->berufstaetigkeit_bez).'">
+									</div>
+								</div>';
+						}
 					}
-				}
-			endif;	?>
+				endif;
+			?>
 
 				<div class="form-group">
 					<label for="berufstaetig" class="col-sm-3 control-label"><?php echo $p->t('bewerbung/berufstaetig') ?></label>
@@ -345,13 +388,20 @@ if(!isset($person_id))
 						<input type="text" name="berufstaetig_art" id="berufstaetig_art" class="form-control">
 					</div>
 				</div>
+			<?php
+			endif;
+			?>
 				<div class="form-group">
 					<label class="col-sm-3 control-label"></label>
 					<div class="col-sm-9">
-						** <?php echo $p->t('bewerbung/anmerkungBerufstaetigkeit') ?>
+						<?php if (!defined('BEWERBERTOOL_BERUFSTAETIGKEIT_NOTIZ') || BEWERBERTOOL_BERUFSTAETIGKEIT_NOTIZ !== false):
+							echo '** ' . $p->t('bewerbung/anmerkungBerufstaetigkeit');
+						else:
+							echo '* ' . $p->t('bewerbung/pflichtfelder');
+						?>
+						<?php endif; ?>
 					</div>
 				</div>
-
 		</fieldset>
 		<?php
 		endif;
@@ -359,7 +409,7 @@ if(!isset($person_id))
 		<button class="btn-nav btn btn-default" type="submit" name="btn_person" data-jump-tab="<?php echo $tabs[array_search('daten', $tabs)-1] ?>" onclick="this.form.action='<?php echo $_SERVER['PHP_SELF'] ?>?active=<?php echo $tabs[array_search('daten', $tabs)-1] ?>'">
 			<?php echo $p->t('global/zurueck') ?>
 		</button>
-		<button class="btn btn-success" type="submit"  <?php /*echo ($svnrDisabled == '' ? '' : $disabled);*/ ?> name="btn_person">
+		<button class="btn btn-success" type="submit" name="btn_person">
 			<?php echo $p->t('global/speichern') ?>
 		</button>
 		<button class="btn-nav btn btn-default" type="submit" name="btn_person" data-jump-tab="<?php echo $tabs[array_search('daten', $tabs)+1] ?>" onclick="this.form.action='<?php echo $_SERVER['PHP_SELF'] ?>?active=<?php echo $tabs[array_search('daten', $tabs)+1] ?>'">
@@ -371,18 +421,25 @@ if(!isset($person_id))
 		$(function()
 		{
 			<?php
-			if(defined('BEWERBERTOOL_SOZIALVERSICHERUNGSNUMMER_ANZEIGEN') && is_string(BEWERBERTOOL_SOZIALVERSICHERUNGSNUMMER_ANZEIGEN)):
+			if(defined('BEWERBERTOOL_BERUFSTAETIGKEIT_NOTIZ') && BEWERBERTOOL_BERUFSTAETIGKEIT_NOTIZ === false):
 			?>
-			$('#staatsbuergerschaft').change(function() {
-				var arrayFromPHP = <?php echo json_encode(explode(";", BEWERBERTOOL_SOZIALVERSICHERUNGSNUMMER_ANZEIGEN)) ?>;
-				if(jQuery.inArray($('#staatsbuergerschaft').val(), arrayFromPHP) > -1 ) {
-					$('#input_svnr').show();
-				}
-				else {
-					$('#input_svnr').hide();
-				}
-			});
-			<?php endif; ?>
+			var berufstaetigCode = $('#inputBerufstaetigCode').val();
+
+			if (['6', '7', '2'].includes(berufstaetigCode))
+				$('.inputFacheinschlaegig[value=Ja]').prop('checked', true);
+			else if (['9', '10', '0'].includes(berufstaetigCode))
+				$('.inputFacheinschlaegig[value=Nein]').prop('checked', true);
+
+			if (['6', '9'].includes(berufstaetigCode))
+				$('.inputBerufstaetigArt[value=Vollzeit]').prop('checked', true);
+			else if (['7', '10'].includes(berufstaetigCode))
+				$('.inputBerufstaetigArt[value=Teilzeit]').prop('checked', true);
+			else if (['2', '0'].includes(berufstaetigCode))
+				$('.inputBerufstaetigArt[value=Nein]').prop('checked', true);
+
+			<?php
+			endif;
+			?>
 
 			$('.inputBerufstaetig').change(function()
 			{
@@ -397,14 +454,14 @@ if(!isset($person_id))
 					$('#berufstaetig_art').attr("disabled", false);
 				}
 			});
-	
+
 		});
 
 
 		var validateGeb = document.getElementById('gebdatum');
 		var responseGeb = document.getElementById('responseGeb');
 
-		validateGeb.onchange = function() 
+		validateGeb.onchange = function()
 		{
 			var response = checkFormat(validateGeb.value);
 
@@ -422,7 +479,7 @@ if(!isset($person_id))
 			}
 		}
 
-	
+
 
 	</script>
 </div>

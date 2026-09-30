@@ -58,6 +58,7 @@ Should you require any additional information, please do not hesitate to contact
 		<a href="#datenschutzText" data-toggle="collapse">Privacy information: <span class="glyphicon glyphicon-collapse-down"></span></a>
 		<div id="datenschutzText" class="collapse">
 		The data communicated to us by you for the purpose of the application will be used by us exclusively for the processing of the application on the basis of pre-contractual or contractual purposes and will not be passed on to third parties with the exception described below in case of uncertainties regarding the entry requirements. If there is no further contact or enrolment, your data will be deleted after three years.<br><br>
+		UAS Technikum Wien is entitled to use your data in anonymized form for surveys for the purpose of quality assurance.<br><br>
 		Information on your data subject rights can be found here: <a href=\'https://www.technikum-wien.at/information-ueber-ihre-rechte-gemaess-datenschutz-grundverordnung/\' target=\'_blank\'>https://www.technikum-wien.at/information-ueber-ihre-rechte-gemaess-datenschutz-grundverordnung/</a><br><br>
 		If you have any questions, please contact us at <a href=\'mailto:datenschutz@technikum-wien.at\'>datenschutz@technikum-wien.at</a><br><br>
 		Data Processing Office:<br>
@@ -75,7 +76,7 @@ $this->phrasen['bewerbung/anredeNeutral']='Mr/Ms';
 $this->phrasen['bewerbung/mailtext']='Dear %4$s %1$s %2$s.<br><br>
                                         Thank you for your interest in a degree program at '.CAMPUS_NAME.'. <br>
                                         To apply for a course, please use the following link and access code:<br><br>
-                                        <a href="'.APP_ROOT.'addons/bewerbung/cis/registration.php?code=%3$s&emailAdresse=%5$s">Link to registration</a><br>
+                                        <a href="'.APP_ROOT.'addons/bewerbung/cis/registration.php">Link to registration</a><br>
                                         Access code: %3$s <br><br>
                                         Best regards, <br>
                                         '.CAMPUS_NAME;
@@ -201,6 +202,8 @@ $this->phrasen['bewerbung/orgform/DDP']='Double Degree Program';
 $this->phrasen['bewerbung/orgform/PT']='Part time';
 $this->phrasen['bewerbung/orgform/ZGS']='Zielgruppenspezifisch';
 $this->phrasen['bewerbung/orgform/DUA']='Dual';
+$this->phrasen['bewerbung/vollzeit']='Full time';
+$this->phrasen['bewerbung/teilzeit']='Part time';
 $this->phrasen['bewerbung/German']='German';
 $this->phrasen['bewerbung/English']='English';
 $this->phrasen['bewerbung/Italian']='Italian';
@@ -236,13 +239,16 @@ $this->phrasen['bewerbung/nichtAbgeschickt']='application not sent';
 $this->phrasen['bewerbung/studiengangHinzufuegen']='Add application for degree program';
 $this->phrasen['bewerbung/weiter']='continue';
 $this->phrasen['bewerbung/geburtsnation']='Country of Birth';
-$this->phrasen['bewerbung/svnr']='Austrian Social Security Number';
 $this->phrasen['bewerbung/maennlich']='male';
 $this->phrasen['bewerbung/weiblich']='female';
 $this->phrasen['bewerbung/berufstaetigkeit']='Job';
 $this->phrasen['bewerbung/berufstaetig']='employed';
 $this->phrasen['bewerbung/dienstgeber']='Employer';
 $this->phrasen['bewerbung/artDerTaetigkeit']='Type of Occupation';
+$this->phrasen['bewerbung/artDerBerufstaetigkeit']='Type of Job';
+$this->phrasen['bewerbung/nichtBerufstaetig']='Not employed';
+$this->phrasen['bewerbung/facheinschlaegigText']='Are you/were you employed in a subject-specific (i.e. in a subject-related environment) related to your chosen degree program(s)?';
+$this->phrasen['bewerbung/facheinschlaegig']='Specialized';
 $this->phrasen['bewerbung/weiter']='Next';
 $this->phrasen['bewerbung/eintragVom']='Date of record:';
 $this->phrasen['bewerbung/menuPersDaten']='Personal Data';
@@ -251,6 +257,7 @@ $this->phrasen['bewerbung/bitteAuswaehlen']='-- please select --';
 $this->phrasen['bewerbung/menuKontaktinformationen']='Contact Details';
 $this->phrasen['bewerbung/kontakt']='Contact';
 $this->phrasen['bewerbung/nation']='Nation';
+$this->phrasen['bewerbung/wohnsitznation']='Country of residence';
 $this->phrasen['bewerbung/menuDokumente']='Documents';
 $this->phrasen['bewerbung/dokument']='Document';
 $this->phrasen['bewerbung/linkDokumenteHochladen']='Upload Documents';
@@ -306,7 +313,6 @@ $this->phrasen['bewerbung/teilweiseVollstaendig']='partially complete';
 $this->phrasen['bewerbung/maxAnzahlTeilnehmer']='Maximum number of participants reached';
 $this->phrasen['bewerbung/erfolgreichBeworben']='You have applied successfully. Generally, we will get back to you within 5 working days.';
 $this->phrasen['bewerbung/fehlerBeimVersendenDerBewerbung']='An error occured while sending the application. Please try again.';
-$this->phrasen['bewerbung/svnrBereitsVorhanden']='Social Security Number already exists.';
 $this->phrasen['bewerbung/menuBewerbungFuerStudiengang']='Application for a degree program';
 $this->phrasen['bewerbung/emailBodyStart']='<html>
 	<head>
@@ -391,6 +397,7 @@ $this->phrasen['bewerbung/orgformBeschreibungstext']='Please enter the organizat
 $this->phrasen['bewerbung/menuAbschließen']='Finish';
 
 $this->phrasen['bewerbung/habenSieBereitsEinenZugangscode']='Already registered? You have already registered and you have received an access code?';
+$this->phrasen['bewerbung/strasse']='Street';
 
 // Allgemeine Phrasen
 $this->phrasen['bewerbung/sieHabenNochKeinenZugangscode']='New applicant? You don\'t have an access code or account?';
@@ -527,7 +534,7 @@ $this->phrasen['bewerbung/erfolgreichBeworbenMail']='
 									Dear %3$s %1$s %2$s,<br><br>
 									Your have successfully submitted your application for %4$s. Generally, we will get back to you within 5 working days. If necessary, you will then be requested to upload additional documents.<br><br>
 									You can see the status of your application in the <a href="'.APP_ROOT.'addons/bewerbung/cis/registration.php">application tool</a>.<br>
-									If you have any questions regarding your application, do not hesitate to contact us at <a href="mailto:%5$s">%5$s</a>.<br><br>
+									If you have any questions regarding your application, please contact our <a href="mailto:studienberatung@technikum-wien.at">InfoCenter Team</a>. They will be happy to help you.<br><br>
 									Best regards,<br>
 									UAS Technikum Wien
 								</td>
@@ -611,6 +618,7 @@ $this->phrasen['bewerbung/textRuecktrittsrecht']='I take note that I have the ri
 								contract by means of a clear declaration by email to your degree program’s administrative assistant about your decision to cancel this contract.</p>';
 $this->phrasen['bewerbung/textAusbildungsvertrag']='I have read the training contract and agree to the content of the contract.';
 $this->phrasen['bewerbung/informationDatenverwendungStudierende']='<a href=\''.APP_ROOT.'cms/dms.php?id=149169\' target=\'_blank\'><span class="glyphicon glyphicon-file"></span>Information on the use of student personal data</a>';
+$this->phrasen['bewerbung/beschreibungUebersichtBewerberstatus']='Within approximately one week of completing your placement test, you will find out whether you have been offered a study place (status "Aufgenomme/r") or whether you have been placed on the waiting list (status "Wartende/r") for the time being.';
 
 // Reihungstest
 $this->phrasen['bewerbung/anmeldungReihungstestMailBetreff']='Confirmation of registration to placement test UAS Technikum Wien';
@@ -623,16 +631,27 @@ Yours sincerely<br>
 UAS Technikum Wien';
 
 $this->phrasen['bewerbung/reihungstestInfoTextAngemeldet']='<div class="alert alert-info">
-<p>We will start on time with the identity check. Therefore, make sure you are in the Zoom waiting room at that time (you will receive the link 2 working days before your chosen placement test date).</p>
-<p>You find the entry to the placement test in your Bachelor application under <a href="https://cis.technikum-wien.at/cms/dms.php?id=147448" target="_blank">overview/details/to the placement test</a> here in the online application tool.</p>
+<p>We will start the online placement test on time. Please ensure that you are logged into the online application tool at this time and have an identity document (passport or ID card) ready.</p>
+<p>You will receive more detailed information about the placement test process in a message in the online application tool in good time before your placement test date. Please check your messages regularly.</p>
+<p>You can find the link to the placement test in your Bachelor\'s application under <a href=\''.APP_ROOT.'cms/dms.php?id=147448\' target=\'_blank\'>Overview/Details/To</a> placement test here in the online application tool.</p>
 </div><br>';
 $this->phrasen['bewerbung/anmeldefrist']='Term of application';
 $this->phrasen['bewerbung/infoVorgemerktFuerQualifikationskurs']='You are pencilled in as a participant for the qualification courses. Once you are confirmed there, you can choose an appointment for the placement test here.';
 $this->phrasen['bewerbung/raumzuteilungFolgt']='Details follow 2 working days before the test per e-mail (Please check your spam folder, too!)';
 $this->phrasen['bewerbung/sieHabenFolgendenTerminGewaehlt']='Thank you for registering for the online-placement test.<br>Your prioritization of degree programs is fixed and can only be changed before the registration deadline.<br>Once the placement test has been completed, the prioritization can <b>no longer</b> be changed.';
+$this->phrasen['bewerbung/sieHabenFolgendenTerminGewaehltMaster']='You have successfully registered for the following Master placement test date(s).';
 $this->phrasen['bewerbung/informationenRTvorhanden']='Information for placement test';
 $this->phrasen['bewerbung/anmerkungBerufstaetigkeit']='<b>ONLY</b> obligatory for part-time degree programs<br>&nbsp;&nbsp;&nbsp;&nbsp;We would like to point out that a professional activity is not mandatory!';
-
+$this->phrasen['bewerbung/loginReihungstest']='<h3>Online-placement-test</h3><b>On the day of your placement test</b> click on the button "To placement test"<br><br>
+												<a href="'.APP_ROOT.'cis/testtool/index.php?prestudent=%s" class="btn btn-primary" role="button" target="_blank">To placement test</a>';
+$this->phrasen['bewerbung/fuerReihungstestAnmeldenMaster']='Please register for a Master\'s placement test date. Please note that in the case of multiple applications, the placement test must be taken for each selected Master\'s degree program. </br >
+You will see the next available placement test dates for the chosen degree program(s). If the displayed date(s) is/are not possible for you, please contact the relevant degree program assistant.';
+$this->phrasen['bewerbung/masterAnmerkung']='You will receive more detailed information on the placement test in good time from the relevant degree program assistant.';
+$this->phrasen['bewerbung/reihungstestInfoTextAngemeldetMaster']='<div class="alert alert-info">
+<p>We will start the online placement test on time. Please ensure that you are logged into the online application tool at this time and have an identity document (passport or ID card) ready.</p>
+<p>You will receive more detailed information about the placement test process in a message in the online application tool in good time before your placement test date.</p>
+<p>Please check your messages regularly. You can find the link to the placement test in your Master\'s application under <a href=\''.APP_ROOT.'cms/dms.php?id=323305\' target=\'_blank\'>Overview/Details/To</a> placement test here in the online application tool.</p>
+</div><br>';
 // Ausbildung
 $this->phrasen['bewerbung/menuAusbildung']='Ausbildung';
 $this->phrasen['bewerbung/ausbildung']='Ausbildung zu Ihrer Zugangsvoraussetzung';
@@ -652,4 +671,23 @@ $this->phrasen['bewerbung/re_nachname']='Name';
 $this->phrasen['bewerbung/staatsbuergerschaft']='Citizenship';
 $this->phrasen['bewerbung/staatsbuergerschaftErklaerung']='Please enter your Citizenship here';
 $this->phrasen['bewerbung/bitteAuswaehlenStaatsbuergerschaft']='-- Please select Entry --';
+$this->phrasen['bewerbung/legende_pflicht']='Required document';
+$this->phrasen['bewerbung/legende_hochgeladen']='Required document already uploaded';
+$this->phrasen['bewerbung/legende_vorhanden']='Document already exists';
+$this->phrasen['bewerbung/legende_hochladen']='Upload if applicable';
+$this->phrasen['bewerbung/legende_nachreichen']='Document will be submitted later';
+
+// UHSTAT
+$this->phrasen['bewerbung/menuUhstat']='Statistical data (UHSTAT)';
+$this->phrasen['bewerbung/uhstatNichtAusgefuellt']='Before registering for a placement test, the statistical data (UHSTAT) must be filled out.';
+
+// Zahlungen
+$this->phrasen['bewerbung/menuInvoices'] = 'Payments';
+$this->phrasen['bewerbung/erklaerungInvoices'] = 'Process and payment conditions';
+
+$this->phrasen['bewerbung/idAustriaLogin']='Registration/login with <b>ID Austria</b>?';
+
+// Datenschutzerklärung
+$this->phrasen['bewerbung/bitteDatenschutzerklaerungZustimmen']='You have to consent to the privacy statement to send the application.';
+$this->phrasen['bewerbung/zustimmungDatenschutzerklaerung']='I have taken note of the privacy information.';
 ?>

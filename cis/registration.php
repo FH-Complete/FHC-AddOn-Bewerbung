@@ -82,10 +82,12 @@ $p = new phrasen($sprache);
 $db = new basis_db();
 $userid = trim(filter_input(INPUT_POST, 'userid'));
 $mailadresse = trim(filter_input(INPUT_POST, 'mailadresse'));
+$keepEmailUnverified = trim(filter_input(INPUT_POST, 'keepEmailUnverified'));
 $username = trim(filter_input(INPUT_POST, 'username'));
 $password = trim(filter_input(INPUT_POST, 'password'));
-$codeGet = trim(filter_input(INPUT_GET, 'code'));
-$emailAdresseGet = trim(filter_input(INPUT_GET, 'emailAdresse'));
+$codeGet = htmlspecialchars(trim(filter_input(INPUT_GET, 'code')));
+$emailAdresseGet = htmlspecialchars(trim(filter_input(INPUT_GET, 'emailAdresse')));
+$keepEmailUnverifiedGet = htmlspecialchars(trim(filter_input(INPUT_GET, 'keepEmailUnverified')));
 
 // Erstellen eines Array mit allen Studiengängen
 $studiengaenge_obj = new studiengang();
@@ -111,6 +113,35 @@ if ($userid)
 			{
 				$validMail = true;
 				break;
+			}
+		}
+
+		if (!$validMail)
+		{
+			$kontakte = new kontakt();
+			$kontakte->load_persKontakttyp($person_id, 'email_unverifiziert');
+
+			foreach ($kontakte->result AS $kontakt)
+			{
+				// if email is not yet verified when logging in
+				if (strtolower($kontakt->kontakt) == strtolower($mailadresse))
+				{
+					// if email found
+					if ($kontakt->load($kontakt->kontakt_id))
+					{
+						$validMail = true;
+
+						// not set to verified if parameter is set
+						if ($keepEmailUnverified !== 'true')
+						{
+							// set email to verified
+							$kontakt->kontakttyp = 'email';
+							if (!$kontakt->save()) $validMail = false;
+						}
+						break;
+						// TODO: save kontakt_verifiziert?
+					}
+				}
 			}
 		}
 
@@ -197,8 +228,8 @@ elseif($username && $password)
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 		<meta name="robots" content="noindex">
-		<link href="../../../vendor/twbs/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" type="text/css">
-		<link rel="stylesheet" type="text/css" href="../../../vendor/twbs/bootstrap/dist/css/bootstrap.min.css">
+		<link href="../../../vendor/twbs/bootstrap3/dist/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+		<link rel="stylesheet" type="text/css" href="../../../vendor/twbs/bootstrap3/dist/css/bootstrap.min.css">
 		<link href="../include/css/registration.css" rel="stylesheet" type="text/css">
 		<script src="../include/js/bewerbung.js"></script>
 	</head>
@@ -502,6 +533,13 @@ elseif($username && $password)
 						{
 							$message = '<p class="bg-danger padding-10">'.$p->t('bewerbung/bitteDatenuebermittlungZustimmen').'</p>';
 						}
+						// Wenn die Zusatimmung zur Datenschutzerklärung nicht gegeben ist
+						elseif (defined('BEWERBERTOOL_SHOW_ZUSTIMMUNGSERKLAERUNG_DATENSCHUTZERKLAERUNG')
+								&& BEWERBERTOOL_SHOW_ZUSTIMMUNGSERKLAERUNG_DATENSCHUTZERKLAERUNG
+								&& !isset($_POST['zustimmung_datenschutzerklaerung']))
+						{
+							$message = '<p class="bg-danger padding-10">'.$p->t('bewerbung/bitteDatenschutzerklaerungZustimmen').'</p>';
+						}
 						// Wenn die Zusatimmung zu AGB nicht gegeben ist
 						elseif (defined('BEWERBERTOOL_SHOW_ZUSTIMMUNGSERKLAERUNG_AGB')
 								&& BEWERBERTOOL_SHOW_ZUSTIMMUNGSERKLAERUNG_AGB
@@ -558,7 +596,7 @@ elseif($username && $password)
 							// Email Kontakt zu Person speichern
 							$kontakt = new kontakt();
 							$kontakt->person_id = $person->person_id;
-							$kontakt->kontakttyp = 'email';
+							$kontakt->kontakttyp = 'email_unverifiziert';
 							$kontakt->kontakt = $email;
 							$kontakt->zustellung = true;
 							$kontakt->insertamum = date('Y-m-d H:i:s');
@@ -1042,7 +1080,7 @@ elseif($username && $password)
 										echo '<div class="panel-body">
 												<div class="checkbox disabled">
 													<label class="text-muted">
-														<input class="" type="checkbox" name="" value="" disabled>
+														<input class="'. $class .'" type="checkbox" name="" value="" disabled>
 														'.$stg_bezeichnung;
 									}
 
@@ -1084,6 +1122,13 @@ elseif($username && $password)
 								<div class="checkbox-inline">
 									<input type="checkbox" name="zustimmung_datenuebermittlung" id="checkbox_zustimmung_datenuebermittlung" value="" required="required">
 									<?php echo $p->t('bewerbung/zustimmungDatenuebermittlung') ?>
+								</div>
+								<br />
+							<?php endif; ?>
+							<?php if (defined('BEWERBERTOOL_SHOW_ZUSTIMMUNGSERKLAERUNG_DATENSCHUTZERKLAERUNG') && BEWERBERTOOL_SHOW_ZUSTIMMUNGSERKLAERUNG_DATENSCHUTZERKLAERUNG === true): ?>
+								<div class="checkbox-inline">
+									<input type="checkbox" name="zustimmung_datenschutzerklaerung" id="checkbox_zustimmung_datenschutzerklaerung" value="" required="required">
+									<?php echo $p->t('bewerbung/zustimmungDatenschutzerklaerung') ?>
 								</div>
 								<br />
 							<?php endif; ?>
@@ -1241,6 +1286,7 @@ elseif($username && $password)
 					<!--<div class="col-xs-10 col-xs-offset-1 col-sm-6 col-sm-offset-3">-->
 					<div class="col-sm-8 col-sm-offset-2">
 						<form action="<?php echo basename(__FILE__);?>" method="POST" id="lp" class="form-horizontal">
+							<input type="hidden" name="keepEmailUnverified" value="<?php echo $keepEmailUnverifiedGet ?>">
 							<div style="border-bottom: 1px solid #eee; margin-bottom: 30px;" class="row">
 								<?php echo $p->t('bewerbung/welcomeHeaderLogin') ?>
 							</div>
@@ -1332,6 +1378,45 @@ elseif($username && $password)
 								</div>
 							  </div>
 							</div>
+							<?php if (defined('BEWERBERTOOL_ELECTRONIC_ONBOARDING_REGISTRATION_LINK')): ?>
+							<?php
+								$onboardingRegistrationLink = APP_ROOT.BEWERBERTOOL_ELECTRONIC_ONBOARDING_REGISTRATION_LINK;
+
+								// wenn weitergeleitet mit studiengangskennzahl, get parameter anhängen
+								$studiengang_get = filter_input(INPUT_GET, 'stg_kz');
+								if($studiengang_get != '')
+								{
+									$hasParams = parse_url(BEWERBERTOOL_ELECTRONIC_ONBOARDING_REGISTRATION_LINK, PHP_URL_QUERY);
+									// parse_url returns a string if the URL has parameters or NULL if not
+									if ($hasParams) {
+										$onboardingRegistrationLink .= '&stg_kz='.$studiengang_get;
+									} else {
+										$onboardingRegistrationLink .= '?stg_kz='.$studiengang_get;
+									}
+								}
+							?>
+							<div class="panel panel-info">
+								<div class="panel-heading text-center">
+									<h3 class="panel-title"><?php echo $p->t('bewerbung/idAustriaLogin') ?></h3>
+								</div>
+								<div class="panel-body text-center">
+									<img
+										src="<?php echo APP_ROOT.'addons/bewerbung/include/images/ID_Austria_logo.png' ?>"
+										style="margin: 10px 10px"
+										alt="ID Austria Logo"
+									>
+									<br>
+									<a
+										class="btn btn-primary btn-lg"
+										style="width: 250px;"
+										href="<?php echo $onboardingRegistrationLink ?>"
+										role="button">
+											<?php echo $p->t('bewerbung/login') ?>
+									</a>
+									<br><br>
+								</div>
+							</div>
+							<?php endif; ?>
 							<div style="text-align:center; color:gray;"><?php echo $p->t('bewerbung/footerText')?></div>
 							<br><br><br><br><br><br><br>
 							<br><br><br><br><br><br><br>
@@ -1347,8 +1432,8 @@ elseif($username && $password)
 				</div>
 			<?php endif; ?>
 		</div>
-		<script type="text/javascript" src="../../../vendor/jquery/jqueryV1/jquery-1.12.4.min.js"></script>
-		<script type="text/javascript" src="../../../vendor/twbs/bootstrap/dist/js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="../../../vendor/jquery/jquery1/jquery-1.12.4.min.js"></script>
+		<script type="text/javascript" src="../../../vendor/twbs/bootstrap3/dist/js/bootstrap.min.js"></script>
 		<script type="text/javascript">
 
 		function changeSprache(sprache)
@@ -1457,6 +1542,14 @@ elseif($username && $password)
 				}
 			<?php endif; ?>
 
+			<?php if (defined('BEWERBERTOOL_SHOW_ZUSTIMMUNGSERKLAERUNG_DATENSCHUTZERKLAERUNG') && BEWERBERTOOL_SHOW_ZUSTIMMUNGSERKLAERUNG_DATENSCHUTZERKLAERUNG): ?>
+				if(document.getElementById('checkbox_zustimmung_datenschutzerklaerung').checked == false)
+				{
+					alert("<?php echo $p->t('bewerbung/bitteDatenschutzerklaerungZustimmen')?>");
+					return false;
+				}
+			<?php endif; ?>
+
 			<?php if (defined('BEWERBERTOOL_SHOW_ZUSTIMMUNGSERKLAERUNG_AGB') && BEWERBERTOOL_SHOW_ZUSTIMMUNGSERKLAERUNG_AGB): ?>
 			if(document.getElementById('checkbox_zustimmung_agb').checked == false)
 			{
@@ -1541,7 +1634,12 @@ elseif($username && $password)
 				$("input[type=checkbox][class=checkbox_stg]").not(":checked").attr("disabled",true);
 				$("input[type=checkbox][class=checkbox_stg]").parents("label").addClass("text-muted");
 				$("input[type=checkbox][class=checkbox_stg]").parents("div").addClass("disabled");
-				$("input[type=checkbox][class=checkbox_stg]").parents("label").append("<br/><div class=\"label label-warning\" style=\"white-space: initial\"><span class=\"glyphicon glyphicon-warning-sign\"></span>&nbsp;&nbsp;<?php echo $p->t('bewerbung/bitteZGVausweahlen'); ?></div>");
+				$("input[type=checkbox][class=checkbox_stg]").parents("label").find('div.label-danger').prev('br').remove();
+				$("input[type=checkbox][class=checkbox_stg]").parents("label").find('div.label-danger').remove();
+
+				$("input[type=checkbox][class=checkbox_stg]").parents("label").find('div.label-warning').prev('br').remove();
+				$("input[type=checkbox][class=checkbox_stg]").parents("label").find('div.label-warning').remove();
+				$("input[type=checkbox][class=checkbox_stg]").parents("label").append("<br /><div class=\"label label-warning\" style=\"white-space: initial\"><span class=\"glyphicon glyphicon-warning-sign\"></span>&nbsp;&nbsp;<?php echo $p->t('bewerbung/bitteZGVausweahlen'); ?></div>");
 			}
 			<?php endif; ?>
 
@@ -1784,7 +1882,7 @@ function sendMail($zugangscode, $email, $person_id=null)
 
 	if(defined('MAIL_DEBUG') && MAIL_DEBUG!='')
 	{
-		$msg .= '<br><br>Zugangscode: <a href="'.APP_ROOT.'addons/bewerbung/cis/registration.php?code='.$zugangscode.'&emailAdresse='.$email.'">Link zur Bewerbung</a>';
+		$msg .= '<br><br>Zugangscode: <a href="'.APP_ROOT.'addons/bewerbung/cis/registration.php?code='.$zugangscode.'&emailAdresse='.$email.'&keepEmailUnverified=true">Link zur Bewerbung</a>';
 	}
 
 	return $msg;

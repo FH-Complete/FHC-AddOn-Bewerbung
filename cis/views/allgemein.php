@@ -631,19 +631,20 @@ $studiensemester_array = array();
 		</div>
 		<div class="modal-body">
 			<div class="form-group">
-				<label for="ausbildungstyp" class="control-label">
-					<?php echo $p->t('bewerbung/ausbildungstyp') ?>
-				</label>
+
 				<div class="dropdown">
+					<label for="ausbildungstyp" class="control-label">
+						<?php echo $p->t('bewerbung/ausbildungstyp') ?>
+					</label>
 					<select id="ausbildungstyp" name="ausbildungstyp" class="form-control">
 						<option value="stg"><?php echo $p->t('global/studiengang') ?></option>
 						<option value="lehrg"><?php echo ($p->t('bewerbung/hackTypBezeichnungLehrgeange') != '' ? $p->t('bewerbung/hackTypBezeichnungLehrgeange') : $p->t('bewerbung/lehrgang')); ?></option>
 					</select>
 				</div>
-				<label for="studiensemester_kurzbz" class="control-label">
-					<?php echo $p->t('bewerbung/geplanterStudienbeginn') ?>
-				</label>
 				<div class="dropdown">
+					<label for="studiensemester_kurzbz" class="control-label">
+						<?php echo $p->t('bewerbung/geplanterStudienbeginn') ?>
+					</label>
 					<select id="studiensemester_kurzbz" name="studiensemester_kurzbz" class="form-control">
 					<option value=""><?php echo $p->t('bewerbung/bitteAuswaehlen') ?></option>
 						<?php
@@ -686,7 +687,7 @@ $studiensemester_array = array();
 					$typ = new studiengang();
 					$typ->getStudiengangTyp($result->typ);
 
-					$studienplan = getStudienplaeneForOnlinebewerbung($result->studiengang_kz, $studiensemester_array, '1', ''); //@todo: ausbildungssemester dynamisch
+					$studienplan = getStudienplaeneForOnlinebewerbung($studiensemester_array, '1', ''); //@todo: ausbildungssemester dynamisch
 
 					$studiensemester = new studiensemester();
 					$studiensemester->getPlusMinus(10,1);

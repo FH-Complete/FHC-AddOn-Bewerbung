@@ -197,7 +197,7 @@ function BewerbungPersonAddStudiengang($studiengang_kz, $anmerkung, $person, $st
 	return true;
 }
 // Fuegt eine Bewerbung für einen Studienplan hinzu
-function BewerbungPersonAddStudienplan($studienplan_id, $person, $studiensemester_kurzbz)
+function BewerbungPersonAddStudienplan($studienplan_id, $person, $studiensemester_kurzbz, $input_zgv_nation = null)
 {
 	// Studienplan laden
 	$studienplan = new studienplan();
@@ -241,6 +241,7 @@ function BewerbungPersonAddStudienplan($studienplan_id, $person, $studiensemeste
 		$studiengaenge_arr[$row->studiengang_kz]['typ'] = $row->typ;
 		$studiengaenge_arr[$row->studiengang_kz]['orgform_kurzbz'] = $row->orgform_kurzbz;
 		$studiengaenge_arr[$row->studiengang_kz]['oe_kurzbz'] = $row->oe_kurzbz;
+		$studiengaenge_arr[$row->studiengang_kz]['lgartcode'] = $row->lgartcode;
 	}
 
 	// Höchsten PreStudenten ermitteln, um ggf ZGV übernehmen zu können
@@ -334,6 +335,7 @@ function BewerbungPersonAddStudienplan($studienplan_id, $person, $studiensemeste
 		if ($zgv_code == '')
 		{
 			$prestudent_id_for_zgv = 0;
+			$prestudent_id_for_zgv_nation = 0;
 			foreach ($pre->result as $row)
 			{
 				if ($row->prestudent_id > $prestudent_id_for_zgv
@@ -342,6 +344,12 @@ function BewerbungPersonAddStudienplan($studienplan_id, $person, $studiensemeste
 						|| $studiengaenge_arr[$row->studiengang_kz]['typ'] == 'm')) // Höchste Prestudent ID in einem bachelor oder master mit ZGV suchen
 				{
 					$prestudent_id_for_zgv = $row->prestudent_id;
+				}
+				else if ($row->prestudent_id > $prestudent_id_for_zgv_nation && $row->prestudent_id > $prestudent_id_for_zgv && $row->zgvnation != '')
+				{
+					// Kommt vor, dass die ZGV Nation ausgefüllt ist aber ZGV Code nicht. Die ZGV Nation soll dann trotzdem übernommen werden
+					$zgvnation = $row->zgvnation;
+					$prestudent_id_for_zgv_nation = $row->prestudent_id;
 				}
 			}
 			if ($prestudent_id_for_zgv != 0)
@@ -367,12 +375,42 @@ function BewerbungPersonAddStudienplan($studienplan_id, $person, $studiensemeste
 			$zgv_code = '';
 			$zgvort = '';
 			$zgvdatum = '';
-			$zgvnation = '';
+			//$zgvnation = ''; // ZGV Nation soll übernommen werden, da sonst immer die Bewerbungsfrist von Drittstaaten zieht.
 			$zgvmas_code = '';
 			$zgvmaort = '';
 			$zgvmadatum = '';
 			$zgvmanation = '';
 		}
+
+		$istMaster = $studiengaenge_arr[$studiengang_kz]['typ'] == 'm' || $studiengaenge_arr[$studiengang_kz]['lgartcode'] == '1';
+		// Bewerber die keinen vorhanden Bachelor bei uns haben und nachträglich noch Studiengänge hinzufügen, müssen die Nation gesetzt bekommen da sie sonst in die Bewerbungsfrist von Drittstaaten fallen.
+		if ($zgvmanation === '' && $istMaster)
+		{
+			$prestudent_id_for_zgv_nation = 0;
+			foreach ($pre->result as $row)
+			{
+				if ($row->prestudent_id > $prestudent_id_for_zgv_nation && $row->zgvmanation != '')
+				{
+					// Kommt vor, dass die ZGV Nation ausgefüllt ist aber ZGV Code nicht. Die ZGV Nation soll dann trotzdem übernommen werden
+					$zgvmanation = $row->zgvmanation;
+					$prestudent_id_for_zgv_nation = $row->prestudent_id;
+				}
+			}
+		}
+
+		// wenn input zgv nation gegeben, input setzen (hat priorität über vorhanden zgvs)
+		if (isset($input_zgv_nation))
+		{
+			if ($istMaster)
+			{
+				$zgvmanation = $input_zgv_nation;
+			}
+			else
+			{
+				$zgvnation = $input_zgv_nation;
+			}
+		}
+
 		// Höchste Priorität in diesem Studiensemester laden und ggf. um 1 erhöhen
 		$prestudent = new prestudent();
 		$hoechstePrio = new prestudent();
@@ -399,6 +437,19 @@ function BewerbungPersonAddStudienplan($studienplan_id, $person, $studiensemeste
 		$prestudent->reihungstestangetreten = false;
 		$prestudent->priorisierung = $hoechstePrio->priorisierung+1;
 		$prestudent->new = true;
+
+		if (defined('BEWERBERTOOL_BERUFSTAETIGKEIT_NOTIZ') && BEWERBERTOOL_BERUFSTAETIGKEIT_NOTIZ === false)
+		{
+			$prestudent_desc = array_reverse($pre->result);
+			foreach ($prestudent_desc as $row)
+			{
+				if($row->berufstaetigkeit_code !== '' )
+				{
+					$prestudent->berufstaetigkeit_code = $row->berufstaetigkeit_code;
+					break;
+				}
+			}
+		}
 
 		if (! $prestudent->save())
 		{
@@ -464,7 +515,7 @@ function check_load_bewerbungen($mailadresse, $studiensemester_kurzbz = null)
 		$qry .= "	JOIN public.tbl_prestudent USING (person_id)
 							JOIN public.tbl_prestudentstatus USING (prestudent_id) ";
 	$qry .= "
-				WHERE kontakttyp='email'
+				WHERE kontakttyp IN ('email', 'email_unverifiziert')
 				AND (	LOWER(kontakt)=" . $db->db_add_param($mailadresse, FHC_STRING) . "
 						OR LOWER(alias||'@" . DOMAIN . "')=" . $db->db_add_param($mailadresse, FHC_STRING) . "
 			 			OR LOWER(uid||'@" . DOMAIN . "')=" . $db->db_add_param($mailadresse, FHC_STRING) . ")";
@@ -1113,12 +1164,10 @@ function getAllDokumenteBewerbungstoolForPerson($person_id, $studiensemester_arr
 			{
 				$i = 0;
 				$qry .= " AND (";
+				$qry .= " get_rolle_prestudent (tbl_prestudent.prestudent_id, NULL) NOT IN ('Abbrecher')";
 				foreach ($studiensemester_array as $studiensemester)
 				{
-					if ($i > 0)
-						$qry .= " OR ";
-					$qry .= " get_rolle_prestudent (tbl_prestudent.prestudent_id, " . $db->db_add_param($studiensemester, FHC_STRING) . ") NOT IN ('Abgewiesener','Abbrecher')";
-					$i ++;
+					$qry .= " OR get_rolle_prestudent (tbl_prestudent.prestudent_id, " . $db->db_add_param($studiensemester, FHC_STRING) . ") NOT IN ('Abgewiesener','Abbrecher')";
 				}
 				$qry .= " ) ";
 			}
@@ -1327,6 +1376,7 @@ function getBewerbungen($person_id, $aktive = null)
 			tbl_studiengang.bezeichnung,
 			tbl_studiengang.english,
 			tbl_studiengang.typ,
+			tbl_studiengang.melderelevant,
 			tbl_prestudent.zgvnation,
 			tbl_prestudent.zgvmanation,
 			tbl_studiengang.lgartcode
@@ -1361,6 +1411,7 @@ function getBewerbungen($person_id, $aktive = null)
 			$obj->zgvnation = $row->zgvnation;
 			$obj->zgvmanation = $row->zgvmanation;
 			$obj->lgartcode = $row->lgartcode;
+			$obj->melderelevant = $db->db_parse_bool($row->melderelevant);
 
 			$db->result[] = $obj;
 		}
@@ -1389,7 +1440,38 @@ function getPrioStudienplanForReihungstest($person_id, $studiensemester_kurzbz)
 {
 	$db = new basis_db();
 	$qry = "
-			SELECT studienplan_id
+			(SELECT DISTINCT(studienplan_id),
+			tbl_studiengang.typ,
+			tbl_studienordnung.studiengangbezeichnung,
+			tbl_studienordnung.studiengangbezeichnung_englisch
+			FROM PUBLIC.tbl_person
+			JOIN PUBLIC.tbl_prestudent USING (person_id)
+			JOIN PUBLIC.tbl_prestudentstatus USING (prestudent_id)
+			JOIN lehre.tbl_studienplan USING (studienplan_id)
+			JOIN lehre.tbl_studienordnung USING (studienordnung_id)
+			JOIN PUBLIC.tbl_studiengang ON (tbl_studienordnung.studiengang_kz = tbl_studiengang.studiengang_kz)
+			WHERE person_id = " . $db->db_add_param($person_id, FHC_INTEGER) . "
+				AND studiensemester_kurzbz = " . $db->db_add_param($studiensemester_kurzbz) . "
+				AND tbl_studiengang.typ = 'm'
+				/*AND bewerbung_abgeschicktamum IS NOT NULL*/ /* Auskommentiert, da nicht immer verlaesslich */
+				AND bestaetigtam IS NOT NULL
+				/*AND bestaetigtvon != ''*/ /* Auskommentiert, da nicht immer verlaesslich */
+				AND (
+					SELECT status_kurzbz
+					FROM PUBLIC.tbl_prestudentstatus
+					WHERE prestudent_id = tbl_prestudent.prestudent_id
+						AND studiensemester_kurzbz = tbl_prestudentstatus.studiensemester_kurzbz
+					ORDER BY datum DESC,
+						tbl_prestudentstatus.insertamum DESC LIMIT 1
+				) IN ('Interessent', 'Bewerber', 'Wartender')
+			ORDER BY studienplan_id)
+
+			UNION ALL
+
+			(SELECT studienplan_id,
+			tbl_studiengang.typ,
+			tbl_studienordnung.studiengangbezeichnung,
+			tbl_studienordnung.studiengangbezeichnung_englisch
 			FROM PUBLIC.tbl_person
 			JOIN PUBLIC.tbl_prestudent USING (person_id)
 			JOIN PUBLIC.tbl_prestudentstatus USING (prestudent_id)
@@ -1409,25 +1491,29 @@ function getPrioStudienplanForReihungstest($person_id, $studiensemester_kurzbz)
 						AND studiensemester_kurzbz = tbl_prestudentstatus.studiensemester_kurzbz
 					ORDER BY datum DESC,
 						tbl_prestudentstatus.insertamum DESC LIMIT 1
-					) IN ('Interessent')";
+				) IN ('Interessent', 'Bewerber')";
 			// An der FHTW werden die Qualifikationskurse ausgenommen
 			if (CAMPUS_NAME == 'FH Technikum Wien')
 			{
 				$qry .= " AND tbl_studiengang.studiengang_kz != 10002 ";
 			}
-	$qry .= " ORDER BY priorisierung ASC NULLS LAST, tbl_prestudent.insertamum DESC LIMIT 1";
+	$qry .= " ORDER BY priorisierung ASC NULLS LAST, tbl_prestudent.insertamum DESC LIMIT 1)";
 
-	if ($db->db_query($qry))
+	if ($result = $db->db_query($qry))
 	{
-		if ($row = $db->db_fetch_object())
+		$db->result = [];
+		while ($row = $db->db_fetch_object($result))
 		{
-			return $row->studienplan_id;
+			$obj = new stdClass();
+			$obj->studienplan_id = $row->studienplan_id;
+			$obj->typ = $row->typ;
+			$obj->studiengangbezeichnung = $row->studiengangbezeichnung;
+			$obj->studiengangbezeichnung_englisch = $row->studiengangbezeichnung_englisch;
+
+			$db->result[] = $obj;
 		}
-		else
-		{
-			$db->errormsg = 'Kein Studienplan gefunden';
-			return false;
-		}
+
+		return $db->result;
 	}
 	else
 	{
@@ -1440,7 +1526,7 @@ function getPrioStudienplanForReihungstest($person_id, $studiensemester_kurzbz)
  * Holt die nächsten Reihungstesttermine mit dem passenden Studienplan, für die sich ein Bewerber anmelden kann.
  * Der Termin muss das Attribut "öffentlich" auf TRUE haben und die Anmeldefrist muss <= dem heutigen Datum liegen.
  *
- * @param integer $studienplan_id Studienplan ID eines zugeteilten Studienplans.
+ * @param array $studienplan_id Studienplan ID eines zugeteilten Studienplans.
  * @param string $studiensemester_kurzbz Studiensemester des Termins
  * @param integer $stufe Optional. Default 1. Stufe, die der Termin haben soll.
  * @param array $excludedStudienplans. Array mit Studienplan_ids, deren Reihungstests von der Abfrage ausgenommen werden sollen
@@ -1455,6 +1541,8 @@ function getReihungstestsForOnlinebewerbung($studienplan_id, $studiensemester_ku
 		$db->errormsg='$excludedStudienplans ist kein Array';
 		return false;
 	}
+
+	if (empty($studienplan_id)) $studienplan_id = [''];
 
 	$qry = "
 			SELECT (
@@ -1500,10 +1588,18 @@ function getReihungstestsForOnlinebewerbung($studienplan_id, $studiensemester_ku
 					FROM PUBLIC.tbl_rt_person
 					WHERE rt_id = rt.reihungstest_id
 					) AS anzahl_anmeldungen,
-				rt.*
+				rt.*,
+				tbl_rt_studienplan.studienplan_id as studienplan_id,
+				typ,
+				studiengangbezeichnung,
+				studiengangbezeichnung_englisch,
+				UPPER(typ::varchar(1) || kurzbz) AS stg_kuerzel
 			FROM PUBLIC.tbl_reihungstest rt
 			JOIN PUBLIC.tbl_rt_studienplan USING (reihungstest_id)
-			WHERE studienplan_id = " . $db->db_add_param($studienplan_id, FHC_INTEGER) . "
+			JOIN public.tbl_studiengang USING (studiengang_kz)
+			JOIN lehre.tbl_studienplan USING (studienplan_id)
+			JOIN lehre.tbl_studienordnung USING (studienordnung_id)
+			WHERE tbl_rt_studienplan.studienplan_id IN (" . $db->db_implode4SQL($studienplan_id) . ")
 				AND studiensemester_kurzbz = " . $db->db_add_param($studiensemester_kurzbz);
 
 			if ($stufe != 1 && $stufe != '')
@@ -1537,7 +1633,7 @@ function getReihungstestsForOnlinebewerbung($studienplan_id, $studiensemester_ku
 // @todo: (stufe = 1 OR stufe IS NULL) ???
 	if ($result = $db->db_query($qry))
 	{
-		$db->result = '';
+		$db->result = [];
 		while ($row = $db->db_fetch_object($result))
 		{
 			$obj = new stdClass();
@@ -1560,6 +1656,12 @@ function getReihungstestsForOnlinebewerbung($studienplan_id, $studiensemester_ku
 			$obj->aufnahmegruppe_kurzbz = $row->aufnahmegruppe_kurzbz;
 			$obj->stufe = $row->stufe;
 			$obj->anmeldefrist = $row->anmeldefrist;
+			$obj->studienplan_id = $row->studienplan_id;
+			$obj->typ = $row->typ;
+			$obj->studiengangbezeichnung = $row->studiengangbezeichnung;
+			$obj->studiengangbezeichnung_englisch = $row->studiengangbezeichnung_englisch;
+			$obj->stg_kuerzel = $row->stg_kuerzel;
+			$obj->rt_id = $row->reihungstest_id;
 			$obj->new = true;
 
 			$db->result[] = $obj;
@@ -2106,13 +2208,12 @@ function setDokumenteMasterZGV($person_id)
 		$person->load($person_id);
 
 		//Dokumente akzeptieren
-		$zgvMaster ->akzeptiereDokument('zgv_mast', $person_id);
-		$zgvMaster ->akzeptiereDokument('zgv_bakk', $person_id);
-		$zgvMaster ->akzeptiereDokument('identity', $person_id);
-		$zgvMaster ->akzeptiereDokument('SprachB2', $person_id);
-		$zgvMaster ->akzeptiereDokument('Statisti', $person_id);
-		$zgvMaster ->akzeptiereDokument('ecard', $person_id);
+		$documentsToAccept = array('zgv_mast', 'zgv_bakk', 'identity', 'SprachB2', 'Statisti');
 
+		foreach ($documentsToAccept as $dokument_kurzbz)
+		{
+			$zgvMaster->akzeptiereDokument($dokument_kurzbz, $person_id, array('m'));
+		}
 
 		//Dokumente entakzeptieren
 		$zgvMaster ->entakzeptiereDokument('Meldezet', $person_id);
@@ -2125,4 +2226,56 @@ function setDokumenteMasterZGV($person_id)
 		$prestudent ->setZGVMasterFields($person_id, $ort);
 	}
 	return true;
+}
+
+/**
+ * Prüft, ob UHSTAT1 formular für eine Person schon ausgefüllt ist.
+ * @param person_id
+ * @return boolean ausgefüllt oder nicht
+ */
+function UHSTAT1FormFilledOut($person_id)
+{
+	$filledOut = false;
+	$db = new basis_db();
+	$qry = "SELECT 1
+			FROM bis.tbl_uhstat1daten
+			WHERE person_id = " . $db->db_add_param($person_id, FHC_INTEGER);
+
+	if ($result = $db->db_query($qry))
+	{
+		if ($db->db_num_rows($result) > 0)
+		{
+			$filledOut = true;
+		}
+	}
+
+	return $filledOut;
+}
+
+/**
+ * Prüft, ob Person zumindest einen Bewerberstatus hat.
+ * @param person_id
+ * @return boolean hat Status oder nicht
+ */
+function hasBewerber($person_id)
+{
+	$hasBewerber = false;
+	$db = new basis_db();
+	$qry = "SELECT 1
+			FROM
+				public.tbl_prestudent
+				JOIN public.tbl_prestudentstatus USING (prestudent_id)
+			WHERE
+				tbl_prestudentstatus.status_kurzbz = 'Bewerber'
+				AND tbl_prestudent.person_id = " . $db->db_add_param($person_id);
+
+	if ($result = $db->db_query($qry))
+	{
+		if ($db->db_num_rows($result) > 0)
+		{
+			$hasBewerber = true;
+		}
+	}
+
+	return $hasBewerber;
 }

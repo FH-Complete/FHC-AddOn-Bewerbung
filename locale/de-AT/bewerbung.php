@@ -64,6 +64,7 @@ $this->phrasen['bewerbung/einleitungstext']='Bitte füllen Sie das Formular aus,
 
 		<div id="datenschutzText" class="collapse">
 		Die uns von Ihnen zum Zwecke der Bewerbung bekanntgegebenen Daten werden von uns ausschließlich zur Abwicklung der Bewerbung auf der Grundlage von vor- bzw vertraglichen Zwecken verarbeitet und mit der unten beschriebenen Ausnahme bei Unklarheiten betreffend die Zugangsvoraussetzungen nicht an Dritte weitergegeben. Kommt es zu keinem weiteren Kontakt bzw zu keiner Aufnahme, löschen wir Ihre Daten nach drei Jahren.<br><br>
+		Die FH Technikum Wien ist berechtigt, zum Zweck der Qualitätssicherung Ihre Daten in anonymisierter Form für Umfragen zu verwenden.<br><br>
 		Informationen zu Ihren Betroffenenrechten finden Sie hier: <a href=\'https://www.technikum-wien.at/information-ueber-ihre-rechte-gemaess-datenschutz-grundverordnung/\' target=\'_blank\'>https://www.technikum-wien.at/information-ueber-ihre-rechte-gemaess-datenschutz-grundverordnung/</a><br><br>
 		Bei Fragen stehen wir Ihnen jederzeit unter <a href=\'mailto:datenschutz@technikum-wien.at\'>datenschutz@technikum-wien.at</a> zur Verfügung.<br><br>
 		Verantwortlich für die Datenverarbeitung:<br>
@@ -100,7 +101,7 @@ $this->phrasen['bewerbung/mailtext']='
 									Sehr %4$s %1$s %2$s!<br><br>
 									Vielen Dank für Ihr Interesse an einem Studiengang oder Lehrgang der '.CAMPUS_NAME.'. <br>
 									Verwenden Sie für Ihre Bewerbung bitte folgenden Link und Zugangscode: <br><br>
-									<a href="'.APP_ROOT.'addons/bewerbung/cis/registration.php?code=%3$s&emailAdresse=%5$s">Link zur Bewerbung</a><br>
+									<a href="'.APP_ROOT.'addons/bewerbung/cis/registration.php">Link zur Bewerbung</a><br>
 									Zugangscode: %3$s<br><br>
 									Wir empfehlen Ihnen aus Sicherheitsgründen, sich einen neuen Zugangscode nach dem Login generieren zu lassen (Menüpunkt "Sicherheit").<br><br>
 									Mit freundlichen Grüßen, <br>
@@ -288,13 +289,16 @@ $this->phrasen['bewerbung/datenUnvollstaendig']='Daten vervollständigen';
 $this->phrasen['bewerbung/studiengangHinzufuegen']='Neue Bewerbung für Studiengang/Lehrgang hinzufügen';
 $this->phrasen['bewerbung/weiter']='Weiter';
 $this->phrasen['bewerbung/geburtsnation']='Geburtsnation';
-$this->phrasen['bewerbung/svnr']='Österr. Sozialversicherungsnr.';
 $this->phrasen['bewerbung/maennlich']='männlich';
 $this->phrasen['bewerbung/weiblich']='weiblich';
-$this->phrasen['bewerbung/berufstaetigkeit']='Aktuelle Berufstätigkeit **';
+$this->phrasen['bewerbung/berufstaetigkeit']='Aktuelle Berufstätigkeit';
 $this->phrasen['bewerbung/berufstaetig']='berufstätig';
 $this->phrasen['bewerbung/dienstgeber']='Dienstgeber';
 $this->phrasen['bewerbung/artDerTaetigkeit']='Art der Tätigkeit';
+$this->phrasen['bewerbung/artDerBerufstaetigkeit']='Art der Berufstätigkeit';
+$this->phrasen['bewerbung/nichtBerufstaetig']='Nicht berufstätig';
+$this->phrasen['bewerbung/facheinschlaegigText']='Sind Sie/waren Sie fachspezifisch (also in einem themenverwandten Umfeld) im Bezug auf Ihre/m gewählte/n Studiengang/Studiengänge berufstätig?';
+$this->phrasen['bewerbung/facheinschlaegig']='Facheinschlägig';
 $this->phrasen['bewerbung/weiter']='Weiter';
 $this->phrasen['bewerbung/eintragVom']='Eintrag vom';
 $this->phrasen['bewerbung/menuPersDaten']='Persönliche Daten';
@@ -303,6 +307,7 @@ $this->phrasen['bewerbung/bitteAuswaehlen']='-- Bitte auswählen --';
 $this->phrasen['bewerbung/menuKontaktinformationen']='Kontaktinformationen';
 $this->phrasen['bewerbung/kontakt']='Kontakt';
 $this->phrasen['bewerbung/nation']='Nation';
+$this->phrasen['bewerbung/wohnsitznation']='Wohnsitz Nation';
 $this->phrasen['bewerbung/menuDokumente']='Dokumente';
 $this->phrasen['bewerbung/dokument']='Dokument';
 $this->phrasen['bewerbung/linkDokumenteHochladen']='Dokumente hochladen';
@@ -328,7 +333,7 @@ $this->phrasen['bewerbung/zahlungsinformation']='Zahlungsinformation';
 $this->phrasen['bewerbung/bezahlt']='bezahlt';
 $this->phrasen['bewerbung/zahlungsdetails']='Zahlungsdetails';
 $this->phrasen['bewerbung/menuReihungstest']='Reihungstest';
-$this->phrasen['bewerbung/fuerReihungstestAnmelden']='Es werden Ihnen die nächsten verfügbaren Online-Reihungstesttermine angezeigt. Bitte melden Sie sich für <b>einen</b> dieser an.<br>Unabhängig von der Anzahl Ihrer Bachelor-Bewerbungen brauchen Sie den Reihungstest nur <b>einmal</b> zu absolvieren.<br>Die Anmeldung zum Reihungstest <b>fixiert die Priorisierung</b> Ihrer gewählten Studiengänge.';
+$this->phrasen['bewerbung/fuerReihungstestAnmelden']='Es werden Ihnen die nächsten verfügbaren Online-Reihungstesttermine angezeigt. Bitte melden Sie sich für <b>einen</b> dieser an. Unabhängig von der Anzahl Ihrer Bachelor-Bewerbungen brauchen Sie den Reihungstest nur <b>einmal</b> zu absolvieren.<br>Die Anmeldung zum Reihungstest <b>fixiert die Priorisierung</b> Ihrer gewählten Studiengänge.';
 $this->phrasen['bewerbung/fehler']='Es ist ein Fehler aufgetreten';
 $this->phrasen['bewerbung/angemeldetPlaetze']='angemeldet / Plätze';
 $this->phrasen['bewerbung/uhrzeit']='Uhrzeit';
@@ -359,7 +364,6 @@ $this->phrasen['bewerbung/teilweiseVollstaendig']='teilweise vollständig';
 $this->phrasen['bewerbung/maxAnzahlTeilnehmer']='max. Teilnehmeranzahl erreicht';
 $this->phrasen['bewerbung/erfolgreichBeworben']='Sie haben sich erfolgreich für %s beworben. In der Regel werden Sie innerhalb von 5 Werktagen kontaktiert.';
 $this->phrasen['bewerbung/fehlerBeimVersendenDerBewerbung']='Es ist ein Fehler beim Versenden der Bewerbung aufgetreten. Bitte versuchen Sie es nocheinmal.';
-$this->phrasen['bewerbung/svnrBereitsVorhanden']='SVNR bereits vorhanden';
 $this->phrasen['bewerbung/menuBewerbungFuerStudiengang']='Bewerbung für einen Studiengang';
 $this->phrasen['bewerbung/dokumentOhneUploadGeprueft'] = 'Dokument ohne Upload überprüft.';
 $this->phrasen['bewerbung/emailBodyStart']='
@@ -446,6 +450,7 @@ $this->phrasen['bewerbung/orgformWaehlen']='Organisationsform wählen';
 $this->phrasen['bewerbung/orgformBeschreibungstext']='Bitte geben Sie an, für welche Organisationsform Sie sich interessieren. Für den Fall, dass alle Plätze in Ihrer gewünschten Organisationsform vergeben sind, können Sie optional eine Alternative angeben';
 $this->phrasen['bewerbung/menuAbschließen']='Abschließen';
 $this->phrasen['bewerbung/habenSieBereitsEinenZugangscode']='<b>Registrierte*r</b> Bewerber*in? <br>Sie haben sich bereits registriert und einen Zugangscode zu unserem Online-Bewerbungsportal erhalten?';
+$this->phrasen['bewerbung/strasse']='Straße';
 
 // Allgemeine Phrasen
 $this->phrasen['bewerbung/sieHabenNochKeinenZugangscode']='<b>Neue*r</b> Bewerber*in? <br>Sie haben noch keinen Zugangscode oder Account an der FH?';
@@ -582,7 +587,7 @@ $this->phrasen['bewerbung/erfolgreichBeworbenMail']='
 									Sehr %3$s %1$s %2$s,<br><br>
 									Sie haben sich erfolgreich für %4$s beworben. In der Regel werden Sie innerhalb von 5 Werktagen kontaktiert. Gegebenenfalls werden Sie dann aufgefordert, weitere Dokumente hochzuladen.<br><br>
 									Den Status Ihrer Bewerbung können Sie jederzeit im <a href="'.APP_ROOT.'addons/bewerbung/cis/registration.php">Bewerbungstool</a> verfolgen.<br>
-									Sollten Sie Fragen zur Bewerbung haben, kontaktieren Sie uns bitte unter <a href="mailto:%5$s">%5$s</a>.<br><br>
+									Sollten Sie Fragen zur Bewerbung haben, kontaktieren Sie uns bitte unser <a href="mailto:studienberatung@technikum-wien.at">InfoCenter Team</a>, die Mitarbeiter*innen helfen Ihnen gerne weiter.<br><br>
 									Mit freundlichen Grüßen<br>
 									Fachhochschule Technikum Wien
 								</td>
@@ -666,6 +671,7 @@ $this->phrasen['bewerbung/textRuecktrittsrecht']='Ich nehme zur Kenntnis, dass m
 								Studiengangsassistenz über Ihren Entschluss, diesen Vertrag zu widerrufen, informieren.</p>';
 $this->phrasen['bewerbung/textAusbildungsvertrag']='Ich habe den Ausbildungsvertrag gelesen und erkläre mich mit dem Vertragsinhalt einverstanden.';
 $this->phrasen['bewerbung/informationDatenverwendungStudierende']='<a href=\''.APP_ROOT.'cms/dms.php?id=149169\' target=\'_blank\'><span class="glyphicon glyphicon-file"></span>Information über die Verwendung personenbezogener Daten von Studierenden</a>';
+$this->phrasen['bewerbung/beschreibungUebersichtBewerberstatus']='Innerhalb von ca. einer Woche nach Absolvierung Ihres Reihungstests erfahren Sie, ob Sie einen Studienplatz (Status Aufgenomme/r) erhalten oder Sie vorerst auf Warteliste (Status Wartende/r) gesetzt wurden.';
 
 // Reihungstest
 $this->phrasen['bewerbung/anmeldungReihungstestMailBetreff']='Bestätigung Reihungstestanmeldung Fachhochschule Technikum Wien';
@@ -677,18 +683,27 @@ Sollten Sie Fragen haben, kontaktieren Sie bitte unser Infocenter <a href="mailt
 Mit freundlichen Grüßen<br>
 Fachhochschule Technikum Wien';
 $this->phrasen['bewerbung/reihungstestInfoTextAngemeldet']='<div class="alert alert-info">
-<p>Wir starten pünktlich mit der Identitätskontrolle. Stellen Sie daher sicher, dass Sie zu diesem Zeitpunkt im Zoom Warteraum sind (Den Link erhalten Sie 2 Werktage vor Ihrem gewählten Reihungstesttermin)</p>
-<p>Den Einstieg zum Reihungstest finden Sie bei Ihrer Bachelorbewerbung unter <a href="https://cis.technikum-wien.at/cms/dms.php?id=147448" target="_blank">Ubersicht/Details/zum Reihungstest</a> hier im Online-Bewerbungstool.</p>
+<p>Wir starten pünktlich mit dem Online-Reihungstest. Stellen Sie sicher, dass Sie zu diesem Zeitpunkt im Online-Bewerbungstool eingeloggt sind und ein Identitätsdokument (Reisepass oder Personalausweis) griffbereit haben.</p>
+<p>Nähere Details zum Ablauf des Reihungstests erhalten Sie rechtzeitig vor Ihrem Reihungstest-Termin per Message im Online-Bewerbungstool. Bitte überprüfen Sie daher regelmäßig Ihre Nachrichten.</p></p> Den Einstieg zum Reihungstest finden Sie bei Ihrer Bachelorbewerbung unter <a href=\''.APP_ROOT.'cms/dms.php?id=147448\' target=\'_blank\'>Übersicht/Details/zum Reihungstest</a> hier im Online-Bewerbungstool.</p>
 </div><br>';
 $this->phrasen['bewerbung/anmeldefrist']='Anmeldefrist';
 $this->phrasen['bewerbung/infoVorgemerktFuerQualifikationskurs']='Sie sind als TeilnehmerIn für die Qualifikationskurse vorgemerkt. Sobald sie dort bestätigt wurden, können Sie hier einen Termin für den Reihungstest wählen.';
 $this->phrasen['bewerbung/raumzuteilungFolgt']='Details folgen 2 Werktage vor Testbeginn per E-Mail (Bitte auch Spamordner überprüfen!)';
-$this->phrasen['bewerbung/sieHabenFolgendenTerminGewaehlt']='Danke für Ihre Anmeldung zum Reihungstest.<br>Ihre Priorisierung der Studiengänge ist fixiert und kann nur bis zur Anmeldefrist geändert werden.<br>Nach Absolvierung des Reihungstests kann die Priorisierung <b>NICHT</b> mehr geändert werden.';
-$this->phrasen['bewerbung/loginReihungstest']='<h3>Online-Reihungstest</h3>Klicken Sie <b>am Tag Ihres Reihungstesttermins</b> auf den Button "Zum Reihungstest"<br>
-												Bitte beachten Sie, dass Sie <u>Mozilla Firefox</u> als Browser verwenden, da es sonst zu Darstellungsproblemen kommen kann.<br><br>
+$this->phrasen['bewerbung/sieHabenFolgendenTerminGewaehltMaster']='Sie haben sich erfolgreich für folgende/n Master-Reihungstesttermin/e registriert.';
+$this->phrasen['bewerbung/sieHabenFolgendenTerminGewaehlt']='Danke für Ihre Anmeldung zum Bachelorreihungstest.<br>Ihre Priorisierung der Studiengänge ist fixiert und kann nur bis zur Anmeldefrist geändert werden.<br>Nach Absolvierung des Reihungstests kann die Priorisierung <b>NICHT</b> mehr geändert werden.';
+$this->phrasen['bewerbung/loginReihungstest']='<h3>Online-Reihungstest</h3>Klicken Sie <b>am Tag Ihres Reihungstesttermins</b> auf den Button "Zum Reihungstest"<br><br>
 												<a href="'.APP_ROOT.'cis/testtool/index.php?prestudent=%s" class="btn btn-primary" role="button" target="_blank">Zum Reihungstest</a>';
 $this->phrasen['bewerbung/informationenRTvorhanden']='Informationen zum Reihungstest vorhanden';
 $this->phrasen['bewerbung/anmerkungBerufstaetigkeit']='<b>NUR</b> für Studiengänge in Abendform (berufsbegleitend) und dualer Form verpflichtend<br>&nbsp;&nbsp;&nbsp;&nbsp;Wir weisen darauf hin, dass eine Berufstätigkeit nicht zwingend erforderlich ist!';
+$this->phrasen['bewerbung/masterAnmerkung']='Nähere Informationen zum Reihungstest erhalten Sie zeitgerecht von der zuständigen Studiengangsassistenz.';
+$this->phrasen['bewerbung/reihungstestInfoTextAngemeldetMaster']='<div class="alert alert-info">
+<p>Wir starten pünktlich mit dem Online-Reihungstest. Stellen Sie sicher, dass Sie zu diesem Zeitpunkt im Online-Bewerbungstool eingeloggt sind und ein Identitätsdokument (Reisepass oder Personalausweis) griffbereit haben. </p>
+<p>Nähere Details zum Ablauf des Reihungstests erhalten Sie rechtzeitig vor Ihrem Reihungstest-Termin per Message im Online-Bewerbungstool. Bitte überprüfen Sie daher regelmäßig Ihre Nachrichten.</p>
+<p>Den Einstieg zum Reihungstest finden Sie bei Ihrer Masterbewerbung unter <a href=\''.APP_ROOT.'cms/dms.php?id=180785\' target=\'_blank\'>Übersicht/Details/zum Reihungstest</a> hier im Online-Bewerbungstool.</p>
+</div><br>';
+$this->phrasen['bewerbung/fuerReihungstestAnmeldenMaster']='Bitte melden Sie sich für einen Master-Reihungstesttermin an. Bitte beachten Sie, dass bei Mehrfachbewerbungen der Reihungstest für jeden gewählten Masterstudiengang zu absolvieren ist. <br/>
+Sie sehen die nächsten verfügbaren Reihungstesttermine des Studiengangs bzw. der gewählten Studiengänge. Sollte der angezeigte/die angezeigten Termine für Sie nicht möglich sein, wenden Sie sich bitte an die zuständige Studiengangsassistenz.';
+
 // Ausbildung
 $this->phrasen['bewerbung/menuAusbildung']='Ausbildung';
 $this->phrasen['bewerbung/ausbildung']='Ausbildung zu Ihrer Zugangsvoraussetzung';
@@ -708,4 +723,23 @@ $this->phrasen['bewerbung/re_nachname']='Nachname';
 $this->phrasen['bewerbung/staatsbuergerschaft']='Staatsangehörigkeit';
 $this->phrasen['bewerbung/staatsbuergerschaftErklaerung']='Bitte geben Sie hier Ihre Staatsbürgerschaft an';
 $this->phrasen['bewerbung/bitteAuswaehlenStaatsbuergerschaft']='-- Bitte auswählen --';
+$this->phrasen['bewerbung/legende_pflicht']='Pflichtdokument';
+$this->phrasen['bewerbung/legende_hochgeladen']='erforderliches Dokument bereits hochgeladen';
+$this->phrasen['bewerbung/legende_vorhanden']='Dokument bereits vorhanden';
+$this->phrasen['bewerbung/legende_hochladen']='falls zutreffend hochladen';
+$this->phrasen['bewerbung/legende_nachreichen']='Dokument wird nachgereicht';
+
+// UHSTAT
+$this->phrasen['bewerbung/menuUhstat']='Statistische Daten (UHSTAT)';
+$this->phrasen['bewerbung/uhstatNichtAusgefuellt']='Vor Anmeldung zu einem Reihungstest müssen die statistischen Daten (UHSTAT) ausgefüllt werden.';
+
+// Zahlungen
+$this->phrasen['bewerbung/menuInvoices'] = 'Meine Zahlungen';
+$this->phrasen['bewerbung/erklaerungInvoices'] = 'Ablauf und Zahlungsbedingungen';
+$this->phrasen['bewerbung/idAustriaLogin']='Mit <b>ID Austria</b> registrieren/einloggen?';
+
+// Datenschutzerklärung
+$this->phrasen['bewerbung/bitteDatenschutzerklaerungZustimmen']='Sie müssen der Datenschutzerklärung zustimmen, um Ihre Bewerbung abschicken zu können';
+$this->phrasen['bewerbung/zustimmungDatenschutzerklaerung']='Ich habe die Datenschutzerklärung zur Kenntnis genommen.';
+
 ?>
