@@ -50,7 +50,9 @@ if(!isset($person_id))
 
 	foreach ($eob_fields as $postName => $dbName)
 	{
-		${$postName.'_disabled'} = $eingabegesperrt
+		// wenn eingabe gesperrt, oder onboarding feld - sperren!
+		${$postName.'_disabled'} =
+			$eingabegesperrt
 			|| (
 				$eobLogin
 				&& $person->{$dbName} != null
@@ -272,14 +274,15 @@ if(!isset($person_id))
 		</div>
 		<?php endif; ?>
 		<?php
-		if(!defined('BEWERBERTOOL_BERUFSTAETIGKEIT_ANZEIGEN') || BEWERBERTOOL_BERUFSTAETIGKEIT_ANZEIGEN):
+		$notiz_mode = !defined('BEWERBERTOOL_BERUFSTAETIGKEIT_NOTIZ') || BEWERBERTOOL_BERUFSTAETIGKEIT_NOTIZ !== false;
+		if((!defined('BEWERBERTOOL_BERUFSTAETIGKEIT_ANZEIGEN') || BEWERBERTOOL_BERUFSTAETIGKEIT_ANZEIGEN) && (isset($prestudent->result[0]) || $notiz_mode)):
 		?>
 		<fieldset>
 			<legend><?php
-				echo $p->t('bewerbung/berufstaetigkeit') . ((!defined('BEWERBERTOOL_BERUFSTAETIGKEIT_NOTIZ') || BEWERBERTOOL_BERUFSTAETIGKEIT_NOTIZ !== false) ? ' **' : ''); ?>
+				echo $p->t('bewerbung/berufstaetigkeit') . ($notiz_mode ? ' **' : ''); ?>
 			</legend>
 			<?php
-			if (defined('BEWERBERTOOL_BERUFSTAETIGKEIT_NOTIZ') && BEWERBERTOOL_BERUFSTAETIGKEIT_NOTIZ === false):
+			if (!$notiz_mode):
 
 				$berufstaetigkeit_code = '';
 
@@ -394,7 +397,7 @@ if(!isset($person_id))
 				<div class="form-group">
 					<label class="col-sm-3 control-label"></label>
 					<div class="col-sm-9">
-						<?php if (!defined('BEWERBERTOOL_BERUFSTAETIGKEIT_NOTIZ') || BEWERBERTOOL_BERUFSTAETIGKEIT_NOTIZ !== false):
+						<?php if ($notiz_mode):
 							echo '** ' . $p->t('bewerbung/anmerkungBerufstaetigkeit');
 						else:
 							echo '* ' . $p->t('bewerbung/pflichtfelder');
@@ -421,7 +424,7 @@ if(!isset($person_id))
 		$(function()
 		{
 			<?php
-			if(defined('BEWERBERTOOL_BERUFSTAETIGKEIT_NOTIZ') && BEWERBERTOOL_BERUFSTAETIGKEIT_NOTIZ === false):
+			if(!$notiz_mode):
 			?>
 			var berufstaetigCode = $('#inputBerufstaetigCode').val();
 
