@@ -300,6 +300,10 @@ elseif($username && $password)
 				$studiensemester_get = filter_input(INPUT_GET, 'studiensemester'); // WS oder SS. Daraus wird das näheste passende Studiensemester ermittelt
 				$prioritaeten = filter_input(INPUT_POST, 'prioritaet', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY);
 				$studienplaene = filter_input(INPUT_POST, 'studienplaene', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY);
+				$karrierepfadAuswahl = filter_input(INPUT_POST, 'karrierepfad', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY); // studienplan_id => karrierepfad_id
+				if (!is_array($karrierepfadAuswahl))
+					$karrierepfadAuswahl = array();
+				$karrierepfad_get = getKarrierepfadFromUrl();
 				$std_semester = filter_input(INPUT_POST, 'studiensemester_kurzbz');
 				$zgv_nation = filter_input(INPUT_POST, 'zgv_nation');
 				$staatsbuergerschaft = filter_input(INPUT_POST, 'staatsbuergerschaft');
@@ -362,6 +366,10 @@ elseif($username && $password)
 
 						foreach ($studiengang_get AS $stg)
 						{
+							// the Karrierepfad of the link decides about the Studienpläne of its Studiengang
+							if ($karrierepfad_get !== null && $stg == $karrierepfad_get->studiengang_kz)
+								continue;
+
 							$studienplan = new studienplan();
 							if($orgform_get != '')
 							{
@@ -387,6 +395,20 @@ elseif($username && $password)
 							foreach ($studienplan->result AS $row)
 							{
 								$studienplaene[] = $row->studienplan_id;
+							}
+						}
+					}
+					// Karrierepfad of the link: preselect it in its Studienpläne of the Studiensemester
+					if ($karrierepfad_get !== null)
+					{
+						$studienplan = new studienplan();
+						$studienplan->getStudienplaeneFromSem($karrierepfad_get->studiengang_kz, $std_semester, '1');
+						foreach ($studienplan->result AS $row)
+						{
+							if (getSelectableKarrierepfadId($row->studienplan_id, $karrierepfad_get->karrierepfad_id) !== null)
+							{
+								$studienplaene[] = $row->studienplan_id;
+								$karrierepfadAuswahl[$row->studienplan_id] = $karrierepfad_get->karrierepfad_id;
 							}
 						}
 					}
@@ -637,6 +659,8 @@ elseif($username && $password)
 									$prestudent->updateamum = date('Y-m-d H:i:s');
 									$prestudent->reihungstestangetreten = false;
 									$prestudent->priorisierung = $prioritaeten[$studienplaene[$i]];
+									$prestudent->karrierepfad_id = getSelectableKarrierepfadId($studienplaene[$i],
+										isset($karrierepfadAuswahl[$studienplaene[$i]]) ? $karrierepfadAuswahl[$studienplaene[$i]] : null);
 									$prestudent->new = true;
 
 									// ZGV aufgrund der ZGV-Nation setzen
@@ -1034,6 +1058,10 @@ elseif($username && $password)
 
 									$organisationsform = new organisationsform($row->orgform_kurzbz);
 
+									$stg_bezeichnung_karrierepfad = $row->typ_bezeichnung.' '.$stg_bezeichnung;
+									$karrierepfad = new karrierepfad();
+									$karrierepfad->getByStudienplan($row->studienplan_id);
+
 									$stg_bezeichnung .= ' | <i>'.$organisationsform->bezeichnung_mehrsprachig[$sprache].
 														' - '.$p->t('bewerbung/'.$row->sprache).'</i>';
 
@@ -1106,8 +1134,14 @@ elseif($username && $password)
 									echo '				<span class="badge" id="badge_'.$row->studienplan_id.'">'.$badge.'</span>';
 									echo '				<input class="prioInput" type="hidden" id="prioritaet_'.$row->studienplan_id.'" name="prioritaet['.$row->studienplan_id.']" value="'.$prioValue.'">';
 									echo '			</label>
-												</div>
-											</div>';
+												</div>';
+									if (!$fristAbgelaufen)
+									{
+										echo getKarrierepfadRadios($karrierepfad->result, $row->studienplan_id, $stg_bezeichnung_karrierepfad,
+											isset($karrierepfadAuswahl[$row->studienplan_id]) ? $karrierepfadAuswahl[$row->studienplan_id] : '',
+											!in_array($row->studienplan_id, $studienplaene));
+									}
+									echo '	</div>';
 								}
 								echo '</div></div></div>';
 							}
@@ -1394,6 +1428,13 @@ elseif($username && $password)
 										$onboardingRegistrationLink .= '?stg_kz='.$studiengang_get;
 									}
 								}
+								// Karrierepfad of the homepage link, like stg_kz
+								$karrierepfad_kurzbz_get = filter_input(INPUT_GET, 'karrierepfad_kurzbz');
+								if ($karrierepfad_kurzbz_get != '')
+								{
+									$onboardingRegistrationLink .= (strpos($onboardingRegistrationLink, '?') === false ? '?' : '&').
+										'karrierepfad_kurzbz='.rawurlencode($karrierepfad_kurzbz_get);
+								}
 							?>
 							<div class="panel panel-info">
 								<div class="panel-heading text-center">
@@ -1440,7 +1481,7 @@ elseif($username && $password)
 		{
 			var method = '<?php echo $db->convert_html_chars($method);?>';
 
-			window.location.href = "registration.php?sprache=" + sprache + "&method=" + method + "&stg_kz=<?php echo filter_input(INPUT_GET, 'stg_kz') ?>&orgform_kurzbz=<?php echo filter_input(INPUT_GET, 'orgform_kurzbz') ?>";
+			window.location.href = "registration.php?sprache=" + sprache + "&method=" + method + "&stg_kz=<?php echo filter_input(INPUT_GET, 'stg_kz') ?>&orgform_kurzbz=<?php echo filter_input(INPUT_GET, 'orgform_kurzbz') ?>&karrierepfad_kurzbz=<?php echo rawurlencode((string) filter_input(INPUT_GET, 'karrierepfad_kurzbz')) ?>";
 		}
 
 		function formSubmit()
@@ -1736,6 +1777,16 @@ elseif($username && $password)
 					$("div[name=checkboxInfoDiv]").html("");
 					$("div[name=checkboxInfoDiv]").removeClass();
 				}*/
+			});
+
+			// A Karrierepfad can only be chosen together with its Studienplan
+			$("input[type=checkbox][name='studienplaene[]']").change(function()
+			{
+				var radios = $(".karrierepfade[data-studienplan_id='" + $(this).val() + "'] input[type=radio]");
+				radios.prop("disabled", !$(this).is(":checked"));
+				radios.closest(".radio").toggleClass("disabled", !$(this).is(":checked"));
+				if (!$(this).is(":checked"))
+					radios.filter("[value='']").prop("checked", true);
 			});
 
 			// Hintergrundfarbe auch bei angeklicketen Lehrgängen

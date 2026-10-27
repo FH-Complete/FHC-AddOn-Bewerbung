@@ -127,6 +127,7 @@ $person_id = (int)$_SESSION['bewerbung/personId'];
 $akte_id = isset($_POST['akte_id']) ? $_POST['akte_id'] : '';
 $method = isset($_POST['method']) ? $_POST['method'] : '';
 $studiengang_get = filter_input(INPUT_GET, 'stg_kz');
+$karrierepfad_get = getKarrierepfadFromUrl();
 $datum = new datum();
 $person = new person();
 
@@ -477,6 +478,25 @@ if ($changePriority && isset($_POST['ausgang_prestudent_id'])
 			exit();
 		}
 	}
+}
+
+$changeKarrierepfad = filter_input(INPUT_POST, 'changeKarrierepfad', FILTER_VALIDATE_BOOLEAN);
+// The applicant changes the Karrierepfad of an application
+if ($changeKarrierepfad && isset($_POST['prestudent_id']))
+{
+	$return = BewerbungPersonChangeKarrierepfad(
+		filter_input(INPUT_POST, 'prestudent_id', FILTER_VALIDATE_INT),
+		filter_input(INPUT_POST, 'karrierepfad_id'),
+		$person_id
+	);
+	if ($return === true)
+		echo json_encode(array('status' => 'ok'));
+	else
+		echo json_encode(array(
+			'status' => 'fehler',
+			'msg' => $return
+		));
+	exit();
 }
 
 $aktionReihungstest = filter_input(INPUT_POST, 'aktionReihungstest', FILTER_VALIDATE_BOOLEAN);
@@ -2298,7 +2318,8 @@ if ($addStudienplan)
 		$_POST['studienplan_id'],
 		$person,
 		$_POST['studiensemester'],
-		isset($_POST['zgv_nation']) ? $_POST['zgv_nation'] : null
+		isset($_POST['zgv_nation']) ? $_POST['zgv_nation'] : null,
+		isset($_POST['karrierepfad_id']) ? $_POST['karrierepfad_id'] : null
 	);
 	if ($return === true)
 	{

@@ -310,6 +310,21 @@ $studiensemester_array = array();
 				$stgBeschriftungPanel .= '</i></p>';
 			}
 
+			// Karrierepfad of the application and the Karrierepfade of its Studienplan.
+			// The list shows no prestudent with Student status, so a change is possible until the group assignment.
+			$karrierepfadAktuell = null;
+			if ($row->karrierepfad_id != '')
+			{
+				$karrierepfadAktuell = new karrierepfad();
+				if ($karrierepfadAktuell->load($row->karrierepfad_id))
+					$stgBeschriftungPanel .= '<p>'.$p->t('bewerbung/karrierepfad').': '.getKarrierepfadBezeichnung($karrierepfadAktuell).'</p>';
+				else
+					$karrierepfadAktuell = null;
+			}
+			$karrierepfadeStudienplan = new karrierepfad();
+			if ($prestudent_status->studienplan_id != '')
+				$karrierepfadeStudienplan->getByStudienplan($prestudent_status->studienplan_id);
+
 			// Nation für die Anzeige der richtigen Bewerbungsfrist laden
 			// Wenn für den aktuellen PreStudenten keine zgvnation gefunden wird, in anderen PreStudenten suchen
 			if ($row->typ == 'm')
@@ -580,7 +595,27 @@ $studiensemester_array = array();
 											echo '<br>'.$p->t('bewerbung/beschreibungUebersichtBewerberstatus');
 										}
 										echo '	</div>
-										</div>
+										</div>';
+										if ($karrierepfadAktuell !== null || count($karrierepfadeStudienplan->result) > 0)
+										{
+											echo '	<div class="form-group">
+														<label class="col-sm-3 col-md-5 text-right">'.$p->t('bewerbung/karrierepfad').':</label>
+														<div class="col-sm-9 col-md-7">'.
+															($karrierepfadAktuell !== null ?
+																getKarrierepfadLabel($karrierepfadAktuell, $typ->bezeichnung.' '.$stg_bezeichnung) :
+																$p->t('bewerbung/karrierepfadOhne'));
+											if (count($karrierepfadeStudienplan->result) > 0)
+											{
+												echo '		<button type="button" class="btn btn-default btn-xs"
+																data-toggle="modal"
+																data-target="#karrierepfadModal_'.$row->prestudent_id.'">
+																'.$p->t('bewerbung/karrierepfadAendern').'
+															</button>';
+											}
+											echo '		</div>
+													</div>';
+										}
+										echo '
 										<!--<div class="form-group">
 											<label for="datum" class="col-sm-3 col-md-5 text-right">'.$p->t('global/datum').':</label>
 											<div class="col-sm-9 col-md-7" id="datum">'.$datum->formatDatum($prestudent_status->datum, 'd.m.Y').'</div>
@@ -647,6 +682,46 @@ $studiensemester_array = array();
 							</div>
 						</div>
 					</div>';
+
+			// Modal to change the Karrierepfad. The stored one stays selectable, also if the Studienplan no longer offers it.
+			if (count($karrierepfadeStudienplan->result) > 0)
+			{
+				$karrierepfadOptionen = $karrierepfadeStudienplan->result;
+				$karrierepfadOptionIds = array();
+				foreach ($karrierepfadOptionen as $karrierepfadRow)
+					$karrierepfadOptionIds[] = $karrierepfadRow->karrierepfad_id;
+				if ($karrierepfadAktuell !== null && !in_array($karrierepfadAktuell->karrierepfad_id, $karrierepfadOptionIds))
+					$karrierepfadOptionen[] = $karrierepfadAktuell;
+
+				echo '	<div class="modal fade"
+						id="karrierepfadModal_'.$row->prestudent_id.'"
+						tabindex="-1"
+						role="dialog"
+						aria-hidden="true">
+						<div class="modal-dialog">
+							<div class="modal-content">
+								<div class="modal-header">
+									<button type="button" class="close" data-dismiss="modal"
+										aria-hidden="true">&times;</button>
+									<h4 class="modal-title">'.$p->t('bewerbung/karrierepfadAendern').'</h4>
+								</div>
+								<div class="modal-body">
+									<form id="karrierepfadForm_'.$row->prestudent_id.'">
+										'.getKarrierepfadRadios($karrierepfadOptionen, $prestudent_status->studienplan_id,
+											$typ->bezeichnung.' '.$stg_bezeichnung,
+											$karrierepfadAktuell !== null ? $karrierepfadAktuell->karrierepfad_id : '', false).'
+									</form>
+								</div>
+								<div class="modal-footer">
+									<button type="button" class="btn btn-default" data-dismiss="modal">'.$p->t('global/abbrechen').'</button>
+									<button type="button" class="btn btn-primary" onclick="changeKarrierepfad(\''.$row->prestudent_id.'\')">
+										'.$p->t('global/speichern').'
+									</button>
+								</div>
+							</div>
+						</div>
+					</div>';
+			}
 
 			// Wenn stornieren möglich, Modal anzeigen
 			if ($buttonStornierenEnabled)
@@ -1224,6 +1299,13 @@ $studiensemester_array = array();
 					$studiengang = new studiengang($row->studiengang_kz);
 					$stg_bezeichnung = $studiengang->bezeichnung_arr[$sprache];
 				}
+				$stg_bezeichnung_karrierepfad = $row->typ_bezeichnung.' '.$stg_bezeichnung;
+				$karrierepfad = new karrierepfad();
+				$karrierepfad->getByStudienplan($row->studienplan_id);
+				$karrierepfadIds = array();
+				foreach ($karrierepfad->result as $karrierepfadRow)
+					$karrierepfadIds[] = $karrierepfadRow->karrierepfad_id;
+
 				$organisationsform = new organisationsform($row->orgform_kurzbz);
 				$stg_bezeichnung .= ' | <i>'.$organisationsform->bezeichnung_mehrsprachig[$sprache].' - '.$p->t('bewerbung/'.$row->sprache).'</i>';
 
@@ -1270,11 +1352,24 @@ $studiensemester_array = array();
 					$class = 'checkbox_lg';
 				}
 
+				$karrierepfadSelected = '';
 				if (!$fristAbgelaufen)
 				{
-					// if studiengangskennzahl passed as parameter, preselect it
-					if ($disabled == '' && $disabledExistsPrestudentstatus == '' && in_array($row->studiengang_kz, $studiengang_get_arr))
-						$checked = ' checked';
+					if ($disabled == '' && $disabledExistsPrestudentstatus == '')
+					{
+						// the Karrierepfad of the link decides about the Studienpläne of its Studiengang
+						if ($karrierepfad_get !== null && $row->studiengang_kz == $karrierepfad_get->studiengang_kz)
+						{
+							if (in_array($karrierepfad_get->karrierepfad_id, $karrierepfadIds))
+							{
+								$checked = ' checked';
+								$karrierepfadSelected = $karrierepfad_get->karrierepfad_id;
+							}
+						}
+						// if studiengangskennzahl passed as parameter, preselect it
+						elseif (in_array($row->studiengang_kz, $studiengang_get_arr))
+							$checked = ' checked';
+					}
 
 					echo '<div class="panel-body">
 						<div class="radio '.$disabledExistsPrestudentstatus.'">
@@ -1292,8 +1387,13 @@ $studiensemester_array = array();
 				}
 
 				echo '			</label>
-						</div><!-- Radiobutton -->
-					</div><!-- Zeile mit Studiengang -->';
+						</div><!-- Radiobutton -->';
+				if (!$fristAbgelaufen && $disabledExistsPrestudentstatus == '')
+				{
+					echo getKarrierepfadRadios($karrierepfad->result, $row->studienplan_id, $stg_bezeichnung_karrierepfad,
+						$karrierepfadSelected, $checked == '');
+				}
+				echo '	</div><!-- Zeile mit Studiengang -->';
 			}
 		}
 		?>
@@ -1328,7 +1428,20 @@ $studiensemester_array = array();
 				alert('<?php echo $p->t('bewerbung/bitteZGVausweahlen')?>');
 				return false;
 			}
-			saveStudienplan(studienplan_id, stsem, zgv_nation);
+			var karrierepfad_id = $('#modal-studiengaenge input[name="karrierepfad[' + studienplan_id + ']"]:checked').val() || '';
+			saveStudienplan(studienplan_id, stsem, zgv_nation, karrierepfad_id);
+		});
+
+		// A Karrierepfad can only be chosen together with its Studienplan. The list reloads, so the handler is delegated.
+		$('#modal-studiengaenge').on('change', 'input[name="studienplaene[]"]', function () {
+			var studienplan_id = $(this).val();
+			$('#modal-studiengaenge .karrierepfade').each(function () {
+				var selected = String($(this).data('studienplan_id')) === String(studienplan_id);
+				$(this).find('input[type=radio]').prop('disabled', !selected);
+				$(this).find('.radio').toggleClass('disabled', !selected);
+				if (!selected)
+					$(this).find('input[value=""]').prop('checked', true);
+			});
 		});
 
 		$('#studiensemester_kurzbz, #zgv_nation').change(function () {
@@ -1383,12 +1496,13 @@ $studiensemester_array = array();
 		});
 	});
 
-	function saveStudienplan(studienplan_id, stsem, zgv_nation) {
+	function saveStudienplan(studienplan_id, stsem, zgv_nation, karrierepfad_id) {
 		data = {
 			studienplan_id: studienplan_id,
 			addStudienplan: true,
 			studiensemester: stsem,
-			zgv_nation: zgv_nation
+			zgv_nation: zgv_nation,
+			karrierepfad_id: karrierepfad_id
 		};
 
 		$.ajax({
@@ -1400,6 +1514,30 @@ $studiensemester_array = array();
 				if (data.status != 'ok') {
 					alert(JSON.stringify(data.msg));
 				}
+				else
+					window.location.href = 'bewerbung.php?active=uebersicht';
+			},
+			error: function (data) {
+				alert(data.msg)
+			}
+		});
+	}
+
+	function changeKarrierepfad(prestudent_id) {
+		data = {
+			prestudent_id: prestudent_id,
+			karrierepfad_id: $('#karrierepfadForm_' + prestudent_id + ' input[type=radio]:checked').val() || '',
+			changeKarrierepfad: true
+		};
+
+		$.ajax({
+			url: basename,
+			data: data,
+			type: 'POST',
+			dataType: "json",
+			success: function (data) {
+				if (data.status != 'ok')
+					alert(data.msg);
 				else
 					window.location.href = 'bewerbung.php?active=uebersicht';
 			},

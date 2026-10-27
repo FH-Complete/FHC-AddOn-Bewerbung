@@ -23,6 +23,7 @@ require_once ('../../../include/personlog.class.php');
 require_once ('../../../config/global.config.inc.php');
 require_once ('../../../include/dokument.class.php');
 require_once ('../../../include/prestudent.class.php');
+require_once ('../../../include/karrierepfad.class.php');
 
 // Fuegt einen Studiengang zu einem Bewerber hinzu
 function BewerbungPersonAddStudiengang($studiengang_kz, $anmerkung, $person, $studiensemester_kurzbz, $orgform_kurzbz, $sprache)
@@ -197,8 +198,10 @@ function BewerbungPersonAddStudiengang($studiengang_kz, $anmerkung, $person, $st
 	return true;
 }
 // Fuegt eine Bewerbung für einen Studienplan hinzu
-function BewerbungPersonAddStudienplan($studienplan_id, $person, $studiensemester_kurzbz, $input_zgv_nation = null)
+function BewerbungPersonAddStudienplan($studienplan_id, $person, $studiensemester_kurzbz, $input_zgv_nation = null, $karrierepfad_id = null)
 {
+	$karrierepfad_id = getSelectableKarrierepfadId($studienplan_id, $karrierepfad_id);
+
 	// Studienplan laden
 	$studienplan = new studienplan();
 	$studienplan->loadStudienplan($studienplan_id);
@@ -294,6 +297,8 @@ function BewerbungPersonAddStudienplan($studienplan_id, $person, $studiensemeste
 	{
 		$prestudent_id = 0;
 	}
+
+	$prestudent_reused = $prestudent_id != 0;
 
 	if ($prestudent_id == 0) // Wenn kein PreStudent-Datensatz gefunden wurde, neuen Prestudenten anlegen
 	{
@@ -436,6 +441,7 @@ function BewerbungPersonAddStudienplan($studienplan_id, $person, $studiensemeste
 		$prestudent->updatevon = 'online';
 		$prestudent->reihungstestangetreten = false;
 		$prestudent->priorisierung = $hoechstePrio->priorisierung+1;
+		$prestudent->karrierepfad_id = $karrierepfad_id;
 		$prestudent->new = true;
 
 		if (defined('BEWERBERTOOL_BERUFSTAETIGKEIT_NOTIZ') && BEWERBERTOOL_BERUFSTAETIGKEIT_NOTIZ === false)
@@ -491,6 +497,171 @@ function BewerbungPersonAddStudienplan($studienplan_id, $person, $studiensemeste
 			$studiengaenge_arr[$studiengang_kz]['oe_kurzbz'],
 			'online');
 	}
+
+	// a reused prestudent gets the Karrierepfad of the new application
+	if ($prestudent_reused)
+	{
+		$prestudent = new prestudent();
+		if (!$prestudent->load($prestudent_id))
+			return $prestudent->errormsg;
+		$prestudent->karrierepfad_id = $karrierepfad_id;
+		$prestudent->updateamum = date('Y-m-d H:i:s');
+		$prestudent->updatevon = 'online';
+		$prestudent->new = false;
+		if (!$prestudent->save())
+			return $prestudent->errormsg;
+	}
+	return true;
+}
+
+/**
+ * Loads the active Karrierepfad of the URL parameter karrierepfad_kurzbz (link from the homepage)
+ * @return karrierepfad or null
+ */
+function getKarrierepfadFromUrl()
+{
+	$karrierepfad_kurzbz = filter_input(INPUT_GET, 'karrierepfad_kurzbz');
+	if ($karrierepfad_kurzbz == '')
+		return null;
+
+	$karrierepfad = new karrierepfad();
+	if (!$karrierepfad->loadKurzbz($karrierepfad_kurzbz) || !$karrierepfad->aktiv)
+		return null;
+	return $karrierepfad;
+}
+
+/**
+ * Checks a Karrierepfad of the applicant against the rule: active and linked to the Studienplan
+ * @param integer $studienplan_id
+ * @param integer $karrierepfad_id
+ * @return integer karrierepfad_id, or null if empty or not selectable
+ */
+function getSelectableKarrierepfadId($studienplan_id, $karrierepfad_id)
+{
+	if ($karrierepfad_id == '' || !is_numeric($karrierepfad_id) || !is_numeric($studienplan_id))
+		return null;
+
+	$karrierepfad = new karrierepfad();
+	if (!$karrierepfad->getByStudienplan($studienplan_id))
+		return null;
+	foreach ($karrierepfad->result as $row)
+	{
+		if ($row->karrierepfad_id == $karrierepfad_id)
+			return $row->karrierepfad_id;
+	}
+	return null;
+}
+
+/**
+ * Name of a Karrierepfad in the user language, default language as fallback
+ * @param karrierepfad $karrierepfad
+ * @return string HTML-escaped
+ */
+function getKarrierepfadBezeichnung($karrierepfad)
+{
+	$sprache = getSprache();
+	$bezeichnung = isset($karrierepfad->bezeichnung_mehrsprachig[$sprache]) && $karrierepfad->bezeichnung_mehrsprachig[$sprache] != '' ?
+		$karrierepfad->bezeichnung_mehrsprachig[$sprache] :
+		$karrierepfad->bezeichnung_mehrsprachig[DEFAULT_LANGUAGE];
+	return htmlspecialchars($bezeichnung);
+}
+
+/**
+ * Label of a Karrierepfad for applicants. It names the Studiengang, so nobody reads the Karrierepfad as a Studiengang.
+ * @param karrierepfad $karrierepfad
+ * @param string $studiengang_bezeichnung Typ and name, e.g. "Bachelor Informatik"
+ * @return string HTML
+ */
+function getKarrierepfadLabel($karrierepfad, $studiengang_bezeichnung)
+{
+	global $p;
+	return $p->t('bewerbung/karrierepfadImRahmenVon', array(getKarrierepfadBezeichnung($karrierepfad), $studiengang_bezeichnung));
+}
+
+/**
+ * Indented radio group for the Karrierepfade of a Studienplan. The first entry is "without Karrierepfad".
+ * @param array $karrierepfade result of karrierepfad::getByStudienplan()
+ * @param integer $studienplan_id
+ * @param string $studiengang_bezeichnung Typ and name, e.g. "Bachelor Informatik"
+ * @param integer $selected_karrierepfad_id
+ * @param boolean $disabled true while the Studienplan is not selected
+ * @return string HTML, empty without Karrierepfade
+ */
+function getKarrierepfadRadios($karrierepfade, $studienplan_id, $studiengang_bezeichnung, $selected_karrierepfad_id, $disabled)
+{
+	global $p;
+	if (count($karrierepfade) == 0)
+		return '';
+
+	$name = 'karrierepfad['.$studienplan_id.']';
+	$options = array('' => $p->t('bewerbung/karrierepfadOhne'));
+	foreach ($karrierepfade as $karrierepfad)
+		$options[$karrierepfad->karrierepfad_id] = getKarrierepfadLabel($karrierepfad, $studiengang_bezeichnung);
+
+	$html = '<div class="karrierepfade" data-studienplan_id="'.$studienplan_id.'" style="margin-left: 25px">';
+	foreach ($options as $karrierepfad_id => $label)
+	{
+		$html .= '<div class="radio'.($disabled ? ' disabled' : '').'">
+					<label>
+						<input type="radio" name="'.$name.'" value="'.$karrierepfad_id.'"'.
+						((string) $karrierepfad_id === (string) $selected_karrierepfad_id ? ' checked' : '').
+						($disabled ? ' disabled' : '').'>
+						'.$label.'
+					</label>
+				</div>';
+	}
+	$html .= '</div>';
+	return $html;
+}
+
+/**
+ * Changes the Karrierepfad of an application of the logged-in person.
+ * Allowed until the group assignment, that is until the prestudent has a Student status.
+ * @param integer $prestudent_id
+ * @param integer $karrierepfad_id empty for "without Karrierepfad"
+ * @param integer $person_id logged-in person
+ * @return true or an error message
+ */
+function BewerbungPersonChangeKarrierepfad($prestudent_id, $karrierepfad_id, $person_id)
+{
+	global $p;
+
+	$prestudent = new prestudent();
+	if (!is_numeric($prestudent_id) || !$prestudent->load($prestudent_id) || $prestudent->person_id != $person_id)
+		return $p->t('global/fehlerBeimLadenDesDatensatzes');
+
+	$studentStatus = new prestudent();
+	if ($studentStatus->getLastStatus($prestudent_id, '', 'Student'))
+		return $p->t('bewerbung/karrierepfadNichtMehrAenderbar');
+
+	$lastStatus = new prestudent();
+	if (!$lastStatus->getLastStatus($prestudent_id))
+		return $p->t('global/fehlerBeimLadenDesDatensatzes');
+
+	// the stored Karrierepfad stays valid, also if the Studienplan no longer offers it
+	if ($karrierepfad_id == '')
+		$karrierepfad_id = null;
+	elseif ($karrierepfad_id != $prestudent->karrierepfad_id
+		&& getSelectableKarrierepfadId($lastStatus->studienplan_id, $karrierepfad_id) === null)
+		return $p->t('global/fehlerBeiDerParameteruebergabe');
+
+	$karrierepfad_id_old = $prestudent->karrierepfad_id;
+	$prestudent->karrierepfad_id = $karrierepfad_id;
+	$prestudent->updateamum = date('Y-m-d H:i:s');
+	$prestudent->updatevon = 'online';
+	$prestudent->new = false;
+	if (!$prestudent->save())
+		return $prestudent->errormsg;
+
+	$log = new personlog();
+	$log->log($person_id,
+		'Action',
+		array('name'=>'Karrierepfad changed','success'=>true,'message'=>'Karrierepfad of PreStudent '.$prestudent_id.' changed from '.
+			($karrierepfad_id_old == '' ? 'none' : $karrierepfad_id_old).' to '.($karrierepfad_id == '' ? 'none' : $karrierepfad_id)),
+		'bewerbung',
+		'bewerbung',
+		null,
+		'online');
 	return true;
 }
 /**
@@ -1379,6 +1550,7 @@ function getBewerbungen($person_id, $aktive = null)
 			tbl_studiengang.melderelevant,
 			tbl_prestudent.zgvnation,
 			tbl_prestudent.zgvmanation,
+			tbl_prestudent.karrierepfad_id,
 			tbl_studiengang.lgartcode
 			FROM public.tbl_prestudent
 			JOIN public.tbl_studiengang USING (studiengang_kz)
@@ -1410,6 +1582,7 @@ function getBewerbungen($person_id, $aktive = null)
 			$obj->typ = $row->typ;
 			$obj->zgvnation = $row->zgvnation;
 			$obj->zgvmanation = $row->zgvmanation;
+			$obj->karrierepfad_id = $row->karrierepfad_id;
 			$obj->lgartcode = $row->lgartcode;
 			$obj->melderelevant = $db->db_parse_bool($row->melderelevant);
 

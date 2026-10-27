@@ -742,4 +742,11 @@ $this->phrasen['bewerbung/idAustriaLogin']='Mit <b>ID Austria</b> registrieren/e
 $this->phrasen['bewerbung/bitteDatenschutzerklaerungZustimmen']='Sie müssen der Datenschutzerklärung zustimmen, um Ihre Bewerbung abschicken zu können';
 $this->phrasen['bewerbung/zustimmungDatenschutzerklaerung']='Ich habe die Datenschutzerklärung zur Kenntnis genommen.';
 
+// Karrierepfade
+$this->phrasen['bewerbung/karrierepfad']='Karrierepfad';
+$this->phrasen['bewerbung/karrierepfadOhne']='Ohne Karrierepfad';
+$this->phrasen['bewerbung/karrierepfadImRahmenVon']='%s im Rahmen des Studiengangs %s';
+$this->phrasen['bewerbung/karrierepfadAendern']='Karrierepfad ändern';
+$this->phrasen['bewerbung/karrierepfadNichtMehrAenderbar']='Nach Studienbeginn können Sie den Karrierepfad nicht mehr ändern.';
+
 ?>

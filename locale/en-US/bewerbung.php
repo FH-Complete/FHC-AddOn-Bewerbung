@@ -690,4 +690,11 @@ $this->phrasen['bewerbung/idAustriaLogin']='Registration/login with <b>ID Austri
 // Datenschutzerklärung
 $this->phrasen['bewerbung/bitteDatenschutzerklaerungZustimmen']='You have to consent to the privacy statement to send the application.';
 $this->phrasen['bewerbung/zustimmungDatenschutzerklaerung']='I have taken note of the privacy information.';
+
+// Karrierepfade
+$this->phrasen['bewerbung/karrierepfad']='Career path';
+$this->phrasen['bewerbung/karrierepfadOhne']='Without career path';
+$this->phrasen['bewerbung/karrierepfadImRahmenVon']='%s as part of the degree program %s';
+$this->phrasen['bewerbung/karrierepfadAendern']='Change career path';
+$this->phrasen['bewerbung/karrierepfadNichtMehrAenderbar']='You can no longer change the career path after the start of your studies.';
 ?>
