@@ -569,12 +569,15 @@ function getKarrierepfadBezeichnung($karrierepfad)
 /**
  * Label of a Karrierepfad for applicants. It names the Studiengang, so nobody reads the Karrierepfad as a Studiengang.
  * @param karrierepfad $karrierepfad
- * @param string $studiengang_bezeichnung Typ and name, e.g. "Bachelor Informatik"
+ * @param string|null $studiengang_bezeichnung Typ and name, e.g. "Bachelor Informatik".
+ *  null if the page already names the Studiengang, e.g. in the panel of one application. The label is then only the name.
  * @return string HTML
  */
 function getKarrierepfadLabel($karrierepfad, $studiengang_bezeichnung)
 {
 	global $p;
+	if ($studiengang_bezeichnung === null)
+		return getKarrierepfadBezeichnung($karrierepfad);
 	return $p->t('bewerbung/karrierepfadImRahmenVon', array(getKarrierepfadBezeichnung($karrierepfad), $studiengang_bezeichnung));
 }
 
@@ -582,7 +585,7 @@ function getKarrierepfadLabel($karrierepfad, $studiengang_bezeichnung)
  * Indented radio group for the Karrierepfade of a Studienplan. The first entry is "without Karrierepfad".
  * @param array $karrierepfade result of karrierepfad::getByStudienplan()
  * @param integer $studienplan_id
- * @param string $studiengang_bezeichnung Typ and name, e.g. "Bachelor Informatik"
+ * @param string|null $studiengang_bezeichnung Typ and name, e.g. "Bachelor Informatik". null for short labels, see getKarrierepfadLabel()
  * @param integer $selected_karrierepfad_id
  * @param boolean $disabled true while the Studienplan is not selected
  * @return string HTML, empty without Karrierepfade

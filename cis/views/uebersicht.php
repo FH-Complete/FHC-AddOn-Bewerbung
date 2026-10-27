@@ -602,7 +602,7 @@ $studiensemester_array = array();
 														<label class="col-sm-3 col-md-5 text-right">'.$p->t('bewerbung/karrierepfad').':</label>
 														<div class="col-sm-9 col-md-7">'.
 															($karrierepfadAktuell !== null ?
-																getKarrierepfadLabel($karrierepfadAktuell, $typ->bezeichnung.' '.$stg_bezeichnung) :
+																getKarrierepfadBezeichnung($karrierepfadAktuell) :
 																$p->t('bewerbung/karrierepfadOhne'));
 											if (count($karrierepfadeStudienplan->result) > 0)
 											{
@@ -684,6 +684,7 @@ $studiensemester_array = array();
 					</div>';
 
 			// Modal to change the Karrierepfad. The stored one stays selectable, also if the Studienplan no longer offers it.
+			// The title names the Studiengang once, so the radios show only the names of the Karrierepfade.
 			if (count($karrierepfadeStudienplan->result) > 0)
 			{
 				$karrierepfadOptionen = $karrierepfadeStudienplan->result;
@@ -703,12 +704,12 @@ $studiensemester_array = array();
 								<div class="modal-header">
 									<button type="button" class="close" data-dismiss="modal"
 										aria-hidden="true">&times;</button>
-									<h4 class="modal-title">'.$p->t('bewerbung/karrierepfadAendern').'</h4>
+									<h4 class="modal-title">'.$p->t('bewerbung/karrierepfadAendern').'
+										<small>'.$typ->bezeichnung.' '.$stg_bezeichnung.'</small></h4>
 								</div>
 								<div class="modal-body">
 									<form id="karrierepfadForm_'.$row->prestudent_id.'">
-										'.getKarrierepfadRadios($karrierepfadOptionen, $prestudent_status->studienplan_id,
-											$typ->bezeichnung.' '.$stg_bezeichnung,
+										'.getKarrierepfadRadios($karrierepfadOptionen, $prestudent_status->studienplan_id, null,
 											$karrierepfadAktuell !== null ? $karrierepfadAktuell->karrierepfad_id : '', false).'
 									</form>
 								</div>
