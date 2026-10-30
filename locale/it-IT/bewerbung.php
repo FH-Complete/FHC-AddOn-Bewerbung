@@ -231,5 +231,4 @@ $this->phrasen['bewerbung/karrierepfad']='Percorso di carriera';
 $this->phrasen['bewerbung/karrierepfadOhne']='Senza percorso di carriera';
 $this->phrasen['bewerbung/karrierepfadImRahmenVon']='%s nell\'ambito del corso di studi %s';
 $this->phrasen['bewerbung/karrierepfadAendern']='Modificare il percorso di carriera';
-$this->phrasen['bewerbung/karrierepfadNichtMehrAenderbar']='Dopo l\'inizio degli studi non è più possibile modificare il percorso di carriera.';
 ?>

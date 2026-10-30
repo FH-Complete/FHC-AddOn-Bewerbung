@@ -747,6 +747,5 @@ $this->phrasen['bewerbung/karrierepfad']='Karrierepfad';
 $this->phrasen['bewerbung/karrierepfadOhne']='Ohne Karrierepfad';
 $this->phrasen['bewerbung/karrierepfadImRahmenVon']='%s im Rahmen des Studiengangs %s';
 $this->phrasen['bewerbung/karrierepfadAendern']='Karrierepfad ändern';
-$this->phrasen['bewerbung/karrierepfadNichtMehrAenderbar']='Nach Studienbeginn können Sie den Karrierepfad nicht mehr ändern.';
 
 ?>

@@ -618,8 +618,7 @@ function getKarrierepfadRadios($karrierepfade, $studienplan_id, $studiengang_bez
 }
 
 /**
- * Changes the Karrierepfad of an application of the logged-in person.
- * Allowed until the group assignment, that is until the prestudent has a Student status.
+ * Changes the Karrierepfad of an application of the logged-in person. No time limit.
  * @param integer $prestudent_id
  * @param integer $karrierepfad_id empty for "without Karrierepfad"
  * @param integer $person_id logged-in person
@@ -632,10 +631,6 @@ function BewerbungPersonChangeKarrierepfad($prestudent_id, $karrierepfad_id, $pe
 	$prestudent = new prestudent();
 	if (!is_numeric($prestudent_id) || !$prestudent->load($prestudent_id) || $prestudent->person_id != $person_id)
 		return $p->t('global/fehlerBeimLadenDesDatensatzes');
-
-	$studentStatus = new prestudent();
-	if ($studentStatus->getLastStatus($prestudent_id, '', 'Student'))
-		return $p->t('bewerbung/karrierepfadNichtMehrAenderbar');
 
 	$lastStatus = new prestudent();
 	if (!$lastStatus->getLastStatus($prestudent_id))

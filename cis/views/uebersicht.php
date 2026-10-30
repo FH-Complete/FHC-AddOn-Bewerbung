@@ -311,7 +311,6 @@ $studiensemester_array = array();
 			}
 
 			// Karrierepfad of the application and the Karrierepfade of its Studienplan.
-			// The list shows no prestudent with Student status, so a change is possible until the group assignment.
 			$karrierepfadAktuell = null;
 			if ($row->karrierepfad_id != '')
 			{
